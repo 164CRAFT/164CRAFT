@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>164CRAFT - Admin Management Panel</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg-main: #f4f4f0;
+      --bg-card: #ffffff;
+      --text-main: #111111;
+      --text-muted: #666666;
+      --border-color: #d1d1cc;
+      --border-dark: #111111;
+      --accent: #111111;
+      --accent-hover: #333333;
+      --accent-vip: #059669;
+      --accent-vip-bg: #f0fdf4;
+      --danger: #dc2626;
+      --radius: 6px;
+      --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg-main);
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* HEADER */
+    .header {
+      background: rgba(255, 255, 255, 0.9);
+      border-bottom: 1px solid var(--border-color);
+      padding: 0 32px;
+      height: 72px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(8px);
+    }
+    .brand-info { display: flex; align-items: center; gap: 12px; }
+    .brand-photo {
+      width: 38px; height: 38px; background: var(--accent); color: #fff;
+      border-radius: var(--radius); display: flex; align-items: center; justify-content: center;
+      font-size: 0.75rem; font-weight: 800; letter-spacing: 1px;
+    }
+    .brand-name { font-size: 1.1rem; font-weight: 800; letter-spacing: 1.5px; }
+
+    .header-actions { display: flex; gap: 10px; align-items: center; }
+
+    .btn-action {
+      height: 38px; border-radius: var(--radius);
+      border: 1px solid var(--border-dark); padding: 0 14px; font-size: 0.8rem;
+      font-weight: 700; background: var(--accent); color: #fff;
+      cursor: pointer; transition: all 0.2s ease;
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    }
+    .btn-action:hover { background: var(--accent-hover); transform: translateY(-1px); }
+    .btn-secondary { background: #fff; color: var(--text-main); border-color: var(--border-color); }
+    .btn-secondary:hover { background: #f0f0ed; color: #111; border-color: var(--border-dark); }
+    .btn-danger { background: var(--danger); color: #fff; border-color: var(--danger); }
+    .btn-danger:hover { opacity: 0.9; }
+
+    /* MAIN ADMIN WRAPPER */
+    .admin-wrapper {
+      max-width: 1100px;
+      width: 100%;
+      margin: 40px auto;
+      padding: 0 24px;
+      flex: 1;
+    }
+    .admin-card-container {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: calc(var(--radius) * 2);
+      padding: 36px;
+      box-shadow: var(--shadow);
+    }
+    .admin-section-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      border-bottom: 2px solid var(--border-dark);
+      padding-bottom: 12px;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .admin-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 28px;
+    }
+
+    /* FORMS & CONTROLS */
+    .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+    .form-group label { font-size: 0.8rem; font-weight: 700; color: #333; }
+    .form-control {
+      background-color: #fafaf8; border: 1px solid var(--border-color); color: var(--text-main);
+      padding: 10px 14px; font-size: 0.88rem; outline: none; width: 100%;
+      border-radius: var(--radius); transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .form-control:focus { background: #fff; border-color: var(--border-dark); box-shadow: 0 0 0 3px rgba(0,0,0,0.05); }
+    textarea.form-control { min-height: 90px; resize: vertical; }
+
+    /* ADMIN MENU GRID */
+    .admin-menu-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+      gap: 20px;
+    }
+    .admin-menu-box {
+      background: #fafaf9;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+    .admin-menu-box:hover {
+      border-color: var(--border-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.04);
+    }
+    .admin-menu-title { font-weight: 800; font-size: 1rem; color: #111; }
+    .admin-menu-desc { font-size: 0.82rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 8px; }
+
+    /* MODAL SYSTEM */
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px);
+      display: none; align-items: center; justify-content: center;
+      z-index: 1000; padding: 20px;
+    }
+    .modal-box {
+      width: min(95vw, 680px); max-height: 90vh;
+      background: var(--bg-card); border: 1px solid var(--border-color);
+      border-radius: calc(var(--radius) * 1.5);
+      padding: 28px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      display: flex; flex-direction: column; gap: 16px; position: relative;
+      overflow-y: auto;
+    }
+    .modal-header {
+      font-size: 1.05rem; font-weight: 800;
+      padding-bottom: 12px; border-bottom: 1px solid var(--border-color);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .modal-close {
+      width: 30px; height: 30px; border: 1px solid var(--border-color);
+      background: #fff; border-radius: var(--radius); font-size: 0.9rem;
+      cursor: pointer; font-weight: bold; display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s;
+    }
+    .modal-close:hover { background: #111; color: #fff; border-color: #111; }
+
+    /* PIN INPUT STYLE */
+    .pin-input-field {
+      text-align: center; font-size: 1.8rem; letter-spacing: 12px;
+      font-weight: 800; padding: 10px; border: 2px solid var(--border-dark);
+      border-radius: var(--radius); background: #fff;
+    }
+    .forgot-pin-link {
+      font-size: 0.8rem; color: var(--text-muted); text-decoration: underline;
+      cursor: pointer; display: inline-block; margin-top: 12px; font-weight: 600;
+    }
+    .forgot-pin-link:hover { color: #111; }
+
+    /* MULTI-IMAGE PREVIEW */
+    .image-preview-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(75px, 1fr));
+      gap: 10px; margin-top: 8px; max-height: 180px; overflow-y: auto;
+      border: 1px dashed var(--border-color); padding: 10px; background: #fafaf8;
+      border-radius: var(--radius);
+    }
+    .preview-thumb-card {
+      position: relative; aspect-ratio: 1/1; border: 1px solid var(--border-dark);
+      background: #fff; overflow: hidden; display: flex; align-items: center; justify-content: center;
+      border-radius: var(--radius);
+    }
+    .preview-thumb-card img { width: 100%; height: 100%; object-fit: cover; }
+    .preview-thumb-card .remove-img-btn {
+      position: absolute; top: 2px; right: 2px; background: rgba(0, 0, 0, 0.8);
+      color: #fff; border: none; width: 20px; height: 20px; font-size: 11px;
+      border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    }
+    .preview-thumb-card .remove-img-btn:hover { background: var(--danger); }
+    .preview-thumb-card .main-tag {
+      position: absolute; bottom: 2px; left: 2px; background: #111; color: #fff;
+      font-size: 7px; padding: 2px 4px; font-weight: 800; text-transform: uppercase;
+    }
+
+    .tags-container { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 0.6rem; }
+    .tag-chip {
+      background: #f0f0ec; border: 1px solid var(--border-color); padding: 6px 10px;
+      font-size: .8rem; font-weight: 600; border-radius: var(--radius);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .tag-chip .del-btn { color: var(--danger); cursor: pointer; font-weight: bold; }
+
+    .scale-price-row {
+      display: grid; grid-template-columns: 1fr 1.4fr; gap: 10px; align-items: center;
+      border: 1px solid var(--border-color); background: #fafaf8; padding: 10px;
+      border-radius: var(--radius); margin-top: 8px;
+    }
+    .scale-check {
+      border: 1px solid var(--border-color); padding: 8px 12px; background: #fafaf8;
+      cursor: pointer; border-radius: var(--radius); font-size: 0.82rem; font-weight: 600;
+      transition: all 0.2s;
+    }
+    .scale-check:has(input:checked) { border-color: #111; background: #111; color: #fff; }
+
+    .admin-prod-item {
+      display: flex; justify-content: space-between; align-items: center;
+      border: 1px solid var(--border-color); background: #fafaf8; padding: 12px 16px;
+      border-radius: var(--radius); margin-bottom: 8px; gap: 12px;
+      transition: border-color 0.2s;
+    }
+    .admin-prod-item:hover { border-color: var(--border-dark); }
+
+    .footer {
+      background: #111; color: #aaa; border-top: 1px solid #111;
+      padding: 32px 20px; text-align: center; letter-spacing: 1.5px;
+      font-size: 0.72rem; text-transform: uppercase; margin-top: auto;
+    }
+  </style>
+</head>
+<body onload="initAdminPanel()">
+
+  <header class="header">
+    <div class="brand-info">
+      <div class="brand-photo">164</div>
+      <div class="brand-name">164CRAFT — ADMIN</div>
+    </div>
+    <div class="header-actions">
+      <button class="btn-action btn-secondary" onclick="window.location.href='index.html'">🌐 ไปยังหน้าร้านค้า</button>
+      <button class="btn-action btn-danger" onclick="logoutAdmin()">🚪 ออกจากระบบ</button>
+    </div>
+  </header>
+
+  <div class="admin-wrapper">
+    <div class="admin-card-container">
+      <div class="admin-section-title">
+        <span>🛠️ แผงควบคุมระบบจัดการหลังบ้าน</span>
+        <span style="font-size: 0.75rem; color: var(--accent-vip); background: var(--accent-vip-bg); padding: 4px 10px; border-radius: 20px; border: 1px solid #a7f3d0;">● เชื่อมต่อข้อมูลกับเว็บหลักแล้ว</span>
+      </div>
+      <p class="admin-desc">
+        ทุกการเปลี่ยนแปลงข้อมูลสินค้า รหัส VIP แบรนด์ และสเกล จะถูกซิงค์ตรงกับหน้าเว็บไซต์หลักทันที
+      </p>
+
+      <div class="admin-menu-grid">
+        <div class="admin-menu-box">
+          <div class="admin-menu-title">✏️ จัดการสินค้า & เพิ่มสินค้าใหม่</div>
+          <div class="admin-menu-desc">เพิ่มสินค้าใหม่ แก้ไขข้อมูล ราคา สเกล พร้อมระบบอัปโหลดภาพหลายรูปและวิดีโอ</div>
+          <button class="btn-action" style="margin-top: auto;" onclick="openManageProductsModal()">จัดการสินค้า</button>
+        </div>
+
+        <div class="admin-menu-box">
+          <div class="admin-menu-title">🎟️ จัดการรหัส VIP (VIP Access Codes)</div>
+          <div class="admin-menu-desc">สร้างหรือลบรหัสผ่านสำหรับปลดล็อกแสดงสินค้าเฉพาะกลุ่มให้กับลูกค้าคนพิเศษ</div>
+          <button class="btn-action btn-secondary" style="margin-top: auto;" onclick="openVipCodesModal()">จัดการรหัส VIP</button>
+        </div>
+
+        <div class="admin-menu-box">
+          <div class="admin-menu-title">⚙️ ข้อมูลหลัก (Brands & Scales)</div>
+          <div class="admin-menu-desc">จัดการรายชื่อแบรนด์และสเกลสินค้า ระบบจัดเรียงลำดับตัวอักษรให้อัตโนมัติ</div>
+          <button class="btn-action btn-secondary" style="margin-top: auto;" onclick="openConfigModal()">จัดการแบรนด์ / สเกล</button>
+        </div>
+
+        <div class="admin-menu-box">
+          <div class="admin-menu-title">🏦 ธนาคาร, QR Code & ที่อยู่ผู้ส่ง</div>
+          <div class="admin-menu-desc">กำหนดเลขบัญชี พร้อมเพย์ และที่อยู่คลังสินค้าสำหรับออกเอกสารจัดส่ง</div>
+          <button class="btn-action btn-secondary" style="margin-top: auto;" onclick="openBankConfigModal()">ตั้งค่าการชำระเงิน</button>
+        </div>
+
+        <div class="admin-menu-box">
+          <div class="admin-menu-title">⚙️ ตั้งค่าระบบทั่วไป</div>
+          <div class="admin-menu-desc">แก้ไขชื่อร้านค้า อีเมลผู้ดูแลระบบ ค่าจัดส่ง และรหัสผ่าน PIN 6 หลัก</div>
+          <button class="btn-action btn-secondary" style="margin-top: auto;" onclick="openSettingsModal()">การตั้งค่าระบบ</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PASSCODE MODAL -->
+  <div id="passcodeModal" class="modal-overlay" style="display: flex;">
+    <div class="modal-box" style="max-width: 380px; text-align: center; cursor: default;">
+      <div class="modal-header" style="justify-content: center; border-bottom: none; padding-bottom: 0;">🔒 ยืนยันสิทธิ์ผู้ดูแลระบบ</div>
+      <p style="font-size:0.85rem; color: var(--text-muted); margin-top:6px;">กรอกรหัส PIN ตัวเลข 6 หลักเพื่อเข้าใช้งาน<br><small>(ระบบจะตรวจสอบและเข้าระบบให้อัตโนมัติ)</small></p>
+      
+      <div class="form-group" style="margin-top: 15px;">
+        <input 
+          type="password" 
+          id="passcodeInput" 
+          class="form-control pin-input-field" 
+          placeholder="••••••" 
+          maxlength="6" 
+          inputmode="numeric"
+          pattern="[0-9]*"
+          oninput="handlePinAutoInput(this)" 
+          autofocus 
+        />
+      </div>
+
+      <div id="pinStatusMsg" style="font-size:0.8rem; height:18px; color:var(--danger); font-weight:bold;"></div>
+
+      <div style="margin-top: 8px;">
+        <span class="forgot-pin-link" onclick="openForgotPinModal()">ลืมรหัส PIN? ขอรหัสผ่านใหม่เข้าอีเมล</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- FORGOT PIN MODAL -->
+  <div id="forgotPinModal" class="modal-overlay">
+    <div class="modal-box" style="max-width: 420px; text-align: center;">
+      <div class="modal-header">
+        <span>📧 รีเซ็ตรหัส PIN ผู้ดูแลระบบ</span>
+        <button class="modal-close" onclick="closeModal('forgotPinModal')">✕</button>
+      </div>
+      <p style="font-size:0.82rem; color: var(--text-muted); line-height: 1.5; text-align: left;">
+        กรุณากรอกอีเมลของ Admin ที่ลงทะเบียนไว้เพื่อรับรหัสผ่านใหม่ ระบบจะทำการสร้าง PIN 6 หลักชุดใหม่และเปิดโปรแกรมอีเมลให้อัตโนมัติ
+      </p>
+
+      <form onsubmit="handleSendNewPin(event)" style="margin-top: 5px; text-align: left;">
+        <div class="form-group">
+          <label>อีเมล Admin</label>
+          <input type="email" id="forgotEmailInput" class="form-control" placeholder="เช่น admin@164craft.com" required />
+        </div>
+
+        <div style="display: flex; gap: 8px; margin-top: 16px;">
+          <button type="button" class="btn-action btn-secondary" style="flex: 1;" onclick="closeModal('forgotPinModal'); openPasscodeModal();">ย้อนกลับ</button>
+          <button type="submit" class="btn-action" style="flex: 2;">📨 ส่งรหัสใหม่เข้า Email</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MANAGE PRODUCTS MODAL -->
+  <div id="manageProductsModal" class="modal-overlay">
+    <div class="modal-box" style="max-width: 650px;">
+      <div class="modal-header">
+        <span>✏️ รายการสินค้าทั้งหมด (แก้ไข / ลบ)</span>
+        <button class="modal-close" onclick="closeModal('manageProductsModal')">✕</button>
+      </div>
+      
+      <div>
+        <button class="btn-action" style="width: 100%; padding: 12px; font-size: 0.9rem;" onclick="openAddProductModal()">
+          + เพิ่มสินค้าใหม่
+        </button>
+      </div>
+
+      <div class="form-group" style="margin-top: 5px;">
+        <input type="text" id="adminSearchInput" class="form-control" placeholder="🔍 ค้นหาด้วยชื่อสินค้า หรือ SKU..." onkeyup="renderAdminProductList()" />
+      </div>
+
+      <div id="adminProductList" style="max-height: 48vh; overflow-y: auto; padding-right: 4px;"></div>
+      
+      <div style="margin-top: 5px;">
+        <button type="button" class="btn-action btn-secondary" style="width: 100%;" onclick="closeModal('manageProductsModal')">ปิดหน้าต่าง</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADD / EDIT PRODUCT MODAL -->
+  <div id="addProductModal" class="modal-overlay">
+    <div class="modal-box" style="max-width: 650px;">
+      <div class="modal-header">
+        <span id="productModalTitle">📦 เพิ่มรายการสินค้าใหม่</span>
+        <button class="modal-close" onclick="closeModal('addProductModal')">✕</button>
+      </div>
+      
+      <form id="addProductForm" onsubmit="handleProductSubmit(event)">
+        <input type="hidden" id="editingProductId" value="" />
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div class="form-group">
+            <label>รหัสสินค้า (SKU)</label>
+            <input type="text" id="pId" class="form-control" placeholder="เช่น HON002" required />
+          </div>
+          <div class="form-group">
+            <label>แบรนด์</label>
+            <select id="pBrandSelect" class="form-control" required></select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>ชื่อสินค้า</label>
+          <input type="text" id="pName" class="form-control" placeholder="เช่น Honda Civic Type R" required />
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <div class="form-group">
+            <label>ราคาเริ่มต้น (ค่าเริ่มต้นตามสเกล)</label>
+            <input type="number" id="pPrice" class="form-control" placeholder="175" required />
+          </div>
+          <div class="form-group">
+            <label style="color:var(--accent-vip);">🎟️ ผูกกับรหัส VIP (ถ้ามี)</label>
+            <select id="pSecretCodeSelect" class="form-control"></select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>📸 อัปโหลดรูปภาพสินค้า (เลือกได้หลายรูป)</label>
+          <input type="file" id="pImageInput" class="form-control" accept="image/*" multiple onchange="handleImageUpload(event)" />
+          <div id="adminImagesPreviewList" class="image-preview-grid" style="display:none;"></div>
+        </div>
+
+        <div class="form-group">
+          <label>🎥 อัปโหลดวิดีโอพรีวิว (MP4)</label>
+          <input type="file" id="pVdoInput" class="form-control" accept="video/mp4" onchange="handleVdoUpload(event)" />
+          <div id="adminVdoPreviewArea" style="margin-top:4px; font-size:0.75rem; color:#059669; font-weight:700;"></div>
+        </div>
+
+        <div class="form-group">
+          <label>สเกลที่รองรับ</label>
+          <div id="scalesContainer" style="display:flex; flex-wrap:wrap; gap:8px;"></div>
+        </div>
+
+        <div class="form-group" id="scalePricesSection">
+          <label>💰 กำหนดราคาตามสเกล</label>
+          <div id="scalePricesContainer"></div>
+        </div>
+
+        <div style="margin-top:8px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 6px;">
+            <label style="font-size:0.8rem; font-weight:bold;">⚙️ ตัวเลือกสินค้า & ส่วนลด</label>
+            <button type="button" class="btn-action btn-secondary" style="height:30px; padding:0 10px; font-size:0.75rem;" onclick="addDynamicOptionRow()">+ เพิ่มตัวเลือก</button>
+          </div>
+          <div id="dynamicOptionsList"></div>
+        </div>
+
+        <div style="display: flex; gap: 10px; margin-top: 18px;">
+          <button type="button" class="btn-action btn-secondary" style="flex: 1;" onclick="closeModal('addProductModal'); openManageProductsModal();">⬅️ ย้อนกลับ</button>
+          <button type="submit" id="saveProductBtn" class="btn-action" style="flex: 2;">+ บันทึกสินค้า</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- VIP CODES MODAL -->
+  <div id="vipCodesModal" class="modal-overlay">
+    <div class="modal-box" style="max-width: 480px;">
+      <div class="modal-header">
+        <span>🎟️ จัดการรหัส VIP (VIP Access Codes)</span>
+        <button class="modal-close" onclick="closeModal('vipCodesModal')">✕</button>
+      </div>
+      <p style="font-size: 0.82rem; color: var(--text-muted);">
+        สร้างรหัส VIP สำหรับเปิดสิทธิ์ให้ลูกค้ามองเห็นสินค้าพิเศษเฉพาะกลุ่ม
+      </p>
+      
+      <form onsubmit="handleAddVipCode(event)" style="display:flex; gap:6px; margin-top: 6px;">
+        <input type="text" id="newVipCodeInput" class="form-control" placeholder="รหัส VIP ใหม่ (เช่น VIP164)..." style="text-transform:uppercase;" required />
+        <button type="submit" class="btn-action" style="padding: 0 16px;">+ เพิ่ม</button>
+      </form>
+
+      <div style="margin-top: 8px;">
+        <label style="font-size:0.78rem; font-weight:bold; color:#444;">รายการรหัส VIP ทั้งหมดในระบบ:</label>
+        <div id="vipCodeChipsList" class="tags-container" style="margin-top: 6px;"></div>
+      </div>
+
+      <div style="margin-top: 15px;">
+        <button type="button" class="btn-action btn-secondary" style="width: 100%;" onclick="closeModal('vipCodesModal')">ปิดหน้าต่าง</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONFIG MODAL (BRANDS & SCALES) -->
+  <div id="configModal" class="modal-overlay">
+    <div class="modal-box" style="max-width: 480px;">
+      <div class="modal-header">
+        <span>⚙️ จัดการข้อมูลหลัก (Brands & Scales)</span>
+        <button class="modal-close" onclick="closeModal('configModal')">✕</button>
+      </div>
+      <p style="font-size:0.78rem; color:var(--text-muted);">แบรนด์และสเกลถูกจัดเรียงตามลำดับตัวอักษรโดยอัตโนมัติ</p>
+      
+      <div style="margin-bottom: 1rem; margin-top:10px;">
+        <label style="font-size:0.8rem; font-weight:bold; display:block; margin-bottom:6px;">🏷️ จัดการแบรนด์ (Brands - เรียง A-Z)</label>
+        <form onsubmit="handleAddBrand(event)" style="display:flex; gap:6px;">
+          <input type="text" id="newBrandName" class="form-control" placeholder="ชื่อแบรนด์ใหม่..." required />
+          <button type="submit" class="btn-action" style="padding: 0 14px;">+</button>
+        </form>
+        <div id="brandChipsList" class="tags-container"></div>
+      </div>
+
+      <hr style="border: 0; border-top: 1px solid var(--border-color);" />
+
+      <div style="margin-top: 12px;">
+        <label style="font-size:0.8rem; font-weight:bold; display:block; margin-bottom:6px;">📐 จัดการสเกล (Scales)</label>
+        <form onsubmit="handleAddScale(event)" style="display:flex; gap:6px;">
+          <input type="text" id="newScaleName" class="form-control" placeholder="เช่น 1/64..." required />
+          <button type="submit" class="btn-action" style="padding: 0 14px;">+</button>
+        </form>
+        <div id="scaleChipsList" class="tags-container"></div>
+      </div>
+
+      <div style="margin-top: 18px;">
+        <button type="button" class="btn-action btn-secondary" style="width: 100%;" onclick="closeModal('configModal')">ปิดหน้าต่าง</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- BANK CONFIG MODAL -->
+  <div id="bankConfigModal" class="modal-overlay">
+    <div class="modal-box" style="max-width: 500px;">
+      <div class="modal-header">
+        <span>🏦 ตั้งค่าการชำระเงินและผู้จัดส่ง</span>
+        <button class="modal-close" onclick="closeModal('bankConfigModal')">✕</button>
+      </div>
+      
+      <form onsubmit="saveBankAndSenderConfig(event)">
+        <div style="font-weight: bold; font-size: 0.85rem; color: #111; margin-bottom: 8px;">💳 ข้อมูลการรับชำระเงิน</div>
+        <div class="form-group">
+          <label>ธนาคาร</label>
+          <input type="text" id="cfgBankName" class="form-control" required />
+        </div>
+        <div class="form-group">
+          <label>เลขที่บัญชี</label>
+          <input type="text" id="cfgAccountNo" class="form-control" required />
+        </div>
+        <div class="form-group">
+          <label>ชื่อบัญชี</label>
+          <input type="text" id="cfgAccountName" class="form-control" required />
+        </div>
+        <div class="form-group">
+          <label>รูปภาพ QR Code พร้อมเพย์</label>
+          <input type="file" id="cfgQrInput" class="form-control" accept="image/*" onchange="handleQrUpload(event)" />
+          <div id="qrPreviewArea" style="text-align: center; margin-top: 6px;"></div>
+        </div>
+
+        <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 16px 0;" />
+
+        <div style="font-weight: bold; font-size: 0.85rem; color: #111; margin-bottom: 8px;">📦 ข้อมูลผู้จัดส่ง (Sender)</div>
+        <div class="form-group">
+          <label>ชื่อผู้ส่ง / ร้านค้า</label>
+          <input type="text" id="cfgSenderName" class="form-control" required />
+        </div>
+        <div class="form-group">
+          <label>เบอร์โทรศัพท์ผู้ส่ง</label>
+          <input type="tel" id="cfgSenderPhone" class="form-control" maxlength="10" required />
+        </div>
+        <div class="form-group">
+          <label>ที่อยู่ผู้จัดส่ง</label>
+          <textarea id="cfgSenderAddress" class="form-control" rows="3" required></textarea>
+        </div>
+
+        <div style="display: flex; gap: 8px; margin-top: 16px;">
+          <button type="button" class="btn-action btn-secondary" style="flex: 1;" onclick="closeModal('bankConfigModal')">ปิดหน้าต่าง</button>
+          <button type="submit" class="btn-action" style="flex: 2;">💾 บันทึกการตั้งค่า</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- SETTINGS MODAL -->
+  <div id="settingsModal" class="modal-overlay">
+    <div class="modal-box" style="max-width: 480px;">
+      <div class="modal-header">
+        <span>⚙️ การตั้งค่าระบบทั่วไป</span>
+        <button class="modal-close" onclick="closeModal('settingsModal')">✕</button>
+      </div>
+      
+      <form onsubmit="saveSystemSettings(event)">
+        <div class="form-group">
+          <label>ชื่อร้านค้า</label>
+          <input type="text" id="stgStoreName" class="form-control" required />
+        </div>
+        <div class="form-group">
+          <label>อีเมลหลัก Admin</label>
+          <input type="email" id="stgAdminEmail" class="form-control" required />
+        </div>
+        <div class="form-group">
+          <label>รูปแบบการจัดส่ง</label>
+          <input type="text" id="stgShippingName" class="form-control" required />
+        </div>
+        <div class="form-group">
+          <label>ค่าจัดส่งคงที่ (บาท)</label>
+          <input type="number" id="stgShippingFee" class="form-control" min="0" required />
+        </div>
+        <div class="form-group">
+          <label>เปลี่ยนรหัสผ่าน PIN (6 หลัก)</label>
+          <input type="password" id="stgNewPasscode" class="form-control" placeholder="เว้นว่างไว้หากไม่ต้องการเปลี่ยน" maxlength="6" inputmode="numeric" />
+        </div>
+
+        <div style="display: flex; gap: 8px; margin-top: 16px;">
+          <button type="button" class="btn-action btn-secondary" style="flex: 1;" onclick="closeModal('settingsModal')">ปิดหน้าต่าง</button>
+          <button type="submit" class="btn-action" style="flex: 2;">💾 บันทึกการตั้งค่า</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <footer class="footer">164CRAFT — ADMIN MANAGEMENT PANEL</footer>
+
+  <script>
+    let brands = JSON.parse(localStorage.getItem("craft_brands")) || ["Ducati", "Honda", "Isuzu", "Kawasaki", "Toyota", "Yamaha"];
+    let scalesList = JSON.parse(localStorage.getItem("craft_scales")) || ["1/12", "1/32", "1/43", "1/64"];
+    let vipCodesList = JSON.parse(localStorage.getItem("craft_vip_codes")) || ["MEMBER99", "SECRET88", "VIP164"];
+    let adminPasscode = localStorage.getItem("craft_passcode") || "123456";
+
+    let systemSettings = JSON.parse(localStorage.getItem("craft_settings")) || {
+      storeName: "164CRAFT",
+      adminEmail: "admin@164craft.com",
+      shippingName: "EMS",
+      shippingFee: 50,
+      bankName: "กสิกรไทย (KBANK)",
+      accountNo: "123-4-56789-0",
+      accountName: "164CRAFT CO., LTD.",
+      qrCodeUrl: "",
+      senderName: "164CRAFT คลังกระจายสินค้า",
+      senderPhone: "0812345678",
+      senderAddress: "99/1 ถ.พหลโยธิน แขวงลาดยาว เขตจตุจักร กรุงเทพฯ 10900"
+    };
+
+    let products = JSON.parse(localStorage.getItem("craft_products")) || [
+      {
+        id: "HON001",
+        name: "Honda Civic Type R (EK9) Custom",
+        brand: "Honda",
+        basePrice: 220,
+        secretCode: "",
+        images: ["https://images.unsplash.com/photo-1590362891991-f776e747a588?w=600&auto=format&fit=crop&q=80"],
+        vdo: "",
+        scales: ["1/64", "1/43"],
+        scalePrices: { "1/64": 220, "1/43": 350 },
+        options: [{ name: "ล้อ TE37 สีขาว", extraPrice: 0, vipCode: "VIP20", vipDiscount: 20 }]
+      }
+    ];
+
+    let tempProductImages = [];
+    let tempProductVdo = "";
+
+    function sortAlphabetically(arr) {
+      return arr.sort((a, b) => a.localeCompare(b, 'th', { sensitivity: 'base' }));
+    }
+
+    function saveDataToStorage() {
+      localStorage.setItem("craft_brands", JSON.stringify(brands));
+      localStorage.setItem("craft_scales", JSON.stringify(scalesList));
+      localStorage.setItem("craft_vip_codes", JSON.stringify(vipCodesList));
+      localStorage.setItem("craft_passcode", adminPasscode);
+      localStorage.setItem("craft_settings", JSON.stringify(systemSettings));
+      localStorage.setItem("craft_products", JSON.stringify(products));
+    }
+
+    function initAdminPanel() {
+      brands = sortAlphabetically(brands);
+      scalesList = sortAlphabetically(scalesList);
+      vipCodesList = sortAlphabetically(vipCodesList);
+      
+      if (sessionStorage.getItem("admin_logged_in") === "true") {
+        closeModal('passcodeModal');
+      } else {
+        openPasscodeModal();
+      }
+    }
+
+    function openModal(id) { document.getElementById(id).style.display = "flex"; }
+    function closeModal(id) { document.getElementById(id).style.display = "none"; }
+
+    // PIN LOGIN
+    function openPasscodeModal() {
+      const input = document.getElementById("passcodeInput");
+      input.value = "";
+      document.getElementById("pinStatusMsg").innerText = "";
+      openModal('passcodeModal');
+      setTimeout(() => input.focus(), 100);
+    }
+
+    function handlePinAutoInput(el) {
+      el.value = el.value.replace(/[^0-9]/g, '');
+      const statusMsg = document.getElementById("pinStatusMsg");
+      statusMsg.innerText = "";
+
+      if (el.value.length === 6) {
+        if (el.value === adminPasscode) {
+          statusMsg.style.color = "#059669";
+          statusMsg.innerText = "✓ รหัสผ่านถูกต้อง เข้าสู่ระบบสำเร็จ!";
+          sessionStorage.setItem("admin_logged_in", "true");
+          setTimeout(() => closeModal('passcodeModal'), 350);
+        } else {
+          statusMsg.style.color = "var(--danger)";
+          statusMsg.innerText = "✕ รหัส PIN ไม่ถูกต้อง";
+          el.value = "";
+          el.style.borderColor = "var(--danger)";
+          setTimeout(() => el.style.borderColor = "#111", 1000);
+        }
+      }
+    }
+
+    function logoutAdmin() {
+      sessionStorage.removeItem("admin_logged_in");
+      openPasscodeModal();
+    }
+
+    function openForgotPinModal() {
+      closeModal('passcodeModal');
+      document.getElementById("forgotEmailInput").value = "";
+      openModal('forgotPinModal');
+    }
+
+    function handleSendNewPin(e) {
+      e.preventDefault();
+      const inputEmail = document.getElementById("forgotEmailInput").value.trim();
+
+      if (inputEmail.toLowerCase() === systemSettings.adminEmail.toLowerCase()) {
+        const newPin = Math.floor(100000 + Math.random() * 900000).toString();
+        adminPasscode = newPin;
+        saveDataToStorage();
+
+        alert(`✓ สร้างรหัส PIN ใหม่เรียบร้อยแล้ว!\n\nรหัส PIN ใหม่ของคุณคือ: ${newPin}\n(ระบบเปิดโปรแกรมเมลให้อัตโนมัติ)`);
+        window.open(`mailto:${systemSettings.adminEmail}?subject=Admin%20New%20PIN&body=Your%20new%20PIN%20is:%20${newPin}`, '_blank');
+        
+        closeModal('forgotPinModal');
+        openPasscodeModal();
+      } else {
+        alert("✕ อีเมลไม่ถูกต้อง");
+      }
+    }
+
+    // MANAGE PRODUCTS
+    function openManageProductsModal() {
+      renderAdminProductList();
+      openModal('manageProductsModal');
+    }
+
+    function renderAdminProductList() {
+      const cont = document.getElementById("adminProductList");
+      const q = (document.getElementById("adminSearchInput").value || "").trim().toLowerCase();
+      const filtered = products.filter(p => p.name.toLowerCase().includes(q) || p.id.toLowerCase().includes(q));
+
+      if (filtered.length === 0) {
+        cont.innerHTML = `<div style="text-align:center; padding:15px; color:#888;">ไม่พบสินค้า</div>`;
+        return;
+      }
+
+      cont.innerHTML = filtered.map(p => {
+        const thumb = (p.images && p.images.length > 0) ? p.images[0] : '';
+        const secretNotice = p.secretCode ? `<span style="color:var(--accent-vip); font-weight:bold;">[VIP: ${p.secretCode}]</span> ` : '';
+        return `
+          <div class="admin-prod-item">
+            <div style="display:flex; gap:12px; align-items:center;">
+              <img src="${thumb}" style="width:42px; height:42px; object-fit:cover; border-radius:4px; border:1px solid #ddd;" />
+              <div>
+                <div style="font-weight:bold; font-size:0.85rem;">${p.name}</div>
+                <div style="font-size:0.75rem; color:#666;">SKU: ${p.id} | ${p.brand} | ${secretNotice}${p.images.length} รูป</div>
+              </div>
+            </div>
+            <div style="display:flex; gap:6px;">
+              <button class="btn-action btn-secondary" style="height:32px; padding:0 10px; font-size:0.75rem;" onclick="editProduct('${p.id}')">แก้ไข</button>
+              <button class="btn-action btn-danger" style="height:32px; padding:0 10px; font-size:0.75rem;" onclick="deleteProduct('${p.id}')">ลบ</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function openAddProductModal() {
+      closeModal('manageProductsModal');
+      document.getElementById("productModalTitle").innerText = "📦 เพิ่มรายการสินค้าใหม่";
+      document.getElementById("editingProductId").value = "";
+      document.getElementById("addProductForm").reset();
+
+      tempProductImages = [];
+      tempProductVdo = "";
+      renderAdminImagePreview();
+      document.getElementById("adminVdoPreviewArea").innerHTML = "";
+
+      const bSelect = document.getElementById("pBrandSelect");
+      bSelect.innerHTML = brands.map(b => `<option value="${b}">${b}</option>`).join('');
+
+      renderVipSelectOptions("");
+      renderAdminScalesInputs();
+      document.getElementById("dynamicOptionsList").innerHTML = "";
+      addDynamicOptionRow();
+
+      openModal('addProductModal');
+    }
+
+    function renderVipSelectOptions(selectedVal = "") {
+      const select = document.getElementById("pSecretCodeSelect");
+      let html = `<option value="">-- เป็นสินค้าทั่วไป (ไม่ต้องใช้รหัส) --</option>`;
+      vipCodesList.forEach(code => {
+        html += `<option value="${code}" ${code === selectedVal ? 'selected' : ''}>🔒 โค้ด VIP: ${code}</option>`;
+      });
+      select.innerHTML = html;
+    }
+
+    function renderAdminScalesInputs(selectedScales = ["1/64"], scalePrices = {}) {
+      const cont = document.getElementById("scalesContainer");
+      cont.innerHTML = scalesList.map(sc => `
+        <label class="scale-check">
+          <input type="checkbox" name="productScale" value="${sc}" ${selectedScales.includes(sc) ? 'checked' : ''} onchange="updateScalePriceInputs()" />
+          ${sc}
+        </label>
+      `).join('');
+      updateScalePriceInputs(scalePrices);
+    }
+
+    function updateScalePriceInputs(existingPrices = {}) {
+      const cont = document.getElementById("scalePricesContainer");
+      const defaultBase = parseFloat(document.getElementById("pPrice").value) || 0;
+      const checkedScales = Array.from(document.querySelectorAll('input[name="productScale"]:checked')).map(cb => cb.value);
+
+      cont.innerHTML = checkedScales.map(sc => {
+        const val = existingPrices[sc] !== undefined ? existingPrices[sc] : defaultBase;
+        return `
+          <div class="scale-price-row">
+            <span class="scale-price-name" style="font-size:0.8rem;">สเกล ${sc}:</span>
+            <div style="display:flex; align-items:center; gap:6px;">
+              <span>฿</span>
+              <input type="number" class="form-control scale-price-input" data-scale="${sc}" value="${val}" required style="min-height:36px;" />
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function handleImageUpload(event) {
+      const files = event.target.files;
+      if (!files || files.length === 0) return;
+      Array.from(files).forEach(file => {
+        if (!file.type.startsWith('image/')) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          tempProductImages.push(e.target.result);
+          renderAdminImagePreview();
+        };
+        reader.readAsDataURL(file);
+      });
+      event.target.value = '';
+    }
+
+    function removeAdminImage(index) {
+      tempProductImages.splice(index, 1);
+      renderAdminImagePreview();
+    }
+
+    function renderAdminImagePreview() {
+      const cont = document.getElementById("adminImagesPreviewList");
+      if (tempProductImages.length === 0) {
+        cont.style.display = "none";
+        cont.innerHTML = "";
+        return;
+      }
+      cont.style.display = "grid";
+      cont.innerHTML = tempProductImages.map((imgSrc, idx) => `
+        <div class="preview-thumb-card">
+          <img src="${imgSrc}" alt="thumb-${idx}" />
+          ${idx === 0 ? '<span class="main-tag">หน้าปก</span>' : ''}
+          <button type="button" class="remove-img-btn" onclick="removeAdminImage(${idx})">✕</button>
+        </div>
+      `).join('');
+    }
+
+    function handleVdoUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        tempProductVdo = e.target.result;
+        document.getElementById("adminVdoPreviewArea").innerHTML = `<span style="color:#059669;">✓ อัปโหลดวิดีโอสำเร็จ</span>`;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function addDynamicOptionRow(opt = { name: '', extraPrice: 0 }) {
+      const cont = document.getElementById("dynamicOptionsList");
+      const row = document.createElement("div");
+      row.className = "form-group";
+      row.style.background = "#fafaf8";
+      row.style.padding = "8px";
+      row.style.border = "1px solid var(--border-color)";
+      row.style.borderRadius = "var(--radius)";
+      row.innerHTML = `
+        <div style="display:flex; gap:6px;">
+          <input type="text" class="form-control opt-name" placeholder="ชื่อตัวเลือก (เช่น ล้อแต่ง)" value="${opt.name}" required style="flex:2; min-height:34px;" />
+          <input type="number" class="form-control opt-extra" placeholder="+บาท" value="${opt.extraPrice}" style="flex:1; min-height:34px;" />
+          <button type="button" class="btn-action btn-danger" style="height:34px; padding:0 8px;" onclick="this.parentElement.parentElement.remove()">✕</button>
+        </div>
+      `;
+      cont.appendChild(row);
+    }
+
+    function handleProductSubmit(e) {
+      e.preventDefault();
+      const editId = document.getElementById("editingProductId").value;
+      const id = document.getElementById("pId").value.trim();
+      const brand = document.getElementById("pBrandSelect").value;
+      const name = document.getElementById("pName").value.trim();
+      const basePrice = parseFloat(document.getElementById("pPrice").value) || 0;
+      const secretCode = (document.getElementById("pSecretCodeSelect").value || "").trim().toUpperCase();
+
+      const checkedScales = Array.from(document.querySelectorAll('input[name="productScale"]:checked')).map(cb => cb.value);
+      if (checkedScales.length === 0) return alert("กรุณาเลือกสเกลอย่างน้อย 1 สเกล");
+
+      const scalePrices = {};
+      document.querySelectorAll(".scale-price-input").forEach(inp => {
+        scalePrices[inp.getAttribute("data-scale")] = parseFloat(inp.value) || basePrice;
+      });
+
+      const options = [];
+      document.querySelectorAll("#dynamicOptionsList .form-group").forEach(card => {
+        const nameInput = card.querySelector(".opt-name");
+        const extraInput = card.querySelector(".opt-extra");
+        if (nameInput && extraInput) {
+          options.push({ name: nameInput.value.trim(), extraPrice: parseFloat(extraInput.value) || 0, vipCode: "", vipDiscount: 0 });
+        }
+      });
+
+      if (tempProductImages.length === 0) tempProductImages.push('https://via.placeholder.com/400?text=164CRAFT');
+
+      const payload = {
+        id, name, brand, basePrice, secretCode,
+        images: [...tempProductImages],
+        vdo: tempProductVdo,
+        scales: checkedScales,
+        scalePrices,
+        options
+      };
+
+      if (editId) {
+        const idx = products.findIndex(p => p.id === editId);
+        if (idx !== -1) products[idx] = payload;
+      } else {
+        products.unshift(payload);
+      }
+
+      saveDataToStorage();
+      alert("บันทึกสินค้าเรียบร้อย!");
+      closeModal('addProductModal');
+      openManageProductsModal();
+    }
+
+    function editProduct(productId) {
+      const prod = products.find(p => p.id === productId);
+      if (!prod) return;
+
+      closeModal('manageProductsModal');
+      document.getElementById("productModalTitle").innerText = "✏️ แก้ไขสินค้า: " + prod.id;
+      document.getElementById("editingProductId").value = prod.id;
+      document.getElementById("pId").value = prod.id;
+      document.getElementById("pName").value = prod.name;
+      document.getElementById("pPrice").value = prod.basePrice;
+
+      const bSelect = document.getElementById("pBrandSelect");
+      bSelect.innerHTML = brands.map(b => `<option value="${b}" ${b === prod.brand ? 'selected' : ''}>${b}</option>`).join('');
+
+      renderVipSelectOptions(prod.secretCode || "");
+
+      tempProductImages = prod.images ? [...prod.images] : [];
+      tempProductVdo = prod.vdo || "";
+      renderAdminImagePreview();
+
+      renderAdminScalesInputs(prod.scales, prod.scalePrices);
+
+      const optCont = document.getElementById("dynamicOptionsList");
+      optCont.innerHTML = "";
+      if (prod.options) prod.options.forEach(o => addDynamicOptionRow(o));
+
+      openModal('addProductModal');
+    }
+
+    function deleteProduct(productId) {
+      if (!confirm(`ต้องการลบ SKU: ${productId} หรือไม่?`)) return;
+      products = products.filter(p => p.id !== productId);
+      saveDataToStorage();
+      renderAdminProductList();
+    }
+
+    // VIP CODES
+    function openVipCodesModal() {
+      renderVipCodesList();
+      openModal('vipCodesModal');
+    }
+
+    function renderVipCodesList() {
+      const cont = document.getElementById("vipCodeChipsList");
+      cont.innerHTML = vipCodesList.map((code, idx) => `
+        <div class="tag-chip">
+          <span style="font-weight:bold; color:var(--accent-vip);">${code}</span>
+          <span class="del-btn" onclick="deleteVipCode(${idx})">✕</span>
+        </div>
+      `).join('');
+    }
+
+    function handleAddVipCode(e) {
+      e.preventDefault();
+      const val = document.getElementById("newVipCodeInput").value.trim().toUpperCase();
+      if (val && !vipCodesList.includes(val)) {
+        vipCodesList.push(val);
+        vipCodesList = sortAlphabetically(vipCodesList);
+        saveDataToStorage();
+        document.getElementById("newVipCodeInput").value = "";
+        renderVipCodesList();
+      }
+    }
+
+    function deleteVipCode(idx) {
+      vipCodesList.splice(idx, 1);
+      saveDataToStorage();
+      renderVipCodesList();
+    }
+
+    // CONFIG BRANDS & SCALES
+    function openConfigModal() {
+      renderConfigChips();
+      openModal('configModal');
+    }
+
+    function renderConfigChips() {
+      brands = sortAlphabetically(brands);
+      scalesList = sortAlphabetically(scalesList);
+
+      document.getElementById("brandChipsList").innerHTML = brands.map(b => `
+        <div class="tag-chip">
+          <span>${b}</span>
+          <span class="del-btn" onclick="deleteBrand('${b}')">✕</span>
+        </div>
+      `).join('');
+
+      document.getElementById("scaleChipsList").innerHTML = scalesList.map(s => `
+        <div class="tag-chip">
+          <span>${s}</span>
+          <span class="del-btn" onclick="deleteScale('${s}')">✕</span>
+        </div>
+      `).join('');
+    }
+
+    function handleAddBrand(e) {
+      e.preventDefault();
+      const val = document.getElementById("newBrandName").value.trim();
+      if (val && !brands.includes(val)) {
+        brands.push(val);
+        brands = sortAlphabetically(brands);
+        saveDataToStorage();
+        document.getElementById("newBrandName").value = "";
+        renderConfigChips();
+      }
+    }
+
+    function deleteBrand(b) {
+      if (brands.length <= 1) return alert("ต้องมีอย่างน้อย 1 แบรนด์");
+      brands = brands.filter(x => x !== b);
+      saveDataToStorage();
+      renderConfigChips();
+    }
+
+    function handleAddScale(e) {
+      e.preventDefault();
+      const val = document.getElementById("newScaleName").value.trim();
+      if (val && !scalesList.includes(val)) {
+        scalesList.push(val);
+        scalesList = sortAlphabetically(scalesList);
+        saveDataToStorage();
+        document.getElementById("newScaleName").value = "";
+        renderConfigChips();
+      }
+    }
+
+    function deleteScale(s) {
+      if (scalesList.length <= 1) return alert("ต้องมีอย่างน้อย 1 สเกล");
+      scalesList = scalesList.filter(x => x !== s);
+      saveDataToStorage();
+      renderConfigChips();
+    }
+
+    // BANK & SENDER CONFIG
+    function openBankConfigModal() {
+      document.getElementById("cfgBankName").value = systemSettings.bankName;
+      document.getElementById("cfgAccountNo").value = systemSettings.accountNo;
+      document.getElementById("cfgAccountName").value = systemSettings.accountName;
+      document.getElementById("cfgSenderName").value = systemSettings.senderName;
+      document.getElementById("cfgSenderPhone").value = systemSettings.senderPhone;
+      document.getElementById("cfgSenderAddress").value = systemSettings.senderAddress;
+
+      const qrArea = document.getElementById("qrPreviewArea");
+      qrArea.innerHTML = systemSettings.qrCodeUrl ? `<img src="${systemSettings.qrCodeUrl}" style="max-width:110px; border-radius:4px; border:1px solid #ccc;" />` : '';
+      openModal('bankConfigModal');
+    }
+
+    function handleQrUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        systemSettings.qrCodeUrl = ev.target.result;
+        document.getElementById("qrPreviewArea").innerHTML = `<img src="${ev.target.result}" style="max-width:110px; border-radius:4px; border:1px solid #ccc;" />`;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function saveBankAndSenderConfig(e) {
+      e.preventDefault();
+      systemSettings.bankName = document.getElementById("cfgBankName").value.trim();
+      systemSettings.accountNo = document.getElementById("cfgAccountNo").value.trim();
+      systemSettings.accountName = document.getElementById("cfgAccountName").value.trim();
+      systemSettings.senderName = document.getElementById("cfgSenderName").value.trim();
+      systemSettings.senderPhone = document.getElementById("cfgSenderPhone").value.trim();
+      systemSettings.senderAddress = document.getElementById("cfgSenderAddress").value.trim();
+
+      saveDataToStorage();
+      alert("บันทึกข้อมูลเรียบร้อยแล้ว");
+      closeModal('bankConfigModal');
+    }
+
+    // SYSTEM SETTINGS
+    function openSettingsModal() {
+      document.getElementById("stgStoreName").value = systemSettings.storeName;
+      document.getElementById("stgAdminEmail").value = systemSettings.adminEmail;
+      document.getElementById("stgShippingName").value = systemSettings.shippingName;
+      document.getElementById("stgShippingFee").value = systemSettings.shippingFee;
+      document.getElementById("stgNewPasscode").value = "";
+      openModal('settingsModal');
+    }
+
+    function saveSystemSettings(e) {
+      e.preventDefault();
+      systemSettings.storeName = document.getElementById("stgStoreName").value.trim();
+      systemSettings.adminEmail = document.getElementById("stgAdminEmail").value.trim();
+      systemSettings.shippingName = document.getElementById("stgShippingName").value.trim();
+      systemSettings.shippingFee = parseFloat(document.getElementById("stgShippingFee").value) || 0;
+
+      const newPass = document.getElementById("stgNewPasscode").value.trim();
+      if (newPass) {
+        if (newPass.length === 6) {
+          adminPasscode = newPass;
+          alert("เปลี่ยนรหัสผ่าน Admin สำเร็จ!");
+        } else {
+          return alert("รหัสผ่านใหม่ต้องมี 6 หลัก");
+        }
+      }
+
+      saveDataToStorage();
+      alert("บันทึกการตั้งค่าสำเร็จ");
+      closeModal('settingsModal');
+    }
+  </script>
+</body>
+</html>
