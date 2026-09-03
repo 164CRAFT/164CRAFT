@@ -2,10 +2,10 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>164CRAFT - Admin Management Panel</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
     :root {
       --bg-main: #f4f4f0;
       --bg-card: #ffffff;
@@ -18,27 +18,28 @@
       --accent-vip: #059669;
       --accent-vip-bg: #f0fdf4;
       --danger: #dc2626;
-      --radius: 6px;
+      --radius: 8px;
       --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
     }
 
     html { scroll-behavior: smooth; }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       background: var(--bg-main);
       color: var(--text-main);
       display: flex;
       flex-direction: column;
       min-height: 100vh;
       -webkit-font-smoothing: antialiased;
+      -webkit-text-size-adjust: 100%;
     }
 
-    /* HEADER */
+    /* HEADER - Responsive สำหรับ iOS / Android / Windows */
     .header {
-      background: rgba(255, 255, 255, 0.9);
+      background: rgba(255, 255, 255, 0.95);
       border-bottom: 1px solid var(--border-color);
-      padding: 0 32px;
-      height: 72px;
+      padding: 0 20px;
+      height: 64px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -47,141 +48,159 @@
       z-index: 100;
       backdrop-filter: blur(8px);
     }
-    .brand-info { display: flex; align-items: center; gap: 12px; }
+    .brand-info { display: flex; align-items: center; gap: 10px; }
     .brand-photo {
-      width: 38px; height: 38px; background: var(--accent); color: #fff;
+      width: 36px; height: 36px; background: var(--accent); color: #fff;
       border-radius: var(--radius); display: flex; align-items: center; justify-content: center;
-      font-size: 0.75rem; font-weight: 800; letter-spacing: 1px;
+      font-size: 0.7rem; font-weight: 800; letter-spacing: 1px; flex-shrink: 0;
     }
-    .brand-name { font-size: 1.1rem; font-weight: 800; letter-spacing: 1.5px; }
+    .brand-name { font-size: 0.95rem; font-weight: 800; letter-spacing: 1px; white-space: nowrap; }
 
-    .header-actions { display: flex; gap: 10px; align-items: center; }
+    .header-actions { display: flex; gap: 8px; align-items: center; }
 
     .btn-action {
       height: 38px; border-radius: var(--radius);
-      border: 1px solid var(--border-dark); padding: 0 14px; font-size: 0.8rem;
+      border: 1px solid var(--border-dark); padding: 0 12px; font-size: 0.78rem;
       font-weight: 700; background: var(--accent); color: #fff;
       cursor: pointer; transition: all 0.2s ease;
       display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+      white-space: nowrap;
     }
-    .btn-action:hover { background: var(--accent-hover); transform: translateY(-1px); }
+    .btn-action:hover { background: var(--accent-hover); }
     .btn-secondary { background: #fff; color: var(--text-main); border-color: var(--border-color); }
-    .btn-secondary:hover { background: #f0f0ed; color: #111; border-color: var(--border-dark); }
+    .btn-secondary:hover { background: #f0f0ed; border-color: var(--border-dark); }
     .btn-danger { background: var(--danger); color: #fff; border-color: var(--danger); }
-    .btn-danger:hover { opacity: 0.9; }
 
     /* MAIN ADMIN WRAPPER */
     .admin-wrapper {
       max-width: 1100px;
       width: 100%;
-      margin: 40px auto;
-      padding: 0 24px;
+      margin: 24px auto;
+      padding: 0 16px;
       flex: 1;
     }
     .admin-card-container {
       background: var(--bg-card);
       border: 1px solid var(--border-color);
-      border-radius: calc(var(--radius) * 2);
-      padding: 36px;
+      border-radius: calc(var(--radius) * 1.5);
+      padding: 24px;
       box-shadow: var(--shadow);
     }
     .admin-section-title {
-      font-size: 1.25rem;
+      font-size: 1.1rem;
       font-weight: 800;
       border-bottom: 2px solid var(--border-dark);
-      padding-bottom: 12px;
+      padding-bottom: 10px;
       margin-bottom: 8px;
       display: flex;
-      justify-content: space-between;
-      align-items: center;
+      flex-direction: column;
+      gap: 6px;
+    }
+    @media(min-width: 640px) {
+      .admin-section-title { flex-direction: row; justify-content: space-between; align-items: center; }
+      .admin-card-container { padding: 36px; }
+      .header { padding: 0 32px; height: 72px; }
+      .brand-name { font-size: 1.1rem; }
     }
     .admin-desc {
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       color: var(--text-muted);
-      margin-bottom: 28px;
+      margin-bottom: 24px;
+      line-height: 1.4;
     }
 
-    /* FORMS & CONTROLS */
+    /* FORMS & CONTROLS (รองรับการแตะบนมือถือไม่ให้ซูมเองด้วย font-size 16px บน iOS ถ้าจำเป็น หรือคุมด้วย padding) */
     .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
     .form-group label { font-size: 0.8rem; font-weight: 700; color: #333; }
     .form-control {
       background-color: #fafaf8; border: 1px solid var(--border-color); color: var(--text-main);
-      padding: 10px 14px; font-size: 0.88rem; outline: none; width: 100%;
+      padding: 10px 14px; font-size: 16px; outline: none; width: 100%; /* ตั้งเป็น 16px ป้องกัน iOS ซูมจออัตโนมัติเวลาพิมพ์ */
       border-radius: var(--radius); transition: border-color 0.2s, box-shadow 0.2s;
     }
+    @media(min-width: 640px) { .form-control { font-size: 0.88rem; } }
     .form-control:focus { background: #fff; border-color: var(--border-dark); box-shadow: 0 0 0 3px rgba(0,0,0,0.05); }
     textarea.form-control { min-height: 90px; resize: vertical; }
 
     /* ADMIN MENU GRID */
     .admin-menu-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
-      gap: 20px;
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+    @media(min-width: 640px) {
+      .admin-menu-grid { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
     }
     .admin-menu-box {
       background: #fafaf9;
       border: 1px solid var(--border-color);
       border-radius: var(--radius);
-      padding: 24px;
+      padding: 20px;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 10px;
       transition: all 0.2s ease;
-      position: relative;
     }
     .admin-menu-box:hover {
       border-color: var(--border-dark);
       transform: translateY(-2px);
       box-shadow: 0 8px 20px rgba(0,0,0,0.04);
     }
-    .admin-menu-title { font-weight: 800; font-size: 1rem; color: #111; }
-    .admin-menu-desc { font-size: 0.82rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 8px; }
+    .admin-menu-title { font-weight: 800; font-size: 0.95rem; color: #111; }
+    .admin-menu-desc { font-size: 0.8rem; color: var(--text-muted); line-height: 1.4; margin-bottom: 4px; }
 
-    /* MODAL SYSTEM */
+    /* MODAL SYSTEM (Full Screen บน Mobile เพื่อความสะดวกในการใช้งาน iOS/Android) */
     .modal-overlay {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px);
-      display: none; align-items: center; justify-content: center;
-      z-index: 1000; padding: 20px;
+      background: rgba(0, 0, 0, 0.65); backdrop-filter: blur(4px);
+      display: none; align-items: flex-end; justify-content: center;
+      z-index: 1000; padding: 0;
+    }
+    @media(min-width: 640px) {
+      .modal-overlay { align-items: center; justify-content: center; padding: 20px; }
     }
     .modal-box {
-      width: min(95vw, 680px); max-height: 90vh;
+      width: 100%; max-height: 92vh;
       background: var(--bg-card); border: 1px solid var(--border-color);
-      border-radius: calc(var(--radius) * 1.5);
-      padding: 28px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-      display: flex; flex-direction: column; gap: 16px; position: relative;
+      border-radius: 16px 16px 0 0;
+      padding: 20px 18px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      display: flex; flex-direction: column; gap: 14px; position: relative;
       overflow-y: auto;
     }
+    @media(min-width: 640px) {
+      .modal-box {
+        width: min(95vw, 650px); max-height: 88vh;
+        border-radius: calc(var(--radius) * 1.5);
+        padding: 28px;
+      }
+    }
     .modal-header {
-      font-size: 1.05rem; font-weight: 800;
-      padding-bottom: 12px; border-bottom: 1px solid var(--border-color);
+      font-size: 1rem; font-weight: 800;
+      padding-bottom: 10px; border-bottom: 1px solid var(--border-color);
       display: flex; align-items: center; justify-content: space-between;
     }
     .modal-close {
-      width: 30px; height: 30px; border: 1px solid var(--border-color);
+      width: 32px; height: 32px; border: 1px solid var(--border-color);
       background: #fff; border-radius: var(--radius); font-size: 0.9rem;
       cursor: pointer; font-weight: bold; display: flex; align-items: center; justify-content: center;
-      transition: all 0.2s;
     }
     .modal-close:hover { background: #111; color: #fff; border-color: #111; }
 
     /* PIN INPUT STYLE */
     .pin-input-field {
-      text-align: center; font-size: 1.8rem; letter-spacing: 12px;
+      text-align: center; font-size: 1.6rem; letter-spacing: 10px;
       font-weight: 800; padding: 10px; border: 2px solid var(--border-dark);
       border-radius: var(--radius); background: #fff;
     }
     .forgot-pin-link {
       font-size: 0.8rem; color: var(--text-muted); text-decoration: underline;
-      cursor: pointer; display: inline-block; margin-top: 12px; font-weight: 600;
+      cursor: pointer; display: inline-block; margin-top: 10px; font-weight: 600;
     }
-    .forgot-pin-link:hover { color: #111; }
 
     /* MULTI-IMAGE PREVIEW */
     .image-preview-grid {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(75px, 1fr));
-      gap: 10px; margin-top: 8px; max-height: 180px; overflow-y: auto;
-      border: 1px dashed var(--border-color); padding: 10px; background: #fafaf8;
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+      gap: 8px; margin-top: 6px; max-height: 160px; overflow-y: auto;
+      border: 1px dashed var(--border-color); padding: 8px; background: #fafaf8;
       border-radius: var(--radius);
     }
     .preview-thumb-card {
@@ -191,48 +210,45 @@
     }
     .preview-thumb-card img { width: 100%; height: 100%; object-fit: cover; }
     .preview-thumb-card .remove-img-btn {
-      position: absolute; top: 2px; right: 2px; background: rgba(0, 0, 0, 0.8);
-      color: #fff; border: none; width: 20px; height: 20px; font-size: 11px;
+      position: absolute; top: 2px; right: 2px; background: rgba(0, 0, 0, 0.85);
+      color: #fff; border: none; width: 22px; height: 22px; font-size: 11px;
       border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center;
     }
-    .preview-thumb-card .remove-img-btn:hover { background: var(--danger); }
     .preview-thumb-card .main-tag {
       position: absolute; bottom: 2px; left: 2px; background: #111; color: #fff;
       font-size: 7px; padding: 2px 4px; font-weight: 800; text-transform: uppercase;
     }
 
-    .tags-container { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 0.6rem; }
+    .tags-container { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 0.5rem; }
     .tag-chip {
       background: #f0f0ec; border: 1px solid var(--border-color); padding: 6px 10px;
-      font-size: .8rem; font-weight: 600; border-radius: var(--radius);
-      display: flex; align-items: center; gap: 8px;
+      font-size: .78rem; font-weight: 600; border-radius: var(--radius);
+      display: flex; align-items: center; gap: 6px;
     }
-    .tag-chip .del-btn { color: var(--danger); cursor: pointer; font-weight: bold; }
+    .tag-chip .del-btn { color: var(--danger); cursor: pointer; font-weight: bold; padding: 0 4px; }
 
     .scale-price-row {
-      display: grid; grid-template-columns: 1fr 1.4fr; gap: 10px; align-items: center;
-      border: 1px solid var(--border-color); background: #fafaf8; padding: 10px;
-      border-radius: var(--radius); margin-top: 8px;
+      display: grid; grid-template-columns: 1fr 1.3fr; gap: 8px; align-items: center;
+      border: 1px solid var(--border-color); background: #fafaf8; padding: 8px 10px;
+      border-radius: var(--radius); margin-top: 6px;
     }
     .scale-check {
-      border: 1px solid var(--border-color); padding: 8px 12px; background: #fafaf8;
-      cursor: pointer; border-radius: var(--radius); font-size: 0.82rem; font-weight: 600;
-      transition: all 0.2s;
+      border: 1px solid var(--border-color); padding: 8px 10px; background: #fafaf8;
+      cursor: pointer; border-radius: var(--radius); font-size: 0.8rem; font-weight: 600;
+      text-align: center; display: block;
     }
     .scale-check:has(input:checked) { border-color: #111; background: #111; color: #fff; }
 
     .admin-prod-item {
       display: flex; justify-content: space-between; align-items: center;
-      border: 1px solid var(--border-color); background: #fafaf8; padding: 12px 16px;
-      border-radius: var(--radius); margin-bottom: 8px; gap: 12px;
-      transition: border-color 0.2s;
+      border: 1px solid var(--border-color); background: #fafaf8; padding: 10px 12px;
+      border-radius: var(--radius); margin-bottom: 8px; gap: 10px;
     }
-    .admin-prod-item:hover { border-color: var(--border-dark); }
 
     .footer {
       background: #111; color: #aaa; border-top: 1px solid #111;
-      padding: 32px 20px; text-align: center; letter-spacing: 1.5px;
-      font-size: 0.72rem; text-transform: uppercase; margin-top: auto;
+      padding: 28px 20px; text-align: center; letter-spacing: 1px;
+      font-size: 0.7rem; text-transform: uppercase; margin-top: auto;
     }
   </style>
 </head>
@@ -241,11 +257,11 @@
   <header class="header">
     <div class="brand-info">
       <div class="brand-photo">164</div>
-      <div class="brand-name">164CRAFT — ADMIN</div>
+      <div class="brand-name">164CRAFT ADMIN</div>
     </div>
     <div class="header-actions">
-      <button class="btn-action btn-secondary" onclick="window.location.href='index.html'">🌐 ไปยังหน้าร้านค้า</button>
-      <button class="btn-action btn-danger" onclick="logoutAdmin()">🚪 ออกจากระบบ</button>
+      <button class="btn-action btn-secondary" onclick="window.location.href='index.html'">🌐 หน้าร้าน</button>
+      <button class="btn-action btn-danger" onclick="logoutAdmin()">🚪 ออก</button>
     </div>
   </header>
 
@@ -253,28 +269,28 @@
     <div class="admin-card-container">
       <div class="admin-section-title">
         <span>🛠️ แผงควบคุมระบบจัดการหลังบ้าน</span>
-        <span style="font-size: 0.75rem; color: var(--accent-vip); background: var(--accent-vip-bg); padding: 4px 10px; border-radius: 20px; border: 1px solid #a7f3d0;">● เชื่อมต่อข้อมูลกับเว็บหลักแล้ว</span>
+        <span style="font-size: 0.72rem; color: var(--accent-vip); background: var(--accent-vip-bg); padding: 3px 8px; border-radius: 12px; border: 1px solid #a7f3d0; width: fit-content;">● ออนไลน์ & ซิงค์ข้อมูลแล้ว</span>
       </div>
       <p class="admin-desc">
-        ทุกการเปลี่ยนแปลงข้อมูลสินค้า รหัส VIP แบรนด์ และสเกล จะถูกซิงค์ตรงกับหน้าเว็บไซต์หลักทันที
+        รองรับการใช้งานผ่าน Windows, Android และ iOS อย่างเต็มรูปแบบ การเปลี่ยนแปลงข้อมูลทั้งหมดจะซิงค์กับหน้าร้านทันที
       </p>
 
       <div class="admin-menu-grid">
         <div class="admin-menu-box">
-          <div class="admin-menu-title">✏️ จัดการสินค้า & เพิ่มสินค้าใหม่</div>
-          <div class="admin-menu-desc">เพิ่มสินค้าใหม่ แก้ไขข้อมูล ราคา สเกล พร้อมระบบอัปโหลดภาพหลายรูปและวิดีโอ</div>
+          <div class="admin-menu-title">✏️ จัดการสินค้า & เพิ่มสินค้า</div>
+          <div class="admin-menu-desc">เพิ่ม แก้ไข หรือลบสินค้า พร้อมอัปโหลดรูปภาพหลายรูปและวิดีโอพรีวิว</div>
           <button class="btn-action" style="margin-top: auto;" onclick="openManageProductsModal()">จัดการสินค้า</button>
         </div>
 
         <div class="admin-menu-box">
-          <div class="admin-menu-title">🎟️ จัดการรหัส VIP (VIP Access Codes)</div>
-          <div class="admin-menu-desc">สร้างหรือลบรหัสผ่านสำหรับปลดล็อกแสดงสินค้าเฉพาะกลุ่มให้กับลูกค้าคนพิเศษ</div>
+          <div class="admin-menu-title">🎟️ จัดการรหัส VIP (VIP Codes)</div>
+          <div class="admin-menu-desc">สร้างหรือลบรหัสผ่านสำหรับปลดล็อกแสดงสินค้าเฉพาะกลุ่ม</div>
           <button class="btn-action btn-secondary" style="margin-top: auto;" onclick="openVipCodesModal()">จัดการรหัส VIP</button>
         </div>
 
         <div class="admin-menu-box">
           <div class="admin-menu-title">⚙️ ข้อมูลหลัก (Brands & Scales)</div>
-          <div class="admin-menu-desc">จัดการรายชื่อแบรนด์และสเกลสินค้า ระบบจัดเรียงลำดับตัวอักษรให้อัตโนมัติ</div>
+          <div class="admin-menu-desc">จัดการรายชื่อแบรนด์และสเกลสินค้า ระบบจัดเรียงตัวอักษรให้อัตโนมัติ</div>
           <button class="btn-action btn-secondary" style="margin-top: auto;" onclick="openConfigModal()">จัดการแบรนด์ / สเกล</button>
         </div>
 
@@ -297,9 +313,9 @@
   <div id="passcodeModal" class="modal-overlay" style="display: flex;">
     <div class="modal-box" style="max-width: 380px; text-align: center; cursor: default;">
       <div class="modal-header" style="justify-content: center; border-bottom: none; padding-bottom: 0;">🔒 ยืนยันสิทธิ์ผู้ดูแลระบบ</div>
-      <p style="font-size:0.85rem; color: var(--text-muted); margin-top:6px;">กรอกรหัส PIN ตัวเลข 6 หลักเพื่อเข้าใช้งาน<br><small>(ระบบจะตรวจสอบและเข้าระบบให้อัตโนมัติ)</small></p>
+      <p style="font-size:0.82rem; color: var(--text-muted); margin-top:4px;">กรอกรหัส PIN ตัวเลข 6 หลัก<br><small>(ระบบจะตรวจสอบและเข้าระบบให้อัตโนมัติ)</small></p>
       
-      <div class="form-group" style="margin-top: 15px;">
+      <div class="form-group" style="margin-top: 12px;">
         <input 
           type="password" 
           id="passcodeInput" 
@@ -313,9 +329,9 @@
         />
       </div>
 
-      <div id="pinStatusMsg" style="font-size:0.8rem; height:18px; color:var(--danger); font-weight:bold;"></div>
+      <div id="pinStatusMsg" style="font-size:0.78rem; height:18px; color:var(--danger); font-weight:bold;"></div>
 
-      <div style="margin-top: 8px;">
+      <div style="margin-top: 6px;">
         <span class="forgot-pin-link" onclick="openForgotPinModal()">ลืมรหัส PIN? ขอรหัสผ่านใหม่เข้าอีเมล</span>
       </div>
     </div>
@@ -323,13 +339,13 @@
 
   <!-- FORGOT PIN MODAL -->
   <div id="forgotPinModal" class="modal-overlay">
-    <div class="modal-box" style="max-width: 420px; text-align: center;">
+    <div class="modal-box" style="max-width: 400px; text-align: center;">
       <div class="modal-header">
         <span>📧 รีเซ็ตรหัส PIN ผู้ดูแลระบบ</span>
         <button class="modal-close" onclick="closeModal('forgotPinModal')">✕</button>
       </div>
-      <p style="font-size:0.82rem; color: var(--text-muted); line-height: 1.5; text-align: left;">
-        กรุณากรอกอีเมลของ Admin ที่ลงทะเบียนไว้เพื่อรับรหัสผ่านใหม่ ระบบจะทำการสร้าง PIN 6 หลักชุดใหม่และเปิดโปรแกรมอีเมลให้อัตโนมัติ
+      <p style="font-size:0.8rem; color: var(--text-muted); line-height: 1.4; text-align: left;">
+        กรอกอีเมล Admin ที่ลงทะเบียนไว้ ระบบจะสร้าง PIN ชุดใหม่และเปิดโปรแกรมเมลให้อัตโนมัติ
       </p>
 
       <form onsubmit="handleSendNewPin(event)" style="margin-top: 5px; text-align: left;">
@@ -338,9 +354,9 @@
           <input type="email" id="forgotEmailInput" class="form-control" placeholder="เช่น admin@164craft.com" required />
         </div>
 
-        <div style="display: flex; gap: 8px; margin-top: 16px;">
+        <div style="display: flex; gap: 8px; margin-top: 14px;">
           <button type="button" class="btn-action btn-secondary" style="flex: 1;" onclick="closeModal('forgotPinModal'); openPasscodeModal();">ย้อนกลับ</button>
-          <button type="submit" class="btn-action" style="flex: 2;">📨 ส่งรหัสใหม่เข้า Email</button>
+          <button type="submit" class="btn-action" style="flex: 2;">📨 ส่งรหัสใหม่</button>
         </div>
       </form>
     </div>
@@ -350,7 +366,7 @@
   <div id="manageProductsModal" class="modal-overlay">
     <div class="modal-box" style="max-width: 650px;">
       <div class="modal-header">
-        <span>✏️ รายการสินค้าทั้งหมด (แก้ไข / ลบ)</span>
+        <span>✏️ จัดการสินค้าทั้งหมด</span>
         <button class="modal-close" onclick="closeModal('manageProductsModal')">✕</button>
       </div>
       
@@ -360,13 +376,13 @@
         </button>
       </div>
 
-      <div class="form-group" style="margin-top: 5px;">
+      <div class="form-group" style="margin-top: 4px;">
         <input type="text" id="adminSearchInput" class="form-control" placeholder="🔍 ค้นหาด้วยชื่อสินค้า หรือ SKU..." onkeyup="renderAdminProductList()" />
       </div>
 
-      <div id="adminProductList" style="max-height: 48vh; overflow-y: auto; padding-right: 4px;"></div>
+      <div id="adminProductList" style="max-height: 45vh; overflow-y: auto; padding-right: 4px;"></div>
       
-      <div style="margin-top: 5px;">
+      <div style="margin-top: 4px;">
         <button type="button" class="btn-action btn-secondary" style="width: 100%;" onclick="closeModal('manageProductsModal')">ปิดหน้าต่าง</button>
       </div>
     </div>
@@ -383,7 +399,7 @@
       <form id="addProductForm" onsubmit="handleProductSubmit(event)">
         <input type="hidden" id="editingProductId" value="" />
         
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
           <div class="form-group">
             <label>รหัสสินค้า (SKU)</label>
             <input type="text" id="pId" class="form-control" placeholder="เช่น HON002" required />
@@ -399,19 +415,19 @@
           <input type="text" id="pName" class="form-control" placeholder="เช่น Honda Civic Type R" required />
         </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
           <div class="form-group">
-            <label>ราคาเริ่มต้น (ค่าเริ่มต้นตามสเกล)</label>
+            <label>ราคาเริ่มต้น (ตามสเกล)</label>
             <input type="number" id="pPrice" class="form-control" placeholder="175" required />
           </div>
           <div class="form-group">
-            <label style="color:var(--accent-vip);">🎟️ ผูกกับรหัส VIP (ถ้ามี)</label>
+            <label style="color:var(--accent-vip);">🎟️ รหัส VIP (ถ้ามี)</label>
             <select id="pSecretCodeSelect" class="form-control"></select>
           </div>
         </div>
 
         <div class="form-group">
-          <label>📸 อัปโหลดรูปภาพสินค้า (เลือกได้หลายรูป)</label>
+          <label>📸 อัปโหลดรูปภาพ (เลือกได้หลายรูป)</label>
           <input type="file" id="pImageInput" class="form-control" accept="image/*" multiple onchange="handleImageUpload(event)" />
           <div id="adminImagesPreviewList" class="image-preview-grid" style="display:none;"></div>
         </div>
@@ -419,12 +435,12 @@
         <div class="form-group">
           <label>🎥 อัปโหลดวิดีโอพรีวิว (MP4)</label>
           <input type="file" id="pVdoInput" class="form-control" accept="video/mp4" onchange="handleVdoUpload(event)" />
-          <div id="adminVdoPreviewArea" style="margin-top:4px; font-size:0.75rem; color:#059669; font-weight:700;"></div>
+          <div id="adminVdoPreviewArea" style="margin-top:2px; font-size:0.75rem; color:#059669; font-weight:700;"></div>
         </div>
 
         <div class="form-group">
           <label>สเกลที่รองรับ</label>
-          <div id="scalesContainer" style="display:flex; flex-wrap:wrap; gap:8px;"></div>
+          <div id="scalesContainer" style="display:flex; flex-wrap:wrap; gap:6px;"></div>
         </div>
 
         <div class="form-group" id="scalePricesSection">
@@ -432,15 +448,15 @@
           <div id="scalePricesContainer"></div>
         </div>
 
-        <div style="margin-top:8px;">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 6px;">
+        <div style="margin-top:6px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 4px;">
             <label style="font-size:0.8rem; font-weight:bold;">⚙️ ตัวเลือกสินค้า & ส่วนลด</label>
             <button type="button" class="btn-action btn-secondary" style="height:30px; padding:0 10px; font-size:0.75rem;" onclick="addDynamicOptionRow()">+ เพิ่มตัวเลือก</button>
           </div>
           <div id="dynamicOptionsList"></div>
         </div>
 
-        <div style="display: flex; gap: 10px; margin-top: 18px;">
+        <div style="display: flex; gap: 8px; margin-top: 14px;">
           <button type="button" class="btn-action btn-secondary" style="flex: 1;" onclick="closeModal('addProductModal'); openManageProductsModal();">⬅️ ย้อนกลับ</button>
           <button type="submit" id="saveProductBtn" class="btn-action" style="flex: 2;">+ บันทึกสินค้า</button>
         </div>
@@ -452,24 +468,22 @@
   <div id="vipCodesModal" class="modal-overlay">
     <div class="modal-box" style="max-width: 480px;">
       <div class="modal-header">
-        <span>🎟️ จัดการรหัส VIP (VIP Access Codes)</span>
+        <span>🎟️ จัดการรหัส VIP</span>
         <button class="modal-close" onclick="closeModal('vipCodesModal')">✕</button>
       </div>
-      <p style="font-size: 0.82rem; color: var(--text-muted);">
-        สร้างรหัส VIP สำหรับเปิดสิทธิ์ให้ลูกค้ามองเห็นสินค้าพิเศษเฉพาะกลุ่ม
-      </p>
+      <p style="font-size: 0.8rem; color: var(--text-muted);">สร้างรหัส VIP สำหรับเปิดสิทธิ์ให้ลูกค้าเห็นสินค้าพิเศษเฉพาะกลุ่ม</p>
       
-      <form onsubmit="handleAddVipCode(event)" style="display:flex; gap:6px; margin-top: 6px;">
+      <form onsubmit="handleAddVipCode(event)" style="display:flex; gap:6px; margin-top: 4px;">
         <input type="text" id="newVipCodeInput" class="form-control" placeholder="รหัส VIP ใหม่ (เช่น VIP164)..." style="text-transform:uppercase;" required />
         <button type="submit" class="btn-action" style="padding: 0 16px;">+ เพิ่ม</button>
       </form>
 
-      <div style="margin-top: 8px;">
-        <label style="font-size:0.78rem; font-weight:bold; color:#444;">รายการรหัส VIP ทั้งหมดในระบบ:</label>
-        <div id="vipCodeChipsList" class="tags-container" style="margin-top: 6px;"></div>
+      <div style="margin-top: 6px;">
+        <label style="font-size:0.75rem; font-weight:bold; color:#444;">รหัส VIP ทั้งหมดในระบบ:</label>
+        <div id="vipCodeChipsList" class="tags-container" style="margin-top: 4px;"></div>
       </div>
 
-      <div style="margin-top: 15px;">
+      <div style="margin-top: 14px;">
         <button type="button" class="btn-action btn-secondary" style="width: 100%;" onclick="closeModal('vipCodesModal')">ปิดหน้าต่าง</button>
       </div>
     </div>
@@ -479,13 +493,13 @@
   <div id="configModal" class="modal-overlay">
     <div class="modal-box" style="max-width: 480px;">
       <div class="modal-header">
-        <span>⚙️ จัดการข้อมูลหลัก (Brands & Scales)</span>
+        <span>⚙️ ข้อมูลหลัก (Brands & Scales)</span>
         <button class="modal-close" onclick="closeModal('configModal')">✕</button>
       </div>
-      <p style="font-size:0.78rem; color:var(--text-muted);">แบรนด์และสเกลถูกจัดเรียงตามลำดับตัวอักษรโดยอัตโนมัติ</p>
+      <p style="font-size:0.75rem; color:var(--text-muted);">แบรนด์และสเกลถูกจัดเรียงตามลำดับตัวอักษรโดยอัตโนมัติ</p>
       
-      <div style="margin-bottom: 1rem; margin-top:10px;">
-        <label style="font-size:0.8rem; font-weight:bold; display:block; margin-bottom:6px;">🏷️ จัดการแบรนด์ (Brands - เรียง A-Z)</label>
+      <div style="margin-bottom: 10px; margin-top:8px;">
+        <label style="font-size:0.8rem; font-weight:bold; display:block; margin-bottom:4px;">🏷️ จัดการแบรนด์ (เรียง A-Z)</label>
         <form onsubmit="handleAddBrand(event)" style="display:flex; gap:6px;">
           <input type="text" id="newBrandName" class="form-control" placeholder="ชื่อแบรนด์ใหม่..." required />
           <button type="submit" class="btn-action" style="padding: 0 14px;">+</button>
@@ -495,8 +509,8 @@
 
       <hr style="border: 0; border-top: 1px solid var(--border-color);" />
 
-      <div style="margin-top: 12px;">
-        <label style="font-size:0.8rem; font-weight:bold; display:block; margin-bottom:6px;">📐 จัดการสเกล (Scales)</label>
+      <div style="margin-top: 10px;">
+        <label style="font-size:0.8rem; font-weight:bold; display:block; margin-bottom:4px;">📐 จัดการสเกล</label>
         <form onsubmit="handleAddScale(event)" style="display:flex; gap:6px;">
           <input type="text" id="newScaleName" class="form-control" placeholder="เช่น 1/64..." required />
           <button type="submit" class="btn-action" style="padding: 0 14px;">+</button>
@@ -504,7 +518,7 @@
         <div id="scaleChipsList" class="tags-container"></div>
       </div>
 
-      <div style="margin-top: 18px;">
+      <div style="margin-top: 14px;">
         <button type="button" class="btn-action btn-secondary" style="width: 100%;" onclick="closeModal('configModal')">ปิดหน้าต่าง</button>
       </div>
     </div>
@@ -519,42 +533,24 @@
       </div>
       
       <form onsubmit="saveBankAndSenderConfig(event)">
-        <div style="font-weight: bold; font-size: 0.85rem; color: #111; margin-bottom: 8px;">💳 ข้อมูลการรับชำระเงิน</div>
-        <div class="form-group">
-          <label>ธนาคาร</label>
-          <input type="text" id="cfgBankName" class="form-control" required />
-        </div>
-        <div class="form-group">
-          <label>เลขที่บัญชี</label>
-          <input type="text" id="cfgAccountNo" class="form-control" required />
-        </div>
-        <div class="form-group">
-          <label>ชื่อบัญชี</label>
-          <input type="text" id="cfgAccountName" class="form-control" required />
-        </div>
+        <div style="font-weight: bold; font-size: 0.82rem; color: #111; margin-bottom: 6px;">💳 ข้อมูลการรับชำระเงิน</div>
+        <div class="form-group"><label>ธนาคาร</label><input type="text" id="cfgBankName" class="form-control" required /></div>
+        <div class="form-group"><label>เลขที่บัญชี</label><input type="text" id="cfgAccountNo" class="form-control" required /></div>
+        <div class="form-group"><label>ชื่อบัญชี</label><input type="text" id="cfgAccountName" class="form-control" required /></div>
         <div class="form-group">
           <label>รูปภาพ QR Code พร้อมเพย์</label>
           <input type="file" id="cfgQrInput" class="form-control" accept="image/*" onchange="handleQrUpload(event)" />
-          <div id="qrPreviewArea" style="text-align: center; margin-top: 6px;"></div>
+          <div id="qrPreviewArea" style="text-align: center; margin-top: 5px;"></div>
         </div>
 
-        <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 16px 0;" />
+        <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 12px 0;" />
 
-        <div style="font-weight: bold; font-size: 0.85rem; color: #111; margin-bottom: 8px;">📦 ข้อมูลผู้จัดส่ง (Sender)</div>
-        <div class="form-group">
-          <label>ชื่อผู้ส่ง / ร้านค้า</label>
-          <input type="text" id="cfgSenderName" class="form-control" required />
-        </div>
-        <div class="form-group">
-          <label>เบอร์โทรศัพท์ผู้ส่ง</label>
-          <input type="tel" id="cfgSenderPhone" class="form-control" maxlength="10" required />
-        </div>
-        <div class="form-group">
-          <label>ที่อยู่ผู้จัดส่ง</label>
-          <textarea id="cfgSenderAddress" class="form-control" rows="3" required></textarea>
-        </div>
+        <div style="font-weight: bold; font-size: 0.82rem; color: #111; margin-bottom: 6px;">📦 ข้อมูลผู้จัดส่ง (Sender)</div>
+        <div class="form-group"><label>ชื่อผู้ส่ง / ร้านค้า</label><input type="text" id="cfgSenderName" class="form-control" required /></div>
+        <div class="form-group"><label>เบอร์โทรศัพท์</label><input type="tel" id="cfgSenderPhone" class="form-control" maxlength="10" required /></div>
+        <div class="form-group"><label>ที่อยู่ผู้จัดส่ง</label><textarea id="cfgSenderAddress" class="form-control" rows="3" required></textarea></div>
 
-        <div style="display: flex; gap: 8px; margin-top: 16px;">
+        <div style="display: flex; gap: 8px; margin-top: 14px;">
           <button type="button" class="btn-action btn-secondary" style="flex: 1;" onclick="closeModal('bankConfigModal')">ปิดหน้าต่าง</button>
           <button type="submit" class="btn-action" style="flex: 2;">💾 บันทึกการตั้งค่า</button>
         </div>
@@ -571,28 +567,13 @@
       </div>
       
       <form onsubmit="saveSystemSettings(event)">
-        <div class="form-group">
-          <label>ชื่อร้านค้า</label>
-          <input type="text" id="stgStoreName" class="form-control" required />
-        </div>
-        <div class="form-group">
-          <label>อีเมลหลัก Admin</label>
-          <input type="email" id="stgAdminEmail" class="form-control" required />
-        </div>
-        <div class="form-group">
-          <label>รูปแบบการจัดส่ง</label>
-          <input type="text" id="stgShippingName" class="form-control" required />
-        </div>
-        <div class="form-group">
-          <label>ค่าจัดส่งคงที่ (บาท)</label>
-          <input type="number" id="stgShippingFee" class="form-control" min="0" required />
-        </div>
-        <div class="form-group">
-          <label>เปลี่ยนรหัสผ่าน PIN (6 หลัก)</label>
-          <input type="password" id="stgNewPasscode" class="form-control" placeholder="เว้นว่างไว้หากไม่ต้องการเปลี่ยน" maxlength="6" inputmode="numeric" />
-        </div>
+        <div class="form-group"><label>ชื่อร้านค้า</label><input type="text" id="stgStoreName" class="form-control" required /></div>
+        <div class="form-group"><label>อีเมลหลัก Admin</label><input type="email" id="stgAdminEmail" class="form-control" required /></div>
+        <div class="form-group"><label>รูปแบบการจัดส่ง</label><input type="text" id="stgShippingName" class="form-control" required /></div>
+        <div class="form-group"><label>ค่าจัดส่งคงที่ (บาท)</label><input type="number" id="stgShippingFee" class="form-control" min="0" required /></div>
+        <div class="form-group"><label>เปลี่ยนรหัสผ่าน PIN (6 หลัก)</label><input type="password" id="stgNewPasscode" class="form-control" placeholder="เว้นว่างไว้หากไม่ต้องการเปลี่ยน" maxlength="6" inputmode="numeric" /></div>
 
-        <div style="display: flex; gap: 8px; margin-top: 16px;">
+        <div style="display: flex; gap: 8px; margin-top: 14px;">
           <button type="button" class="btn-action btn-secondary" style="flex: 1;" onclick="closeModal('settingsModal')">ปิดหน้าต่าง</button>
           <button type="submit" class="btn-action" style="flex: 2;">💾 บันทึกการตั้งค่า</button>
         </div>
@@ -668,7 +649,6 @@
     function openModal(id) { document.getElementById(id).style.display = "flex"; }
     function closeModal(id) { document.getElementById(id).style.display = "none"; }
 
-    // PIN LOGIN
     function openPasscodeModal() {
       const input = document.getElementById("passcodeInput");
       input.value = "";
@@ -728,7 +708,6 @@
       }
     }
 
-    // MANAGE PRODUCTS
     function openManageProductsModal() {
       renderAdminProductList();
       openModal('manageProductsModal');
@@ -749,16 +728,16 @@
         const secretNotice = p.secretCode ? `<span style="color:var(--accent-vip); font-weight:bold;">[VIP: ${p.secretCode}]</span> ` : '';
         return `
           <div class="admin-prod-item">
-            <div style="display:flex; gap:12px; align-items:center;">
-              <img src="${thumb}" style="width:42px; height:42px; object-fit:cover; border-radius:4px; border:1px solid #ddd;" />
-              <div>
-                <div style="font-weight:bold; font-size:0.85rem;">${p.name}</div>
-                <div style="font-size:0.75rem; color:#666;">SKU: ${p.id} | ${p.brand} | ${secretNotice}${p.images.length} รูป</div>
+            <div style="display:flex; gap:10px; align-items:center; overflow:hidden;">
+              <img src="${thumb}" style="width:38px; height:38px; object-fit:cover; border-radius:4px; border:1px solid #ddd; flex-shrink:0;" />
+              <div style="overflow:hidden;">
+                <div style="font-weight:bold; font-size:0.8rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${p.name}</div>
+                <div style="font-size:0.7rem; color:#666;">SKU: ${p.id} | ${p.brand} | ${secretNotice}</div>
               </div>
             </div>
-            <div style="display:flex; gap:6px;">
-              <button class="btn-action btn-secondary" style="height:32px; padding:0 10px; font-size:0.75rem;" onclick="editProduct('${p.id}')">แก้ไข</button>
-              <button class="btn-action btn-danger" style="height:32px; padding:0 10px; font-size:0.75rem;" onclick="deleteProduct('${p.id}')">ลบ</button>
+            <div style="display:flex; gap:5px; flex-shrink:0;">
+              <button class="btn-action btn-secondary" style="height:30px; padding:0 8px; font-size:0.7rem;" onclick="editProduct('${p.id}')">แก้ไข</button>
+              <button class="btn-action btn-danger" style="height:30px; padding:0 8px; font-size:0.7rem;" onclick="deleteProduct('${p.id}')">ลบ</button>
             </div>
           </div>
         `;
@@ -816,10 +795,10 @@
         const val = existingPrices[sc] !== undefined ? existingPrices[sc] : defaultBase;
         return `
           <div class="scale-price-row">
-            <span class="scale-price-name" style="font-size:0.8rem;">สเกล ${sc}:</span>
+            <span class="scale-price-name" style="font-size:0.78rem;">สเกล ${sc}:</span>
             <div style="display:flex; align-items:center; gap:6px;">
               <span>฿</span>
-              <input type="number" class="form-control scale-price-input" data-scale="${sc}" value="${val}" required style="min-height:36px;" />
+              <input type="number" class="form-control scale-price-input" data-scale="${sc}" value="${val}" required style="min-height:34px;" />
             </div>
           </div>
         `;
@@ -879,7 +858,7 @@
       const row = document.createElement("div");
       row.className = "form-group";
       row.style.background = "#fafaf8";
-      row.style.padding = "8px";
+      row.style.padding = "6px";
       row.style.border = "1px solid var(--border-color)";
       row.style.borderRadius = "var(--radius)";
       row.innerHTML = `
