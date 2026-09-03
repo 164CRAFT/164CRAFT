@@ -485,6 +485,41 @@
     .compact-price-label { font-size: 0.75rem; font-weight: bold; color: #555; }
     .compact-price-val { font-size: 1.15rem; font-weight: 900; color: #111; }
 
+    /* CART ITEM QUANTITY CONTROLS */
+    .cart-item-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #ddd;
+      padding: 10px 0;
+      gap: 10px;
+    }
+    .qty-control-group {
+      display: flex;
+      align-items: center;
+      border: 1px solid #111;
+      background: #fff;
+    }
+    .qty-btn {
+      background: #f2f2ef;
+      border: none;
+      width: 26px;
+      height: 26px;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+    }
+    .qty-btn:hover { background: #111; color: #fff; }
+    .qty-display {
+      width: 32px;
+      text-align: center;
+      font-size: 0.85rem;
+      font-weight: 800;
+    }
+
     /* PIN INPUT SPECIAL STYLE */
     .pin-input-field {
       text-align: center;
@@ -1037,7 +1072,7 @@
     </div>
   </div>
 
-  <!-- DETAIL MODAL (NEW COMPACT UI) -->
+  <!-- DETAIL MODAL (COMPACT UI) -->
   <div id="detailModal" class="modal-overlay">
     <div class="modal-box">
       <button class="modal-close" onclick="closeModal('detailModal')">✕</button>
@@ -1045,13 +1080,11 @@
 
       <div class="detail-compact-body">
         
-        <!-- ฝั่งซ้าย: Gallery รูปและวิดีโอแบบกระชับ -->
         <div class="detail-gallery-compact">
           <div class="detail-main-media-box" id="detailMainMedia">[ Preview ]</div>
           <div class="detail-thumbs-compact" id="detailMediaThumbs"></div>
         </div>
 
-        <!-- ฝั่งขวา: ข้อมูลสเปกและส่วนสั่งซื้อ -->
         <div class="detail-info-action-col">
           <div class="compact-specs-grid">
             <div class="compact-spec-item">
@@ -1112,15 +1145,20 @@
     </div>
   </div>
 
-  <!-- CART MODAL -->
+  <!-- CART MODAL (WITH EDITABLE QTY CONTROLS) -->
   <div id="cartModal" class="modal-overlay">
-    <div class="modal-box">
+    <div class="modal-box" style="max-width: 500px;">
       <button class="modal-close" onclick="closeModal('cartModal')">✕</button>
-      <div class="modal-header">🛒 ตะกร้าสินค้า</div>
-      <div id="cartItemList">- ไม่มีรายการสินค้า -</div>
-      <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 10px;" id="cartShippingDisplay">การจัดส่ง: EMS (฿50)</div>
-      <div style="font-weight: bold; color: #000; font-size: 1.1rem; margin-top: 5px;" id="netTotalDisplay">ราคารวมทั้งสิ้น: ฿0</div>
-      <button class="btn-action" style="width:100%; margin-top:10px;" onclick="closeModal('cartModal'); openShippingModal();">ดำเนินการชำระเงิน</button>
+      <div class="modal-header">🛒 ตะกร้าสินค้าของคุณ</div>
+      
+      <div id="cartItemList" style="max-height: 45vh; overflow-y: auto;">- ไม่มีรายการสินค้า -</div>
+      
+      <div style="border-top: 1px solid #111; padding-top: 10px; margin-top: 5px;">
+        <div style="font-size: 0.85rem; color: var(--text-muted);" id="cartShippingDisplay">การจัดส่ง: EMS (฿50)</div>
+        <div style="font-weight: bold; color: #000; font-size: 1.15rem; margin-top: 4px;" id="netTotalDisplay">ราคารวมทั้งสิ้น: ฿0</div>
+      </div>
+
+      <button class="btn-action" style="width:100%; margin-top:6px;" onclick="closeModal('cartModal'); openShippingModal();">ดำเนินการชำระเงิน</button>
     </div>
   </div>
 
@@ -1219,11 +1257,11 @@
   <footer class="footer" id="footerText">164CRAFT — SCALE MODEL ARCHIVE</footer>
 
   <script>
-    // System Master Data (แบรนด์ผู้ผลิตรถมอเตอร์ไซค์ จัดเรียง A-Z)
+    // System Master Data (แบรนด์มอเตอร์ไซค์ เรียง A-Z)
     let brands = ["BMW", "Ducati", "Honda", "Kawasaki", "Suzuki", "Yamaha"];
     let scalesList = ["1/12", "1/18", "1/43", "1/64"];
     let activeCategory = "ALL";
-    let activeSecretCode = ""; // โค้ด VIP ปัจจุบันที่ปลดล็อกอยู่
+    let activeSecretCode = "";
 
     let vipCodesList = ["MEMBER99", "SECRET88", "VIP164"];
     let adminPasscode = "123456";
@@ -1243,16 +1281,14 @@
       senderAddress: "99/1 ถ.พหลโยธิน แขวงลาดยาว เขตจตุจักร กรุงเทพฯ 10900"
     };
 
-    // =========================================================================
-    // MOTORCYCLE MODELS DATABASE (รูปตรงรุ่นแท้ 100% จาก Wikimedia Commons)
-    // =========================================================================
+    // Motorcycle Products Database
     let products = [
       {
         id: "HON-CBR1000",
         name: "Honda CBR1000RR-R Fireblade SP (2024)",
         brand: "Honda",
         basePrice: 380,
-        secretCode: "", // สินค้าทั่วไป
+        secretCode: "",
         images: [
           "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/2024_Honda_CBR1000RR-R_Fireblade_SP.jpg/800px-2024_Honda_CBR1000RR-R_Fireblade_SP.jpg",
           "https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Honda_CBR_1000_RR_Fireblade_2004.jpg/800px-Honda_CBR_1000_RR_Fireblade_2004.jpg"
@@ -1270,7 +1306,7 @@
         name: "Yamaha YZF-R1 Crossplane Superbike",
         brand: "Yamaha",
         basePrice: 360,
-        secretCode: "", // สินค้าทั่วไป
+        secretCode: "",
         images: [
           "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Yamaha_YZF-R1_at_the_Tokyo_Motor_Show_2009-1_neutral_background.jpg/800px-Yamaha_YZF-R1_at_the_Tokyo_Motor_Show_2009-1_neutral_background.jpg",
           "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Yamaha_YZF-R1_%28MSP15%29.JPG/800px-Yamaha_YZF-R1_%28MSP15%29.JPG"
@@ -1288,7 +1324,7 @@
         name: "Kawasaki Ninja H2 Supercharged",
         brand: "Kawasaki",
         basePrice: 450,
-        secretCode: "", // สินค้าทั่วไป
+        secretCode: "",
         images: [
           "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Kawasaki_Ninja_H2_at_the_Tokyo_Motor_Show_2015-1.jpg/800px-Kawasaki_Ninja_H2_at_the_Tokyo_Motor_Show_2015-1.jpg",
           "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/Kawasaki_Ninja_H2_%281%29.jpg/800px-Kawasaki_Ninja_H2_%281%29.jpg",
@@ -1307,7 +1343,7 @@
         name: "Ducati Panigale V4 SP2 (30° Anniversario)",
         brand: "Ducati",
         basePrice: 990,
-        secretCode: "VIP164", // สินค้าพิเศษ VIP (ปลดล็อกด้วยโค้ด VIP164)
+        secretCode: "VIP164", // สินค้า VIP
         images: [
           "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Ducati_Panigale_V4_SP2_30%C2%B0_anniversario_916_at_EICMA_2023_-_left_view.jpg/800px-Ducati_Panigale_V4_SP2_30%C2%B0_anniversario_916_at_EICMA_2023_-_left_view.jpg",
           "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Ducati_Panigale_V4_2026.jpg/600px-Ducati_Panigale_V4_2026.jpg"
@@ -1324,7 +1360,7 @@
         name: "BMW S1000RR M-Package Sportbike",
         brand: "BMW",
         basePrice: 420,
-        secretCode: "", // สินค้าทั่วไป
+        secretCode: "",
         images: [
           "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/BMW_S1000_RR_Studio.JPG/800px-BMW_S1000_RR_Studio.JPG",
           "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/BMW_MOTORRAD_S1000RR_at_50th_Tokyo_Motorcycle_Show_%282023%29.jpg/600px-BMW_MOTORRAD_S1000RR_at_50th_Tokyo_Motorcycle_Show_%282023%29.jpg"
@@ -1342,7 +1378,7 @@
         name: "Suzuki Hayabusa GSX1300R Ultimate Sport",
         brand: "Suzuki",
         basePrice: 390,
-        secretCode: "", // สินค้าทั่วไป
+        secretCode: "",
         images: [
           "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f7/2005_Suzuki_Hayabusa.jpg/800px-2005_Suzuki_Hayabusa.jpg",
           "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/2000_GSX1300R_HAYABUSA_Pearl_Suzuki_Deep_Blue%C3%97Metallic_Sonic_Silver.jpg/800px-2000_GSX1300R_HAYABUSA_Pearl_Suzuki_Deep_Blue%C3%97Metallic_Sonic_Silver.jpg"
@@ -1357,7 +1393,7 @@
       }
     ];
 
-    let cart = [];
+    let cart = []; // แต่ละ item จะมี property `quantity`
     let currentSelectedProduct = null;
     let appliedVipDiscount = 0;
 
@@ -1424,7 +1460,7 @@
 
     function applyShopSettings() {
       document.getElementById("siteTitleText").innerText = systemSettings.storeName;
-      document.getElementById("footerText").innerText = systemSettings.storeName + " — SCALE MODEL ARCHIVE";
+      document.getElementById("footerText").innerText = systemSettings.storeName + " — MOTORCYCLE SCALE MODEL ARCHIVE";
       document.getElementById("cartShippingDisplay").innerText = `การจัดส่ง: ${systemSettings.shippingName} (฿${systemSettings.shippingFee})`;
       document.getElementById("payBankName").innerText = systemSettings.bankName;
       document.getElementById("payAccountNo").innerText = systemSettings.accountNo;
@@ -1880,19 +1916,40 @@
       const selectedOpt = currentSelectedProduct.options[optIdx] || { name: 'Standard', extraPrice: 0 };
       const finalPrice = calculateModalPrice();
 
-      cart.push({
-        product: currentSelectedProduct,
-        scale: scale,
-        optionName: selectedOpt.name,
-        price: finalPrice
-      });
+      // ตรวจสอบว่ามีสินค้าชนิดเดียวกัน (รหัส + สเกล + ตัวเลือกเดียวกัน) ในตะกร้าหรือยัง
+      const existingIndex = cart.findIndex(item => 
+        item.product.id === currentSelectedProduct.id && 
+        item.scale === scale && 
+        item.optionName === selectedOpt.name
+      );
 
-      document.getElementById("cartCount").innerText = cart.length;
+      if (existingIndex !== -1) {
+        cart[existingIndex].quantity += 1;
+      } else {
+        cart.push({
+          product: currentSelectedProduct,
+          scale: scale,
+          optionName: selectedOpt.name,
+          price: finalPrice,
+          quantity: 1
+        });
+      }
+
+      // นับจำนวนชิ้นรวมทั้งหมดในตะกร้า
+      updateCartCountBadge();
       closeModal("detailModal");
       alert(`เพิ่ม "${currentSelectedProduct.name}" สเกล ${scale} ลงในตะกร้าแล้ว`);
     }
 
-    // CART
+    function updateCartCountBadge() {
+      let totalQty = 0;
+      cart.forEach(item => totalQty += item.quantity);
+      document.getElementById("cartCount").innerText = totalQty;
+    }
+
+    // ==========================================
+    // CART (WITH EDITABLE QTY CONTROLS)
+    // ==========================================
     function renderCart() {
       const list = document.getElementById("cartItemList");
       if (cart.length === 0) {
@@ -1903,20 +1960,30 @@
 
       let subtotal = 0;
       list.innerHTML = cart.map((item, idx) => {
-        subtotal += item.price;
+        const itemTotal = item.price * item.quantity;
+        subtotal += itemTotal;
         const thumb = (item.product.images && item.product.images.length > 0) ? item.product.images[0] : '';
         return `
-          <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #ddd; padding:8px 0;">
-            <div style="display:flex; gap:10px; align-items:center;">
+          <div class="cart-item-row">
+            <div style="display:flex; gap:10px; align-items:center; flex: 2;">
               <img src="${thumb}" style="width:45px; height:45px; object-fit:cover; border:1px solid #111;" />
               <div>
-                <div style="font-weight:bold; font-size:0.85rem;">${item.product.name}</div>
-                <div style="font-size:0.75rem; color:#666;">สเกล: ${item.scale} | ${item.optionName}</div>
+                <div style="font-weight:bold; font-size:0.85rem; line-height:1.2;">${item.product.name}</div>
+                <div style="font-size:0.7rem; color:#666;">สเกล: ${item.scale} | ${item.optionName}</div>
+                <div style="font-size:0.75rem; font-weight:bold; color:#111; margin-top:2px;">฿${item.price} ต่อชิ้น</div>
               </div>
             </div>
-            <div style="text-align:right;">
-              <div style="font-weight:bold;">฿${item.price}</div>
-              <span style="color:var(--danger); cursor:pointer; font-size:0.75rem;" onclick="removeCartItem(${idx})">ลบ</span>
+            
+            <div style="display:flex; align-items:center; gap:12px; flex: 1; justify-content: flex-end;">
+              <div class="qty-control-group">
+                <button type="button" class="qty-btn" onclick="updateCartItemQty(${idx}, -1)">-</button>
+                <div class="qty-display">${item.quantity}</div>
+                <button type="button" class="qty-btn" onclick="updateCartItemQty(${idx}, 1)">+</button>
+              </div>
+              <div style="text-align:right; min-width:60px;">
+                <div style="font-weight:bold; font-size:0.9rem;">฿${itemTotal}</div>
+                <span style="color:var(--danger); cursor:pointer; font-size:0.68rem; text-decoration:underline;" onclick="removeCartItem(${idx})">ลบ</span>
+              </div>
             </div>
           </div>
         `;
@@ -1926,9 +1993,18 @@
       document.getElementById("netTotalDisplay").innerText = `ราคารวมทั้งสิ้น: ฿${grandTotal} (รวมค่าส่ง ฿${systemSettings.shippingFee})`;
     }
 
+    function updateCartItemQty(idx, change) {
+      cart[idx].quantity += change;
+      if (cart[idx].quantity <= 0) {
+        cart.splice(idx, 1);
+      }
+      updateCartCountBadge();
+      renderCart();
+    }
+
     function removeCartItem(idx) {
       cart.splice(idx, 1);
-      document.getElementById("cartCount").innerText = cart.length;
+      updateCartCountBadge();
       renderCart();
     }
 
@@ -1951,7 +2027,7 @@
       };
 
       let subtotal = 0;
-      cart.forEach(it => subtotal += it.price);
+      cart.forEach(it => subtotal += (it.price * it.quantity));
       const grandTotal = subtotal + systemSettings.shippingFee;
 
       document.getElementById("summarySenderName").innerText = systemSettings.senderName;
@@ -1975,8 +2051,8 @@
 
       document.getElementById("summaryItemsList").innerHTML = cart.map(it => `
         <div style="display:flex; justify-content:space-between; font-size:0.85rem; padding:4px 0;">
-          <span>${it.product.name} (${it.scale})</span>
-          <strong>฿${it.price}</strong>
+          <span>${it.product.name} (${it.scale}) x${it.quantity}</span>
+          <strong>฿${it.price * it.quantity}</strong>
         </div>
       `).join('');
 
@@ -1990,7 +2066,7 @@
 
     function finishOrder() {
       cart = [];
-      document.getElementById("cartCount").innerText = 0;
+      updateCartCountBadge();
       closeModal('orderSummaryModal');
       alert("คำสั่งซื้อเสร็จสมบูรณ์ ขอบคุณที่ใช้บริการ 164CRAFT");
     }
@@ -2292,6 +2368,7 @@
         return;
       }
       scalesList = scalesList.filter(s => s !== scaleName);
+      scalesList = sortAlphabetically(scalesList);
       renderConfigChips();
     }
 
