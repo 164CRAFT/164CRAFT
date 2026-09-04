@@ -140,7 +140,7 @@
     }
     .secret-status-tag.active { display: block; color: #065f46; }
 
-    /* CATEGORIES HORIZONTAL SCROLL */
+    /* CATEGORIES LIST: บนมือถือสไลด์ซ้าย-ขวา / บนหน้าจอ Windows จัดเป็นแนวตั้ง */
     .sidebar-categories-list {
       display: flex; flex-direction: row; overflow-x: auto; gap: 6px; padding-bottom: 6px; scrollbar-width: thin;
       -webkit-overflow-scrolling: touch;
@@ -158,6 +158,22 @@
     .sidebar-cat-btn.active { background: #111; color: #fff; border-color: #111; }
     .cat-count-badge { font-size: 0.65rem; padding: 1px 4px; background: #e2e2dd; color: #111; border-radius: 3px; font-weight: 800; }
     .sidebar-cat-btn.active .cat-count-badge { background: #333; color: #fff; }
+
+    /* ปรับแต่งเป็นแนวตั้งเมื่อเปิดบนหน้าจอคอมพิวเตอร์ (Windows / Desktop >= 992px) */
+    @media(min-width: 992px) {
+      .sidebar-categories-list {
+        flex-direction: column;
+        overflow-x: visible;
+        gap: 6px;
+        padding-bottom: 0;
+      }
+      .sidebar-cat-btn {
+        width: 100%;
+        white-space: normal;
+        justify-content: space-between;
+        padding: 10px 14px;
+      }
+    }
 
     /* PRODUCTS GRID */
     .main-container { width: 100%; padding: 24px 16px 48px 16px; }
@@ -364,11 +380,12 @@
           </div>
 
           <div class="form-group">
-            <label>โค้ดส่วนลดพิเศษ (ถ้ามี):</label>
+            <label>โค้ดส่วนลดประจำตัวเลือก (ถ้ามี):</label>
             <div style="display:flex; gap: 4px;">
-              <input type="text" id="promoCodeInput" class="form-control" placeholder="กรอกโค้ดลดราคา..." style="text-transform: uppercase;">
+              <input type="text" id="promoCodeInput" class="form-control" placeholder="กรอกโค้ดส่วนลดตัวเลือก..." style="text-transform: uppercase;">
               <button type="button" class="btn-action btn-secondary" style="padding:4px 12px; white-space:nowrap;" onclick="applyPromoCode()">ใช้โค้ด</button>
             </div>
+            <div id="promoStatusMsg" style="font-size:0.75rem; margin-top:2px; font-weight:bold;"></div>
           </div>
 
           <div class="compact-price-bar">
@@ -505,7 +522,7 @@
     let activeSecretCode = "";
     let cart = [];
     let currentSelectedProduct = null;
-    let appliedVipDiscount = 0;
+    let appliedOptionDiscount = 0;
 
     function sortAlphabetically(arr) {
       return arr.sort((a, b) => a.localeCompare(b, 'th', { sensitivity: 'base' }));
@@ -517,7 +534,6 @@
     }
 
     function loadDataFromFirebase() {
-      // ดึงข้อมูลการตั้งค่า แบรนด์ สเกล และรหัส VIP
       db.collection("store_data").doc("settings").onSnapshot((doc) => {
         if (doc.exists) {
           const data = doc.data();
@@ -530,7 +546,6 @@
         renderCategories();
       }, (err) => console.log("Error loading settings:", err));
 
-      // ดึงสินค้าแบบเรียลไทม์ (เมื่อแอดมินเพิ่ม/แก้/ลบ สินค้าจะอัปเดตทันที)
       db.collection("products").onSnapshot((snapshot) => {
         products = [];
         snapshot.forEach((doc) => {
@@ -748,8 +763,9 @@
       const prod = products.find(p => p.id === productId);
       if (!prod) return;
       currentSelectedProduct = prod;
-      appliedVipDiscount = 0;
+      appliedOptionDiscount = 0;
       document.getElementById("promoCodeInput").value = "";
+      document.getElementById("promoStatusMsg").innerText = "";
 
       document.getElementById("detailTitle").innerText = prod.name;
       document.getElementById("detailSku").innerText = prod.id;
@@ -781,14 +797,18 @@
 
       const scaleSelect = document.getElementById("detailScaleSelect");
       scaleSelect.innerHTML = (prod.scales || []).map(sc => {
-        const scPrice = (prod.scalePrices && prod.scalePrices[sc]) ? prod.scalePrices[sc] : prod.basePrice;
+        const scPrice = (prod.scalePrices && prod.scalePrices[sc] !== undefined) ? prod.scalePrices[sc] : prod.basePrice;
         return `<option value="${sc}">${sc} (฿${scPrice})</option>`;
       }).join('');
 
       const optSelect = document.getElementById("detailOptionSelect");
-      optSelect.innerHTML = (prod.options || []).map((opt, idx) => `
-        <option value="${idx}">${opt.name} (+฿${opt.extraPrice})</option>
-      `).join('');
+      if (prod.options && prod.options.length > 0) {
+        optSelect.innerHTML = prod.options.map((opt, idx) => `
+          <option value="${idx}">${opt.name} (+฿${opt.extraPrice || 0})</option>
+        `).join('');
+      } else {
+        optSelect.innerHTML = `<option value="0">ตัวเลือกมาตรฐาน (+฿0)</option>`;
+      }
 
       calculateModalPrice();
       openModal("detailModal");
@@ -813,13 +833,13 @@
       if (!currentSelectedProduct) return 0;
       const scale = document.getElementById("detailScaleSelect").value;
       const optIdx = parseInt(document.getElementById("detailOptionSelect").value) || 0;
-      const basePrice = (currentSelectedProduct.scalePrices && currentSelectedProduct.scalePrices[scale]) ? currentSelectedProduct.scalePrices[scale] : currentSelectedProduct.basePrice;
-      const optExtra = (currentSelectedProduct.options && currentSelectedProduct.options[optIdx]) ? currentSelectedProduct.options[optIdx].extraPrice : 0;
+      const basePrice = (currentSelectedProduct.scalePrices && currentSelectedProduct.scalePrices[scale] !== undefined) ? currentSelectedProduct.scalePrices[scale] : currentSelectedProduct.basePrice;
+      const optExtra = (currentSelectedProduct.options && currentSelectedProduct.options[optIdx]) ? (currentSelectedProduct.options[optIdx].extraPrice || 0) : 0;
 
-      let total = basePrice + optExtra - appliedVipDiscount;
+      let total = basePrice + optExtra - appliedOptionDiscount;
       if (total < 0) total = 0;
 
-      document.getElementById("modalTotalPrice").innerText = `฿${total} ${appliedVipDiscount > 0 ? `(-฿${appliedVipDiscount})` : ''}`;
+      document.getElementById("modalTotalPrice").innerText = `฿${total} ${appliedOptionDiscount > 0 ? `(-฿${appliedOptionDiscount})` : ''}`;
       return total;
     }
 
@@ -828,13 +848,23 @@
       const code = (document.getElementById("promoCodeInput").value || "").trim().toUpperCase();
       const optIdx = parseInt(document.getElementById("detailOptionSelect").value) || 0;
       const selectedOpt = currentSelectedProduct.options ? currentSelectedProduct.options[optIdx] : null;
+      const statusMsg = document.getElementById("promoStatusMsg");
+
+      if (!code) {
+        appliedOptionDiscount = 0;
+        statusMsg.innerText = "";
+        calculateModalPrice();
+        return;
+      }
 
       if (selectedOpt && selectedOpt.vipCode && selectedOpt.vipCode.toUpperCase() === code) {
-        appliedVipDiscount = selectedOpt.vipDiscount || 0;
-        alert(`ใช้โค้ดส่วนลดสำเร็จ! ได้รับส่วนลด ฿${appliedVipDiscount}`);
+        appliedOptionDiscount = selectedOpt.vipDiscount || 0;
+        statusMsg.style.color = "var(--accent-vip)";
+        statusMsg.innerText = `✓ ใช้โค้ดสำเร็จ! ได้รับส่วนลด ฿${appliedOptionDiscount}`;
       } else {
-        appliedVipDiscount = 0;
-        alert("รหัสโค้ดไม่ถูกต้อง");
+        appliedOptionDiscount = 0;
+        statusMsg.style.color = "var(--danger)";
+        statusMsg.innerText = "✕ โค้ดส่วนลดไม่ถูกต้องสำหรับตัวเลือกนี้";
       }
       calculateModalPrice();
     }
