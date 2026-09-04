@@ -20,6 +20,7 @@
       --danger: #dc2626;
       --radius: 8px;
       --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+      --shadow-pop: 0 10px 25px -5px rgba(0, 0, 0, 0.15);
     }
 
     html { scroll-behavior: smooth; }
@@ -47,13 +48,29 @@
       z-index: 100;
       backdrop-filter: blur(8px);
     }
-    .brand-info { display: flex; align-items: center; gap: 10px; }
+    
+    /* โลโก้คลิกได้ เปิดเมนูลอย */
+    .brand-info { display: flex; align-items: center; gap: 10px; cursor: pointer; position: relative; }
     .brand-photo {
       width: 36px; height: 36px; background: var(--accent); color: #fff;
       border-radius: var(--radius); display: flex; align-items: center; justify-content: center;
-      font-size: 0.7rem; font-weight: 800; letter-spacing: 1px; flex-shrink: 0;
+      font-size: 0.7rem; font-weight: 800; letter-spacing: 1px; flex-shrink: 0; overflow: hidden;
     }
+    .brand-photo img { width: 100%; height: 100%; object-fit: cover; }
     .brand-name { font-size: 0.95rem; font-weight: 800; letter-spacing: 1px; white-space: nowrap; }
+
+    /* เมนูลอยเมื่อคลิกโลโก้ */
+    .admin-dropdown-menu {
+      position: absolute; top: 50px; left: 0; width: 240px; background: #fff;
+      border: 1px solid var(--border-color); border-radius: 12px; box-shadow: var(--shadow-pop);
+      display: none; flex-direction: column; z-index: 1000; overflow: hidden;
+    }
+    .admin-dropdown-item {
+      padding: 11px 14px; font-size: 0.78rem; font-weight: 750; color: #111;
+      display: flex; align-items: center; gap: 8px; cursor: pointer; border-bottom: 1px solid #f0f0ed;
+      background: #fff; transition: background 0.15s; border-left: 3px solid transparent; text-decoration: none;
+    }
+    .admin-dropdown-item:hover { background: #f4f4f1; border-left-color: #111; }
 
     .admin-wrapper { max-width: 1100px; width: 100%; margin: 24px auto; padding: 0 16px; flex: 1; }
     .admin-card-container {
@@ -107,13 +124,13 @@
     .modal-overlay {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       background: rgba(0, 0, 0, 0.65); backdrop-filter: blur(4px);
-      display: none; align-items: flex-end; justify-content: center; z-index: 1000; padding: 0;
+      display: none; align-items: flex-end; justify-content: center; z-index: 1000; padding: 0; cursor: pointer;
     }
     @media(min-width: 640px) { .modal-overlay { align-items: center; justify-content: center; padding: 20px; } }
     .modal-box {
       width: 100%; max-height: 92vh; background: var(--bg-card); border: 1px solid var(--border-color);
       border-radius: 16px 16px 0 0; padding: 20px 18px; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
-      display: flex; flex-direction: column; gap: 14px; position: relative; overflow-y: auto;
+      display: flex; flex-direction: column; gap: 14px; position: relative; overflow-y: auto; cursor: default;
     }
     @media(min-width: 640px) { .modal-box { width: min(95vw, 760px); border-radius: calc(var(--radius) * 1.5); padding: 28px; } }
     .modal-header {
@@ -191,12 +208,19 @@
     .tag-chip .del-btn { color: var(--danger); cursor: pointer; font-weight: bold; padding: 0 4px; }
   </style>
 </head>
-<body onload="initAdminPanel()">
+<body onload="initAdminPanel()" onclick="closeAdminDropdownOutside(event)">
 
   <header class="header">
-    <div class="brand-info">
-      <div class="brand-photo">164</div>
-      <div class="brand-name">164CRAFT ADMIN PANEL</div>
+    <div class="brand-info" onclick="toggleAdminDropdown(event)">
+      <div class="brand-photo" id="adminHeaderLogo">164</div>
+      <div class="brand-name" id="adminHeaderTitle">164CRAFT ADMIN</div>
+      
+      <!-- เมนูลอย (Dropdown Menu เมื่อคลิกโลโก้) -->
+      <div id="adminDropdownMenu" class="admin-dropdown-menu">
+        <div class="admin-dropdown-item" onclick="openProfileModal()">👤 หน้าโปรไฟล์ Admin</div>
+        <div class="admin-dropdown-item" onclick="window.scrollTo({top:0, behavior:'smooth'})">🛠️ แผงควบคุมระบบจัดการหลังบ้าน</div>
+        <div class="admin-dropdown-item danger" onclick="logoutAdmin()">🚪 ออกจากระบบ</div>
+      </div>
     </div>
   </header>
 
@@ -207,7 +231,7 @@
         <span style="font-size: 0.72rem; color: var(--accent-vip); background: var(--accent-vip-bg); padding: 3px 8px; border-radius: 12px; border: 1px solid #a7f3d0; width: fit-content;">● Google Admin Authenticated</span>
       </div>
       <p class="admin-desc">
-        ระบบจัดการสินค้า โคลนสินค้า ตั้งค่าระบบ และบริหารจัดการบัญชีสมาชิกผู้ใช้งาน
+        ระบบจัดการสินค้า โคลนสินค้า ตั้งค่าธีมเว็บ และบริหารจัดการสมาชิกพร้อมดูประวัติการซื้อ
       </p>
 
       <div class="admin-menu-grid">
@@ -218,15 +242,15 @@
         </div>
 
         <div class="admin-menu-box">
-          <div class="admin-menu-title">➕ เพิ่มสินค้าใหม่</div>
-          <div class="admin-menu-desc">เพิ่มรายการโมเดลรถใหม่ พร้อมระบบบีบอัดรูปและ VDO HD (สูงสุด 100 MB)</div>
-          <button class="btn-action btn-secondary" style="margin-top: auto;" onclick="openAddProductModal()">+ เพิ่มสินค้า</button>
+          <div class="admin-menu-title">👥 จัดการสมาชิก & ประวัติการซื้อ</div>
+          <div class="admin-menu-desc">ดูรายชื่อสมาชิกผู้ใช้งาน และตรวจสอบประวัติรายการสั่งซื้อสินค้า</div>
+          <button class="btn-action btn-secondary" style="margin-top: auto;" onclick="openMembersModal()">จัดการสมาชิก</button>
         </div>
 
         <div class="admin-menu-box">
-          <div class="admin-menu-title">👥 จัดการสมาชิก (Members)</div>
-          <div class="admin-menu-desc">ดูรายชื่อสมาชิกที่ลงทะเบียนเข้าสู่ระบบ จัดการสิทธิ์และดูข้อมูลผู้ใช้</div>
-          <button class="btn-action btn-secondary" style="margin-top: auto;" onclick="openMembersModal()">จัดการสมาชิก</button>
+          <div class="admin-menu-title">🎨 ตั้งค่าเว็บ, โลโก้ & สีธีม</div>
+          <div class="admin-menu-desc">แก้ไขชื่อเว็บไซต์ อัปโหลดรูปโลโก้ และกำหนดสีธีม (Theme Color) ของเว็บ</div>
+          <button class="btn-action btn-secondary" style="margin-top: auto;" onclick="openWebThemeConfigModal()">ตั้งค่าเว็บไซต์</button>
         </div>
 
         <div class="admin-menu-box">
@@ -252,7 +276,7 @@
 
   <!-- GOOGLE ADMIN LOGIN MODAL -->
   <div id="passcodeModal" class="modal-overlay" style="display: flex;">
-    <div class="modal-box" style="max-width: 400px; text-align: center; cursor: default;">
+    <div class="modal-box" style="max-width: 400px; text-align: center;">
       <div class="modal-header" style="justify-content: center; border-bottom: none; padding-bottom: 0;">🔒 ตรวจสอบสิทธิ์ผู้ดูแลระบบ</div>
       <p style="font-size:0.82rem; color: var(--text-muted); margin-top:6px;">กรุณาเข้าสู่ระบบด้วยบัญชี Google ที่ได้รับสิทธิ์ Admin เท่านั้น</p>
       
@@ -266,8 +290,22 @@
     </div>
   </div>
 
+  <!-- PROFILE MODAL (หน้าโปรไฟล์ Admin) -->
+  <div id="profileModal" class="modal-overlay" onclick="checkOutsideModalClick(event, 'profileModal')">
+    <div class="modal-box" style="max-width: 420px; text-align: center;">
+      <div class="modal-header"><span>👤 ข้อมูลโปรไฟล์ Admin</span><button class="modal-close" onclick="closeModal('profileModal')">✕</button></div>
+      <img id="profileModalAvatar" src="" style="width: 80px; height: 80px; border-radius: 50%; border: 3px solid #111; margin: 10px auto;" alt="Avatar" />
+      <div id="profileModalName" style="font-weight: 850; font-size: 1.05rem;">-</div>
+      <div id="profileModalEmail" style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;">-</div>
+      <div style="background: var(--accent-vip-bg); border: 1px solid #6ee7b7; border-radius: var(--radius); padding: 10px; margin-top: 10px; font-size: 0.78rem; color: #065f46; font-weight: bold;">
+        สถานะสิทธิ์: ผู้ดูแลระบบสูงสุด (Super Admin)
+      </div>
+      <button class="btn-action btn-danger" style="width: 100%; margin-top: 12px; height: 40px; justify-content: center;" onclick="logoutAdmin()">🚪 ออกจากระบบ Admin</button>
+    </div>
+  </div>
+
   <!-- MANAGE PRODUCTS MODAL -->
-  <div id="manageProductsModal" class="modal-overlay">
+  <div id="manageProductsModal" class="modal-overlay" onclick="checkOutsideModalClick(event, 'manageProductsModal')">
     <div class="modal-box">
       <div class="modal-header">
         <span>📋 รายการสินค้าทั้งหมดในระบบ</span>
@@ -276,7 +314,7 @@
       
       <div>
         <button class="btn-action" style="width: 100%; padding: 12px; font-size: 0.9rem;" onclick="openAddProductModal()">
-          + เพิ่มสินค้าใหม่
+          + เพิ่มสินค้าใหม่ (โมเดลรถ)
         </button>
       </div>
 
@@ -307,18 +345,16 @@
     </div>
   </div>
 
-  <!-- MEMBERS MODAL (จัดการสมาชิก) -->
-  <div id="membersModal" class="modal-overlay">
-    <div class="modal-box" style="max-width: 600px;">
+  <!-- MEMBERS MODAL (จัดการสมาชิก & ประวัติการซื้อ) -->
+  <div id="membersModal" class="modal-overlay" onclick="checkOutsideModalClick(event, 'membersModal')">
+    <div class="modal-box" style="max-width: 650px;">
       <div class="modal-header">
-        <span>👥 รายชื่อสมาชิกร้านค้าทั้งหมด</span>
+        <span>👥 จัดการสมาชิก & ประวัติการสั่งซื้อ</span>
         <button class="modal-close" onclick="closeModal('membersModal')">✕</button>
       </div>
-      <p style="font-size: 0.8rem; color: var(--text-muted);">รายชื่อผู้ใช้งานที่ลงทะเบียนเข้าสู่ระบบผ่าน Google Account ในร้านค้า</p>
+      <p style="font-size: 0.8rem; color: var(--text-muted);">รายชื่อสมาชิกและประวัติการซื้อสินค้าทั้งหมดในระบบ</p>
       
-      <div id="membersListContainer" style="max-height: 50vh; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin-top: 6px;">
-        <!-- รายการสมาชิกจะถูกโหลดมาแสดงที่นี่ -->
-      </div>
+      <div id="membersListContainer" style="max-height: 50vh; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; margin-top: 6px;"></div>
 
       <div style="margin-top: 14px;">
         <button type="button" class="btn-action btn-secondary" style="width: 100%;" onclick="closeModal('membersModal')">ปิดหน้าต่าง</button>
@@ -326,8 +362,42 @@
     </div>
   </div>
 
+  <!-- WEB THEME CONFIG MODAL (ตั้งค่าเว็บ, โลโก้ และสีธีม) -->
+  <div id="webThemeConfigModal" class="modal-overlay" onclick="checkOutsideModalClick(event, 'webThemeConfigModal')">
+    <div class="modal-box" style="max-width: 480px;">
+      <div class="modal-header">
+        <span>🎨 ตั้งค่าเว็บไซต์, โลโก้ & สีธีม</span>
+        <button class="modal-close" onclick="closeModal('webThemeConfigModal')">✕</button>
+      </div>
+      
+      <form onsubmit="saveWebThemeConfig(event)">
+        <div class="form-group">
+          <label>ชื่อเว็บไซต์ (Store Name)</label>
+          <input type="text" id="cfgStoreName" class="form-control" required />
+        </div>
+        <div class="form-group">
+          <label>สีธีมหลักของเว็บไซต์ (Theme Color)</label>
+          <div style="display: flex; gap: 8px; align-items: center;">
+            <input type="color" id="cfgThemeColor" style="width: 50px; height: 38px; border: 1px solid var(--border-color); border-radius: var(--radius); cursor: pointer; background: transparent;" value="#111111" />
+            <input type="text" id="cfgThemeColorText" class="form-control" value="#111111" readonly />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>อัปโหลดรูปโลโก้เว็บไซต์</label>
+          <input type="file" id="cfgLogoFileInput" class="form-control" accept="image/*" onchange="handleLogoUpload(event)" />
+          <div id="logoPreviewArea" style="margin-top: 6px;"></div>
+        </div>
+
+        <div style="display: flex; gap: 8px; margin-top: 14px;">
+          <button type="button" class="btn-action btn-secondary" style="flex: 1;" onclick="closeModal('webThemeConfigModal')">ปิดหน้าต่าง</button>
+          <button type="submit" class="btn-action" style="flex: 2;">💾 บันทึกการตั้งค่าเว็บ</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- ADD / EDIT / CLONE PRODUCT MODAL -->
-  <div id="addProductModal" class="modal-overlay">
+  <div id="addProductModal" class="modal-overlay" onclick="checkOutsideModalClick(event, 'addProductModal')">
     <div class="modal-box">
       <div class="modal-header">
         <span id="productModalTitle">📦 เพิ่มรายการสินค้าใหม่</span>
@@ -373,7 +443,7 @@
           <div id="adminImagesPreviewList" class="image-preview-grid" style="display:none;"></div>
         </div>
 
-        <!-- กล่องจัดการ VDO (รับสูงสุด 100 MB) -->
+        <!-- กล่องจัดการ VDO HD (สูงสุด 100 MB) -->
         <div class="form-group" style="background:#fafaf8; border:1px solid var(--border-color); border-radius:var(--radius); padding:10px;">
           <div style="display:flex; justify-content:space-between; align-items:center;">
             <label style="font-weight:bold; color:#111;">🎥 วิดีโอพรีวิวสินค้า (HD VDO - สูงสุด 100 MB)</label>
@@ -429,7 +499,7 @@
   </div>
 
   <!-- VIP CODES MODAL -->
-  <div id="vipCodesModal" class="modal-overlay">
+  <div id="vipCodesModal" class="modal-overlay" onclick="checkOutsideModalClick(event, 'vipCodesModal')">
     <div class="modal-box" style="max-width: 480px;">
       <div class="modal-header">
         <span>🎟️ จัดการรหัส VIP</span>
@@ -453,7 +523,7 @@
   </div>
 
   <!-- CONFIG MODAL (BRANDS & SCALES) -->
-  <div id="configModal" class="modal-overlay">
+  <div id="configModal" class="modal-overlay" onclick="checkOutsideModalClick(event, 'configModal')">
     <div class="modal-box" style="max-width: 480px;">
       <div class="modal-header">
         <span>⚙️ ข้อมูลหลัก (Brands & Scales)</span>
@@ -487,7 +557,7 @@
   </div>
 
   <!-- BANK CONFIG MODAL -->
-  <div id="bankConfigModal" class="modal-overlay">
+  <div id="bankConfigModal" class="modal-overlay" onclick="checkOutsideModalClick(event, 'bankConfigModal')">
     <div class="modal-box" style="max-width: 500px;">
       <div class="modal-header">
         <span>🏦 ตั้งค่าการชำระเงินและผู้จัดส่ง</span>
@@ -558,11 +628,15 @@
       qrCodeUrl: "",
       senderName: "164CRAFT คลังกระจายสินค้า",
       senderPhone: "0812345678",
-      senderAddress: "99/1 ถ.พหลโยธิน แขวงลาดยาว เขตจตุจักร กรุงเทพฯ 10900"
+      senderAddress: "99/1 ถ.พหลโยธิน แขวงลาดยาว เขตจตุจักร กรุงเทพฯ 10900",
+      logoUrl: "",
+      themeColor: "#111111"
     };
 
     let products = [];
     let members = [];
+    let ordersList = [];
+    let loggedInAdminUser = null;
     let tempProductImages = [];
     let tempProductVdo = "";
     let adminFilterBrand = "ALL";
@@ -590,6 +664,7 @@
           if (data.vipCodes) vipCodesList = sortAlphabetically(data.vipCodes);
           if (data.settings) systemSettings = data.settings;
         }
+        applyAdminTheme();
       }).catch(err => console.log("Error loading settings:", err));
 
       db.collection("products").onSnapshot((snapshot) => {
@@ -599,10 +674,15 @@
         renderAdminProductList();
       });
 
-      // ดึงรายชื่อสมาชิกจาก Firebase Auth (หรือบันทึกเก็บไว้ใน collection members)
       db.collection("members").onSnapshot((snapshot) => {
         members = [];
         snapshot.forEach((doc) => members.push(doc.data()));
+      });
+
+      // ดึงประวัติคำสั่งซื้อทั้งหมดเพื่อนำมาแสดงในหน้าจัดการสมาชิก
+      db.collection("orders").onSnapshot((snapshot) => {
+        ordersList = [];
+        snapshot.forEach((doc) => ordersList.push(doc.data()));
       });
 
       auth.onAuthStateChanged((user) => {
@@ -610,11 +690,11 @@
         if (user) {
           const userEmail = (user.email || "").toLowerCase();
           if (ALLOWED_ADMIN_EMAILS.includes(userEmail)) {
+            loggedInAdminUser = user;
             statusMsg.style.color = "#059669";
             statusMsg.innerText = `✓ ยินดีต้อนรับ Admin: ${user.email}`;
             setTimeout(() => closeModal('passcodeModal'), 400);
 
-            // บันทึกข้อมูลสมาชิกอัตโนมัติเมื่อเข้าสู่ระบบ
             db.collection("members").doc(user.uid).set({
               uid: user.uid,
               name: user.displayName || "สมาชิก",
@@ -634,6 +714,19 @@
       });
     }
 
+    function applyAdminTheme() {
+      document.getElementById("adminHeaderTitle").innerText = systemSettings.storeName;
+      const logoBox = document.getElementById("adminHeaderLogo");
+      if (systemSettings.logoUrl) {
+        logoBox.innerHTML = `<img src="${systemSettings.logoUrl}" alt="Logo" />`;
+      } else {
+        logoBox.innerHTML = "164";
+      }
+      if (systemSettings.themeColor) {
+        document.documentElement.style.setProperty('--accent', systemSettings.themeColor);
+      }
+    }
+
     function loginAdminWithGoogle() {
       const statusMsg = document.getElementById("adminAuthStatus");
       statusMsg.style.color = "#666";
@@ -646,9 +739,45 @@
       });
     }
 
+    function logoutAdmin() {
+      auth.signOut().then(() => {
+        alert("ออกจากระบบ Admin เรียบร้อย");
+        openPasscodeModal();
+      });
+    }
+
     function openModal(id) { document.getElementById(id).style.display = "flex"; }
     function closeModal(id) { document.getElementById(id).style.display = "none"; }
     function openPasscodeModal() { openModal('passcodeModal'); }
+
+    /* ฟังก์ชันคลิกพื้นที่ว่างด้านนอกเพื่อยกเลิก/ปิด Modal */
+    function checkOutsideModalClick(event, modalId) {
+      if (event.target.id === modalId) {
+        closeModal(modalId);
+      }
+    }
+
+    /* เปิด/ปิด เมนูลอยที่โลโก้ */
+    function toggleAdminDropdown(event) {
+      event.stopPropagation();
+      const menu = document.getElementById("adminDropdownMenu");
+      menu.style.display = (menu.style.display === "flex") ? "none" : "flex";
+    }
+
+    function closeAdminDropdownOutside(event) {
+      const menu = document.getElementById("adminDropdownMenu");
+      if (menu && menu.style.display === "flex") {
+        menu.style.display = "none";
+      }
+    }
+
+    function openProfileModal() {
+      if (!loggedInAdminUser) return;
+      document.getElementById("profileModalAvatar").src = loggedInAdminUser.photoURL || "https://via.placeholder.com/80";
+      document.getElementById("profileModalName").innerText = loggedInAdminUser.displayName || "Admin";
+      document.getElementById("profileModalEmail").innerText = loggedInAdminUser.email;
+      openModal('profileModal');
+    }
 
     function openManageProductsModal() {
       adminFilterBrand = "ALL";
@@ -658,26 +787,87 @@
       openModal('manageProductsModal');
     }
 
-    // จัดการสมาชิก
+    /* หน้าจัดการสมาชิก & ดูประวัติการซื้อ */
     function openMembersModal() {
       const cont = document.getElementById("membersListContainer");
       if (members.length === 0) {
         cont.innerHTML = `<div style="text-align:center; padding:20px; color:#777;">ยังไม่มีข้อมูลสมาชิกในระบบ</div>`;
       } else {
-        cont.innerHTML = members.map(m => `
-          <div style="display:flex; align-items:center; justify-content:space-between; background:#fafafa; border:1px solid var(--border-color); padding:10px 12px; border-radius:var(--radius);">
-            <div style="display:flex; align-items:center; gap:10px;">
-              <img src="${m.photoURL || 'https://via.placeholder.com/35'}" style="width:35px; height:35px; border-radius:50%; object-fit:cover;" />
-              <div>
-                <div style="font-weight:bold; font-size:0.85rem;">${m.name}</div>
-                <div style="font-size:0.72rem; color:var(--text-muted);">${m.email}</div>
+        cont.innerHTML = members.map(m => {
+          // ค้นหาประวัติคำสั่งซื้อของสมาชิกรายนี้จากอีเมล
+          const userOrders = ordersList.filter(o => o.customer && o.customer.email && o.customer.email.toLowerCase() === (m.email || "").toLowerCase());
+          
+          let ordersHtml = '';
+          if (userOrders.length > 0) {
+            ordersHtml = userOrders.map(ord => `
+              <div style="background:#fff; border:1px solid #e2e8f0; border-radius:6px; padding:8px; margin-top:4px; font-size:0.75rem;">
+                <div><strong>วันที่สั่งซื้อ:</strong> ${new Date().toLocaleDateString()}</div>
+                <div><strong>ยอดชำระ:</strong> ฿${ord.grandTotal || 0} (${ord.shippingName || 'EMS'})</div>
+              </div>
+            `).join('');
+          } else {
+            ordersHtml = `<div style="font-size:0.72rem; color:#888; margin-top:2px;">ยังไม่มีประวัติการสั่งซื้อสินค้า</div>`;
+          }
+
+          return `
+            <div style="background:#fafafa; border:1px solid var(--border-color); padding:12px; border-radius:var(--radius);">
+              <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom: 6px;">
+                <div style="display:flex; align-items:center; gap:10px;">
+                  <img src="${m.photoURL || 'https://via.placeholder.com/35'}" style="width:38px; height:38px; border-radius:50%; object-fit:cover;" />
+                  <div>
+                    <div style="font-weight:bold; font-size:0.85rem;">${m.name}</div>
+                    <div style="font-size:0.72rem; color:var(--text-muted);">${m.email}</div>
+                  </div>
+                </div>
+                <div style="font-size:0.7rem; color:#059669; font-weight:bold; background:var(--accent-vip-bg); padding:3px 8px; border-radius:4px;">สมาชิก Active</div>
+              </div>
+              <div style="border-top:1px dashed #cbd5e1; padding-top:6px; margin-top:6px;">
+                <div style="font-size:0.75rem; font-weight:bold; color:#333;">📦 ประวัติการซื้อสินค้า (${userOrders.length} คำสั่งซื้อ):</div>
+                ${ordersHtml}
               </div>
             </div>
-            <div style="font-size:0.7rem; color:#059669; font-weight:bold; background:var(--accent-vip-bg); padding:3px 8px; border-radius:4px;">สมาชิก Active</div>
-          </div>
-        `).join('');
+          `;
+        }).join('');
       }
       openModal('membersModal');
+    }
+
+    /* หน้าตั้งค่าเว็บ, โลโก้ และสีธีม */
+    function openWebThemeConfigModal() {
+      document.getElementById("cfgStoreName").value = systemSettings.storeName || "164CRAFT";
+      document.getElementById("cfgThemeColor").value = systemSettings.themeColor || "#111111";
+      document.getElementById("cfgThemeColorText").value = systemSettings.themeColor || "#111111";
+      
+      const logoArea = document.getElementById("logoPreviewArea");
+      logoArea.innerHTML = systemSettings.logoUrl ? `<img src="${systemSettings.logoUrl}" style="max-height:50px; border-radius:4px; border:1px solid #ccc;" />` : '<span style="font-size:0.72rem; color:#666;">(ยังไม่ได้อัปโหลดโลโก้)</span>';
+      
+      // อัปเดตช่อง Text สีแบบเรียลไทม์
+      document.getElementById("cfgThemeColor").oninput = function(e) {
+        document.getElementById("cfgThemeColorText").value = e.target.value;
+      };
+
+      openModal('webThemeConfigModal');
+    }
+
+    function handleLogoUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        systemSettings.logoUrl = ev.target.result;
+        document.getElementById("logoPreviewArea").innerHTML = `<img src="${ev.target.result}" style="max-height:50px; border-radius:4px; border:1px solid #ccc;" />`;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function saveWebThemeConfig(e) {
+      e.preventDefault();
+      systemSettings.storeName = document.getElementById("cfgStoreName").value.trim();
+      systemSettings.themeColor = document.getElementById("cfgThemeColor").value;
+      saveDataToFirestore();
+      applyAdminTheme();
+      alert("✓ บันทึกการตั้งค่าเว็บไซต์และสีธีมสำเร็จ!");
+      closeModal('webThemeConfigModal');
     }
 
     function renderAdminBrandFilterChips() {
@@ -772,7 +962,6 @@
       openModal('addProductModal');
     }
 
-    // --- ระบบโคลนสินค้า (Clone Product) ---
     function cloneProduct(productId) {
       db.collection("products").doc(productId).get().then((doc) => {
         if (!doc.exists) return alert("ไม่พบสินค้าต้นฉบับ");
@@ -780,8 +969,8 @@
 
         closeModal('manageProductsModal');
         document.getElementById("productModalTitle").innerText = "🧬 โคลนสินค้าใหม่จาก SKU: " + prod.id;
-        document.getElementById("editingProductId").value = ""; // เคลียร์เพื่อให้บันทึกเป็นสินค้าใหม่
-        document.getElementById("pId").value = prod.id + "-COPY"; // สร้าง SKU ใหม่ป้องกันซ้ำ
+        document.getElementById("editingProductId").value = "";
+        document.getElementById("pId").value = prod.id + "-COPY";
         document.getElementById("pName").value = prod.name + " (สำเนา)";
         document.getElementById("pPrice").value = prod.basePrice;
 
