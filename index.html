@@ -65,7 +65,7 @@
       .search-box { display: block; }
     }
     .search-box input {
-      width: 200px; height: 38px;
+      width: 170px; height: 38px;
       padding: 8px 12px 8px 32px;
       border: 1px solid var(--border-color);
       background: #fafaf8; border-radius: var(--radius);
@@ -159,7 +159,6 @@
     .cat-count-badge { font-size: 0.65rem; padding: 1px 4px; background: #e2e2dd; color: #111; border-radius: 3px; font-weight: 800; }
     .sidebar-cat-btn.active .cat-count-badge { background: #333; color: #fff; }
 
-    /* แสดงผลเป็นแนวตั้งบนหน้าจอคอมพิวเตอร์ (Windows) */
     @media(min-width: 992px) {
       .sidebar-categories-list {
         flex-direction: column;
@@ -220,6 +219,7 @@
     .product-card > .btn-action { width: calc(100% - 24px); margin: 0 12px 12px; min-height: 36px; font-size: 0.75rem; }
     @media(min-width: 640px) { .product-card > .btn-action { width: calc(100% - 32px); margin: 0 16px 16px; min-height: 40px; font-size: 0.8rem; } }
 
+    /* MODAL */
     .modal-overlay {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       background: rgba(10, 10, 10, 0.7); backdrop-filter: blur(4px);
@@ -301,6 +301,19 @@
       <div class="search-box">
         <input type="text" id="searchInput" placeholder="ค้นหาสินค้า / SKU..." onkeyup="renderProducts()" />
       </div>
+
+      <!-- GOOGLE AUTH CONTAINER -->
+      <div id="authContainer" style="display: flex; align-items: center; gap: 6px;">
+        <button id="loginBtn" class="btn-action btn-secondary" onclick="loginWithGoogle()">
+          🔑 เข้าสู่ระบบ
+        </button>
+        <div id="userProfile" style="display: none; align-items: center; gap: 6px;">
+          <img id="userAvatar" src="" style="width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--border-dark);" alt="User" />
+          <span id="userName" style="font-size: 0.75rem; font-weight: 700; max-width: 80px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"></span>
+          <button class="btn-action btn-secondary" style="padding: 0 8px; font-size: 0.7rem; height: 32px;" onclick="logoutGoogle()">ออก</button>
+        </div>
+      </div>
+
       <button class="btn-action btn-secondary" onclick="window.location.href='admin.html'">🛠️ หลังบ้าน</button>
       <button class="btn-action" onclick="renderCart(); openModal('cartModal');">
         🛒 ตะกร้า (<span id="cartCount">0</span>)
@@ -481,24 +494,26 @@
     </div>
   </div>
 
-  <!-- Firebase App SDK & Firestore -->
+  <!-- Firebase App SDK, Firestore & Auth -->
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
 
   <script>
-    // อัปเดต Project ID เป็น craft-2cc07 ตามโปรเจกต์ปัจจุบันของคุณ
     const firebaseConfig = {
-      apiKey: "AIzaSyBqt1Y3dskVPe1FnFunsV8sD61M_7dK7c4",
+      apiKey: "AIzaSyBqtlTy3dmasVPe1HfssaWrvsfJl1nTINc",
       authDomain: "craft-2cc07.firebaseapp.com",
       projectId: "craft-2cc07",
       storageBucket: "craft-2cc07.firebasestorage.app",
       messagingSenderId: "371408751439",
-      appId: "1:371408751439:web:fa489eaf0a36oc06b2533a",
-      measurementId: "G-Z6TFLVDNR"
+      appId: "1:371408751439:web:fa489eaf0a36c0c6b2533a",
+      measurementId: "G-Z5TTL1VDKR"
     };
 
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
+    const auth = firebase.auth();
+    const googleProvider = new firebase.auth.GoogleAuthProvider();
 
     let brands = ["Ducati", "Honda", "Isuzu", "Kawasaki", "Toyota", "Yamaha"];
     let scalesList = ["1/12", "1/32", "1/43", "1/64"];
@@ -529,8 +544,51 @@
     }
 
     function initStoreFront() {
+      initAuthListener();
       loadDataFromFirebase();
       initModalOutsideClick();
+    }
+
+    /* GOOGLE AUTHENTICATION */
+    function initAuthListener() {
+      auth.onAuthStateChanged((user) => {
+        const loginBtn = document.getElementById("loginBtn");
+        const userProfile = document.getElementById("userProfile");
+        const userAvatar = document.getElementById("userAvatar");
+        const userName = document.getElementById("userName");
+
+        if (user) {
+          loginBtn.style.display = "none";
+          userProfile.style.display = "flex";
+          userAvatar.src = user.photoURL || "https://via.placeholder.com/32";
+          userName.innerText = user.displayName || user.email;
+
+          const shipNameInput = document.getElementById("shipName");
+          const shipEmailInput = document.getElementById("shipEmail");
+          if (shipNameInput && !shipNameInput.value) shipNameInput.value = user.displayName || "";
+          if (shipEmailInput && !shipEmailInput.value) shipEmailInput.value = user.email || "";
+        } else {
+          loginBtn.style.display = "inline-flex";
+          userProfile.style.display = "none";
+        }
+      });
+    }
+
+    function loginWithGoogle() {
+      auth.signInWithPopup(googleProvider).then((result) => {
+        alert("✓ เข้าสู่ระบบสำเร็จ: " + (result.user.displayName || result.user.email));
+      }).catch((error) => {
+        console.error("Login failed:", error);
+        alert("เข้าสู่ระบบไม่สำเร็จ: " + error.message);
+      });
+    }
+
+    function logoutGoogle() {
+      auth.signOut().then(() => {
+        alert("ออกจากระบบเรียบร้อย");
+      }).catch((error) => {
+        console.error("Logout error:", error);
+      });
     }
 
     function loadDataFromFirebase() {
@@ -585,7 +643,8 @@
 
     function applyShopSettings() {
       document.getElementById("siteTitleText").innerText = systemSettings.storeName;
-      document.getElementById("footerText").innerText = systemSettings.storeName + " — SCALE MODEL ARCHIVE";
+      const footerText = document.getElementById("footerText");
+      if (footerText) footerText.innerText = systemSettings.storeName + " — SCALE MODEL ARCHIVE";
       document.getElementById("cartShippingDisplay").innerText = `การจัดส่ง: ${systemSettings.shippingName} (฿${systemSettings.shippingFee})`;
       document.getElementById("payBankName").innerText = systemSettings.bankName;
       document.getElementById("payAccountNo").innerText = systemSettings.accountNo;
