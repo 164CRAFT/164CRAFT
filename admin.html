@@ -234,9 +234,9 @@
         </div>
 
         <div class="admin-menu-box">
-          <div class="admin-menu-title">🎟️ จัดการรหัส VIP (VIP Codes)</div>
+          <div class="admin-menu-title">🎟️ จัดการรหัส ปลดล็อคสินค้า</div>
           <div class="admin-menu-desc">สร้างหรือลบรหัสผ่านพร้อมบันทึกโน้ตข้อความสำหรับปลดล็อกเฉพาะกลุ่ม</div>
-          <button class="btn-action btn-secondary" style="margin-top: auto;" onclick="openVipCodesModal()">จัดการรหัส VIP</button>
+          <button class="btn-action btn-secondary" style="margin-top: auto;" onclick="openVipCodesModal()">ปลดล็อคสินค้า</button>
         </div>
 
         <div class="admin-menu-box">
@@ -389,12 +389,10 @@
           <input type="text" id="pName" class="form-control" placeholder="เช่น Ducati Panigale V4 S" required />
         </div>
 
-        <!-- ⚙️ ส่วนตั้งค่าสต็อกและการขายพรีออเดอร์ -->
         <div class="form-group" style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: var(--radius); padding: 12px;">
           <label style="font-weight: 800; color: #1e293b; margin-bottom: 8px; display: block;">⚙️ ตั้งค่าสต็อกและการขาย (พร้อมส่ง & พรีออเดอร์)</label>
           
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-            <!-- สต็อกพร้อมส่ง -->
             <div style="background: #f0fdf4; border: 1px solid #10b981; padding: 10px; border-radius: 6px;">
               <label style="font-size: 0.75rem; color: #065f46; font-weight: bold; display: block; margin-bottom: 4px;">📦 สต็อกพร้อมส่ง (In Stock)</label>
               <div style="display: flex; align-items: center; gap: 6px;">
@@ -403,7 +401,6 @@
               </div>
             </div>
 
-            <!-- โควต้าพรีออเดอร์ (มีเปิด-ปิด, ใส่จำนวน, และไม่จำกัด) -->
             <div style="background: #fff7ed; border: 1px solid #f97316; padding: 10px; border-radius: 6px;">
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
                 <label style="font-size: 0.75rem; color: #c2410c; font-weight: bold;">⏳ พรีออเดอร์ (Pre-order)</label>
@@ -436,7 +433,7 @@
             <input type="text" inputmode="numeric" id="pPrice" class="form-control" value="0" onfocus="this.select()" required />
           </div>
           <div class="form-group">
-            <label style="color:var(--accent-vip);">🎟️ รหัส VIP (ถ้ามี)</label>
+            <label style="color:var(--accent-vip);">🎟️ รหัสปลดล็อคสินค้า (ถ้ามี)</label>
             <select id="pSecretCodeSelect" class="form-control"></select>
           </div>
         </div>
@@ -507,20 +504,20 @@
   <div id="vipCodesModal" class="modal-overlay" onclick="checkOutsideModalClick(event, 'vipCodesModal')">
     <div class="modal-box" style="max-width: 500px;">
       <div class="modal-header">
-        <span>🎟️ จัดการรหัส VIP & โน้ตข้อความ</span>
+        <span>🎟️ จัดการรหัส  & โน้ตข้อความ</span>
         <button class="modal-close" onclick="closeModal('vipCodesModal')">✕</button>
       </div>
       
       <form onsubmit="handleAddVipCode(event)" style="display:flex; flex-direction:column; gap:8px; margin-top: 4px;">
         <div style="display: flex; gap: 6px;">
-          <input type="text" id="newVipCodeInput" class="form-control" placeholder="รหัส VIP ใหม่ (เช่น VIP164)..." style="text-transform:uppercase; flex: 1;" required />
+          <input type="text" id="newVipCodeInput" class="form-control" placeholder="รหัสใหม่ (เช่น VIP164)..." style="text-transform:uppercase; flex: 1;" required />
           <input type="text" id="newVipNoteInput" class="form-control" placeholder="โน้ตข้อความ..." style="flex: 1.5;" />
           <button type="submit" class="btn-action" style="padding: 0 16px;">+ เพิ่ม</button>
         </div>
       </form>
 
       <div style="margin-top: 8px;">
-        <label style="font-size:0.75rem; font-weight:bold; color:#444;">รายการรหัส VIP ทั้งหมดในระบบ:</label>
+        <label style="font-size:0.75rem; font-weight:bold; color:#444;">รายการรหัสทั้งหมดในระบบ:</label>
         <div id="vipCodeChipsList" class="tags-container" style="margin-top: 4px; display:flex; flex-direction:column; gap:6px;"></div>
       </div>
 
@@ -898,7 +895,7 @@
 
       cont.innerHTML = filtered.map(p => {
         const thumb = (p.images && p.images.length > 0) ? p.images[0] : '';
-        const secretNotice = p.secretCode ? `<span style="color:var(--accent-vip); font-weight:bold;">[VIP: ${p.secretCode}]</span> ` : '';
+        const secretNotice = p.secretCode ? `<span style="color:var(--accent-vip); font-weight:bold;">[ปลดล็อค: ${p.secretCode}]</span> ` : '';
         const readyStock = p.readyStock !== undefined ? p.readyStock : 0;
         
         let preorderInfo = "ปิด";
@@ -1023,7 +1020,7 @@
       vipCodesList.forEach(item => {
         const code = typeof item === 'object' ? item.code : item;
         const note = typeof item === 'object' && item.note ? ` (${item.note})` : '';
-        html += `<option value="${code}" ${code === selectedVal ? 'selected' : ''}>🔒 โค้ด VIP: ${code}${note}</option>`;
+        html += `<option value="${code}" ${code === selectedVal ? 'selected' : ''}>🔒 โค้ดปลดล็อค: ${code}${note}</option>`;
       });
       select.innerHTML = html;
     }
@@ -1446,7 +1443,7 @@
           document.getElementById("newVipNoteInput").value = "";
           renderVipCodesList();
         } else {
-          alert("รหัส VIP นี้มีอยู่ในระบบแล้ว");
+          alert("รหัสนี้มีอยู่ในระบบแล้ว");
         }
       }
     }
