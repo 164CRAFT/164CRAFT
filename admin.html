@@ -47,35 +47,13 @@
       z-index: 100;
       backdrop-filter: blur(8px);
     }
-    .brand-info { 
-      display: flex; 
-      align-items: center; 
-      gap: 10px; 
-      cursor: pointer; 
-      transition: opacity 0.2s; 
-    }
-    .brand-info:hover { opacity: 0.8; }
+    .brand-info { display: flex; align-items: center; gap: 10px; }
     .brand-photo {
       width: 36px; height: 36px; background: var(--accent); color: #fff;
       border-radius: var(--radius); display: flex; align-items: center; justify-content: center;
       font-size: 0.7rem; font-weight: 800; letter-spacing: 1px; flex-shrink: 0;
     }
     .brand-name { font-size: 0.95rem; font-weight: 800; letter-spacing: 1px; white-space: nowrap; }
-
-    .header-actions { display: flex; gap: 8px; align-items: center; }
-
-    .btn-action {
-      height: 38px; border-radius: var(--radius);
-      border: 1px solid var(--border-dark); padding: 0 12px; font-size: 0.78rem;
-      font-weight: 700; background: var(--accent); color: #fff;
-      cursor: pointer; transition: all 0.2s ease;
-      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-      white-space: nowrap;
-    }
-    .btn-action:hover { background: var(--accent-hover); }
-    .btn-secondary { background: #fff; color: var(--text-main); border-color: var(--border-color); }
-    .btn-secondary:hover { background: #f0f0ed; border-color: var(--border-dark); }
-    .btn-danger { background: var(--danger); color: #fff; border-color: var(--danger); }
 
     .admin-wrapper { max-width: 1100px; width: 100%; margin: 24px auto; padding: 0 16px; flex: 1; }
     .admin-card-container {
@@ -112,6 +90,19 @@
     .admin-menu-box:hover { border-color: var(--border-dark); transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.04); }
     .admin-menu-title { font-weight: 800; font-size: 0.95rem; color: #111; }
     .admin-menu-desc { font-size: 0.8rem; color: var(--text-muted); line-height: 1.4; margin-bottom: 4px; }
+
+    .btn-action {
+      height: 38px; border-radius: var(--radius);
+      border: 1px solid var(--border-dark); padding: 0 12px; font-size: 0.78rem;
+      font-weight: 700; background: var(--accent); color: #fff;
+      cursor: pointer; transition: all 0.2s ease;
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+      white-space: nowrap;
+    }
+    .btn-action:hover { background: var(--accent-hover); }
+    .btn-secondary { background: #fff; color: var(--text-main); border-color: var(--border-color); }
+    .btn-secondary:hover { background: #f0f0ed; border-color: var(--border-dark); }
+    .btn-danger { background: var(--danger); color: #fff; border-color: var(--danger); }
 
     .modal-overlay {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -167,36 +158,14 @@
     .scale-check:has(input:checked) { border-color: #111; background: #111; color: #fff; }
 
     .opt-card-row {
-      background: #fafaf8;
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius);
-      padding: 12px 14px;
-      margin-bottom: 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
+      background: #fafaf8; border: 1px solid var(--border-color); border-radius: var(--radius);
+      padding: 12px 14px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 10px;
     }
-    .opt-main-inputs {
-      display: grid;
-      grid-template-columns: 2fr 1fr auto;
-      gap: 8px;
-      align-items: end;
-    }
+    .opt-main-inputs { display: grid; grid-template-columns: 2fr 1fr auto; gap: 8px; align-items: end; }
     .opt-codes-section {
-      background: #ffffff;
-      border: 1px dashed #cbd5e1;
-      border-radius: 6px;
-      padding: 10px 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
+      background: #ffffff; border: 1px dashed #cbd5e1; border-radius: 6px; padding: 10px 12px; display: flex; flex-direction: column; gap: 8px;
     }
-    .opt-code-single-row {
-      display: grid;
-      grid-template-columns: 1.5fr 1fr auto;
-      gap: 8px;
-      align-items: center;
-    }
+    .opt-code-single-row { display: grid; grid-template-columns: 1.5fr 1fr auto; gap: 8px; align-items: center; }
 
     .admin-filter-bar {
       display: flex; flex-direction: column; gap: 8px; background: #fafaf8;
@@ -225,13 +194,9 @@
 <body onload="initAdminPanel()">
 
   <header class="header">
-    <div class="brand-info" onclick="window.location.href='index.html'" title="คลิกเพื่อไปที่หน้าร้าน">
+    <div class="brand-info">
       <div class="brand-photo">164</div>
-      <div class="brand-name">164CRAFT ADMIN</div>
-    </div>
-    <div class="header-actions">
-      <button class="btn-action btn-secondary" onclick="window.location.href='index.html'">🌐 หน้าร้าน</button>
-      <button class="btn-action btn-danger" onclick="logoutAdmin()">🚪 ออก</button>
+      <div class="brand-name">164CRAFT ADMIN PANEL</div>
     </div>
   </header>
 
@@ -239,17 +204,29 @@
     <div class="admin-card-container">
       <div class="admin-section-title">
         <span>🛠️ แผงควบคุมระบบจัดการหลังบ้าน</span>
-        <span style="font-size: 0.72rem; color: var(--accent-vip); background: var(--accent-vip-bg); padding: 3px 8px; border-radius: 12px; border: 1px solid #a7f3d0; width: fit-content;">● Google Admin Secured</span>
+        <span style="font-size: 0.72rem; color: var(--accent-vip); background: var(--accent-vip-bg); padding: 3px 8px; border-radius: 12px; border: 1px solid #a7f3d0; width: fit-content;">● Google Admin Authenticated</span>
       </div>
       <p class="admin-desc">
-        ระบบจัดการสินค้าและตั้งค่าร้านค้า ป้องกันความปลอดภัยด้วย Google Authentication (จำกัดสิทธิ์เฉพาะ Admin)
+        ระบบจัดการสินค้า โคลนสินค้า ตั้งค่าระบบ และบริหารจัดการบัญชีสมาชิกผู้ใช้งาน
       </p>
 
       <div class="admin-menu-grid">
         <div class="admin-menu-box">
-          <div class="admin-menu-title">✏️ จัดการสินค้า & เพิ่มสินค้า</div>
-          <div class="admin-menu-desc">ค้นหา กรองสินค้า เพิ่ม แก้ไข หรือลบสินค้า พร้อมระบบ HD VDO</div>
-          <button class="btn-action" style="margin-top: auto;" onclick="openManageProductsModal()">จัดการสินค้า</button>
+          <div class="admin-menu-title">📋 หน้ารายการสินค้าทั้งหมด</div>
+          <div class="admin-menu-desc">ค้นหา กรองสินค้า แก้ไข ลบ หรือโคลนสินค้าเดิมมาปรับแก้</div>
+          <button class="btn-action" style="margin-top: auto;" onclick="openManageProductsModal()">ดูรายการสินค้า</button>
+        </div>
+
+        <div class="admin-menu-box">
+          <div class="admin-menu-title">➕ เพิ่มสินค้าใหม่</div>
+          <div class="admin-menu-desc">เพิ่มรายการโมเดลรถใหม่ พร้อมระบบบีบอัดรูปและ VDO HD (สูงสุด 100 MB)</div>
+          <button class="btn-action btn-secondary" style="margin-top: auto;" onclick="openAddProductModal()">+ เพิ่มสินค้า</button>
+        </div>
+
+        <div class="admin-menu-box">
+          <div class="admin-menu-title">👥 จัดการสมาชิก (Members)</div>
+          <div class="admin-menu-desc">ดูรายชื่อสมาชิกที่ลงทะเบียนเข้าสู่ระบบ จัดการสิทธิ์และดูข้อมูลผู้ใช้</div>
+          <button class="btn-action btn-secondary" style="margin-top: auto;" onclick="openMembersModal()">จัดการสมาชิก</button>
         </div>
 
         <div class="admin-menu-box">
@@ -260,20 +237,14 @@
 
         <div class="admin-menu-box">
           <div class="admin-menu-title">⚙️ ข้อมูลหลัก (Brands & Scales)</div>
-          <div class="admin-menu-desc">จัดการรายชื่อแบรนด์และสเกลสินค้า ระบบจัดเรียงตัวอักษรให้อัตโนมัติ</div>
+          <div class="admin-menu-desc">จัดการรายชื่อแบรนด์และสเกลสินค้า จัดเรียงอัตโนมัติ</div>
           <button class="btn-action btn-secondary" style="margin-top: auto;" onclick="openConfigModal()">จัดการแบรนด์ / สเกล</button>
         </div>
 
         <div class="admin-menu-box">
-          <div class="admin-menu-title">🏦 ธนาคาร, QR Code & ที่อยู่ผู้ส่ง</div>
-          <div class="admin-menu-desc">กำหนดเลขบัญชี พร้อมเพย์ และที่อยู่คลังสินค้าสำหรับออกเอกสารจัดส่ง</div>
+          <div class="admin-menu-title">🏦 ธนาคาร, QR Code & ผู้จัดส่ง</div>
+          <div class="admin-menu-desc">กำหนดเลขบัญชี พร้อมเพย์ และที่อยู่คลังสินค้าสำหรับออกบิล</div>
           <button class="btn-action btn-secondary" style="margin-top: auto;" onclick="openBankConfigModal()">ตั้งค่าการชำระเงิน</button>
-        </div>
-
-        <div class="admin-menu-box">
-          <div class="admin-menu-title">⚙️ ตั้งค่าระบบทั่วไป</div>
-          <div class="admin-menu-desc">แก้ไขชื่อร้านค้า อีเมลผู้ดูแลระบบ ค่าจัดส่ง และอื่นๆ</div>
-          <button class="btn-action btn-secondary" style="margin-top: auto;" onclick="openSettingsModal()">การตั้งค่าระบบ</button>
         </div>
       </div>
     </div>
@@ -282,8 +253,8 @@
   <!-- GOOGLE ADMIN LOGIN MODAL -->
   <div id="passcodeModal" class="modal-overlay" style="display: flex;">
     <div class="modal-box" style="max-width: 400px; text-align: center; cursor: default;">
-      <div class="modal-header" style="justify-content: center; border-bottom: none; padding-bottom: 0;">🔒 เข้าสู่ระบบผู้ดูแลระบบ (Admin)</div>
-      <p style="font-size:0.82rem; color: var(--text-muted); margin-top:6px;">ระบบจำกัดสิทธิ์เฉพาะบัญชีผู้ดูแลระบบที่ได้รับอนุญาตเท่านั้น</p>
+      <div class="modal-header" style="justify-content: center; border-bottom: none; padding-bottom: 0;">🔒 ตรวจสอบสิทธิ์ผู้ดูแลระบบ</div>
+      <p style="font-size:0.82rem; color: var(--text-muted); margin-top:6px;">กรุณาเข้าสู่ระบบด้วยบัญชี Google ที่ได้รับสิทธิ์ Admin เท่านั้น</p>
       
       <div style="margin: 20px 0;">
         <button type="button" class="btn-action" style="width: 100%; height: 44px; font-size: 0.9rem; justify-content: center; background: #111;" onclick="loginAdminWithGoogle()">
@@ -292,10 +263,6 @@
       </div>
 
       <div id="adminAuthStatus" style="font-size:0.78rem; min-height:20px; color:var(--danger); font-weight:bold;"></div>
-
-      <div style="margin-top: 10px;">
-        <button type="button" class="btn-action btn-secondary" style="width: 100%;" onclick="window.location.href='index.html'">🌐 กลับสู่หน้าร้าน</button>
-      </div>
     </div>
   </div>
 
@@ -303,7 +270,7 @@
   <div id="manageProductsModal" class="modal-overlay">
     <div class="modal-box">
       <div class="modal-header">
-        <span>✏️ รายการสินค้าทั้งหมด</span>
+        <span>📋 รายการสินค้าทั้งหมดในระบบ</span>
         <button class="modal-close" onclick="closeModal('manageProductsModal')">✕</button>
       </div>
       
@@ -323,7 +290,7 @@
         <div style="display:flex; gap:6px; margin-top:4px;">
           <span style="font-size:0.75rem; font-weight:800; color:#333; line-height:26px;">ประเภท:</span>
           <button type="button" class="admin-filter-btn active" id="filterVipAllBtn" onclick="setAdminVipFilter('ALL')">ทั้งหมด</button>
-          <button type="button" class="admin-filter-btn" id="filterVipNormalBtn" onclick="setAdminVipFilter('NORMAL')">สินค้าทั่วไป</button>
+          <button type="button" class="admin-filter-btn" id="filterVipNormalBtn" onclick="setAdminVipFilter('NORMAL')">ทั่วไป</button>
           <button type="button" class="admin-filter-btn" id="filterVipOnlyBtn" onclick="setAdminVipFilter('VIP')">เฉพาะ VIP 🔒</button>
         </div>
       </div>
@@ -340,7 +307,26 @@
     </div>
   </div>
 
-  <!-- ADD / EDIT PRODUCT MODAL -->
+  <!-- MEMBERS MODAL (จัดการสมาชิก) -->
+  <div id="membersModal" class="modal-overlay">
+    <div class="modal-box" style="max-width: 600px;">
+      <div class="modal-header">
+        <span>👥 รายชื่อสมาชิกร้านค้าทั้งหมด</span>
+        <button class="modal-close" onclick="closeModal('membersModal')">✕</button>
+      </div>
+      <p style="font-size: 0.8rem; color: var(--text-muted);">รายชื่อผู้ใช้งานที่ลงทะเบียนเข้าสู่ระบบผ่าน Google Account ในร้านค้า</p>
+      
+      <div id="membersListContainer" style="max-height: 50vh; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin-top: 6px;">
+        <!-- รายการสมาชิกจะถูกโหลดมาแสดงที่นี่ -->
+      </div>
+
+      <div style="margin-top: 14px;">
+        <button type="button" class="btn-action btn-secondary" style="width: 100%;" onclick="closeModal('membersModal')">ปิดหน้าต่าง</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADD / EDIT / CLONE PRODUCT MODAL -->
   <div id="addProductModal" class="modal-overlay">
     <div class="modal-box">
       <div class="modal-header">
@@ -387,7 +373,7 @@
           <div id="adminImagesPreviewList" class="image-preview-grid" style="display:none;"></div>
         </div>
 
-        <!-- กล่องจัดการ VDO ระบบความคมชัดสูง HD (รับสูงสุด 100 MB) -->
+        <!-- กล่องจัดการ VDO (รับสูงสุด 100 MB) -->
         <div class="form-group" style="background:#fafaf8; border:1px solid var(--border-color); border-radius:var(--radius); padding:10px;">
           <div style="display:flex; justify-content:space-between; align-items:center;">
             <label style="font-weight:bold; color:#111;">🎥 วิดีโอพรีวิวสินค้า (HD VDO - สูงสุด 100 MB)</label>
@@ -534,28 +520,6 @@
     </div>
   </div>
 
-  <!-- SETTINGS MODAL -->
-  <div id="settingsModal" class="modal-overlay">
-    <div class="modal-box" style="max-width: 480px;">
-      <div class="modal-header">
-        <span>⚙️ การตั้งค่าระบบทั่วไป</span>
-        <button class="modal-close" onclick="closeModal('settingsModal')">✕</button>
-      </div>
-      
-      <form onsubmit="saveSystemSettings(event)">
-        <div class="form-group"><label>ชื่อร้านค้า</label><input type="text" id="stgStoreName" class="form-control" required /></div>
-        <div class="form-group"><label>อีเมลหลัก Admin</label><input type="email" id="stgAdminEmail" class="form-control" required /></div>
-        <div class="form-group"><label>รูปแบบการจัดส่ง</label><input type="text" id="stgShippingName" class="form-control" required /></div>
-        <div class="form-group"><label>ค่าจัดส่งคงที่ (บาท)</label><input type="number" id="stgShippingFee" class="form-control" min="0" required /></div>
-
-        <div style="display: flex; gap: 8px; margin-top: 14px;">
-          <button type="button" class="btn-action btn-secondary" style="flex: 1;" onclick="closeModal('settingsModal')">ปิดหน้าต่าง</button>
-          <button type="submit" class="btn-action" style="flex: 2;">💾 บันทึกการตั้งค่า</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
   <!-- Firebase App SDK, Firestore & Auth -->
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
@@ -577,7 +541,6 @@
     const auth = firebase.auth();
     const googleProvider = new firebase.auth.GoogleAuthProvider();
 
-    // กำหนดอีเมลที่มีสิทธิ์เป็น Admin (สามารถเพิ่มอีเมลอื่นๆ ในวงเล็บนี้ได้)
     const ALLOWED_ADMIN_EMAILS = ["craft.studio164@gmail.com"];
 
     let brands = ["Ducati", "Honda", "Isuzu", "Kawasaki", "Toyota", "Yamaha"];
@@ -599,6 +562,7 @@
     };
 
     let products = [];
+    let members = [];
     let tempProductImages = [];
     let tempProductVdo = "";
     let adminFilterBrand = "ALL";
@@ -635,7 +599,12 @@
         renderAdminProductList();
       });
 
-      // ตรวจสอบสิทธิ์ผ่าน Google Authentication
+      // ดึงรายชื่อสมาชิกจาก Firebase Auth (หรือบันทึกเก็บไว้ใน collection members)
+      db.collection("members").onSnapshot((snapshot) => {
+        members = [];
+        snapshot.forEach((doc) => members.push(doc.data()));
+      });
+
       auth.onAuthStateChanged((user) => {
         const statusMsg = document.getElementById("adminAuthStatus");
         if (user) {
@@ -644,6 +613,16 @@
             statusMsg.style.color = "#059669";
             statusMsg.innerText = `✓ ยินดีต้อนรับ Admin: ${user.email}`;
             setTimeout(() => closeModal('passcodeModal'), 400);
+
+            // บันทึกข้อมูลสมาชิกอัตโนมัติเมื่อเข้าสู่ระบบ
+            db.collection("members").doc(user.uid).set({
+              uid: user.uid,
+              name: user.displayName || "สมาชิก",
+              email: user.email,
+              photoURL: user.photoURL || "",
+              lastLogin: firebase.firestore.FieldValue.serverTimestamp()
+            }, { merge: true });
+
           } else {
             statusMsg.style.color = "var(--danger)";
             statusMsg.innerText = `✕ บัญชี (${user.email}) ไม่มีสิทธิ์เข้าถึงระบบหลังบ้านนี้`;
@@ -667,13 +646,6 @@
       });
     }
 
-    function logoutAdmin() {
-      auth.signOut().then(() => {
-        alert("ออกจากระบบ Admin เรียบร้อย");
-        openPasscodeModal();
-      });
-    }
-
     function openModal(id) { document.getElementById(id).style.display = "flex"; }
     function closeModal(id) { document.getElementById(id).style.display = "none"; }
     function openPasscodeModal() { openModal('passcodeModal'); }
@@ -684,6 +656,28 @@
       renderAdminBrandFilterChips();
       renderAdminProductList();
       openModal('manageProductsModal');
+    }
+
+    // จัดการสมาชิก
+    function openMembersModal() {
+      const cont = document.getElementById("membersListContainer");
+      if (members.length === 0) {
+        cont.innerHTML = `<div style="text-align:center; padding:20px; color:#777;">ยังไม่มีข้อมูลสมาชิกในระบบ</div>`;
+      } else {
+        cont.innerHTML = members.map(m => `
+          <div style="display:flex; align-items:center; justify-content:space-between; background:#fafafa; border:1px solid var(--border-color); padding:10px 12px; border-radius:var(--radius);">
+            <div style="display:flex; align-items:center; gap:10px;">
+              <img src="${m.photoURL || 'https://via.placeholder.com/35'}" style="width:35px; height:35px; border-radius:50%; object-fit:cover;" />
+              <div>
+                <div style="font-weight:bold; font-size:0.85rem;">${m.name}</div>
+                <div style="font-size:0.72rem; color:var(--text-muted);">${m.email}</div>
+              </div>
+            </div>
+            <div style="font-size:0.7rem; color:#059669; font-weight:bold; background:var(--accent-vip-bg); padding:3px 8px; border-radius:4px;">สมาชิก Active</div>
+          </div>
+        `).join('');
+      }
+      openModal('membersModal');
     }
 
     function renderAdminBrandFilterChips() {
@@ -738,20 +732,20 @@
       cont.innerHTML = filtered.map(p => {
         const thumb = (p.images && p.images.length > 0) ? p.images[0] : '';
         const secretNotice = p.secretCode ? `<span style="color:var(--accent-vip); font-weight:bold;">[VIP: ${p.secretCode}]</span> ` : '';
-        const hasVdoNotice = p.vdo ? `<span style="color:#0284c7; font-weight:bold;">[🎥 มี VDO HD]</span> ` : '';
-        const optCount = p.options ? p.options.length : 0;
+        const hasVdoNotice = p.vdo ? `<span style="color:#0284c7; font-weight:bold;">[🎥 VDO]</span> ` : '';
         return `
           <div class="admin-prod-item">
             <div style="display:flex; gap:10px; align-items:center; overflow:hidden;">
               <img src="${thumb}" style="width:42px; height:42px; object-fit:cover; border-radius:4px; border:1px solid #ddd; flex-shrink:0;" />
               <div style="overflow:hidden;">
                 <div style="font-weight:bold; font-size:0.82rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${p.name}</div>
-                <div style="font-size:0.72rem; color:#666;">SKU: ${p.id} | ${p.brand} | ${secretNotice}${hasVdoNotice}(${optCount} ตัวเลือก)</div>
+                <div style="font-size:0.72rem; color:#666;">SKU: ${p.id} | ${p.brand} | ${secretNotice}${hasVdoNotice}</div>
               </div>
             </div>
-            <div style="display:flex; gap:5px; flex-shrink:0;">
-              <button class="btn-action btn-secondary" style="height:32px; padding:0 10px; font-size:0.75rem;" onclick="editProduct('${p.id}')">แก้ไข</button>
-              <button class="btn-action btn-danger" style="height:32px; padding:0 10px; font-size:0.75rem;" onclick="deleteProduct('${p.id}')">ลบ</button>
+            <div style="display:flex; gap:4px; flex-shrink:0;">
+              <button class="btn-action btn-secondary" style="height:32px; padding:0 8px; font-size:0.7rem;" onclick="cloneProduct('${p.id}')" title="โคลนสินค้า">🧬 โคลน</button>
+              <button class="btn-action btn-secondary" style="height:32px; padding:0 8px; font-size:0.7rem;" onclick="editProduct('${p.id}')">แก้ไข</button>
+              <button class="btn-action btn-danger" style="height:32px; padding:0 8px; font-size:0.7rem;" onclick="deleteProduct('${p.id}')">ลบ</button>
             </div>
           </div>
         `;
@@ -776,6 +770,48 @@
       addDynamicOptionRow();
 
       openModal('addProductModal');
+    }
+
+    // --- ระบบโคลนสินค้า (Clone Product) ---
+    function cloneProduct(productId) {
+      db.collection("products").doc(productId).get().then((doc) => {
+        if (!doc.exists) return alert("ไม่พบสินค้าต้นฉบับ");
+        const prod = doc.data();
+
+        closeModal('manageProductsModal');
+        document.getElementById("productModalTitle").innerText = "🧬 โคลนสินค้าใหม่จาก SKU: " + prod.id;
+        document.getElementById("editingProductId").value = ""; // เคลียร์เพื่อให้บันทึกเป็นสินค้าใหม่
+        document.getElementById("pId").value = prod.id + "-COPY"; // สร้าง SKU ใหม่ป้องกันซ้ำ
+        document.getElementById("pName").value = prod.name + " (สำเนา)";
+        document.getElementById("pPrice").value = prod.basePrice;
+
+        const bSelect = document.getElementById("pBrandSelect");
+        bSelect.innerHTML = brands.map(b => `<option value="${b}" ${b === prod.brand ? 'selected' : ''}>${b}</option>`).join('');
+
+        renderVipSelectOptions(prod.secretCode || "");
+
+        tempProductImages = prod.images ? [...prod.images] : [];
+        renderAdminImagePreview();
+
+        if (prod.vdo) {
+          tempProductVdo = prod.vdo;
+          displayVdoPreview(prod.vdo, prod.vdo);
+        } else {
+          removeVdo();
+        }
+
+        renderAdminScalesInputs(prod.scales, prod.scalePrices);
+
+        const optCont = document.getElementById("dynamicOptionsList");
+        optCont.innerHTML = "";
+        if (prod.options && prod.options.length > 0) {
+          prod.options.forEach(o => addDynamicOptionRow(o));
+        } else {
+          addDynamicOptionRow();
+        }
+
+        openModal('addProductModal');
+      });
     }
 
     function renderVipSelectOptions(selectedVal = "") {
@@ -903,7 +939,6 @@
           const ctx = canvas.getContext('2d');
 
           const stream = canvas.captureStream(30);
-          
           let mimeType = 'video/webm;codecs=vp9';
           if (!MediaRecorder.isTypeSupported(mimeType)) {
             mimeType = 'video/webm;codecs=vp8';
@@ -1233,24 +1268,6 @@
       saveDataToFirestore();
       alert("บันทึกการตั้งค่าสำเร็จ");
       closeModal('bankConfigModal');
-    }
-
-    function openSettingsModal() {
-      document.getElementById("stgStoreName").value = systemSettings.storeName;
-      document.getElementById("stgAdminEmail").value = systemSettings.adminEmail;
-      document.getElementById("stgShippingName").value = systemSettings.shippingName;
-      document.getElementById("stgShippingFee").value = systemSettings.shippingFee;
-      openModal('settingsModal');
-    }
-    function saveSystemSettings(e) {
-      e.preventDefault();
-      systemSettings.storeName = document.getElementById("stgStoreName").value.trim();
-      systemSettings.adminEmail = document.getElementById("stgAdminEmail").value.trim();
-      systemSettings.shippingName = document.getElementById("stgShippingName").value.trim();
-      systemSettings.shippingFee = parseFloat(document.getElementById("stgShippingFee").value) || 0;
-      saveDataToFirestore();
-      alert("บันทึกการตั้งค่าสำเร็จ");
-      closeModal('settingsModal');
     }
   </script>
 </body>
