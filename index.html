@@ -70,7 +70,7 @@
 
     .header-actions { display: flex; gap: 8px; align-items: center; }
 
-    /* HEADER VIP PASS BOX (ปรับโทนสีและข้อความใหม่ตามต้องการ) */
+    /* HEADER VIP PASS BOX */
     .header-vip-box {
       display: none; background: #fafafa; border: 1px solid var(--border-color); border-radius: var(--radius);
       padding: 3px 8px; align-items: center; gap: 6px; box-shadow: var(--shadow-soft);
@@ -211,7 +211,6 @@
       display: none; flex-direction: column; z-index: 500; overflow: hidden; margin-top: 4px;
       max-height: 280px; overflow-y: auto;
     }
-    /* รองรับทั้งการเอาเมาส์ชี้ และการกดคลิกค้างไว้ */
     .brand-drawer-container:hover .brand-drawer-dropdown { display: flex; }
     .brand-drawer-dropdown.show { display: flex; }
 
@@ -366,7 +365,7 @@
     </div>
     <div class="header-actions" style="position: relative;">
       
-      <!-- HEADER VIP PASS BOX (ย้ายสิทธิ์ VIP มาไว้ที่หัวเว็บ ปรับสีและข้อความใหม่เป็น 🔒 กรอกรหัส VIP) -->
+      <!-- HEADER VIP PASS BOX (ปรับข้อความด้านในเป็น 🔒 กรอกรหัส VIP) -->
       <div class="header-vip-box">
         <input type="password" id="headerVipInput" class="header-vip-input" placeholder="🔒 กรอกรหัส VIP" autocomplete="off" />
         <button type="button" class="btn-action" style="height:32px; padding:0 10px; font-size:0.72rem; background:#111; color:#fff; border:none;" onclick="applyHeaderVipCode()">ปลดล็อก</button>
@@ -429,7 +428,7 @@
         </div>
       </div>
 
-      <!-- ตัวกรองแบรนด์แบบ Popup ลิ้นชักแนวตั้ง (แสดงจำนวนสินค้าแทนเครื่องหมายถูก) -->
+      <!-- ตัวกรองแบรนด์แบบ Popup ลิ้นชักแนวตั้ง -->
       <div>
         <div class="sidebar-section-title">
           <span>🏷️ ตัวกรองแบรนด์</span>
@@ -437,7 +436,7 @@
         </div>
         <div class="brand-drawer-container">
           <button type="button" class="brand-drawer-btn" onclick="toggleBrandDrawer(event)">
-            <span id="currentBrandLabel">📁 เลือกแบรนด์สินค้า (ทั้งหมด)</span>
+            <span id="currentBrandLabel">ALL MODELS (4)</span>
             <span>▾</span>
           </button>
           <div class="brand-drawer-dropdown" id="brandDrawerDropdown"></div>
@@ -882,9 +881,10 @@
       const labelEl = document.getElementById("currentBrandLabel");
 
       if (activeCategory === "ALL") {
-        labelEl.innerText = `📁 เลือกแบรนด์สินค้า (ทั้งหมด ${totalAll})`;
+        labelEl.innerText = `ALL MODELS (${totalAll})`;
       } else {
-        labelEl.innerText = `📁 แบรนด์: ${activeCategory}`;
+        const count = getProductCountByBrand(activeCategory);
+        labelEl.innerText = `${activeCategory.toUpperCase()} (${count})`;
       }
 
       let html = `
