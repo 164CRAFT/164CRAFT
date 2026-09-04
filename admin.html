@@ -20,7 +20,6 @@
       --danger: #dc2626;
       --radius: 8px;
       --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
-      --shadow-pop: 0 10px 25px -5px rgba(0, 0, 0, 0.15);
     }
 
     html { scroll-behavior: smooth; }
@@ -48,15 +47,12 @@
       z-index: 100;
       backdrop-filter: blur(8px);
     }
-    
-    .brand-info { display: flex; align-items: center; gap: 10px; cursor: pointer; transition: opacity 0.2s; }
-    .brand-info:hover { opacity: 0.8; }
+    .brand-info { display: flex; align-items: center; gap: 10px; }
     .brand-photo {
       width: 36px; height: 36px; background: var(--accent); color: #fff;
       border-radius: var(--radius); display: flex; align-items: center; justify-content: center;
-      font-size: 0.7rem; font-weight: 800; letter-spacing: 1px; flex-shrink: 0; overflow: hidden;
+      font-size: 0.7rem; font-weight: 800; letter-spacing: 1px; flex-shrink: 0;
     }
-    .brand-photo img { width: 100%; height: 100%; object-fit: cover; }
     .brand-name { font-size: 0.95rem; font-weight: 800; letter-spacing: 1px; white-space: nowrap; }
 
     .admin-wrapper { max-width: 1100px; width: 100%; margin: 24px auto; padding: 0 16px; flex: 1; }
@@ -111,13 +107,13 @@
     .modal-overlay {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       background: rgba(0, 0, 0, 0.65); backdrop-filter: blur(4px);
-      display: none; align-items: flex-end; justify-content: center; z-index: 1000; padding: 0; cursor: pointer;
+      display: none; align-items: flex-end; justify-content: center; z-index: 1000; padding: 0;
     }
     @media(min-width: 640px) { .modal-overlay { align-items: center; justify-content: center; padding: 20px; } }
     .modal-box {
       width: 100%; max-height: 92vh; background: var(--bg-card); border: 1px solid var(--border-color);
       border-radius: 16px 16px 0 0; padding: 20px 18px; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
-      display: flex; flex-direction: column; gap: 14px; position: relative; overflow-y: auto; cursor: default;
+      display: flex; flex-direction: column; gap: 14px; position: relative; overflow-y: auto;
     }
     @media(min-width: 640px) { .modal-box { width: min(95vw, 760px); border-radius: calc(var(--radius) * 1.5); padding: 28px; } }
     .modal-header {
@@ -198,9 +194,9 @@
 <body onload="initAdminPanel()">
 
   <header class="header">
-    <div class="brand-info" onclick="window.location.href='index.html'" title="คลิกเพื่อกลับไปหน้าร้านค้า">
-      <div class="brand-photo" id="adminHeaderLogo">164</div>
-      <div class="brand-name" id="adminHeaderTitle">164CRAFT ADMIN</div>
+    <div class="brand-info">
+      <div class="brand-photo">164</div>
+      <div class="brand-name">164CRAFT ADMIN PANEL</div>
     </div>
   </header>
 
@@ -208,10 +204,10 @@
     <div class="admin-card-container">
       <div class="admin-section-title">
         <span>🛠️ แผงควบคุมระบบจัดการหลังบ้าน</span>
-        <span style="font-size: 0.72rem; color: var(--accent-vip); background: var(--accent-vip-bg); padding: 3px 8px; border-radius: 12px; border: 1px solid #a7f3d0; width: fit-content;">● Google Admin Authenticated</span>
+        <span style="font-size: 0.72rem; color: var(--accent-vip); background: var(--accent-vip-bg); padding: 3px 8px; border-radius: 12px; border: 1px solid #a7f3d0; width: fit-content;">● Google Admin Secured</span>
       </div>
       <p class="admin-desc">
-        ระบบจัดการสินค้า โคลนสินค้า ตั้งค่าธีมเว็บ (มีผลร่วมกันทั้งหน้าแรกและหลังบ้าน) และบริหารจัดการสมาชิก
+        ระบบจัดการสินค้า โคลนสินค้า ตั้งค่าธีมสีชื่อเว็บ และบริหารจัดการสมาชิกผู้ใช้งาน
       </p>
 
       <div class="admin-menu-grid">
@@ -222,27 +218,27 @@
         </div>
 
         <div class="admin-menu-box">
-          <div class="admin-menu-title">👥 จัดการสมาชิก & ประวัติการซื้อ</div>
-          <div class="admin-menu-desc">ดูรายชื่อสมาชิกผู้ใช้งาน และตรวจสอบประวัติรายการสั่งซื้อสินค้า</div>
-          <button class="btn-action btn-secondary" style="margin-top: auto;" onclick="openMembersModal()">จัดการสมาชิก</button>
+          <div class="admin-menu-title">➕ เพิ่มสินค้าใหม่</div>
+          <div class="admin-menu-desc">เพิ่มรายการโมเดลรถใหม่ พร้อมระบบบีบอัดรูปและ VDO HD (สูงสุด 100 MB)</div>
+          <button class="btn-action btn-secondary" style="margin-top: auto;" onclick="openAddProductModal()">+ เพิ่มสินค้า</button>
         </div>
 
         <div class="admin-menu-box">
-          <div class="admin-menu-title">🎨 ตั้งค่าเว็บ, โลโก้ & สีธีม</div>
-          <div class="admin-menu-desc">แก้ไขชื่อเว็บ อัปโหลดโลโก้ และกำหนดสีธีม (มีผลทั้งหน้าแรกและหลังบ้าน)</div>
-          <button class="btn-action btn-secondary" style="margin-top: auto;" onclick="openWebThemeConfigModal()">ตั้งค่าเว็บไซต์</button>
+          <div class="admin-menu-title">🎨 ตั้งค่าชื่อเว็บ & ธีมสี</div>
+          <div class="admin-menu-desc">แก้ไขชื่อร้านค้า โลโก้ และเลือกปรับเปลี่ยนสีสันชื่อเว็บหน้าร้านได้ตามต้องการ</div>
+          <button class="btn-action btn-secondary" style="margin-top: auto;" onclick="openSettingsModal()">ตั้งค่าชื่อเว็บ / สี</button>
+        </div>
+
+        <div class="admin-menu-box">
+          <div class="admin-menu-title">👥 จัดการสมาชิก (Members)</div>
+          <div class="admin-menu-desc">ดูรายชื่อสมาชิกที่ลงทะเบียนเข้าสู่ระบบ และจัดการข้อมูลผู้ใช้</div>
+          <button class="btn-action btn-secondary" style="margin-top: auto;" onclick="openMembersModal()">จัดการสมาชิก</button>
         </div>
 
         <div class="admin-menu-box">
           <div class="admin-menu-title">🎟️ จัดการรหัส VIP (VIP Codes)</div>
           <div class="admin-menu-desc">สร้างหรือลบรหัสผ่านสำหรับปลดล็อกแสดงสินค้าเฉพาะกลุ่ม</div>
           <button class="btn-action btn-secondary" style="margin-top: auto;" onclick="openVipCodesModal()">จัดการรหัส VIP</button>
-        </div>
-
-        <div class="admin-menu-box">
-          <div class="admin-menu-title">⚙️ ข้อมูลหลัก (Brands & Scales)</div>
-          <div class="admin-menu-desc">จัดการรายชื่อแบรนด์และสเกลสินค้า จัดเรียงอัตโนมัติ</div>
-          <button class="btn-action btn-secondary" style="margin-top: auto;" onclick="openConfigModal()">จัดการแบรนด์ / สเกล</button>
         </div>
 
         <div class="admin-menu-box">
@@ -256,7 +252,7 @@
 
   <!-- GOOGLE ADMIN LOGIN MODAL -->
   <div id="passcodeModal" class="modal-overlay" style="display: flex;">
-    <div class="modal-box" style="max-width: 400px; text-align: center;">
+    <div class="modal-box" style="max-width: 400px; text-align: center; cursor: default;">
       <div class="modal-header" style="justify-content: center; border-bottom: none; padding-bottom: 0;">🔒 ตรวจสอบสิทธิ์ผู้ดูแลระบบ</div>
       <p style="font-size:0.82rem; color: var(--text-muted); margin-top:6px;">กรุณาเข้าสู่ระบบด้วยบัญชี Google ที่ได้รับสิทธิ์ Admin เท่านั้น</p>
       
@@ -271,7 +267,7 @@
   </div>
 
   <!-- MANAGE PRODUCTS MODAL -->
-  <div id="manageProductsModal" class="modal-overlay" onclick="checkOutsideModalClick(event, 'manageProductsModal')">
+  <div id="manageProductsModal" class="modal-overlay">
     <div class="modal-box">
       <div class="modal-header">
         <span>📋 รายการสินค้าทั้งหมดในระบบ</span>
@@ -280,7 +276,7 @@
       
       <div>
         <button class="btn-action" style="width: 100%; padding: 12px; font-size: 0.9rem;" onclick="openAddProductModal()">
-          + เพิ่มสินค้าใหม่ (โมเดลรถ)
+          + เพิ่มสินค้าใหม่
         </button>
       </div>
 
@@ -312,15 +308,15 @@
   </div>
 
   <!-- MEMBERS MODAL -->
-  <div id="membersModal" class="modal-overlay" onclick="checkOutsideModalClick(event, 'membersModal')">
-    <div class="modal-box" style="max-width: 650px;">
+  <div id="membersModal" class="modal-overlay">
+    <div class="modal-box" style="max-width: 600px;">
       <div class="modal-header">
-        <span>👥 จัดการสมาชิก & ประวัติการสั่งซื้อ</span>
+        <span>👥 รายชื่อสมาชิกร้านค้าทั้งหมด</span>
         <button class="modal-close" onclick="closeModal('membersModal')">✕</button>
       </div>
-      <p style="font-size: 0.8rem; color: var(--text-muted);">รายชื่อสมาชิกและประวัติการซื้อสินค้าทั้งหมดในระบบ</p>
+      <p style="font-size: 0.8rem; color: var(--text-muted);">รายชื่อผู้ใช้งานที่ลงทะเบียนเข้าสู่ระบบผ่าน Google Account ในร้านค้า</p>
       
-      <div id="membersListContainer" style="max-height: 50vh; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; margin-top: 6px;"></div>
+      <div id="membersListContainer" style="max-height: 50vh; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin-top: 6px;"></div>
 
       <div style="margin-top: 14px;">
         <button type="button" class="btn-action btn-secondary" style="width: 100%;" onclick="closeModal('membersModal')">ปิดหน้าต่าง</button>
@@ -328,42 +324,8 @@
     </div>
   </div>
 
-  <!-- WEB THEME CONFIG MODAL -->
-  <div id="webThemeConfigModal" class="modal-overlay" onclick="checkOutsideModalClick(event, 'webThemeConfigModal')">
-    <div class="modal-box" style="max-width: 480px;">
-      <div class="modal-header">
-        <span>🎨 ตั้งค่าเว็บไซต์, โลโก้ & สีธีม</span>
-        <button class="modal-close" onclick="closeModal('webThemeConfigModal')">✕</button>
-      </div>
-      
-      <form onsubmit="saveWebThemeConfig(event)">
-        <div class="form-group">
-          <label>ชื่อเว็บไซต์ (Store Name)</label>
-          <input type="text" id="cfgStoreName" class="form-control" required />
-        </div>
-        <div class="form-group">
-          <label>สีธีมหลักของเว็บไซต์ (Theme Color)</label>
-          <div style="display: flex; gap: 8px; align-items: center;">
-            <input type="color" id="cfgThemeColor" style="width: 50px; height: 38px; border: 1px solid var(--border-color); border-radius: var(--radius); cursor: pointer; background: transparent;" value="#111111" />
-            <input type="text" id="cfgThemeColorText" class="form-control" value="#111111" readonly />
-          </div>
-        </div>
-        <div class="form-group">
-          <label>อัปโหลดรูปโลโก้เว็บไซต์ (มีผลทั้งหน้าแรกและหลังบ้าน)</label>
-          <input type="file" id="cfgLogoFileInput" class="form-control" accept="image/*" onchange="handleLogoUpload(event)" />
-          <div id="logoPreviewArea" style="margin-top: 6px;"></div>
-        </div>
-
-        <div style="display: flex; gap: 8px; margin-top: 14px;">
-          <button type="button" class="btn-action btn-secondary" style="flex: 1;" onclick="closeModal('webThemeConfigModal')">ปิดหน้าต่าง</button>
-          <button type="submit" class="btn-action" style="flex: 2;">💾 บันทึกการตั้งค่าเว็บ</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
   <!-- ADD / EDIT / CLONE PRODUCT MODAL -->
-  <div id="addProductModal" class="modal-overlay" onclick="checkOutsideModalClick(event, 'addProductModal')">
+  <div id="addProductModal" class="modal-overlay">
     <div class="modal-box">
       <div class="modal-header">
         <span id="productModalTitle">📦 เพิ่มรายการสินค้าใหม่</span>
@@ -463,7 +425,7 @@
   </div>
 
   <!-- VIP CODES MODAL -->
-  <div id="vipCodesModal" class="modal-overlay" onclick="checkOutsideModalClick(event, 'vipCodesModal')">
+  <div id="vipCodesModal" class="modal-overlay">
     <div class="modal-box" style="max-width: 480px;">
       <div class="modal-header">
         <span>🎟️ จัดการรหัส VIP</span>
@@ -487,7 +449,7 @@
   </div>
 
   <!-- CONFIG MODAL (BRANDS & SCALES) -->
-  <div id="configModal" class="modal-overlay" onclick="checkOutsideModalClick(event, 'configModal')">
+  <div id="configModal" class="modal-overlay">
     <div class="modal-box" style="max-width: 480px;">
       <div class="modal-header">
         <span>⚙️ ข้อมูลหลัก (Brands & Scales)</span>
@@ -521,7 +483,7 @@
   </div>
 
   <!-- BANK CONFIG MODAL -->
-  <div id="bankConfigModal" class="modal-overlay" onclick="checkOutsideModalClick(event, 'bankConfigModal')">
+  <div id="bankConfigModal" class="modal-overlay">
     <div class="modal-box" style="max-width: 500px;">
       <div class="modal-header">
         <span>🏦 ตั้งค่าการชำระเงินและผู้จัดส่ง</span>
@@ -548,6 +510,34 @@
 
         <div style="display: flex; gap: 8px; margin-top: 14px;">
           <button type="button" class="btn-action btn-secondary" style="flex: 1;" onclick="closeModal('bankConfigModal')">ปิดหน้าต่าง</button>
+          <button type="submit" class="btn-action" style="flex: 2;">💾 บันทึกการตั้งค่า</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- SETTINGS MODAL (ตั้งค่าชื่อเว็บ โลโก้ และสีของชื่อเว็บ) -->
+  <div id="settingsModal" class="modal-overlay">
+    <div class="modal-box" style="max-width: 480px;">
+      <div class="modal-header">
+        <span>🎨 ตั้งค่าชื่อเว็บ & ธีมสี</span>
+        <button class="modal-close" onclick="closeModal('settingsModal')">✕</button>
+      </div>
+      
+      <form onsubmit="saveSystemSettings(event)">
+        <div class="form-group"><label>ชื่อร้านค้า / ชื่อเว็บ</label><input type="text" id="stgStoreName" class="form-control" required /></div>
+        <div class="form-group">
+          <label>สีของชื่อเว็บ / แบรนด์ (Text / Accent Color)</label>
+          <div style="display:flex; gap:8px; align-items:center;">
+            <input type="color" id="stgThemeColor" value="#111111" style="width:50px; height:38px; border:1px solid var(--border-color); border-radius:var(--radius); cursor:pointer; background:none;" />
+            <span style="font-size:0.75rem; color:var(--text-muted);">เลือกสีสำหรับชื่อแบรนด์หน้าร้าน</span>
+          </div>
+        </div>
+        <div class="form-group"><label>URL โลโก้ร้านค้า (ถ้ามี)</label><input type="url" id="stgLogoUrl" class="form-control" placeholder="https://.../logo.png" /></div>
+        <div class="form-group"><label>ค่าจัดส่งคงที่ (บาท)</label><input type="number" id="stgShippingFee" class="form-control" min="0" required /></div>
+
+        <div style="display: flex; gap: 8px; margin-top: 14px;">
+          <button type="button" class="btn-action btn-secondary" style="flex: 1;" onclick="closeModal('settingsModal')">ปิดหน้าต่าง</button>
           <button type="submit" class="btn-action" style="flex: 2;">💾 บันทึกการตั้งค่า</button>
         </div>
       </form>
@@ -599,7 +589,6 @@
 
     let products = [];
     let members = [];
-    let ordersList = [];
     let tempProductImages = [];
     let tempProductVdo = "";
     let adminFilterBrand = "ALL";
@@ -627,7 +616,6 @@
           if (data.vipCodes) vipCodesList = sortAlphabetically(data.vipCodes);
           if (data.settings) systemSettings = data.settings;
         }
-        applyAdminTheme();
       }).catch(err => console.log("Error loading settings:", err));
 
       db.collection("products").onSnapshot((snapshot) => {
@@ -640,11 +628,6 @@
       db.collection("members").onSnapshot((snapshot) => {
         members = [];
         snapshot.forEach((doc) => members.push(doc.data()));
-      });
-
-      db.collection("orders").onSnapshot((snapshot) => {
-        ordersList = [];
-        snapshot.forEach((doc) => ordersList.push(doc.data()));
       });
 
       auth.onAuthStateChanged((user) => {
@@ -675,19 +658,6 @@
       });
     }
 
-    function applyAdminTheme() {
-      document.getElementById("adminHeaderTitle").innerText = systemSettings.storeName;
-      const logoBox = document.getElementById("adminHeaderLogo");
-      if (systemSettings.logoUrl) {
-        logoBox.innerHTML = `<img src="${systemSettings.logoUrl}" alt="Logo" />`;
-      } else {
-        logoBox.innerHTML = "164";
-      }
-      if (systemSettings.themeColor) {
-        document.documentElement.style.setProperty('--accent', systemSettings.themeColor);
-      }
-    }
-
     function loginAdminWithGoogle() {
       const statusMsg = document.getElementById("adminAuthStatus");
       statusMsg.style.color = "#666";
@@ -704,12 +674,6 @@
     function closeModal(id) { document.getElementById(id).style.display = "none"; }
     function openPasscodeModal() { openModal('passcodeModal'); }
 
-    function checkOutsideModalClick(event, modalId) {
-      if (event.target.id === modalId) {
-        closeModal(modalId);
-      }
-    }
-
     function openManageProductsModal() {
       adminFilterBrand = "ALL";
       adminFilterVip = "ALL";
@@ -723,77 +687,20 @@
       if (members.length === 0) {
         cont.innerHTML = `<div style="text-align:center; padding:20px; color:#777;">ยังไม่มีข้อมูลสมาชิกในระบบ</div>`;
       } else {
-        cont.innerHTML = members.map(m => {
-          const userOrders = ordersList.filter(o => o.customer && o.customer.email && o.customer.email.toLowerCase() === (m.email || "").toLowerCase());
-          
-          let ordersHtml = '';
-          if (userOrders.length > 0) {
-            ordersHtml = userOrders.map(ord => `
-              <div style="background:#fff; border:1px solid #e2e8f0; border-radius:6px; padding:8px; margin-top:4px; font-size:0.75rem;">
-                <div><strong>ยอดชำระ:</strong> ฿${ord.grandTotal || 0} (${ord.shippingName || 'EMS'})</div>
-              </div>
-            `).join('');
-          } else {
-            ordersHtml = `<div style="font-size:0.72rem; color:#888; margin-top:2px;">ยังไม่มีประวัติการสั่งซื้อสินค้า</div>`;
-          }
-
-          return `
-            <div style="background:#fafafa; border:1px solid var(--border-color); padding:12px; border-radius:var(--radius);">
-              <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom: 6px;">
-                <div style="display:flex; align-items:center; gap:10px;">
-                  <img src="${m.photoURL || 'https://via.placeholder.com/35'}" style="width:38px; height:38px; border-radius:50%; object-fit:cover;" />
-                  <div>
-                    <div style="font-weight:bold; font-size:0.85rem;">${m.name}</div>
-                    <div style="font-size:0.72rem; color:var(--text-muted);">${m.email}</div>
-                  </div>
-                </div>
-                <div style="font-size:0.7rem; color:#059669; font-weight:bold; background:var(--accent-vip-bg); padding:3px 8px; border-radius:4px;">สมาชิก Active</div>
-              </div>
-              <div style="border-top:1px dashed #cbd5e1; padding-top:6px; margin-top:6px;">
-                <div style="font-size:0.75rem; font-weight:bold; color:#333;">📦 ประวัติการซื้อสินค้า (${userOrders.length} คำสั่งซื้อ):</div>
-                ${ordersHtml}
+        cont.innerHTML = members.map(m => `
+          <div style="display:flex; align-items:center; justify-content:space-between; background:#fafafa; border:1px solid var(--border-color); padding:10px 12px; border-radius:var(--radius);">
+            <div style="display:flex; align-items:center; gap:10px;">
+              <img src="${m.photoURL || 'https://via.placeholder.com/35'}" style="width:35px; height:35px; border-radius:50%; object-fit:cover;" />
+              <div>
+                <div style="font-weight:bold; font-size:0.85rem;">${m.name}</div>
+                <div style="font-size:0.72rem; color:var(--text-muted);">${m.email}</div>
               </div>
             </div>
-          `;
-        }).join('');
+            <div style="font-size:0.7rem; color:#059669; font-weight:bold; background:var(--accent-vip-bg); padding:3px 8px; border-radius:4px;">สมาชิก Active</div>
+          </div>
+        `).join('');
       }
       openModal('membersModal');
-    }
-
-    function openWebThemeConfigModal() {
-      document.getElementById("cfgStoreName").value = systemSettings.storeName || "164CRAFT";
-      document.getElementById("cfgThemeColor").value = systemSettings.themeColor || "#111111";
-      document.getElementById("cfgThemeColorText").value = systemSettings.themeColor || "#111111";
-      
-      const logoArea = document.getElementById("logoPreviewArea");
-      logoArea.innerHTML = systemSettings.logoUrl ? `<img src="${systemSettings.logoUrl}" style="max-height:50px; border-radius:4px; border:1px solid #ccc;" />` : '<span style="font-size:0.72rem; color:#666;">(ยังไม่ได้อัปโหลดโลโก้)</span>';
-      
-      document.getElementById("cfgThemeColor").oninput = function(e) {
-        document.getElementById("cfgThemeColorText").value = e.target.value;
-      };
-
-      openModal('webThemeConfigModal');
-    }
-
-    function handleLogoUpload(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = (ev) => {
-        systemSettings.logoUrl = ev.target.result;
-        document.getElementById("logoPreviewArea").innerHTML = `<img src="${ev.target.result}" style="max-height:50px; border-radius:4px; border:1px solid #ccc;" />`;
-      };
-      reader.readAsDataURL(file);
-    }
-
-    function saveWebThemeConfig(e) {
-      e.preventDefault();
-      systemSettings.storeName = document.getElementById("cfgStoreName").value.trim();
-      systemSettings.themeColor = document.getElementById("cfgThemeColor").value;
-      saveDataToFirestore();
-      applyAdminTheme();
-      alert("✓ บันทึกการตั้งค่าเว็บไซต์และสีธีมสำเร็จ!");
-      closeModal('webThemeConfigModal');
     }
 
     function renderAdminBrandFilterChips() {
@@ -1383,6 +1290,25 @@
       saveDataToFirestore();
       alert("บันทึกการตั้งค่าสำเร็จ");
       closeModal('bankConfigModal');
+    }
+
+    function openSettingsModal() {
+      document.getElementById("stgStoreName").value = systemSettings.storeName;
+      document.getElementById("stgThemeColor").value = systemSettings.themeColor || "#111111";
+      document.getElementById("stgLogoUrl").value = systemSettings.logoUrl || "";
+      document.getElementById("stgShippingFee").value = systemSettings.shippingFee;
+      openModal('settingsModal');
+    }
+
+    function saveSystemSettings(e) {
+      e.preventDefault();
+      systemSettings.storeName = document.getElementById("stgStoreName").value.trim();
+      systemSettings.themeColor = document.getElementById("stgThemeColor").value;
+      systemSettings.logoUrl = document.getElementById("stgLogoUrl").value.trim();
+      systemSettings.shippingFee = parseFloat(document.getElementById("stgShippingFee").value) || 0;
+      saveDataToFirestore();
+      alert("✓ บันทึกการตั้งค่าธีมสีและชื่อเว็บสำเร็จ!");
+      closeModal('settingsModal');
     }
   </script>
 </body>
