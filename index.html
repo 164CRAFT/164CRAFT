@@ -57,13 +57,15 @@
       .header { padding: 0 32px; height: 70px; }
     }
     .brand-info { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+    
+    /* โลโก้ปรับพื้นหลังและสีข้อความให้เป็นสีเดียวกับธีม (Accent Color) */
     .brand-photo {
-      width: 34px; height: 34px; background: var(--accent); color: #fff;
+      width: 34px; height: 34px; background: var(--accent); color: var(--bg-card);
       border-radius: var(--radius); display: flex; align-items: center; justify-content: center;
       font-size: 0.7rem; font-weight: 800; letter-spacing: 0.5px; flex-shrink: 0; overflow: hidden;
     }
     .brand-photo img { width: 100%; height: 100%; object-fit: cover; }
-    .brand-name { font-size: 0.85rem; font-weight: 850; letter-spacing: 1px; white-space: nowrap; }
+    .brand-name { font-size: 0.85rem; font-weight: 850; letter-spacing: 1px; white-space: nowrap; color: var(--accent); }
     @media(min-width: 480px) {
       .brand-name { font-size: 1rem; }
       .brand-photo { width: 36px; height: 36px; }
@@ -249,11 +251,14 @@
       width: 100%; height: 100%;
     }
     .product-card:hover { border-color: var(--border-dark); transform: translateY(-3px); box-shadow: var(--shadow-hover); }
+    
     .media-preview-container {
       height: auto; aspect-ratio: 1/1; background: radial-gradient(circle at 50% 45%, #fafafa 0 35%, #eef0ed 36% 100%);
       border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center;
       position: relative; overflow: hidden; cursor: pointer; width: 100%;
     }
+    
+    /* สไตล์การแสดงผลรูปภาพและวิดีโอแบบ Hover Play */
     .media-preview-container img, .media-preview-container video {
       width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; padding: 10px; transition: transform 0.3s ease;
     }
@@ -818,10 +823,9 @@
     function applyShopSettings() {
       document.getElementById("siteTitleText").innerText = systemSettings.storeName || "164CRAFT";
       
-      // ดึงโลโก้และสีธีมที่ตั้งค่าจาก Admin มาแสดงผลหน้าแรกทันที
       const logoBox = document.getElementById("siteLogoText");
       if (systemSettings.logoUrl) {
-        logoBox.innerHTML = `<img src="${systemSettings.logoUrl}" style="width:100%; height:100%; object-fit:cover;" />`;
+        logoBox.innerHTML = `<img src="${systemSettings.logoUrl}" alt="Logo" />`;
       } else {
         logoBox.innerHTML = systemSettings.storeName ? systemSettings.storeName.substring(0, 3).toUpperCase() : "164";
       }
@@ -1000,15 +1004,20 @@
         const countBadge = imgCount > 1 ? `<div class="media-count-badge">📷 ${imgCount} ภาพ</div>` : '';
         const isExclusive = p.secretCode ? `<span class="exclusive-badge">EXCLUSIVE</span>` : '';
 
+        // ตั้งค่าแสดงผลภาพปกติ และสลับเล่น VDO เมื่อเอาเมาส์มาวาง (Hover) หากมี VDO
         let mediaHtml = '';
         if (p.vdo) {
-          mediaHtml = `<video src="${p.vdo}" autoplay loop muted playsinline disablepictureinpicture></video><div class="badge" style="left:8px; right:auto;">VDO PLAYING</div>`;
+          mediaHtml = `
+            <img src="${mainImage}" alt="${p.name}" class="prod-img" style="display:block;" />
+            <video src="${p.vdo}" muted loop playsinline class="prod-vdo" style="display:none; width:100%; height:100%; object-fit:contain; padding:10px;"></video>
+            <div class="badge" style="left:8px; right:auto;">VDO</div>
+          `;
         } else {
           mediaHtml = `<img src="${mainImage}" alt="${p.name}" />`;
         }
 
         return `
-          <div class="product-card">
+          <div class="product-card" ${p.vdo ? `onmouseenter="playCardVdo(this)" onmouseleave="stopCardVdo(this)"` : ''}>
             <div class="media-preview-container product-media-clickable" title="คลิกเพื่อดูรายละเอียดสินค้า" onclick="openDetailModal('${p.id}')">
               <span class="badge">${p.brand}</span>
               ${isExclusive}
@@ -1022,6 +1031,28 @@
           </div>
         `;
       }).join('');
+    }
+
+    /* ฟังก์ชันควบคุมการเล่น VDO เฉพาะเมื่อเอาเมาส์มาวาง */
+    function playCardVdo(cardEl) {
+      const img = cardEl.querySelector('.prod-img');
+      const vdo = cardEl.querySelector('.prod-vdo');
+      if (img && vdo) {
+        img.style.display = 'none';
+        vdo.style.display = 'block';
+        vdo.play().catch(err => console.log("VDO autoplay prevented:", err));
+      }
+    }
+
+    function stopCardVdo(cardEl) {
+      const img = cardEl.querySelector('.prod-img');
+      const vdo = cardEl.querySelector('.prod-vdo');
+      if (img && vdo) {
+        vdo.pause();
+        vdo.currentTime = 0;
+        vdo.style.display = 'none';
+        img.style.display = 'block';
+      }
     }
 
     function openDetailModal(productId) {
