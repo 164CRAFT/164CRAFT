@@ -142,7 +142,6 @@
     }
     .filter-counter-text { font-size: 0.62rem; color: var(--text-muted); font-weight: normal; text-transform: none; }
     
-    /* ปรับช่องใส่รหัส VIP ให้พอดีและใช้งานง่าย */
     .secret-code-box { background: #fafaf8; border: 1px solid var(--border-color); border-radius: var(--radius); padding: 10px; }
     .secret-input-wrap { display: flex; flex-direction: column; gap: 6px; width: 100%; }
     .secret-code-box input { 
@@ -161,7 +160,7 @@
     }
     .secret-status-tag.active { display: block; color: #065f46; }
 
-    /* CATEGORIES LIST - ปรับให้สามารถเลื่อนซ้ายขวาได้ลื่นไหลทั้งมือถือและจอคอม */
+    /* CATEGORIES LIST - โทรศัพท์เป็นแนวนอนเลื่อนซ้ายขวา / Window (Desktop) เป็นแนวตั้ง */
     .sidebar-categories-list {
       display: flex; 
       flex-direction: row; 
@@ -191,12 +190,29 @@
       transition: all 0.15s ease;
       display: inline-flex; 
       align-items: center; 
+      justify-content: space-between;
       gap: 6px;
     }
     .sidebar-cat-btn:hover { background: #f0f0ed; border-color: var(--border-dark); }
     .sidebar-cat-btn.active { background: #111; color: #fff; border-color: #111; }
     .cat-count-badge { font-size: 0.6rem; padding: 1px 4px; background: #e2e2dd; color: #111; border-radius: 3px; font-weight: 800; }
     .sidebar-cat-btn.active .cat-count-badge { background: #333; color: #fff; }
+
+    /* เมื่อหน้าจอเป็น Desktop (Window / 992px ขึ้นไป) ให้เปลี่ยนเป็นแนวตั้ง */
+    @media(min-width: 992px) {
+      .sidebar-categories-list {
+        flex-direction: column;
+        overflow-x: visible;
+        overflow-y: auto;
+        max-height: calc(100vh - 250px);
+        white-space: normal;
+        padding-bottom: 0;
+      }
+      .sidebar-cat-btn {
+        width: 100%;
+        white-space: normal;
+      }
+    }
 
     /* PRODUCTS GRID */
     .main-container { 
@@ -392,10 +408,10 @@
 
       <div>
         <div class="sidebar-section-title">
-          <span>🏷️ ตัวกรอง (จำนวนสินค้าที่โชว์)</span>
+          <span>🏷️ ตัวกรองแบรนด์</span>
           <span class="filter-counter-text" id="filterOverviewCount">กำลังโหลด...</span>
         </div>
-        <!-- ช่องคัดกรองเลื่อนซ้ายขวาได้ -->
+        <!-- แถบคัดกรอง: แสดงเป็นแนวตั้งในหน้าจอคอม และสไลด์แนวนอนในมือถือ -->
         <div class="sidebar-categories-list" id="categoriesContainer"></div>
       </div>
     </aside>
