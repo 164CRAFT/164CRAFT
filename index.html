@@ -65,7 +65,7 @@
       .search-box { display: block; }
     }
     .search-box input {
-      width: 180px; height: 38px;
+      width: 170px; height: 38px;
       padding: 8px 12px 8px 32px;
       border: 1px solid var(--border-color);
       background: #fafaf8; border-radius: var(--radius);
@@ -301,8 +301,8 @@
       <div class="search-box">
         <input type="text" id="searchInput" placeholder="ค้นหาสินค้า / SKU..." onkeyup="renderProducts()" />
       </div>
-      
-      <!-- AUTH GOOGLE BUTTON & PROFILE -->
+
+      <!-- GOOGLE AUTH CONTAINER -->
       <div id="authContainer" style="display: flex; align-items: center; gap: 6px;">
         <button id="loginBtn" class="btn-action btn-secondary" onclick="loginWithGoogle()">
           🔑 เข้าสู่ระบบ
@@ -501,13 +501,13 @@
 
   <script>
     const firebaseConfig = {
-      apiKey: "AIzaSyAga6WtuHA-6e-TFrgnHkeVI2HfMMyZ_pc",
-      authDomain: "caft-6b82e.firebaseapp.com",
-      projectId: "caft-6b82e",
-      storageBucket: "caft-6b82e.firebasestorage.app",
-      messagingSenderId: "508354956932",
-      appId: "1:508354956932:web:72b54041d8be550617fcd1",
-      measurementId: "G-WNRFG2QRBF"
+      apiKey: "AIzaSyBqtlTy3dmasVPe1HfssaWrvsfJl1nTINc",
+      authDomain: "craft-2cc07.firebaseapp.com",
+      projectId: "craft-2cc07",
+      storageBucket: "craft-2cc07.firebasestorage.app",
+      messagingSenderId: "371408751439",
+      appId: "1:371408751439:web:fa489eaf0a36c0c6b2533a",
+      measurementId: "G-Z5TTL1VDKR"
     };
 
     firebase.initializeApp(firebaseConfig);
@@ -563,7 +563,7 @@
           userAvatar.src = user.photoURL || "https://via.placeholder.com/32";
           userName.innerText = user.displayName || user.email;
 
-          // เติมชื่อและอีเมลในหน้าสั่งซื้ออัตโนมัติ
+          // เติมข้อมูลลงช่องสั่งซื้อให้อัตโนมัติ
           const shipNameInput = document.getElementById("shipName");
           const shipEmailInput = document.getElementById("shipEmail");
           if (shipNameInput && !shipNameInput.value) shipNameInput.value = user.displayName || "";
@@ -644,7 +644,8 @@
 
     function applyShopSettings() {
       document.getElementById("siteTitleText").innerText = systemSettings.storeName;
-      document.getElementById("footerText").innerText = systemSettings.storeName + " — SCALE MODEL ARCHIVE";
+      const footerText = document.getElementById("footerText");
+      if (footerText) footerText.innerText = systemSettings.storeName + " — SCALE MODEL ARCHIVE";
       document.getElementById("cartShippingDisplay").innerText = `การจัดส่ง: ${systemSettings.shippingName} (฿${systemSettings.shippingFee})`;
       document.getElementById("payBankName").innerText = systemSettings.bankName;
       document.getElementById("payAccountNo").innerText = systemSettings.accountNo;
