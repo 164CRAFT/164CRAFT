@@ -117,7 +117,7 @@
       border-radius: 16px 16px 0 0; padding: 20px 18px; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
       display: flex; flex-direction: column; gap: 14px; position: relative; overflow-y: auto;
     }
-    @media(min-width: 640px) { .modal-box { width: min(95vw, 680px); border-radius: calc(var(--radius) * 1.5); padding: 28px; } }
+    @media(min-width: 640px) { .modal-box { width: min(95vw, 720px); border-radius: calc(var(--radius) * 1.5); padding: 28px; } }
     .modal-header {
       font-size: 1rem; font-weight: 800; padding-bottom: 10px; border-bottom: 1px solid var(--border-color);
       display: flex; align-items: center; justify-content: space-between;
@@ -200,6 +200,39 @@
       }
     }
 
+    /* แถบตัวกรองในหน้าจัดการสินค้า */
+    .admin-filter-bar {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      background: #fafaf8;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 10px 12px;
+      margin-bottom: 10px;
+    }
+    .admin-filter-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .admin-filter-btn {
+      background: #fff;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 4px 10px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .admin-filter-btn:hover { border-color: #111; }
+    .admin-filter-btn.active {
+      background: #111;
+      color: #fff;
+      border-color: #111;
+    }
+
     .footer {
       background: #111; color: #aaa; border-top: 1px solid #111;
       padding: 28px 20px; text-align: center; letter-spacing: 1px; font-size: 0.7rem; text-transform: uppercase; margin-top: auto;
@@ -232,7 +265,7 @@
       <div class="admin-menu-grid">
         <div class="admin-menu-box">
           <div class="admin-menu-title">✏️ จัดการสินค้า & เพิ่มสินค้า</div>
-          <div class="admin-menu-desc">เพิ่ม แก้ไข หรือลบสินค้า พร้อมอัปโหลดรูปภาพหลายรูป วิดีโอ และชุดตัวเลือกโค้ดส่วนลด</div>
+          <div class="admin-menu-desc">ค้นหา กรองสินค้า เพิ่ม แก้ไข หรือลบสินค้า พร้อมชุดตัวเลือกโค้ดส่วนลด</div>
           <button class="btn-action" style="margin-top: auto;" onclick="openManageProductsModal()">จัดการสินค้า</button>
         </div>
 
@@ -316,11 +349,11 @@
     </div>
   </div>
 
-  <!-- MANAGE PRODUCTS MODAL -->
+  <!-- MANAGE PRODUCTS MODAL (มีตัวกรองแบรนด์และสถานะสินค้า) -->
   <div id="manageProductsModal" class="modal-overlay">
-    <div class="modal-box" style="max-width: 650px;">
+    <div class="modal-box" style="max-width: 720px;">
       <div class="modal-header">
-        <span>✏️ จัดการสินค้าทั้งหมด</span>
+        <span>✏️ รายการสินค้าทั้งหมด</span>
         <button class="modal-close" onclick="closeModal('manageProductsModal')">✕</button>
       </div>
       
@@ -330,7 +363,23 @@
         </button>
       </div>
 
-      <div class="form-group" style="margin-top: 4px;">
+      <!-- แถบตัวกรองการแสดงผลสินค้าในหน้าแอดมิน -->
+      <div class="admin-filter-bar">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <span style="font-size:0.75rem; font-weight:800; color:#333;">🏷️ ตัวกรองแบรนด์:</span>
+          <span id="adminFilteredCount" style="font-size:0.72rem; color:var(--text-muted);"></span>
+        </div>
+        <div class="admin-filter-chips" id="adminBrandFilterChips"></div>
+
+        <div style="display:flex; gap:6px; margin-top:4px;">
+          <span style="font-size:0.75rem; font-weight:800; color:#333; line-height:26px;">ประเภท:</span>
+          <button type="button" class="admin-filter-btn active" id="filterVipAllBtn" onclick="setAdminVipFilter('ALL')">ทั้งหมด</button>
+          <button type="button" class="admin-filter-btn" id="filterVipNormalBtn" onclick="setAdminVipFilter('NORMAL')">สินค้าทั่วไป</button>
+          <button type="button" class="admin-filter-btn" id="filterVipOnlyBtn" onclick="setAdminVipFilter('VIP')">เฉพาะ VIP 🔒</button>
+        </div>
+      </div>
+
+      <div class="form-group" style="margin-top: 2px;">
         <input type="text" id="adminSearchInput" class="form-control" placeholder="🔍 ค้นหาด้วยชื่อสินค้า หรือ SKU..." onkeyup="renderAdminProductList()" />
       </div>
 
@@ -402,14 +451,14 @@
           <div id="scalePricesContainer"></div>
         </div>
 
-        <!-- ตัวเลือกสินค้า & ส่วนลด (มีช่องสร้างโค้ดและใส่ราคา) -->
+        <!-- ชุดตัวเลือกสินค้า & ส่วนลด (กดสร้าง - ลบ ตั้งราคา เพิ่มโค้ดได้) -->
         <div style="margin-top:10px;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 6px;">
             <label style="font-size:0.82rem; font-weight:800;">⚙️ ตัวเลือกสินค้า & ส่วนลด</label>
-            <button type="button" class="btn-action btn-secondary" style="height:32px; padding:0 12px; font-size:0.75rem;" onclick="addDynamicOptionRow()">+ เพิ่มตัวเลือก</button>
+            <button type="button" class="btn-action btn-secondary" style="height:32px; padding:0 12px; font-size:0.75rem;" onclick="addDynamicOptionRow()">+ เพิ่มชุดตัวเลือกใหม่</button>
           </div>
           <p style="font-size:0.75rem; color:var(--text-muted); margin-bottom:8px;">
-            กำหนดชื่อตัวเลือก, ราคาเพิ่ม (+฿), โค้ดส่วนลดเฉพาะตัวเลือก และจำนวนเงินส่วนลด (-฿)
+            สามารถกดสร้าง-ลบชุดตัวเลือก ตั้งราคาเพิ่ม (+฿) และกำหนดโค้ดส่วนลดพร้อมจำนวนเงินที่ลด (-฿) ได้อิสระ
           </p>
           <div id="dynamicOptionsList"></div>
         </div>
@@ -580,6 +629,10 @@
     let tempProductImages = [];
     let tempProductVdo = "";
 
+    // ตัวแปรเก็บสถานะตัวกรองในหน้าแอดมิน
+    let adminFilterBrand = "ALL";
+    let adminFilterVip = "ALL";
+
     function sortAlphabetically(arr) {
       return arr.sort((a, b) => a.localeCompare(b, 'th', { sensitivity: 'base' }));
     }
@@ -610,9 +663,11 @@
         }
       }).catch(err => console.log("Error loading settings:", err));
 
-      db.collection("products").get().then((snapshot) => {
+      db.collection("products").onSnapshot((snapshot) => {
         products = [];
         snapshot.forEach((doc) => products.push(doc.data()));
+        renderAdminBrandFilterChips();
+        renderAdminProductList();
       });
 
       if (sessionStorage.getItem("admin_logged_in") === "true") {
@@ -685,39 +740,82 @@
     }
 
     function openManageProductsModal() {
-      db.collection("products").get().then((snapshot) => {
-        products = [];
-        snapshot.forEach((doc) => products.push(doc.data()));
-        renderAdminProductList();
-        openModal('manageProductsModal');
+      adminFilterBrand = "ALL";
+      adminFilterVip = "ALL";
+      renderAdminBrandFilterChips();
+      renderAdminProductList();
+      openModal('manageProductsModal');
+    }
+
+    // สร้างปุ่มตัวกรองแบรนด์ในหน้าจัดการสินค้า
+    function renderAdminBrandFilterChips() {
+      const cont = document.getElementById("adminBrandFilterChips");
+      let html = `<button type="button" class="admin-filter-btn ${adminFilterBrand === 'ALL' ? 'active' : ''}" onclick="setAdminBrandFilter('ALL')">ทั้งหมด (${products.length})</button>`;
+      
+      brands.forEach(b => {
+        const count = products.filter(p => p.brand && p.brand.toUpperCase() === b.toUpperCase()).length;
+        html += `<button type="button" class="admin-filter-btn ${adminFilterBrand === b ? 'active' : ''}" onclick="setAdminBrandFilter('${b}')">${b} (${count})</button>`;
       });
+      cont.innerHTML = html;
+    }
+
+    function setAdminBrandFilter(brand) {
+      adminFilterBrand = brand;
+      renderAdminBrandFilterChips();
+      renderAdminProductList();
+    }
+
+    function setAdminVipFilter(type) {
+      adminFilterVip = type;
+      document.getElementById("filterVipAllBtn").className = `admin-filter-btn ${type === 'ALL' ? 'active' : ''}`;
+      document.getElementById("filterVipNormalBtn").className = `admin-filter-btn ${type === 'NORMAL' ? 'active' : ''}`;
+      document.getElementById("filterVipOnlyBtn").className = `admin-filter-btn ${type === 'VIP' ? 'active' : ''}`;
+      renderAdminProductList();
     }
 
     function renderAdminProductList() {
       const cont = document.getElementById("adminProductList");
       const q = (document.getElementById("adminSearchInput").value || "").trim().toLowerCase();
-      const filtered = products.filter(p => p.name.toLowerCase().includes(q) || p.id.toLowerCase().includes(q));
+      
+      const filtered = products.filter(p => {
+        // กรองตามแบรนด์
+        if (adminFilterBrand !== "ALL" && (!p.brand || p.brand.toUpperCase() !== adminFilterBrand.toUpperCase())) {
+          return false;
+        }
+        // กรองตามสถานะ VIP
+        const hasVip = (p.secretCode && p.secretCode.trim() !== "");
+        if (adminFilterVip === "NORMAL" && hasVip) return false;
+        if (adminFilterVip === "VIP" && !hasVip) return false;
+
+        // กรองตามข้อความค้นหา
+        const matchName = p.name && p.name.toLowerCase().includes(q);
+        const matchId = p.id && p.id.toLowerCase().includes(q);
+        return matchName || matchId;
+      });
+
+      document.getElementById("adminFilteredCount").innerText = `แสดงอยู่ ${filtered.length} จากทั้งหมด ${products.length} ชิ้น`;
 
       if (filtered.length === 0) {
-        cont.innerHTML = `<div style="text-align:center; padding:15px; color:#888;">ไม่พบสินค้า</div>`;
+        cont.innerHTML = `<div style="text-align:center; padding:25px; color:#888; background:#fff; border:1px dashed #ccc; border-radius:8px;">ไม่พบสินค้าที่ตรงกับตัวกรอง</div>`;
         return;
       }
 
       cont.innerHTML = filtered.map(p => {
         const thumb = (p.images && p.images.length > 0) ? p.images[0] : '';
         const secretNotice = p.secretCode ? `<span style="color:var(--accent-vip); font-weight:bold;">[VIP: ${p.secretCode}]</span> ` : '';
+        const optCount = p.options ? p.options.length : 0;
         return `
           <div class="admin-prod-item">
             <div style="display:flex; gap:10px; align-items:center; overflow:hidden;">
-              <img src="${thumb}" style="width:38px; height:38px; object-fit:cover; border-radius:4px; border:1px solid #ddd; flex-shrink:0;" />
+              <img src="${thumb}" style="width:42px; height:42px; object-fit:cover; border-radius:4px; border:1px solid #ddd; flex-shrink:0;" />
               <div style="overflow:hidden;">
-                <div style="font-weight:bold; font-size:0.8rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${p.name}</div>
-                <div style="font-size:0.7rem; color:#666;">SKU: ${p.id} | ${p.brand} | ${secretNotice}</div>
+                <div style="font-weight:bold; font-size:0.82rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${p.name}</div>
+                <div style="font-size:0.72rem; color:#666;">SKU: ${p.id} | ${p.brand} | ${secretNotice} (${optCount} ตัวเลือก)</div>
               </div>
             </div>
             <div style="display:flex; gap:5px; flex-shrink:0;">
-              <button class="btn-action btn-secondary" style="height:30px; padding:0 8px; font-size:0.7rem;" onclick="editProduct('${p.id}')">แก้ไข</button>
-              <button class="btn-action btn-danger" style="height:30px; padding:0 8px; font-size:0.7rem;" onclick="deleteProduct('${p.id}')">ลบ</button>
+              <button class="btn-action btn-secondary" style="height:32px; padding:0 10px; font-size:0.75rem;" onclick="editProduct('${p.id}')">แก้ไข</button>
+              <button class="btn-action btn-danger" style="height:32px; padding:0 10px; font-size:0.75rem;" onclick="deleteProduct('${p.id}')">ลบ</button>
             </div>
           </div>
         `;
@@ -741,7 +839,7 @@
       renderVipSelectOptions("");
       renderAdminScalesInputs();
       document.getElementById("dynamicOptionsList").innerHTML = "";
-      addDynamicOptionRow();
+      addDynamicOptionRow(); // สร้างตัวเลือกแถวแรกเริ่มต้น
 
       openModal('addProductModal');
     }
@@ -833,7 +931,7 @@
       reader.readAsDataURL(file);
     }
 
-    // ฟังก์ชันเพิ่มชุดตัวเลือกสินค้า: มีชื่อ, ราคาเพิ่ม, โค้ดส่วนลด, ส่วนลด
+    // ฟังก์ชันเพิ่มชุดตัวเลือก: กดสร้าง - ลบ ตั้งราคา และเพิ่มโค้ดส่วนลดได้
     function addDynamicOptionRow(opt = { name: '', extraPrice: 0, vipCode: '', vipDiscount: 0 }) {
       const cont = document.getElementById("dynamicOptionsList");
       const row = document.createElement("div");
@@ -841,19 +939,19 @@
       row.innerHTML = `
         <div class="opt-grid-inputs">
           <div style="display:flex; flex-direction:column; gap:2px;">
-            <label style="font-size:0.7rem; color:#555; font-weight:bold;">ชื่อตัวเลือก</label>
+            <label style="font-size:0.7rem; color:#444; font-weight:bold;">ชื่อตัวเลือก</label>
             <input type="text" class="form-control opt-name" placeholder="เช่น ล้อ TE37" value="${opt.name || ''}" required style="min-height:36px;" />
           </div>
           <div style="display:flex; flex-direction:column; gap:2px;">
-            <label style="font-size:0.7rem; color:#555; font-weight:bold;">ราคาเพิ่ม (+฿)</label>
+            <label style="font-size:0.7rem; color:#444; font-weight:bold;">ราคาเพิ่ม (+฿)</label>
             <input type="number" class="form-control opt-extra" placeholder="0" value="${opt.extraPrice !== undefined ? opt.extraPrice : 0}" style="min-height:36px;" />
           </div>
           <div style="display:flex; flex-direction:column; gap:2px;">
-            <label style="font-size:0.7rem; color:var(--accent-vip); font-weight:bold;">🎟️ โค้ดลด</label>
+            <label style="font-size:0.7rem; color:var(--accent-vip); font-weight:bold;">🎟️ โค้ดส่วนลด</label>
             <input type="text" class="form-control opt-code" placeholder="เช่น WHEEL10" value="${opt.vipCode || ''}" style="text-transform:uppercase; min-height:36px;" />
           </div>
           <div style="display:flex; flex-direction:column; gap:2px;">
-            <label style="font-size:0.7rem; color:var(--danger); font-weight:bold;">ลดเงิน (-฿)</label>
+            <label style="font-size:0.7rem; color:var(--danger); font-weight:bold;">ส่วนลดเงิน (-฿)</label>
             <input type="number" class="form-control opt-discount" placeholder="0" value="${opt.vipDiscount !== undefined ? opt.vipDiscount : 0}" style="min-height:36px;" />
           </div>
           <button type="button" class="btn-action btn-danger" style="height:36px; padding:0 10px; margin-top:auto;" onclick="this.closest('.opt-card-row').remove()" title="ลบตัวเลือกนี้">✕ ลบ</button>
@@ -955,7 +1053,6 @@
       if (!confirm(`ต้องการลบ SKU: ${productId} จาก Firebase หรือไม่?`)) return;
       db.collection("products").doc(productId).delete().then(() => {
         alert("ลบสินค้าสำเร็จ");
-        openManageProductsModal();
       }).catch((err) => alert("เกิดข้อผิดพลาดในการลบ"));
     }
 
