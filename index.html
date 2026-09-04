@@ -38,7 +38,6 @@
       -webkit-text-size-adjust: 100%;
     }
 
-    /* HEADER */
     .header {
       background: rgba(255, 255, 255, 0.95);
       border-bottom: 1px solid var(--border-color);
@@ -58,7 +57,6 @@
     }
     .brand-info { display: flex; align-items: center; gap: 8px; cursor: pointer; }
     
-    /* โลโก้แบรนด์ (แสดงรูปโลโก้จาก Admin หากมี) */
     .brand-photo {
       width: 34px; height: 34px; background: transparent; color: var(--accent);
       border-radius: var(--radius); display: flex; align-items: center; justify-content: center;
@@ -73,7 +71,6 @@
 
     .header-actions { display: flex; gap: 8px; align-items: center; }
 
-    /* HEADER VIP PASS BOX */
     .header-vip-box {
       display: none; background: #fafafa; border: 1px solid var(--border-color); border-radius: var(--radius);
       padding: 3px 8px; align-items: center; gap: 6px; box-shadow: var(--shadow-soft);
@@ -104,7 +101,6 @@
     .btn-secondary { background: #fff; color: var(--text-main); border-color: var(--border-color); box-shadow: none; }
     .btn-secondary:hover { background: #f4f4f0; border-color: var(--border-dark); }
     
-    /* ICON PROFILE BUTTON */
     .profile-icon-btn {
       width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--border-dark);
       background: #eee; cursor: pointer; overflow: hidden; display: flex; align-items: center; justify-content: center;
@@ -113,7 +109,6 @@
     .profile-icon-btn:hover { transform: scale(1.05); }
     .profile-icon-btn img { width: 100%; height: 100%; object-fit: cover; }
 
-    /* FLOATING ACCOUNT MENU */
     .account-dropdown-menu {
       position: absolute; top: 65px; right: 12px; width: 240px; background: #fff;
       border: 1px solid var(--border-color); border-radius: 12px; box-shadow: var(--shadow-pop);
@@ -148,14 +143,22 @@
       transform: translateY(-52%); font-size: 1.2rem; color: #888; z-index: 2;
     }
 
-    /* STORE LAYOUT */
+    /* 🆕 แถบปุ่มเลือกคัดแยกโหมดสินค้า (พร้อมส่ง vs พรีออเดอร์) */
+    .sale-mode-switch-bar {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; background: #fff; padding: 6px; border: 1px solid var(--border-color); border-radius: var(--radius); box-shadow: var(--shadow-soft);
+    }
+    .sale-mode-btn {
+      padding: 8px 10px; font-size: 0.75rem; font-weight: 800; border-radius: 6px; border: 1px solid transparent; background: transparent; cursor: pointer; text-align: center; transition: all 0.2s; color: #555;
+    }
+    .sale-mode-btn.active { background: #111; color: #fff; border-color: #111; }
+    .sale-mode-btn:hover:not(.active) { background: #f1f1ee; color: #111; }
+
     .store-layout {
       display: grid; grid-template-columns: 1fr;
       max-width: 1500px; width: 100%; margin: 0 auto; flex: 1; align-items: start;
     }
     @media(min-width: 992px) { .store-layout { grid-template-columns: 260px 1fr; } }
 
-    /* SIDEBAR */
     .sidebar-container {
       background: transparent;
       padding: 14px; display: flex; flex-direction: column; gap: 12px; width: 100%;
@@ -175,7 +178,6 @@
     }
     .filter-counter-text { font-size: 0.6rem; color: var(--text-muted); font-weight: normal; text-transform: none; }
     
-    /* SIDEBAR SEARCH BOX */
     .sidebar-search-box {
       background: #fff; border: 1px solid var(--border-color); border-radius: var(--radius); padding: 10px;
       box-shadow: var(--shadow-soft);
@@ -192,14 +194,12 @@
       transform: translateY(-52%); font-size: 1rem; color: #888; z-index: 2;
     }
 
-    /* VIP TAG NOTIFICATION */
     .secret-status-tag {
       font-size: 0.68rem; margin-top: 4px; line-height: 1.3; display: none;
       padding: 4px 8px; background: var(--accent-vip-bg); border: 1px solid #6ee7b7; border-radius: 4px; color: #065f46;
     }
     .secret-status-tag.active { display: block; }
 
-    /* BRAND DRAWER */
     .brand-drawer-container { position: relative; display: inline-block; width: 100%; }
     .brand-drawer-btn {
       width: 100%; background: #fff; border: 1px solid var(--border-dark); border-radius: var(--radius);
@@ -213,13 +213,8 @@
       position: absolute; top: 100%; left: 0; width: 100%; background: #fff;
       border: 1px solid var(--border-color); border-radius: 8px; box-shadow: var(--shadow-pop);
       display: none; flex-direction: column; z-index: 500; overflow: hidden; margin-top: 4px;
-      max-height: 220px;
-      overflow-y: auto;
-      scrollbar-width: thin;
+      max-height: 220px; overflow-y: auto; scrollbar-width: thin;
     }
-    .brand-drawer-dropdown::-webkit-scrollbar { width: 5px; }
-    .brand-drawer-dropdown::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
-
     .brand-drawer-dropdown.show { display: flex; }
 
     .brand-drawer-item {
@@ -230,7 +225,6 @@
     .brand-drawer-item:hover { background: #f4f4f1; }
     .brand-drawer-item.active { background: #111; color: #fff; }
 
-    /* PRODUCTS GRID */
     .main-container { 
       width: 100%; padding: 14px 12px 48px 12px; display: flex; flex-direction: column; align-items: flex-start; 
     }
@@ -271,6 +265,12 @@
       font-size: .52rem; letter-spacing: .08em; text-transform: uppercase; font-weight: 850; z-index: 2; border-radius: 4px;
       box-shadow: 0 2px 4px rgba(0,0,0,0.15);
     }
+    .stock-badge {
+      position: absolute; bottom: 6px; left: 6px; padding: 2px 6px; font-size: 0.55rem; font-weight: 800; border-radius: 4px; z-index: 2;
+    }
+    .stock-badge.ready { background: #ecfdf5; color: #047857; border: 1px solid #10b981; }
+    .stock-badge.preorder { background: #fff7ed; color: #c2410c; border: 1px solid #f97316; }
+
     .media-count-badge {
       position: absolute; bottom: 6px; right: 6px; background: rgba(0,0,0,0.75); color: #fff;
       padding: 2px 5px; font-size: 0.58rem; font-weight: bold; border-radius: 4px; z-index: 2; backdrop-filter: blur(4px);
@@ -288,7 +288,6 @@
     }
     @media(min-width: 640px) { .product-card > .btn-action { width: calc(100% - 24px); margin: 0 12px 12px; min-height: 38px; font-size: 0.78rem; } }
 
-    /* MODAL */
     .modal-overlay {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       background: rgba(10, 10, 10, 0.75); backdrop-filter: blur(6px);
@@ -369,13 +368,11 @@
     </div>
     <div class="header-actions" style="position: relative;">
       
-      <!-- HEADER VIP PASS BOX -->
       <div class="header-vip-box">
         <input type="password" id="headerVipInput" class="header-vip-input" placeholder="🔒 กรอกรหัส VIP" autocomplete="off" />
         <button type="button" class="btn-action" style="height:32px; padding:0 10px; font-size:0.72rem; background:#111; color:#fff; border:none;" onclick="applyHeaderVipCode()">ปลดล็อก</button>
       </div>
 
-      <!-- GOOGLE AUTH CONTAINER -->
       <div id="authContainer" style="display: flex; align-items: center; gap: 6px;">
         <button id="loginBtn" class="btn-action btn-secondary" onclick="loginWithGoogle()">
           🔑 เข้าสู่ระบบ
@@ -385,7 +382,6 @@
             <img id="userAvatar" src="" alt="User" />
           </div>
 
-          <!-- FLOATING MENU -->
           <div id="accountDropdownMenu" class="account-dropdown-menu">
             <div class="dropdown-header-info">
               <div class="dropdown-user-name" id="dropdownUserName">-</div>
@@ -423,7 +419,14 @@
   <div class="store-layout">
     <aside class="sidebar-container">
       
-      <!-- ช่องค้นหาหลักใน Sidebar สำหรับหน้าจอคอมพิวเตอร์ -->
+      <!-- 🆕 ปุ่มสลับเลือกโหมดสินค้า (พร้อมส่ง / พรีออเดอร์) -->
+      <div>
+        <div class="sale-mode-switch-bar">
+          <button type="button" class="sale-mode-btn active" id="modeReadyBtn" onclick="switchSaleMode('READY')">📦 พร้อมส่ง</button>
+          <button type="button" class="sale-mode-btn" id="modePreorderBtn" onclick="switchSaleMode('PREORDER')">⏳ พรีออเดอร์</button>
+        </div>
+      </div>
+
       <div>
         <div class="sidebar-search-box">
           <div class="sidebar-search-wrap">
@@ -432,16 +435,15 @@
         </div>
       </div>
 
-      <!-- ตัวคัดกรอง -->
       <div>
         <div class="sidebar-section-title-row">
-          <span>🏷️ ตัวคัดกรอง</span>
+          <span>🏷️ ตัวคัดกรองแบรนด์</span>
           <span class="filter-counter-text" id="filterOverviewCount">กำลังโหลด...</span>
         </div>
         <div class="brand-drawer-container" id="brandDrawerContainer">
           <button type="button" class="brand-drawer-btn" onclick="toggleBrandDrawer(event)">
             <span id="currentBrandName">ALL MODELS</span>
-            <span id="currentBrandCount">(4)</span>
+            <span id="currentBrandCount">(0)</span>
           </button>
           <div class="brand-drawer-dropdown" id="brandDrawerDropdown"></div>
         </div>
@@ -497,7 +499,7 @@
             <div class="compact-spec-item"><span class="compact-spec-label">Brand</span><span class="compact-spec-val" id="detailBrand">-</span></div>
             <div class="compact-spec-item"><span class="compact-spec-label">Base Price</span><span class="compact-spec-val" id="detailBasePrice">-</span></div>
             <div class="compact-spec-item"><span class="compact-spec-label">Scale List</span><span class="compact-spec-val" id="detailScales">-</span></div>
-            <div class="compact-spec-item"><span class="compact-spec-label">Media</span><span class="compact-spec-val" id="detailMediaCount">-</span></div>
+            <div class="compact-spec-item"><span class="compact-spec-label">Stock Status</span><span class="compact-spec-val" id="detailStockStatus" style="color:#059669;">-</span></div>
             <div class="compact-spec-item"><span class="compact-spec-label">Options</span><span class="compact-spec-val" id="detailOptionCount">-</span></div>
           </div>
 
@@ -664,6 +666,7 @@
     let products = [];
 
     let activeCategory = "ALL";
+    let activeSaleMode = "READY"; // 🆕 ค่าเริ่มต้นเป็นโหมดสินค้าพร้อมส่ง
     let activeSecretCode = "";
     let cart = [];
     let currentSelectedProduct = null;
@@ -844,6 +847,16 @@
       }
     }
 
+    // 🆕 ฟังก์ชันสลับโหมดการแสดงผลสินค้า (READY vs PREORDER)
+    function switchSaleMode(mode) {
+      activeSaleMode = mode;
+      document.getElementById("modeReadyBtn").className = `sale-mode-btn ${mode === 'READY' ? 'active' : ''}`;
+      document.getElementById("modePreorderBtn").className = `sale-mode-btn ${mode === 'PREORDER' ? 'active' : ''}`;
+      activeCategory = "ALL"; // รีเซ็ตหมวดหมู่แบรนด์เมื่อสลับโหมด
+      renderCategories();
+      renderProducts();
+    }
+
     function syncSearchAndRender(el) {
       document.getElementById("mobileSearchInput").value = el.value;
       document.getElementById("sidebarSearchInput").value = el.value;
@@ -891,6 +904,9 @@
 
     function getProductCountByBrand(brand = "ALL") {
       return products.filter(p => {
+        const pSaleType = p.saleType || "READY";
+        if (pSaleType !== activeSaleMode) return false;
+
         const prodSecret = (p.secretCode || "").trim().toUpperCase();
         if (activeSecretCode) {
           const isGeneral = (prodSecret === "");
@@ -910,6 +926,9 @@
       const labelCount = document.getElementById("currentBrandCount");
 
       const currentFilteredCount = products.filter(p => {
+        const pSaleType = p.saleType || "READY";
+        if (pSaleType !== activeSaleMode) return false;
+
         const prodSecret = (p.secretCode || "").trim().toUpperCase();
         if (activeSecretCode) {
           const isGeneral = (prodSecret === "");
@@ -964,6 +983,9 @@
       const overviewCounter = document.getElementById("filterOverviewCount");
 
       const filtered = products.filter(p => {
+        const pSaleType = p.saleType || "READY";
+        if (pSaleType !== activeSaleMode) return false;
+
         const prodSecret = (p.secretCode || "").trim().toUpperCase();
         if (activeSecretCode) {
           const isGeneral = (prodSecret === "");
@@ -989,7 +1011,7 @@
         grid.innerHTML = `
           <div style="grid-column: 1/-1; text-align:center; padding:50px 20px; color:#888; background:#fff; border:1px dashed #ccc; border-radius:12px; width: 100%;">
             <div style="font-size:1.6rem; margin-bottom:8px;">📦</div>
-            <div style="font-weight:bold; font-size:0.95rem; color:#111;">ไม่พบสินค้าที่ตรงกับเงื่อนไข</div>
+            <div style="font-weight:bold; font-size:0.95rem; color:#111;">ไม่พบสินค้าในหมวด ${activeSaleMode === 'READY' ? 'พร้อมส่ง' : 'พรีออเดอร์'} ที่ตรงกับเงื่อนไข</div>
           </div>
         `;
         return;
@@ -1000,6 +1022,11 @@
         const imgCount = p.images ? p.images.length : 0;
         const countBadge = imgCount > 1 ? `<div class="media-count-badge">📷 ${imgCount} ภาพ</div>` : '';
         const isExclusive = p.secretCode ? `<span class="exclusive-badge">EXCLUSIVE</span>` : '';
+        
+        const pSaleType = p.saleType || "READY";
+        const stockBadgeHtml = (pSaleType === "PREORDER")
+          ? `<div class="stock-badge preorder">⏳ พรีออเดอร์</div>`
+          : `<div class="stock-badge ready">📦 พร้อมส่ง (${p.stockQty !== undefined ? p.stockQty : 10})</div>`;
 
         let mediaHtml = '';
         if (p.vdo) {
@@ -1018,6 +1045,7 @@
               <span class="badge">${p.brand}</span>
               ${isExclusive}
               ${mediaHtml}
+              ${stockBadgeHtml}
               ${countBadge}
             </div>
             <div class="product-code">SKU: ${p.id}</div>
@@ -1064,6 +1092,16 @@
       document.getElementById("detailScales").innerText = (prod.scales || []).join(", ");
       document.getElementById("detailBasePrice").innerText = "฿" + prod.basePrice;
       
+      const pSaleType = prod.saleType || "READY";
+      const stockStatusEl = document.getElementById("detailStockStatus");
+      if (pSaleType === "PREORDER") {
+        stockStatusEl.style.color = "#c2410c";
+        stockStatusEl.innerText = `⏳ พรีออเดอร์ (${prod.preorderLeadTime || 'รอผลิต'})`;
+      } else {
+        stockStatusEl.style.color = "#059669";
+        stockStatusEl.innerText = `📦 พร้อมส่ง (เหลือ ${prod.stockQty !== undefined ? prod.stockQty : 10} ชิ้น)`;
+      }
+
       const allMedia = [];
       if (prod.vdo) allMedia.push({ type: 'video', src: prod.vdo, label: 'วิดีโอ' });
       if (prod.images) prod.images.forEach((img, i) => allMedia.push({ type: 'image', src: img, label: `รูป ${i+1}` }));
@@ -1177,8 +1215,23 @@
       calculateModalPrice();
     }
 
+    // 🆕 ตรวจสอบและเพิ่มสินค้าลงตะกร้า (ห้ามซื้อสินค้าพร้อมส่งและพรีออเดอร์ปะปนกัน)
     function addToCartFromModal() {
       if (!currentSelectedProduct) return;
+      
+      const prodSaleType = currentSelectedProduct.saleType || "READY";
+
+      // เช็กว่ามีสินค้าประเภทอื่นค้างอยู่ในตะกร้าหรือไม่
+      if (cart.length > 0) {
+        const existingCartSaleType = cart[0].product.saleType || "READY";
+        if (existingCartSaleType !== prodSaleType) {
+          const currentTypeName = existingCartSaleType === 'READY' ? 'สินค้าพร้อมส่ง' : 'สินค้าพรีออเดอร์';
+          const newTypeName = prodSaleType === 'READY' ? 'สินค้าพร้อมส่ง' : 'สินค้าพรีออเดอร์';
+          alert(`⚠️ ไม่สามารถสั่งซื้อสินค้าทั้ง 2 ระบบพร้อมกันได้!\n\nในตะกร้าของคุณมี "${currentTypeName}" อยู่ กรุณาเคลียร์ตะกร้าก่อนหากต้องการสั่งซื้อ "${newTypeName}"`);
+          return;
+        }
+      }
+
       const scale = document.getElementById("detailScaleSelect").value;
       const optIdx = parseInt(document.getElementById("detailOptionSelect").value) || 0;
       const selectedOpt = (currentSelectedProduct.options && currentSelectedProduct.options[optIdx]) ? currentSelectedProduct.options[optIdx] : { name: 'Standard', extraPrice: 0 };
@@ -1221,7 +1274,13 @@
       }
 
       let subtotal = 0;
-      list.innerHTML = cart.map((item, idx) => {
+      const cartType = (cart[0].product.saleType || "READY") === "READY" ? "📦 พร้อมส่ง" : "⏳ พรีออเดอร์";
+
+      list.innerHTML = `
+        <div style="font-size:0.72rem; font-weight:bold; color:#059669; background:#ecfdf5; padding:4px 8px; border-radius:4px; margin-bottom:8px; text-align:center;">
+          ประเภทคำสั่งซื้อในตะกร้าปัจจุบัน: ${cartType}
+        </div>
+      ` + cart.map((item, idx) => {
         subtotal += (item.price * item.qty);
         const thumb = (item.product.images && item.product.images.length > 0) ? item.product.images[0] : '';
         return `
