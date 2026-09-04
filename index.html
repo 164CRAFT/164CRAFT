@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no" />
   <title>164CRAFT - Scale Model Store</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -19,7 +19,7 @@
       --accent-vip-bg: #ecfdf5;
       --danger: #dc2626;
       --radius: 10px;
-      --shadow-soft: 0 4px 20px -2px rgba(0, 0, 0, 0.04);
+      --shadow-soft: 0 4px 20px -2px rgba(0, 0, 0, 0.04), 0 2px 6px -2px rgba(0, 0, 0, 0.02);
       --shadow-hover: 0 12px 30px -4px rgba(0, 0, 0, 0.08);
       --shadow-pop: 0 10px 25px -5px rgba(0, 0, 0, 0.15);
     }
@@ -35,6 +35,7 @@
       width: 100%;
       overflow-x: hidden;
       -webkit-font-smoothing: antialiased;
+      -webkit-text-size-adjust: 100%;
     }
 
     /* HEADER */
@@ -49,7 +50,7 @@
       position: sticky;
       top: 0;
       z-index: 100;
-      backdrop-filter: blur(8px);
+      backdrop-filter: blur(12px);
       width: 100%;
     }
     @media(min-width: 768px) {
@@ -57,12 +58,11 @@
     }
     .brand-info { display: flex; align-items: center; gap: 8px; cursor: pointer; }
     .brand-photo {
-      width: 34px; height: 34px; background: transparent; color: var(--accent);
+      width: 34px; height: 34px; background: var(--accent); color: #fff;
       border-radius: var(--radius); display: flex; align-items: center; justify-content: center;
-      font-size: 0.7rem; font-weight: 800; flex-shrink: 0; overflow: hidden;
+      font-size: 0.7rem; font-weight: 800; letter-spacing: 0.5px; flex-shrink: 0;
     }
-    .brand-photo img { width: 100%; height: 100%; object-fit: cover; }
-    .brand-name { font-size: 0.85rem; font-weight: 850; letter-spacing: 1px; white-space: nowrap; color: var(--accent); }
+    .brand-name { font-size: 0.85rem; font-weight: 850; letter-spacing: 1px; white-space: nowrap; }
     @media(min-width: 480px) {
       .brand-name { font-size: 1rem; }
       .brand-photo { width: 36px; height: 36px; }
@@ -70,29 +70,33 @@
 
     .header-actions { display: flex; gap: 8px; align-items: center; }
 
-    /* HEADER VIP PASS BOX */
-    .header-vip-box {
-      display: none; background: #fafafa; border: 1px solid var(--border-color); border-radius: var(--radius);
-      padding: 3px 8px; align-items: center; gap: 6px; box-shadow: var(--shadow-soft);
+    .search-box { position: relative; display: none; }
+    @media(min-width: 640px) {
+      .search-box { display: block; }
     }
-    @media(min-width: 850px) {
-      .header-vip-box { display: flex; }
+    .search-box input {
+      width: 170px; height: 38px;
+      padding: 8px 12px 8px 34px;
+      border: 1px solid var(--border-color);
+      background: #fafafa; border-radius: var(--radius);
+      font-size: 0.85rem; outline: none; transition: all 0.2s;
     }
-    .header-vip-input {
-      background: #fff; border: 1px solid var(--border-color);
-      border-radius: 6px; color: var(--text-main); height: 32px; width: 135px; padding: 0 8px;
-      font-size: 0.75rem; font-weight: 800; text-transform: uppercase; outline: none;
+    .search-box input:focus { background: #fff; border-color: var(--border-dark); box-shadow: 0 0 0 3px rgba(0,0,0,0.04); }
+    .search-box:before {
+      content: "⌕";
+      position: absolute; left: 12px; top: 50%;
+      transform: translateY(-52%);
+      font-size: 1.1rem; color: #888; z-index: 2;
     }
-    .header-vip-input:focus { border-color: var(--border-dark); }
-    .header-vip-input::placeholder { color: #888; font-weight: normal; text-transform: none; }
 
     .btn-action {
       height: 36px; border-radius: var(--radius);
       border: 1px solid var(--border-dark); padding: 0 10px; font-size: 0.75rem;
       font-weight: 750; background: var(--accent); color: #fff;
-      cursor: pointer; transition: background 0.15s ease;
+      cursor: pointer; transition: all 0.2s ease;
       display: inline-flex; align-items: center; justify-content: center; gap: 4px;
       white-space: nowrap;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     }
     @media(min-width: 640px) {
       .btn-action { height: 38px; padding: 0 12px; font-size: 0.78rem; gap: 6px; }
@@ -101,17 +105,24 @@
     .btn-secondary { background: #fff; color: var(--text-main); border-color: var(--border-color); box-shadow: none; }
     .btn-secondary:hover { background: #f4f4f0; border-color: var(--border-dark); }
     
+    /* ICON PROFILE BUTTON */
     .profile-icon-btn {
       width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--border-dark);
       background: #eee; cursor: pointer; overflow: hidden; display: flex; align-items: center; justify-content: center;
+      transition: transform 0.2s;
     }
+    .profile-icon-btn:hover { transform: scale(1.05); }
     .profile-icon-btn img { width: 100%; height: 100%; object-fit: cover; }
 
+    /* FLOATING ACCOUNT MENU (POPUP) */
     .account-dropdown-menu {
       position: absolute; top: 65px; right: 12px; width: 240px; background: #fff;
       border: 1px solid var(--border-color); border-radius: 12px; box-shadow: var(--shadow-pop);
       display: none; flex-direction: column; z-index: 1000; overflow: hidden;
+      animation: fadeInDropdown 0.15s ease-out;
     }
+    @keyframes fadeInDropdown { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+    
     .dropdown-header-info { padding: 12px 14px; background: #fafafa; border-bottom: 1px solid var(--border-color); }
     .dropdown-user-name { font-weight: 850; font-size: 0.85rem; color: #111; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .dropdown-user-email { font-size: 0.7rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -119,18 +130,19 @@
     .dropdown-menu-item {
       padding: 11px 14px; font-size: 0.78rem; font-weight: 750; color: #111;
       display: flex; align-items: center; gap: 8px; cursor: pointer; border-bottom: 1px solid #f0f0ed;
-      background: #fff; border-left: 3px solid transparent; text-decoration: none;
+      background: #fff; transition: background 0.15s; border-left: 3px solid transparent; text-decoration: none;
     }
     .dropdown-menu-item:hover { background: #f4f4f1; border-left-color: #111; }
     .dropdown-menu-item.danger { color: var(--danger); }
     .dropdown-menu-item.danger:hover { background: #fef2f2; border-left-color: var(--danger); }
 
-    .mobile-search-bar { padding: 12px 14px 0 14px; display: block; width: 100%; }
+    .mobile-search-bar { padding: 12px 14px 0 14px; background: transparent; display: block; width: 100%; }
     @media(min-width: 640px) { .mobile-search-bar { display: none; } }
     .mobile-search-bar input {
       width: 100%; height: 42px; padding: 8px 12px 8px 38px;
       border: 1px solid var(--border-color); background: #fff;
-      border-radius: var(--radius); font-size: 16px; outline: none; box-shadow: var(--shadow-soft);
+      border-radius: var(--radius); font-size: 16px; outline: none;
+      box-shadow: var(--shadow-soft);
     }
     .mobile-search-bar-wrap { position: relative; width: 100%; }
     .mobile-search-bar-wrap:before {
@@ -143,197 +155,205 @@
       display: grid; grid-template-columns: 1fr;
       max-width: 1500px; width: 100%; margin: 0 auto; flex: 1; align-items: start;
     }
-    @media(min-width: 992px) { .store-layout { grid-template-columns: 260px 1fr; } }
+    @media(min-width: 992px) { .store-layout { grid-template-columns: 280px 1fr; } }
 
+    /* SIDEBAR */
     .sidebar-container {
-      padding: 14px; display: flex; flex-direction: column; gap: 12px; width: 100%;
+      background: transparent;
+      padding: 14px; display: flex; flex-direction: column; gap: 14px; width: 100%;
     }
     @media(min-width: 992px) {
       .sidebar-container {
         border-right: 1px solid var(--border-color);
-        padding: 24px 16px; position: sticky; top: 70px; height: calc(100vh - 70px); overflow-y: auto;
+        padding: 32px 20px; position: sticky; top: 70px; height: calc(100vh - 70px); overflow-y: auto;
         background: #fff;
       }
     }
-    
-    .sidebar-section-title-row {
-      font-size: 0.68rem; font-weight: 850; letter-spacing: 0.08em; text-transform: uppercase;
-      color: #111; border-bottom: 2px solid var(--border-dark); padding-bottom: 4px;
-      margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;
+    .sidebar-section-title {
+      font-size: 0.72rem; font-weight: 850; letter-spacing: 0.08em; text-transform: uppercase;
+      color: #111; border-bottom: 2px solid var(--border-dark); padding-bottom: 6px;
+      margin-bottom: 10px; display: flex; flex-direction: column; gap: 3px;
     }
-    .filter-counter-text { font-size: 0.6rem; color: var(--text-muted); font-weight: normal; text-transform: none; }
+    .filter-counter-text { font-size: 0.65rem; color: var(--text-muted); font-weight: normal; text-transform: none; }
     
-    .sidebar-search-box {
-      background: #fff; border: 1px solid var(--border-color); border-radius: var(--radius); padding: 10px;
+    .secret-code-box { 
+      background: #fff; border: 1px solid var(--border-color); border-radius: var(--radius); padding: 12px;
       box-shadow: var(--shadow-soft);
     }
-    .sidebar-search-wrap { position: relative; width: 100%; }
-    .sidebar-search-wrap input {
-      width: 100%; height: 38px; padding: 6px 10px 6px 32px;
-      border: 1px solid var(--border-color); background: #fafafa;
-      border-radius: 6px; font-size: 0.82rem; outline: none;
+    .secret-input-wrap { display: flex; flex-direction: column; gap: 8px; width: 100%; }
+    .secret-code-box input { 
+      text-transform: uppercase; 
+      font-weight: 800; 
+      letter-spacing: 1.5px; 
+      font-size: 0.88rem; 
+      background: #fafafa; 
+      height: 40px;
+      padding: 6px 12px;
     }
-    .sidebar-search-wrap input:focus { background: #fff; border-color: var(--border-dark); }
-    .sidebar-search-wrap:before {
-      content: "⌕"; position: absolute; left: 10px; top: 50%;
-      transform: translateY(-52%); font-size: 1rem; color: #888; z-index: 2;
-    }
-
     .secret-status-tag {
-      font-size: 0.68rem; margin-top: 4px; line-height: 1.3; display: none;
-      padding: 4px 8px; background: var(--accent-vip-bg); border: 1px solid #6ee7b7; border-radius: 4px; color: #065f46;
+      font-size: 0.7rem; margin-top: 8px; line-height: 1.4; display: none;
+      padding: 8px 10px; background: var(--accent-vip-bg); border: 1px solid #6ee7b7; border-radius: var(--radius);
     }
-    .secret-status-tag.active { display: block; }
+    .secret-status-tag.active { display: block; color: #065f46; }
 
-    /* BRAND DRAWER */
-    .brand-drawer-container { position: relative; display: inline-block; width: 100%; }
-    .brand-drawer-btn {
-      width: 100%; background: #fff; border: 1px solid var(--border-dark); border-radius: var(--radius);
-      padding: 9px 12px; font-size: 0.78rem; font-weight: 800; text-transform: uppercase;
-      cursor: pointer; display: flex; justify-content: space-between; align-items: center;
+    /* CATEGORIES LIST */
+    .sidebar-categories-list {
+      display: flex; flex-direction: row; overflow-x: auto; gap: 8px; padding-bottom: 8px; scrollbar-width: thin;
+      -webkit-overflow-scrolling: touch; width: 100%; white-space: nowrap;
+    }
+    .sidebar-categories-list::-webkit-scrollbar { height: 4px; }
+    .sidebar-categories-list::-webkit-scrollbar-thumb { background: #d1d1cc; border-radius: 2px; }
+
+    .sidebar-cat-btn {
+      flex: 0 0 auto; white-space: nowrap; background: #fff; border: 1px solid var(--border-color);
+      border-radius: var(--radius); padding: 8px 14px; font-size: 0.75rem; font-weight: 750;
+      letter-spacing: 0.04em; text-transform: uppercase; cursor: pointer; transition: all 0.2s ease;
+      display: inline-flex; align-items: center; justify-content: space-between; gap: 8px;
       box-shadow: var(--shadow-soft);
     }
-    .brand-drawer-btn:hover { background: var(--accent); color: #fff; }
+    .sidebar-cat-btn:hover { background: #f4f4f0; border-color: var(--border-dark); transform: translateY(-1px); }
+    .sidebar-cat-btn.active { background: #111; color: #fff; border-color: #111; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+    .cat-count-badge { font-size: 0.62rem; padding: 2px 5px; background: #eee; color: #111; border-radius: 4px; font-weight: 850; }
+    .sidebar-cat-btn.active .cat-count-badge { background: #333; color: #fff; }
 
-    .brand-drawer-dropdown {
-      position: absolute; top: 100%; left: 0; width: 100%; background: #fff;
-      border: 1px solid var(--border-color); border-radius: 8px; box-shadow: var(--shadow-pop);
-      display: none; flex-direction: column; z-index: 500; overflow: hidden; margin-top: 4px;
-      max-height: 220px; overflow-y: auto; scrollbar-width: thin;
+    @media(min-width: 992px) {
+      .sidebar-categories-list {
+        flex-direction: column; overflow-x: visible; overflow-y: auto; max-height: calc(100vh - 280px);
+        white-space: normal; padding-bottom: 0; gap: 6px;
+      }
+      .sidebar-cat-btn { width: 100%; white-space: normal; box-shadow: none; background: #fafafa; }
     }
-    .brand-drawer-dropdown.show { display: flex; }
-
-    .brand-drawer-item {
-      padding: 10px 14px; font-size: 0.75rem; font-weight: 750; text-transform: uppercase;
-      color: #111; border-bottom: 1px solid #f0f0ed; cursor: pointer; display: flex;
-      justify-content: space-between; align-items: center; background: #fff;
-    }
-    .brand-drawer-item:hover { background: #f4f4f1; }
-    .brand-drawer-item.active { background: #111; color: #fff; }
 
     /* PRODUCTS GRID */
     .main-container { 
-      width: 100%; padding: 14px 12px 48px 12px; display: flex; flex-direction: column; align-items: flex-start; 
+      width: 100%; padding: 16px 14px 48px 14px; display: flex; flex-direction: column; align-items: center; 
     }
-    @media(min-width: 768px) { .main-container { padding: 28px 28px 64px 28px; } }
+    @media(min-width: 768px) { .main-container { padding: 32px 32px 64px 32px; } }
     
-    .main-inner-wrap { width: 100%; max-width: 1300px; margin: 0 auto; }
+    .main-inner-wrap { width: 100%; max-width: 1300px; }
+    .main-inner-wrap:before {
+      content: "164CRAFT / SCALE MODEL ARCHIVE"; display: block; font-size: .65rem; font-weight: 850;
+      letter-spacing: .25em; color: #888; margin-bottom: 14px; text-align: left;
+    }
 
     .product-grid { 
-      display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; width: 100%; align-items: start; justify-items: stretch;
+      display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; width: 100%; justify-content: center;
     }
-    @media(min-width: 580px) { .product-grid { grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 16px; } }
-    @media(min-width: 1024px) { .product-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; } }
+    @media(min-width: 600px) { .product-grid { grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 18px; } }
+    @media(min-width: 1024px) { .product-grid { grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 22px; } }
     
     .product-card {
       position: relative; background: var(--bg-card); border: 1px solid var(--border-color);
       border-radius: var(--radius); padding: 0; gap: 0; overflow: hidden; box-shadow: var(--shadow-soft);
-      display: flex; flex-direction: column; width: 100%; height: 100%;
+      transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease; display: flex; flex-direction: column;
+      width: 100%; margin: 0 auto;
     }
-    .product-card:hover { border-color: var(--border-dark); box-shadow: var(--shadow-hover); }
+    .product-card:hover { border-color: var(--border-dark); transform: translateY(-3px); box-shadow: var(--shadow-hover); }
     .media-preview-container {
       height: auto; aspect-ratio: 1/1; background: radial-gradient(circle at 50% 45%, #fafafa 0 35%, #eef0ed 36% 100%);
       border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center;
       position: relative; overflow: hidden; cursor: pointer; width: 100%;
     }
     .media-preview-container img, .media-preview-container video {
-      width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; padding: 10px;
+      width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; padding: 10px; transition: transform 0.3s ease;
     }
+    .product-card:hover .media-preview-container img { transform: scale(1.04); }
 
     .badge {
-      position: absolute; top: 8px; right: 8px; background: #111; color: #fff; padding: 3px 6px;
-      font-size: .55rem; letter-spacing: .08em; text-transform: uppercase; font-weight: 800; z-index: 2; border-radius: 4px;
+      position: absolute; top: 8px; right: 8px; background: #111; color: #fff; padding: 3px 7px;
+      font-size: .58rem; letter-spacing: .08em; text-transform: uppercase; font-weight: 800; z-index: 2; border-radius: 4px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
     }
     .exclusive-badge {
-      position: absolute; top: 8px; left: 8px; background: var(--accent-vip); color: #fff; padding: 3px 6px;
-      font-size: .52rem; letter-spacing: .08em; text-transform: uppercase; font-weight: 850; z-index: 2; border-radius: 4px;
+      position: absolute; top: 8px; left: 8px; background: var(--accent-vip); color: #fff; padding: 3px 7px;
+      font-size: .55rem; letter-spacing: .08em; text-transform: uppercase; font-weight: 850; z-index: 2; border-radius: 4px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.15);
     }
     .media-count-badge {
       position: absolute; bottom: 6px; right: 6px; background: rgba(0,0,0,0.75); color: #fff;
-      padding: 2px 5px; font-size: 0.58rem; font-weight: bold; border-radius: 4px; z-index: 2;
+      padding: 3px 6px; font-size: 0.6rem; font-weight: bold; border-radius: 4px; z-index: 2; backdrop-filter: blur(4px);
     }
 
-    .product-code { padding: 10px 10px 0; font-size: .58rem; letter-spacing: .1em; color: #777; font-weight: 700; text-transform: uppercase; }
-    .product-title { padding: 3px 10px 0; min-height: 38px; font-size: .8rem; line-height: 1.25; font-weight: 850; color: #111; }
-    @media(min-width: 640px) { .product-title { font-size: .88rem; padding: 4px 12px 0; } }
-    .product-price { padding: 6px 10px 10px; font-size: .95rem; font-weight: 900; color: #111; }
-    @media(min-width: 640px) { .product-price { padding: 8px 12px 12px; font-size: 1rem; } }
+    .product-code { padding: 12px 12px 0; font-size: .6rem; letter-spacing: .1em; color: #777; font-weight: 700; text-transform: uppercase; }
+    .product-title { padding: 4px 12px 0; min-height: 42px; font-size: .84rem; line-height: 1.3; font-weight: 850; color: #111; }
+    @media(min-width: 640px) { .product-title { font-size: .92rem; padding: 4px 14px 0; } }
+    .product-price { padding: 8px 12px 12px; font-size: .98rem; font-weight: 900; color: #111; }
+    @media(min-width: 640px) { .product-price { padding: 8px 14px 14px; font-size: 1.05rem; } }
     
     .product-card > .btn-action { 
-      width: calc(100% - 20px); margin: 0 10px 10px; min-height: 34px; font-size: 0.72rem; border-radius: calc(var(--radius) - 2px);
-      margin-top: auto;
+      width: calc(100% - 24px); margin: 0 12px 12px; min-height: 36px; font-size: 0.75rem; border-radius: calc(var(--radius) - 2px);
     }
-    @media(min-width: 640px) { .product-card > .btn-action { width: calc(100% - 24px); margin: 0 12px 12px; min-height: 38px; font-size: 0.78rem; } }
+    @media(min-width: 640px) { .product-card > .btn-action { width: calc(100% - 28px); margin: 0 14px 14px; min-height: 40px; font-size: 0.8rem; } }
 
     /* MODAL */
     .modal-overlay {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(10, 10, 10, 0.75); backdrop-filter: blur(4px);
+      background: rgba(10, 10, 10, 0.75); backdrop-filter: blur(6px);
       display: none; align-items: flex-end; justify-content: center; z-index: 1000; padding: 0; cursor: pointer;
     }
     @media(min-width: 640px) { .modal-overlay { align-items: center; justify-content: center; padding: 20px; } }
     .modal-box {
       width: 100%; max-height: 90vh; background: #fff; border: 1px solid var(--border-color);
-      border-radius: 20px 20px 0 0; padding: 22px 16px; box-shadow: 0 30px 60px rgba(0,0,0,0.3);
-      display: flex; flex-direction: column; gap: 12px; position: relative; overflow-y: auto; cursor: default;
+      border-radius: 20px 20px 0 0; padding: 24px 18px; box-shadow: 0 30px 60px rgba(0,0,0,0.3);
+      display: flex; flex-direction: column; gap: 14px; position: relative; overflow-y: auto; cursor: default;
     }
-    @media(min-width: 640px) { .modal-box { width: min(95vw, 680px); border-radius: calc(var(--radius) * 1.8); padding: 28px; } }
+    @media(min-width: 640px) { .modal-box { width: min(95vw, 680px); border-radius: calc(var(--radius) * 1.8); padding: 32px; } }
 
     .modal-header {
-      font-size: 1rem; font-weight: 850; padding-bottom: 8px; border-bottom: 1px solid var(--border-color);
+      font-size: 1.05rem; font-weight: 850; padding-bottom: 10px; border-bottom: 1px solid var(--border-color);
       display: flex; align-items: center; justify-content: space-between;
     }
     .modal-close {
-      width: 32px; height: 32px; border: 1px solid var(--border-color); background: #fff;
-      border-radius: var(--radius); font-size: 0.9rem; cursor: pointer; font-weight: bold;
-      display: flex; align-items: center; justify-content: center;
+      width: 34px; height: 34px; border: 1px solid var(--border-color); background: #fff;
+      border-radius: var(--radius); font-size: 0.95rem; cursor: pointer; font-weight: bold;
+      display: flex; align-items: center; justify-content: center; transition: all 0.2s;
     }
     .modal-close:hover { background: #111; color: #fff; border-color: #111; }
 
-    #detailModal .modal-box { width: min(98vw, 800px); padding: 18px 20px; gap: 12px; }
-    .detail-compact-body { display: grid; grid-template-columns: 1fr; gap: 14px; align-items: start; }
-    @media(min-width: 768px) { .detail-compact-body { grid-template-columns: 1.15fr 1fr; gap: 18px; } }
+    #detailModal .modal-box { width: min(98vw, 840px); padding: 22px 24px; gap: 14px; }
+    .detail-compact-body { display: grid; grid-template-columns: 1fr; gap: 16px; align-items: start; }
+    @media(min-width: 768px) { .detail-compact-body { grid-template-columns: 1.15fr 1fr; gap: 20px; } }
     
-    .detail-gallery-compact { display: flex; flex-direction: column; gap: 6px; }
+    .detail-gallery-compact { display: flex; flex-direction: column; gap: 8px; }
     .detail-main-media-box {
-      width: 100%; aspect-ratio: 1/1; max-height: 260px; background: #f2f2ee;
+      width: 100%; aspect-ratio: 1/1; max-height: 280px; background: #f2f2ee;
       border: 1px solid var(--border-color); border-radius: var(--radius);
       display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative;
     }
-    @media(min-width: 768px) { .detail-main-media-box { max-height: 300px; } }
-    .detail-main-media-box img, .detail-main-media-box video { width: 100%; height: 100%; object-fit: contain; padding: 4px; }
-    .detail-thumbs-compact { display: flex; flex-direction: row; gap: 5px; overflow-x: auto; padding-bottom: 2px; }
-    .detail-thumb-item { flex: 0 0 50px; height: 48px; border: 1px solid var(--border-color); border-radius: 6px; background: #fafafa; cursor: pointer; overflow: hidden; position: relative; }
+    @media(min-width: 768px) { .detail-main-media-box { max-height: 320px; } }
+    .detail-main-media-box img, .detail-main-media-box video { width: 100%; height: 100%; object-fit: contain; padding: 6px; }
+    .detail-thumbs-compact { display: flex; flex-direction: row; gap: 6px; overflow-x: auto; padding-bottom: 4px; }
+    .detail-thumb-item { flex: 0 0 54px; height: 52px; border: 1px solid var(--border-color); border-radius: 6px; background: #fafafa; cursor: pointer; overflow: hidden; position: relative; }
     .detail-thumb-item.active { border: 2px solid #111; }
     .detail-thumb-item img, .detail-thumb-item video { width: 100%; height: 100%; object-fit: cover; }
-    .detail-thumb-item span { position: absolute; right: 2px; bottom: 2px; background: #111; color: #fff; font-size: .48rem; padding: 1px 2px; font-weight: bold; }
+    .detail-thumb-item span { position: absolute; right: 2px; bottom: 2px; background: #111; color: #fff; font-size: .5rem; padding: 1px 3px; font-weight: bold; }
 
-    .detail-info-action-col { display: flex; flex-direction: column; gap: 6px; }
-    .compact-specs-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; background: #fcfcf9; border: 1px solid var(--border-color); border-radius: var(--radius); padding: 6px 8px; }
+    .detail-info-action-col { display: flex; flex-direction: column; gap: 8px; }
+    .compact-specs-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; background: #fcfcf9; border: 1px solid var(--border-color); border-radius: var(--radius); padding: 8px 10px; }
     .compact-spec-item { display: flex; flex-direction: column; }
-    .compact-spec-label { font-size: 0.55rem; letter-spacing: 0.05em; text-transform: uppercase; color: #777; font-weight: 800; }
-    .compact-spec-val { font-size: 0.75rem; font-weight: 850; color: #111; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .compact-price-bar { display: flex; justify-content: space-between; align-items: center; background: #f4f4f0; border: 1px solid var(--border-color); border-radius: var(--radius); padding: 8px 10px; margin-top: 2px; }
-    .compact-price-label { font-size: 0.72rem; font-weight: 800; color: #444; }
-    .compact-price-val { font-size: 1.1rem; font-weight: 950; color: #111; }
+    .compact-spec-label { font-size: 0.58rem; letter-spacing: 0.05em; text-transform: uppercase; color: #777; font-weight: 800; }
+    .compact-spec-val { font-size: 0.78rem; font-weight: 850; color: #111; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .compact-price-bar { display: flex; justify-content: space-between; align-items: center; background: #f4f4f0; border: 1px solid var(--border-color); border-radius: var(--radius); padding: 10px 12px; margin-top: 4px; }
+    .compact-price-label { font-size: 0.75rem; font-weight: 800; color: #444; }
+    .compact-price-val { font-size: 1.15rem; font-weight: 950; color: #111; }
 
-    .form-group { display: flex; flex-direction: column; gap: 4px; margin-bottom: 6px; }
-    .form-group label { font-size: .72rem; letter-spacing: .04em; color: #333; font-weight: 800; }
+    .form-group { display: flex; flex-direction: column; gap: 5px; margin-bottom: 8px; }
+    .form-group label { font-size: .75rem; letter-spacing: .04em; color: #333; font-weight: 800; }
     .form-control {
-      min-height: 38px; border: 1px solid var(--border-color); border-radius: var(--radius);
-      background: #fafafa; padding: 6px 10px; font-size: 16px; outline: none; width: 100%;
+      min-height: 42px; border: 1px solid var(--border-color); border-radius: var(--radius);
+      background: #fafafa; padding: 8px 12px; font-size: 16px; outline: none; width: 100%;
     }
-    @media(min-width: 640px) { .form-control { font-size: 0.84rem; min-height: 36px; } }
+    @media(min-width: 640px) { .form-control { font-size: 0.86rem; min-height: 38px; } }
     .form-control:focus { background: #fff; border-color: var(--border-dark); box-shadow: 0 0 0 3px rgba(0,0,0,0.04); }
-    textarea.form-control { min-height: 70px; }
+    textarea.form-control { min-height: 80px; }
 
-    .shipping-info-box { background: #fafaf8; border: 1px dashed #888; border-radius: var(--radius); padding: 10px; font-size: .82rem; line-height: 1.4; margin-top: 8px; }
-    .bank-payment-box { background: #f4f4f1; border: 1px solid var(--border-color); border-radius: var(--radius); padding: 10px; font-size: 0.82rem; margin-top: 8px; text-align: center; }
-    .qr-preview-img { max-width: 130px; max-height: 130px; object-fit: contain; margin: 6px auto; display: block; border-radius: 6px; border: 1px solid #ccc; }
+    .shipping-info-box { background: #fafaf8; border: 1px dashed #888; border-radius: var(--radius); padding: 12px; font-size: .85rem; line-height: 1.45; margin-top: 10px; }
+    .bank-payment-box { background: #f4f4f1; border: 1px solid var(--border-color); border-radius: var(--radius); padding: 12px; font-size: .85rem; margin-top: 10px; text-align: center; }
+    .qr-preview-img { max-width: 140px; max-height: 140px; object-fit: contain; margin: 8px auto; display: block; border-radius: 6px; border: 1px solid #ccc; }
 
     .footer {
       background: #111; color: #aaa; border-top: 1px solid #111;
-      padding: 28px 16px; text-align: center; letter-spacing: 1.5px; font-size: 0.65rem; text-transform: uppercase; margin-top: auto; width: 100%;
+      padding: 32px 20px; text-align: center; letter-spacing: 1.5px; font-size: 0.68rem; text-transform: uppercase; margin-top: auto; width: 100%;
     }
   </style>
 </head>
@@ -341,28 +361,27 @@
 
   <header class="header">
     <div class="brand-info" onclick="window.location.href='index.html'">
-      <div class="brand-photo" id="siteLogoText"></div>
-      <div class="brand-name" id="siteTitleText"></div>
+      <div class="brand-photo" id="siteLogoText">164</div>
+      <div class="brand-name" id="siteTitleText">164CRAFT</div>
     </div>
     <div class="header-actions" style="position: relative;">
-      
-      <!-- HEADER VIP PASS BOX -->
-      <div class="header-vip-box">
-        <input type="password" id="headerVipInput" class="header-vip-input" placeholder="🔒 กรอกรหัส VIP" autocomplete="off" />
-        <button type="button" class="btn-action" style="height:32px; padding:0 10px; font-size:0.72rem; background:#111; color:#fff; border:none;" onclick="applyHeaderVipCode()">ปลดล็อก</button>
+      <div class="search-box">
+        <input type="text" id="searchInput" placeholder="ค้นหาสินค้า / SKU..." onkeyup="renderProducts()" />
       </div>
 
-      <!-- GOOGLE AUTH CONTAINER -->
+      <!-- GOOGLE AUTH CONTAINER WITH ICON & FLOATING MENU -->
       <div id="authContainer" style="display: flex; align-items: center; gap: 6px;">
         <button id="loginBtn" class="btn-action btn-secondary" onclick="loginWithGoogle()">
           🔑 เข้าสู่ระบบ
         </button>
+        
+        <!-- รูป Icon บัญชี -->
         <div id="userProfile" style="display: none; position: relative;">
           <div class="profile-icon-btn" onclick="toggleAccountDropdown(event)" title="เมนูบัญชี">
             <img id="userAvatar" src="" alt="User" />
           </div>
 
-          <!-- FLOATING MENU -->
+          <!-- เมนูลอย (Floating Account Menu) -->
           <div id="accountDropdownMenu" class="account-dropdown-menu">
             <div class="dropdown-header-info">
               <div class="dropdown-user-name" id="dropdownUserName">-</div>
@@ -372,12 +391,15 @@
             <div id="adminMenuLink" class="dropdown-menu-item" style="display: none;" onclick="window.location.href='admin.html'">
               🛠️ เข้าสู่ระบบหลังบ้าน (Admin)
             </div>
+
             <div class="dropdown-menu-item" onclick="openModal('accountModal'); toggleAccountDropdown(event);">
               📍 ตั้งค่าที่อยู่จัดส่ง
             </div>
+
             <div class="dropdown-menu-item" onclick="alert('ฟีเจอร์ประวัติการสั่งซื้อ จะแสดงรายการสั่งซื้อของคุณที่นี่เร็วๆ นี้'); toggleAccountDropdown(event);">
               📦 ประวัติการสั่งซื้อ
             </div>
+
             <div class="dropdown-menu-item danger" onclick="logoutGoogle(); toggleAccountDropdown(event);">
               🚪 ออกจากระบบ
             </div>
@@ -399,31 +421,29 @@
 
   <div class="store-layout">
     <aside class="sidebar-container">
-      
-      <!-- ช่องค้นหาหลักใน Sidebar สำหรับหน้าจอคอมพิวเตอร์ -->
       <div>
-        <div class="sidebar-search-box">
-          <div class="sidebar-search-wrap">
-            <input type="text" id="sidebarSearchInput" placeholder="ค้นหาสินค้า / SKU..." onkeyup="syncSidebarSearch(this)" />
+        <div class="sidebar-section-title">
+          <span>🔒 สิทธิ์สมาชิก VIP</span>
+        </div>
+        <div class="secret-code-box">
+          <div class="secret-input-wrap">
+            <input type="password" id="secretCodeInput" class="form-control" placeholder="กรอกโค้ด VIP..." autocomplete="off" />
+            <div style="display: flex; gap: 8px;">
+              <button type="button" class="btn-action" style="flex: 2; padding: 6px 10px; font-size: 0.75rem;" onclick="applySecretAccessCode()">ปลดล็อก VIP</button>
+              <button type="button" class="btn-action btn-secondary" style="flex: 1; padding: 6px 8px; font-size: 0.72rem;" onclick="clearSecretAccessCode()">ล้าง</button>
+            </div>
           </div>
+          <div id="secretStatusTag" class="secret-status-tag"></div>
         </div>
       </div>
 
-      <!-- ตัวคัดกรอง -->
       <div>
-        <div class="sidebar-section-title-row">
-          <span>🏷️ ตัวคัดกรอง</span>
+        <div class="sidebar-section-title">
+          <span>🏷️ ตัวกรองแบรนด์</span>
           <span class="filter-counter-text" id="filterOverviewCount">กำลังโหลด...</span>
         </div>
-        <div class="brand-drawer-container" id="brandDrawerContainer">
-          <button type="button" class="brand-drawer-btn" onclick="toggleBrandDrawer(event)">
-            <span id="currentBrandName">ALL MODELS</span>
-            <span id="currentBrandCount">(4)</span>
-          </button>
-          <div class="brand-drawer-dropdown" id="brandDrawerDropdown"></div>
-        </div>
+        <div class="sidebar-categories-list" id="categoriesContainer"></div>
       </div>
-      <div id="secretStatusTag" class="secret-status-tag" style="margin-top:6px;"></div>
     </aside>
 
     <main class="main-container">
@@ -439,19 +459,33 @@
       <button class="modal-close" onclick="closeModal('accountModal')">✕</button>
       <div class="modal-header">📍 ตั้งค่าข้อมูลที่อยู่จัดส่ง</div>
 
-      <div style="display: flex; align-items: center; gap: 10px; background: #fafafa; padding: 10px; border-radius: var(--radius); border: 1px solid var(--border-color);">
-        <img id="modalUserAvatar" src="" style="width: 45px; height: 45px; border-radius: 50%; border: 2px solid #111;" alt="Avatar" />
+      <div style="display: flex; align-items: center; gap: 12px; background: #fafafa; padding: 12px; border-radius: var(--radius); border: 1px solid var(--border-color);">
+        <img id="modalUserAvatar" src="" style="width: 50px; height: 50px; border-radius: 50%; border: 2px solid #111;" alt="Avatar" />
         <div style="overflow: hidden;">
-          <div id="modalUserName" style="font-weight: 850; font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">-</div>
-          <div id="modalUserEmail" style="font-size: 0.72rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">-</div>
+          <div id="modalUserName" style="font-weight: 850; font-size: 0.95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">-</div>
+          <div id="modalUserEmail" style="font-size: 0.76rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">-</div>
         </div>
       </div>
 
+      <div style="background: var(--accent-vip-bg); border: 1px solid #6ee7b7; border-radius: var(--radius); padding: 10px 12px;">
+        <div style="font-weight: 850; font-size: 0.8rem; color: #065f46;">💎 บัญชีผู้ใช้งานปลอดภัย</div>
+        <div style="font-size: 0.72rem; color: #047857; margin-top: 2px;">ข้อมูลที่อยู่ของคุณจะถูกใช้กรอกอัตโนมัติเมื่อทำการสั่งซื้อสินค้า</div>
+      </div>
+
       <form onsubmit="saveUserProfileModal(event)">
-        <div class="form-group"><label>ชื่อ-นามสกุล ผู้รับหลัก</label><input type="text" id="profileName" class="form-control" required /></div>
-        <div class="form-group"><label>เบอร์โทรศัพท์ติดต่อ</label><input type="tel" id="profilePhone" class="form-control" placeholder="0812345678" maxlength="10" required /></div>
-        <div class="form-group"><label>ที่อยู่จัดส่งเริ่มต้น</label><textarea id="profileAddress" class="form-control" rows="3" placeholder="บ้านเลขที่, ถนน, ตำบล, อำเภอ, จังหวัด, รหัสไปรษณีย์" required></textarea></div>
-        <button type="submit" class="btn-action" style="width: 100%; margin-top: 4px; height: 40px;">💾 บันทึกที่อยู่จัดส่ง</button>
+        <div class="form-group">
+          <label>ชื่อ-นามสกุล ผู้รับหลัก</label>
+          <input type="text" id="profileName" class="form-control" required />
+        </div>
+        <div class="form-group">
+          <label>เบอร์โทรศัพท์ติดต่อ</label>
+          <input type="tel" id="profilePhone" class="form-control" placeholder="0812345678" maxlength="10" required />
+        </div>
+        <div class="form-group">
+          <label>ที่อยู่จัดส่งเริ่มต้น</label>
+          <textarea id="profileAddress" class="form-control" rows="3" placeholder="บ้านเลขที่, ถนน, แขวง/ตำบล, เขต/อำเภอ, จังหวัด, รหัสไปรษณีย์" required></textarea>
+        </div>
+        <button type="submit" class="btn-action" style="width: 100%; margin-top: 6px; height: 42px;">💾 บันทึกที่อยู่จัดส่ง</button>
       </form>
     </div>
   </div>
@@ -478,16 +512,23 @@
             <div class="compact-spec-item"><span class="compact-spec-label">Options</span><span class="compact-spec-val" id="detailOptionCount">-</span></div>
           </div>
 
-          <div class="form-group" style="margin-top:2px;"><label>สเกล (Scale):</label><select id="detailScaleSelect" class="form-control" onchange="calculateModalPrice()"></select></div>
-          <div class="form-group"><label>ตัวเลือกตกแต่ง (Option):</label><select id="detailOptionSelect" class="form-control" onchange="calculateModalPrice()"></select></div>
+          <div class="form-group" style="margin-top:2px;">
+            <label>สเกล (Scale):</label>
+            <select id="detailScaleSelect" class="form-control" onchange="calculateModalPrice()"></select>
+          </div>
+
+          <div class="form-group">
+            <label>ตัวเลือกตกแต่ง (Option):</label>
+            <select id="detailOptionSelect" class="form-control" onchange="calculateModalPrice()"></select>
+          </div>
 
           <div class="form-group">
             <label>โค้ดส่วนลดประจำตัวเลือก (ถ้ามี):</label>
             <div style="display:flex; gap: 6px;">
-              <input type="text" id="promoCodeInput" class="form-control" placeholder="กรอกโค้ด..." style="text-transform: uppercase;">
-              <button type="button" class="btn-action btn-secondary" style="padding:4px 10px; white-space:nowrap;" onclick="applyPromoCode()">ใช้โค้ด</button>
+              <input type="text" id="promoCodeInput" class="form-control" placeholder="กรอกโค้ดส่วนลดตัวเลือก..." style="text-transform: uppercase;">
+              <button type="button" class="btn-action btn-secondary" style="padding:4px 12px; white-space:nowrap;" onclick="applyPromoCode()">ใช้โค้ด</button>
             </div>
-            <div id="promoStatusMsg" style="font-size:0.72rem; margin-top:2px; font-weight:bold;"></div>
+            <div id="promoStatusMsg" style="font-size:0.75rem; margin-top:3px; font-weight:bold;"></div>
           </div>
 
           <div class="compact-price-bar">
@@ -495,7 +536,7 @@
             <span class="compact-price-val" id="modalTotalPrice">฿0</span>
           </div>
 
-          <button class="btn-action" style="width:100%; margin-top:4px; height: 40px;" onclick="addToCartFromModal()">+ เพิ่มลงในตะกร้า</button>
+          <button class="btn-action" style="width:100%; margin-top:6px; height: 42px;" onclick="addToCartFromModal()">+ เพิ่มลงในตะกร้า</button>
         </div>
       </div>
     </div>
@@ -505,18 +546,11 @@
   <div id="cartModal" class="modal-overlay">
     <div class="modal-box">
       <button class="modal-close" onclick="closeModal('cartModal')">✕</button>
-      <div class="modal-header">🛒 ตะกร้าสินค้าของคุณ</div>
-      <div id="cartItemList" style="max-height: 45vh; overflow-y: auto; padding-right: 2px;">- ไม่มีรายการสินค้า -</div>
-      
-      <div style="background: #fafafa; border: 1px solid var(--border-color); padding: 10px; border-radius: var(--radius); margin-top: 4px;">
-        <div style="font-size: 0.78rem; color: var(--text-muted);" id="cartShippingDisplay">การจัดส่ง: EMS (฿50)</div>
-        <div style="font-weight: 850; color: #000; font-size: 1.05rem; margin-top: 2px;" id="netTotalDisplay">ราคารวมทั้งสิ้น: ฿0</div>
-      </div>
-
-      <div style="display: flex; gap: 8px; margin-top: 6px;">
-        <button class="btn-action btn-secondary" style="flex: 1; height: 40px;" onclick="closeModal('cartModal')">🔍 ตรวจสอบรายการต่อ</button>
-        <button class="btn-action" style="flex: 1.2; height: 40px;" onclick="closeModal('cartModal'); openShippingModal();">ดำเนินการชำระเงิน</button>
-      </div>
+      <div class="modal-header">🛒 ตะกร้าสินค้า</div>
+      <div id="cartItemList">- ไม่มีรายการสินค้า -</div>
+      <div style="font-size: 0.82rem; color: var(--text-muted); margin-top: 10px;" id="cartShippingDisplay">การจัดส่ง: EMS (฿50)</div>
+      <div style="font-weight: bold; color: #000; font-size: 1.05rem; margin-top: 6px;" id="netTotalDisplay">ราคารวมทั้งสิ้น: ฿0</div>
+      <button class="btn-action" style="width:100%; margin-top:12px; height: 42px;" onclick="closeModal('cartModal'); openShippingModal();">ดำเนินการชำระเงิน</button>
     </div>
   </div>
 
@@ -524,36 +558,31 @@
   <div id="shippingModal" class="modal-overlay">
     <div class="modal-box">
       <button class="modal-close" onclick="closeModal('shippingModal')">✕</button>
-      <div class="modal-header">ข้อมูลการจัดส่ง & ชำระเงิน</div>
+      <div class="modal-header">ข้อมูลการจัดส่ง & การชำระเงิน</div>
       
       <div class="bank-payment-box">
-        <div style="font-weight:bold; font-size:0.82rem;">📲 โอนเงินชำระค่าสินค้าผ่านบัญชี</div>
+        <div style="font-weight:bold; font-size:0.85rem;">📲 ช่องทางโอนเงินชำระค่าสินค้า</div>
         <div><strong>ธนาคาร:</strong> <span id="payBankName">กสิกรไทย (KBANK)</span></div>
         <div><strong>เลขที่บัญชี:</strong> <span id="payAccountNo" style="font-weight:bold; color:#000;">123-4-56789-0</span></div>
         <div><strong>ชื่อบัญชี:</strong> <span id="payAccountName">164CRAFT</span></div>
         <div id="payQrDisplay"></div>
       </div>
 
-      <form id="shippingForm" onsubmit="confirmOrder(event)" style="margin-top: 4px;">
+      <form id="shippingForm" onsubmit="confirmOrder(event)" style="margin-top: 6px;">
         <div class="form-group"><label>ชื่อ-นามสกุล ผู้รับ</label><input type="text" id="shipName" class="form-control" required /></div>
         <div class="form-group"><label>เบอร์โทรศัพท์</label><input type="tel" id="shipPhone" class="form-control" maxlength="10" required /></div>
         <div class="form-group"><label>อีเมล (Email)</label><input type="email" id="shipEmail" class="form-control" required /></div>
-        <div class="form-group"><label>ที่อยู่จัดส่ง</label><textarea id="shipAddress" class="form-control" rows="2" required></textarea></div>
-        <div class="form-group"><label>Note (บันทึกเพิ่มเติมถึงร้านค้า)</label><input type="text" id="shipNote" class="form-control" placeholder="ระบุข้อความถึงร้านค้า (ถ้ามี)..." /></div>
-
-        <div style="display: flex; gap: 8px; margin-top: 8px;">
-          <button type="button" class="btn-action btn-secondary" style="flex: 1; height: 40px;" onclick="closeModal('shippingModal'); openModal('cartModal');">⬅️ ย้อนกลับไปตะกร้า</button>
-          <button type="submit" class="btn-action" style="flex: 1.5; height: 40px;">ยืนยันการสั่งซื้อ</button>
-        </div>
+        <div class="form-group"><label>ที่อยู่จัดส่ง</label><textarea id="shipAddress" class="form-control" rows="3" required></textarea></div>
+        <button type="submit" class="btn-action" style="width:100%; margin-top:8px; height: 42px;">ยืนยันการสั่งซื้อ</button>
       </form>
     </div>
   </div>
 
   <!-- ORDER SUMMARY MODAL -->
   <div id="orderSummaryModal" class="modal-overlay">
-    <div class="modal-box" style="max-width: 600px;">
+    <div class="modal-box" style="max-width: 560px;">
       <div class="modal-header" style="color: #111;">🎉 สรุปรายการสั่งซื้อสำเร็จ!</div>
-      <p style="font-size: 0.8rem; color: var(--text-muted);">ระบบบันทึกรายการคำสั่งซื้อเรียบร้อยแล้ว</p>
+      <p style="font-size: 0.82rem; color: var(--text-muted);">ระบบบันทึกรายการคำสั่งซื้อเรียบร้อยแล้ว</p>
 
       <div id="printableOrderArea">
         <div class="shipping-info-box" style="margin-top:0; background: #fff;">
@@ -564,15 +593,14 @@
         </div>
 
         <div style="font-weight: bold; font-size: 0.88rem; margin-top: 8px;">📦 รายการสินค้าที่สั่งซื้อ:</div>
-        <div id="summaryItemsList" style="max-height: 200px; overflow-y: auto; border: 1px solid var(--border-color); border-radius: var(--radius); padding: 6px; background: #fff; margin-top: 4px;"></div>
+        <div id="summaryItemsList" style="max-height: 160px; overflow-y: auto;"></div>
 
-        <div class="shipping-info-box" style="margin-top: 8px;">
+        <div class="shipping-info-box">
           <div style="font-weight: bold; margin-bottom: 4px; border-bottom: 1px solid #ddd; padding-bottom: 4px;">🚚 ข้อมูลผู้รับ (Receiver):</div>
           <div><strong>ชื่อผู้รับ:</strong> <span id="summaryCustomerName">-</span></div>
           <div><strong>เบอร์โทร:</strong> <span id="summaryCustomerPhone">-</span></div>
           <div><strong>อีเมล:</strong> <span id="summaryCustomerEmail">-</span></div>
           <div><strong>ที่อยู่:</strong> <span id="summaryCustomerAddress">-</span></div>
-          <div id="summaryNoteContainer" style="margin-top: 4px; color: #b45309; display:none;"><strong>Note:</strong> <span id="summaryCustomerNote">-</span></div>
         </div>
 
         <div class="bank-payment-box" style="margin-top: 8px; text-align: left;">
@@ -591,16 +619,16 @@
       </div>
 
       <div style="display: flex; gap: 8px; margin-top: 10px;">
-        <button class="btn-action btn-secondary" style="flex: 1; height: 40px;" onclick="window.print()">🖨️ พิมพ์เอกสาร</button>
-        <button class="btn-action" style="flex: 1; height: 40px;" onclick="closeModal('orderSummaryModal')">เสร็จสิ้น / ปิด</button>
+        <button class="btn-action btn-secondary" style="flex: 1; height: 42px;" onclick="window.print()">🖨️ พิมพ์เอกสาร</button>
+        <button class="btn-action" style="flex: 1; height: 42px;" onclick="closeModal('orderSummaryModal')">เสร็จสิ้น / ปิด</button>
       </div>
     </div>
   </div>
 
-  <!-- Firebase App SDK, Firestore & Auth (Loaded with defer for speed) -->
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js" defer></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js" defer></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js" defer></script>
+  <!-- Firebase App SDK, Firestore & Auth -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
 
   <script>
     const firebaseConfig = {
@@ -618,6 +646,7 @@
     const auth = firebase.auth();
     const googleProvider = new firebase.auth.GoogleAuthProvider();
 
+    // กำหนดอีเมลที่มีสิทธิ์เข้าถึงหลังบ้าน (Admin)
     const ALLOWED_ADMIN_EMAILS = ["craft.studio164@gmail.com"];
 
     let brands = ["Ducati", "Honda", "Isuzu", "Kawasaki", "Toyota", "Yamaha"];
@@ -634,9 +663,7 @@
       qrCodeUrl: "",
       senderName: "164CRAFT คลังกระจายสินค้า",
       senderPhone: "0812345678",
-      senderAddress: "99/1 ถ.พหลโยธิน แขวงลาดยาว เขตจตุจักร กรุงเทพฯ 10900",
-      logoUrl: "",
-      themeColor: "#111111"
+      senderAddress: "99/1 ถ.พหลโยธิน แขวงลาดยาว เขตจตุจักร กรุงเทพฯ 10900"
     };
     let products = [];
 
@@ -654,9 +681,9 @@
       initAuthListener();
       loadDataFromFirebase();
       initModalOutsideClick();
-      initBrandDrawerOutsideClick();
     }
 
+    /* GOOGLE AUTHENTICATION & ADMIN PERMISSION CHECK */
     function initAuthListener() {
       auth.onAuthStateChanged((user) => {
         const loginBtn = document.getElementById("loginBtn");
@@ -672,10 +699,11 @@
           document.getElementById("dropdownUserName").innerText = user.displayName || "สมาชิก 164CRAFT";
           document.getElementById("dropdownUserEmail").innerText = user.email;
 
-          document.getElementById("modalUserAvatar").src = user.photoURL || "https://via.placeholder.com/45";
+          document.getElementById("modalUserAvatar").src = user.photoURL || "https://via.placeholder.com/50";
           document.getElementById("modalUserName").innerText = user.displayName || "สมาชิก 164CRAFT";
           document.getElementById("modalUserEmail").innerText = user.email;
 
+          // ตรวจสอบว่าเป็น Admin หรือไม่ เพื่อแสดงเมนูหลังบ้าน
           const userEmail = (user.email || "").toLowerCase();
           if (ALLOWED_ADMIN_EMAILS.includes(userEmail)) {
             adminMenuLink.style.display = "flex";
@@ -700,13 +728,21 @@
     function loginWithGoogle() {
       auth.signInWithPopup(googleProvider).then((result) => {
         alert("✓ เข้าสู่ระบบสำเร็จ: " + (result.user.displayName || result.user.email));
-      }).catch((error) => alert("เข้าสู่ระบบไม่สำเร็จ: " + error.message));
+      }).catch((error) => {
+        console.error("Login failed:", error);
+        alert("เข้าสู่ระบบไม่สำเร็จ: " + error.message);
+      });
     }
 
     function logoutGoogle() {
-      auth.signOut().then(() => alert("ออกจากระบบเรียบร้อย"));
+      auth.signOut().then(() => {
+        alert("ออกจากระบบเรียบร้อย");
+      }).catch((error) => {
+        console.error("Logout error:", error);
+      });
     }
 
+    /* TOGGLE FLOATING ACCOUNT DROPDOWN */
     function toggleAccountDropdown(event) {
       event.stopPropagation();
       const menu = document.getElementById("accountDropdownMenu");
@@ -715,23 +751,9 @@
 
     function closeAccountDropdownOutside(event) {
       const menu = document.getElementById("accountDropdownMenu");
-      if (menu && menu.style.display === "flex") menu.style.display = "none";
-    }
-
-    function toggleBrandDrawer(event) {
-      event.stopPropagation();
-      const dropdown = document.getElementById("brandDrawerDropdown");
-      dropdown.classList.toggle("show");
-    }
-
-    function initBrandDrawerOutsideClick() {
-      document.addEventListener('click', function(e) {
-        const container = document.getElementById("brandDrawerContainer");
-        const dropdown = document.getElementById("brandDrawerDropdown");
-        if (container && !container.contains(e.target)) {
-          dropdown.classList.remove("show");
-        }
-      });
+      if (menu && menu.style.display === "flex") {
+        menu.style.display = "none";
+      }
     }
 
     function saveUserProfileModal(e) {
@@ -744,7 +766,7 @@
       document.getElementById("shipPhone").value = phone;
       document.getElementById("shipAddress").value = address;
 
-      alert("✓ บันทึกที่อยู่จัดส่งเรียบร้อยแล้ว!");
+      alert("✓ บันทึกข้อมูลที่อยู่จัดส่งเรียบร้อยแล้ว!");
       closeModal('accountModal');
     }
 
@@ -763,10 +785,14 @@
 
       db.collection("products").onSnapshot((snapshot) => {
         products = [];
-        snapshot.forEach((doc) => products.push(doc.data()));
+        snapshot.forEach((doc) => {
+          products.push(doc.data());
+        });
         renderCategories();
         renderProducts();
-      }, (err) => console.log("Error loading products:", err));
+      }, (err) => {
+        console.log("Error loading products:", err);
+      });
     }
 
     function openModal(id) { document.getElementById(id).style.display = "flex"; }
@@ -795,19 +821,9 @@
     }
 
     function applyShopSettings() {
-      document.getElementById("siteTitleText").innerText = systemSettings.storeName || "";
-      
-      const logoBox = document.getElementById("siteLogoText");
-      if (systemSettings.logoUrl) {
-        logoBox.innerHTML = `<img src="${systemSettings.logoUrl}" alt="Logo" />`;
-      } else {
-        logoBox.innerHTML = "";
-      }
-
-      if (systemSettings.themeColor) {
-        document.documentElement.style.setProperty('--accent', systemSettings.themeColor);
-      }
-
+      document.getElementById("siteTitleText").innerText = systemSettings.storeName;
+      const footerText = document.getElementById("footerText");
+      if (footerText) footerText.innerText = systemSettings.storeName + " — SCALE MODEL ARCHIVE";
       document.getElementById("cartShippingDisplay").innerText = `การจัดส่ง: ${systemSettings.shippingName} (฿${systemSettings.shippingFee})`;
       document.getElementById("payBankName").innerText = systemSettings.bankName;
       document.getElementById("payAccountNo").innerText = systemSettings.accountNo;
@@ -822,31 +838,33 @@
     }
 
     function syncSearchAndRender(el) {
-      document.getElementById("mobileSearchInput").value = el.value;
-      document.getElementById("sidebarSearchInput").value = el.value;
+      document.getElementById("searchInput").value = el.value;
       renderProducts();
     }
 
-    function syncSidebarSearch(el) {
-      document.getElementById("mobileSearchInput").value = el.value;
-      renderProducts();
-    }
-
-    function applyHeaderVipCode() {
-      const input = document.getElementById("headerVipInput");
+    /* VIP ACCESS */
+    function applySecretAccessCode() {
+      const input = document.getElementById("secretCodeInput");
       const code = (input.value || "").trim().toUpperCase();
       const statusTag = document.getElementById("secretStatusTag");
 
-      if (!code) { clearHeaderVipCode(); return; }
+      if (!code) {
+        clearSecretAccessCode();
+        return;
+      }
 
       if (vipCodesList.includes(code)) {
         activeSecretCode = code;
         const maskedCode = code.length > 2 ? code.substring(0, 2) + "•".repeat(code.length - 2) : "••••••";
         input.value = "";
-        input.placeholder = "🔒 กรอกรหัส VIP";
+        input.placeholder = "•••••••• (เปิดสิทธิ์แล้ว)";
 
         statusTag.className = "secret-status-tag active";
-        statusTag.innerHTML = `<div style="font-weight:bold;">✓ สิทธิ์ VIP: ${maskedCode} [ACTIVE]</div>`;
+        statusTag.innerHTML = `
+          <div style="font-weight:bold;">✓ สิทธิ์ VIP: <span style="letter-spacing:2px;">${maskedCode}</span> [ACTIVE]</div>
+          <div style="font-size:0.65rem; color:#065f46; margin-top:2px;">แสดงสินค้าทั่วไป + สินค้าพิเศษ VIP</div>
+        `;
+
         renderCategories();
         renderProducts();
         alert("✓ ปลดล็อกสิทธิ์ VIP สำเร็จ!");
@@ -855,17 +873,18 @@
       }
     }
 
-    function clearHeaderVipCode() {
+    function clearSecretAccessCode() {
       activeSecretCode = "";
-      const input = document.getElementById("headerVipInput");
+      const input = document.getElementById("secretCodeInput");
       input.value = "";
-      input.placeholder = "🔒 กรอกรหัส VIP";
+      input.placeholder = "กรอกโค้ด VIP...";
       document.getElementById("secretStatusTag").className = "secret-status-tag";
       document.getElementById("secretStatusTag").innerHTML = "";
       renderCategories();
       renderProducts();
     }
 
+    /* CATEGORIES & COUNTER */
     function getProductCountByBrand(brand = "ALL") {
       return products.filter(p => {
         const prodSecret = (p.secretCode || "").trim().toUpperCase();
@@ -882,47 +901,23 @@
     }
 
     function renderCategories() {
-      const cont = document.getElementById("brandDrawerDropdown");
-      const labelName = document.getElementById("currentBrandName");
-      const labelCount = document.getElementById("currentBrandCount");
-
-      const currentFilteredCount = products.filter(p => {
-        const prodSecret = (p.secretCode || "").trim().toUpperCase();
-        if (activeSecretCode) {
-          const isGeneral = (prodSecret === "");
-          const isVip = (prodSecret === activeSecretCode);
-          if (!isGeneral && !isVip) return false;
-        } else {
-          if (prodSecret !== "") return false;
-        }
-
-        const matchesCat = (activeCategory === "ALL" || (p.brand && p.brand.toUpperCase() === activeCategory.toUpperCase()));
-        return matchesCat;
-      }).length;
-
-      if (activeCategory === "ALL") {
-        labelName.innerText = "ALL MODELS";
-        labelCount.innerText = `(${currentFilteredCount})`;
-      } else {
-        labelName.innerText = activeCategory.toUpperCase();
-        labelCount.innerText = `(${currentFilteredCount})`;
-      }
-
+      const cont = document.getElementById("categoriesContainer");
       const totalAll = getProductCountByBrand("ALL");
+
       let html = `
-        <div class="brand-drawer-item ${activeCategory === 'ALL' ? 'active' : ''}" onclick="selectCategory('ALL')">
+        <button class="sidebar-cat-btn ${activeCategory === 'ALL' ? 'active' : ''}" onclick="selectCategory('ALL')">
           <span>ALL MODELS</span>
-          <span>(${totalAll})</span>
-        </div>
+          <span class="cat-count-badge">${totalAll}</span>
+        </button>
       `;
 
       brands.forEach(b => {
         const count = getProductCountByBrand(b);
         html += `
-          <div class="brand-drawer-item ${activeCategory === b ? 'active' : ''}" onclick="selectCategory('${b}')">
+          <button class="sidebar-cat-btn ${activeCategory === b ? 'active' : ''}" onclick="selectCategory('${b}')">
             <span>${b}</span>
-            <span>(${count})</span>
-          </div>
+            <span class="cat-count-badge">${count}</span>
+          </button>
         `;
       });
       cont.innerHTML = html;
@@ -932,16 +927,17 @@
       activeCategory = cat;
       renderCategories();
       renderProducts();
-      document.getElementById("brandDrawerDropdown").classList.remove("show");
     }
 
+    /* PRODUCTS GRID */
     function renderProducts() {
       const grid = document.getElementById("productGridContainer");
-      const search = (document.getElementById("mobileSearchInput").value || "").trim().toLowerCase();
+      const search = (document.getElementById("searchInput").value || "").trim().toLowerCase();
       const overviewCounter = document.getElementById("filterOverviewCount");
 
       const filtered = products.filter(p => {
         const prodSecret = (p.secretCode || "").trim().toUpperCase();
+
         if (activeSecretCode) {
           const isGeneral = (prodSecret === "");
           const isVip = (prodSecret === activeSecretCode);
@@ -959,8 +955,6 @@
       });
 
       if (overviewCounter) overviewCounter.innerText = `(แสดงอยู่ ${filtered.length} รายการ)`;
-
-      renderCategories();
 
       if (filtered.length === 0) {
         grid.innerHTML = `
@@ -980,17 +974,13 @@
 
         let mediaHtml = '';
         if (p.vdo) {
-          mediaHtml = `
-            <img src="${mainImage}" alt="${p.name}" class="prod-img" style="display:block;" />
-            <video src="${p.vdo}" muted loop playsinline class="prod-vdo" style="display:none; width:100%; height:100%; object-fit:contain; padding:10px;"></video>
-            <div class="badge" style="left:8px; right:auto;">VDO</div>
-          `;
+          mediaHtml = `<video src="${p.vdo}" autoplay loop muted playsinline disablepictureinpicture></video><div class="badge" style="left:8px; right:auto;">VDO PLAYING</div>`;
         } else {
           mediaHtml = `<img src="${mainImage}" alt="${p.name}" />`;
         }
 
         return `
-          <div class="product-card" ${p.vdo ? `onmouseenter="playCardVdo(this)" onmouseleave="stopCardVdo(this)"` : ''}>
+          <div class="product-card">
             <div class="media-preview-container product-media-clickable" title="คลิกเพื่อดูรายละเอียดสินค้า" onclick="openDetailModal('${p.id}')">
               <span class="badge">${p.brand}</span>
               ${isExclusive}
@@ -1006,27 +996,7 @@
       }).join('');
     }
 
-    function playCardVdo(cardEl) {
-      const img = cardEl.querySelector('.prod-img');
-      const vdo = cardEl.querySelector('.prod-vdo');
-      if (img && vdo) {
-        img.style.display = 'none';
-        vdo.style.display = 'block';
-        vdo.play().catch(err => console.log("VDO autoplay prevented:", err));
-      }
-    }
-
-    function stopCardVdo(cardEl) {
-      const img = cardEl.querySelector('.prod-img');
-      const vdo = cardEl.querySelector('.prod-vdo');
-      if (img && vdo) {
-        vdo.pause();
-        vdo.currentTime = 0;
-        vdo.style.display = 'none';
-        img.style.display = 'block';
-      }
-    }
-
+    /* DETAIL MODAL */
     function openDetailModal(productId) {
       const prod = products.find(p => p.id === productId);
       if (!prod) return;
@@ -1161,34 +1131,19 @@
       const selectedOpt = (currentSelectedProduct.options && currentSelectedProduct.options[optIdx]) ? currentSelectedProduct.options[optIdx] : { name: 'Standard', extraPrice: 0 };
       const finalPrice = calculateModalPrice();
 
-      const existingIndex = cart.findIndex(item => 
-        item.product.id === currentSelectedProduct.id && 
-        item.scale === scale && 
-        item.optionName === selectedOpt.name
-      );
+      cart.push({
+        product: currentSelectedProduct,
+        scale: scale,
+        optionName: selectedOpt.name,
+        price: finalPrice
+      });
 
-      if (existingIndex > -1) {
-        cart[existingIndex].qty += 1;
-      } else {
-        cart.push({
-          product: currentSelectedProduct,
-          scale: scale,
-          optionName: selectedOpt.name,
-          price: finalPrice,
-          qty: 1
-        });
-      }
-
-      updateCartBadge();
+      document.getElementById("cartCount").innerText = cart.length;
       closeModal("detailModal");
       alert(`เพิ่มลงตะกร้าแล้ว`);
     }
 
-    function updateCartBadge() {
-      const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
-      document.getElementById("cartCount").innerText = totalQty;
-    }
-
+    /* CART & CHECKOUT */
     function renderCart() {
       const list = document.getElementById("cartItemList");
       if (cart.length === 0) {
@@ -1199,27 +1154,20 @@
 
       let subtotal = 0;
       list.innerHTML = cart.map((item, idx) => {
-        subtotal += (item.price * item.qty);
+        subtotal += item.price;
         const thumb = (item.product.images && item.product.images.length > 0) ? item.product.images[0] : '';
         return `
-          <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #ddd; padding:8px 0; gap:8px;">
-            <div style="display:flex; gap:8px; align-items:center; overflow:hidden;">
-              <img src="${thumb}" style="width:38px; height:38px; object-fit:cover; border-radius:6px; border:1px solid #111; flex-shrink:0;" />
-              <div style="overflow:hidden;">
-                <div style="font-weight:bold; font-size:0.8rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${item.product.name}</div>
-                <div style="font-size:0.68rem; color:#666;">สเกล: ${item.scale} | ${item.optionName}</div>
+          <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #ddd; padding:8px 0;">
+            <div style="display:flex; gap:10px; align-items:center;">
+              <img src="${thumb}" style="width:40px; height:40px; object-fit:cover; border-radius:6px; border:1px solid #111;" />
+              <div>
+                <div style="font-weight:bold; font-size:0.82rem;">${item.product.name}</div>
+                <div style="font-size:0.72rem; color:#666;">สเกล: ${item.scale} | ${item.optionName}</div>
               </div>
             </div>
-            <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
-              <div style="display:flex; align-items:center; border:1px solid var(--border-color); border-radius:4px; background:#fff;">
-                <button type="button" style="width:24px; height:24px; border:none; background:transparent; font-weight:bold; cursor:pointer;" onclick="changeCartQty(${idx}, -1)">-</button>
-                <span style="width:24px; text-align:center; font-size:0.75rem; font-weight:bold;">${item.qty}</span>
-                <button type="button" style="width:24px; height:24px; border:none; background:transparent; font-weight:bold; cursor:pointer;" onclick="changeCartQty(${idx}, 1)">+</button>
-              </div>
-              <div style="text-align:right; min-width:50px;">
-                <div style="font-weight:bold; font-size:0.82rem;">฿${item.price * item.qty}</div>
-                <span style="color:var(--danger); cursor:pointer; font-size:0.68rem;" onclick="removeCartItem(${idx})">ลบ</span>
-              </div>
+            <div style="text-align:right;">
+              <div style="font-weight:bold; font-size:0.85rem;">฿${item.price}</div>
+              <span style="color:var(--danger); cursor:pointer; font-size:0.72rem;" onclick="removeCartItem(${idx})">ลบ</span>
             </div>
           </div>
         `;
@@ -1229,16 +1177,9 @@
       document.getElementById("netTotalDisplay").innerText = `ราคารวมทั้งสิ้น: ฿${grandTotal} (รวมค่าส่ง ฿${systemSettings.shippingFee})`;
     }
 
-    function changeCartQty(idx, delta) {
-      cart[idx].qty += delta;
-      if (cart[idx].qty <= 0) cart.splice(idx, 1);
-      updateCartBadge();
-      renderCart();
-    }
-
     function removeCartItem(idx) {
       cart.splice(idx, 1);
-      updateCartBadge();
+      document.getElementById("cartCount").innerText = cart.length;
       renderCart();
     }
 
@@ -1253,12 +1194,11 @@
         name: document.getElementById("shipName").value,
         phone: document.getElementById("shipPhone").value,
         email: document.getElementById("shipEmail").value,
-        address: document.getElementById("shipAddress").value,
-        note: document.getElementById("shipNote").value.trim()
+        address: document.getElementById("shipAddress").value
       };
 
       let subtotal = 0;
-      cart.forEach(it => subtotal += (it.price * it.qty));
+      cart.forEach(it => subtotal += it.price);
       const grandTotal = subtotal + systemSettings.shippingFee;
 
       document.getElementById("summarySenderName").innerText = systemSettings.senderName;
@@ -1270,42 +1210,22 @@
       document.getElementById("summaryCustomerEmail").innerText = customer.email;
       document.getElementById("summaryCustomerAddress").innerText = customer.address;
 
-      const noteContainer = document.getElementById("summaryNoteContainer");
-      if (customer.note) {
-        document.getElementById("summaryCustomerNote").innerText = customer.note;
-        noteContainer.style.display = "block";
-      } else {
-        noteContainer.style.display = "none";
-      }
-
       document.getElementById("summaryBankName").innerText = systemSettings.bankName;
       document.getElementById("summaryAccountNo").innerText = systemSettings.accountNo;
       document.getElementById("summaryAccountName").innerText = systemSettings.accountName;
       document.getElementById("summaryQrDisplay").innerHTML = systemSettings.qrCodeUrl ? `<img src="${systemSettings.qrCodeUrl}" class="qr-preview-img" />` : '';
 
       document.getElementById("summarySubtotal").innerText = "฿" + subtotal;
+      document.getElementById("summaryShippingName").innerText = systemSettings.shippingName;
       document.getElementById("summaryShippingFee").innerText = "฿" + systemSettings.shippingFee;
       document.getElementById("summaryGrandTotal").innerText = "฿" + grandTotal;
 
-      document.getElementById("summaryItemsList").innerHTML = cart.map(it => {
-        const thumb = (it.product.images && it.product.images.length > 0) ? it.product.images[0] : '';
-        const lineTotal = it.price * it.qty;
-        return `
-          <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid #eee; padding:6px 0; gap:8px;">
-            <div style="display:flex; gap:8px; align-items:center; overflow:hidden;">
-              <img src="${thumb}" style="width:36px; height:36px; object-fit:cover; border-radius:4px; border:1px solid #ccc; flex-shrink:0;" />
-              <div style="overflow:hidden;">
-                <div style="font-weight:bold; font-size:0.78rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${it.product.name}</div>
-                <div style="font-size:0.65rem; color:#666;">SKU: ${it.product.id} | สเกล: ${it.scale} | ${it.optionName}</div>
-              </div>
-            </div>
-            <div style="text-align:right; flex-shrink:0; font-size:0.78rem;">
-              <div>${it.qty} ชิ้น x ฿${it.price}</div>
-              <strong style="color:#111;">฿${lineTotal}</strong>
-            </div>
-          </div>
-        `;
-      }).join('');
+      document.getElementById("summaryItemsList").innerHTML = cart.map(it => `
+        <div style="display:flex; justify-content:space-between; font-size:0.82rem; padding:4px 0;">
+          <span>${it.product.name} (${it.scale})</span>
+          <strong>฿${it.price}</strong>
+        </div>
+      `).join('');
 
       closeModal('shippingModal');
       openModal('orderSummaryModal');
