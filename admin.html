@@ -49,7 +49,6 @@
       backdrop-filter: blur(8px);
     }
     
-    /* โลโก้และชื่อเว็บ คลิกเพื่อกลับไปหน้าแรก (index.html) */
     .brand-info { display: flex; align-items: center; gap: 10px; cursor: pointer; transition: opacity 0.2s; }
     .brand-info:hover { opacity: 0.8; }
     .brand-photo {
@@ -199,7 +198,6 @@
 <body onload="initAdminPanel()">
 
   <header class="header">
-    <!-- คลิกที่โลโก้หรือชื่อเว็บ เพื่อไปหน้าแรก (index.html) ทันที -->
     <div class="brand-info" onclick="window.location.href='index.html'" title="คลิกเพื่อกลับไปหน้าร้านค้า">
       <div class="brand-photo" id="adminHeaderLogo">164</div>
       <div class="brand-name" id="adminHeaderTitle">164CRAFT ADMIN</div>
@@ -213,7 +211,7 @@
         <span style="font-size: 0.72rem; color: var(--accent-vip); background: var(--accent-vip-bg); padding: 3px 8px; border-radius: 12px; border: 1px solid #a7f3d0; width: fit-content;">● Google Admin Authenticated</span>
       </div>
       <p class="admin-desc">
-        ระบบจัดการสินค้า โคลนสินค้า ตั้งค่าธีมเว็บ และบริหารจัดการสมาชิกพร้อมดูประวัติการซื้อ
+        ระบบจัดการสินค้า โคลนสินค้า ตั้งค่าธีมเว็บ (มีผลร่วมกันทั้งหน้าแรกและหลังบ้าน) และบริหารจัดการสมาชิก
       </p>
 
       <div class="admin-menu-grid">
@@ -231,7 +229,7 @@
 
         <div class="admin-menu-box">
           <div class="admin-menu-title">🎨 ตั้งค่าเว็บ, โลโก้ & สีธีม</div>
-          <div class="admin-menu-desc">แก้ไขชื่อเว็บไซต์ อัปโหลดรูปโลโก้ และกำหนดสีธีม (Theme Color) ของเว็บ</div>
+          <div class="admin-menu-desc">แก้ไขชื่อเว็บ อัปโหลดโลโก้ และกำหนดสีธีม (มีผลทั้งหน้าแรกและหลังบ้าน)</div>
           <button class="btn-action btn-secondary" style="margin-top: auto;" onclick="openWebThemeConfigModal()">ตั้งค่าเว็บไซต์</button>
         </div>
 
@@ -313,7 +311,7 @@
     </div>
   </div>
 
-  <!-- MEMBERS MODAL (จัดการสมาชิก & ประวัติการซื้อ) -->
+  <!-- MEMBERS MODAL -->
   <div id="membersModal" class="modal-overlay" onclick="checkOutsideModalClick(event, 'membersModal')">
     <div class="modal-box" style="max-width: 650px;">
       <div class="modal-header">
@@ -351,7 +349,7 @@
           </div>
         </div>
         <div class="form-group">
-          <label>อัปโหลดรูปโลโก้เว็บไซต์</label>
+          <label>อัปโหลดรูปโลโก้เว็บไซต์ (มีผลทั้งหน้าแรกและหลังบ้าน)</label>
           <input type="file" id="cfgLogoFileInput" class="form-control" accept="image/*" onchange="handleLogoUpload(event)" />
           <div id="logoPreviewArea" style="margin-top: 6px;"></div>
         </div>
@@ -411,7 +409,6 @@
           <div id="adminImagesPreviewList" class="image-preview-grid" style="display:none;"></div>
         </div>
 
-        <!-- กล่องจัดการ VDO HD (สูงสุด 100 MB) -->
         <div class="form-group" style="background:#fafaf8; border:1px solid var(--border-color); border-radius:var(--radius); padding:10px;">
           <div style="display:flex; justify-content:space-between; align-items:center;">
             <label style="font-weight:bold; color:#111;">🎥 วิดีโอพรีวิวสินค้า (HD VDO - สูงสุด 100 MB)</label>
@@ -449,7 +446,6 @@
           <div id="scalePricesContainer"></div>
         </div>
 
-        <!-- ตัวเลือกสินค้า & ส่วนลด -->
         <div style="margin-top:10px;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 6px;">
             <label style="font-size:0.82rem; font-weight:800;">⚙️ ตัวเลือกสินค้า & ส่วนลด</label>
@@ -704,18 +700,10 @@
       });
     }
 
-    function logoutAdmin() {
-      auth.signOut().then(() => {
-        alert("ออกจากระบบ Admin เรียบร้อย");
-        openPasscodeModal();
-      });
-    }
-
     function openModal(id) { document.getElementById(id).style.display = "flex"; }
     function closeModal(id) { document.getElementById(id).style.display = "none"; }
     function openPasscodeModal() { openModal('passcodeModal'); }
 
-    /* ฟังก์ชันคลิกพื้นที่ว่างด้านนอกเพื่อยกเลิก/ปิด Modal */
     function checkOutsideModalClick(event, modalId) {
       if (event.target.id === modalId) {
         closeModal(modalId);
@@ -730,7 +718,6 @@
       openModal('manageProductsModal');
     }
 
-    /* หน้าจัดการสมาชิก & ดูประวัติการซื้อ */
     function openMembersModal() {
       const cont = document.getElementById("membersListContainer");
       if (members.length === 0) {
@@ -773,7 +760,6 @@
       openModal('membersModal');
     }
 
-    /* หน้าตั้งค่าเว็บ, โลโก้ และสีธีม */
     function openWebThemeConfigModal() {
       document.getElementById("cfgStoreName").value = systemSettings.storeName || "164CRAFT";
       document.getElementById("cfgThemeColor").value = systemSettings.themeColor || "#111111";
