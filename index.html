@@ -38,6 +38,13 @@
       -webkit-text-size-adjust: 100%;
     }
 
+    /* 🛡️ ป้องกันการกดค้างเพื่อเซฟรูป/วิดีโอในมือถือ และป้องกันการไฮไลท์/ลากรูป */
+    img, video {
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+
     .header {
       background: rgba(255, 255, 255, 0.95);
       border-bottom: 1px solid var(--border-color);
@@ -672,6 +679,18 @@
     let cart = [];
     let currentSelectedProduct = null;
     let appliedOptionDiscount = 0;
+
+    // 🛡️ ป้องกันการคลิกขวาและลากรูปภาพ/วิดีโอเพื่อเซฟ
+    document.addEventListener('contextmenu', function(e) {
+      if (e.target.tagName === 'IMG' || e.target.tagName === 'VIDEO') {
+        e.preventDefault();
+      }
+    });
+    document.addEventListener('dragstart', function(e) {
+      if (e.target.tagName === 'IMG' || e.target.tagName === 'VIDEO') {
+        e.preventDefault();
+      }
+    });
 
     function sortAlphabetically(arr) {
       return arr.sort((a, b) => {
