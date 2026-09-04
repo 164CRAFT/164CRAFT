@@ -196,7 +196,7 @@
     }
     .secret-status-tag.active { display: block; }
 
-    /* BRAND DRAWER (CLICK TO TOGGLE & SCROLLABLE DROPDOWN) */
+    /* BRAND DRAWER (CLICK TO TOGGLE OPEN/CLOSE) */
     .brand-drawer-container { position: relative; display: inline-block; width: 100%; }
     .brand-drawer-btn {
       width: 100%; background: #fff; border: 1px solid var(--border-dark); border-radius: var(--radius);
@@ -217,7 +217,6 @@
     .brand-drawer-dropdown::-webkit-scrollbar { width: 5px; }
     .brand-drawer-dropdown::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
 
-    /* ควบคุมการเปิด-ปิดผ่าน Class 'show' โดยการคลิก */
     .brand-drawer-dropdown.show { display: flex; }
 
     .brand-drawer-item {
@@ -235,10 +234,6 @@
     @media(min-width: 768px) { .main-container { padding: 28px 28px 64px 28px; } }
     
     .main-inner-wrap { width: 100%; max-width: 1300px; margin: 0 auto; }
-    .main-inner-wrap:before {
-      content: "164CRAFT / SCALE MODEL ARCHIVE"; display: block; font-size: .62rem; font-weight: 850;
-      letter-spacing: .25em; color: #888; margin-bottom: 12px; text-align: left;
-    }
 
     .product-grid { 
       display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; width: 100%; align-items: start; justify-items: stretch;
@@ -434,7 +429,7 @@
         </div>
       </div>
 
-      <!-- ตัวคัดกรอง: คลิกเพื่อเปิด/ปิดลิ้นชัก หรือเลื่อนสกอร์เลือกแบรนด์ได้ -->
+      <!-- ตัวคัดกรอง: แสดงผลแบบ [ ALL MODELS (4) ] และคลิกเปิด-ปิดค้างไว้ได้ -->
       <div>
         <div class="sidebar-section-title-row">
           <span>🏷️ ตัวคัดกรอง</span>
@@ -442,7 +437,8 @@
         </div>
         <div class="brand-drawer-container" id="brandDrawerContainer">
           <button type="button" class="brand-drawer-btn" onclick="toggleBrandDrawer(event)">
-            <span id="currentBrandLabel">ALL MODELS (4) ▾▴</span>
+            <span id="currentBrandName">ALL MODELS</span>
+            <span id="currentBrandCount">(4)</span>
           </button>
           <div class="brand-drawer-dropdown" id="brandDrawerDropdown"></div>
         </div>
@@ -740,7 +736,6 @@
       if (menu && menu.style.display === "flex") menu.style.display = "none";
     }
 
-    /* ฟังก์ชันเปิด-ปิดลิ้นชักตัวคัดกรองแบรนด์โดยการคลิก */
     function toggleBrandDrawer(event) {
       event.stopPropagation();
       const dropdown = document.getElementById("brandDrawerDropdown");
@@ -894,16 +889,32 @@
 
     function renderCategories() {
       const cont = document.getElementById("brandDrawerDropdown");
-      const totalAll = getProductCountByBrand("ALL");
-      const labelEl = document.getElementById("currentBrandLabel");
+      const labelName = document.getElementById("currentBrandName");
+      const labelCount = document.getElementById("currentBrandCount");
+
+      const currentFilteredCount = products.filter(p => {
+        const prodSecret = (p.secretCode || "").trim().toUpperCase();
+        if (activeSecretCode) {
+          const isGeneral = (prodSecret === "");
+          const isVip = (prodSecret === activeSecretCode);
+          if (!isGeneral && !isVip) return false;
+        } else {
+          if (prodSecret !== "") return false;
+        }
+
+        const matchesCat = (activeCategory === "ALL" || (p.brand && p.brand.toUpperCase() === activeCategory.toUpperCase()));
+        return matchesCat;
+      }).length;
 
       if (activeCategory === "ALL") {
-        labelEl.innerText = `ALL MODELS (${totalAll}) ▾▴`;
+        labelName.innerText = "ALL MODELS";
+        labelCount.innerText = `(${currentFilteredCount})`;
       } else {
-        const count = getProductCountByBrand(activeCategory);
-        labelEl.innerText = `${activeCategory.toUpperCase()} (${count}) ▾▴`;
+        labelName.innerText = activeCategory.toUpperCase();
+        labelCount.innerText = `(${currentFilteredCount})`;
       }
 
+      const totalAll = getProductCountByBrand("ALL");
       let html = `
         <div class="brand-drawer-item ${activeCategory === 'ALL' ? 'active' : ''}" onclick="selectCategory('ALL')">
           <span>ALL MODELS</span>
@@ -954,6 +965,8 @@
       });
 
       if (overviewCounter) overviewCounter.innerText = `(แสดงอยู่ ${filtered.length} รายการ)`;
+
+      renderCategories();
 
       if (filtered.length === 0) {
         grid.innerHTML = `
