@@ -489,8 +489,10 @@
   <!-- ACCOUNT MODAL -->
   <div id="accountModal" class="modal-overlay">
     <div class="modal-box" style="max-width: 480px;">
-      <button class="modal-close" onclick="closeModal('accountModal')">✕</button>
-      <div class="modal-header">📍 ตั้งค่าข้อมูลที่อยู่จัดส่ง</div>
+      <div class="modal-header">
+        <span>📍 ตั้งค่าข้อมูลที่อยู่จัดส่ง</span>
+        <button class="modal-close" onclick="closeModal('accountModal')">✕</button>
+      </div>
 
       <div style="display: flex; align-items: center; gap: 10px; background: #fafafa; padding: 10px; border-radius: var(--radius); border: 1px solid var(--border-color);">
         <img id="modalUserAvatar" src="" style="width: 45px; height: 45px; border-radius: 50%; border: 2px solid #111;" alt="Avatar" />
@@ -512,8 +514,10 @@
   <!-- DETAIL MODAL -->
   <div id="detailModal" class="modal-overlay">
     <div class="modal-box">
-      <button class="modal-close" onclick="closeModal('detailModal')">✕</button>
-      <div class="modal-header" id="detailTitle">รายละเอียดสินค้า</div>
+      <div class="modal-header">
+        <span id="detailTitle">รายละเอียดสินค้า</span>
+        <button class="modal-close" onclick="closeModal('detailModal')">✕</button>
+      </div>
 
       <div class="detail-compact-body">
         <div class="detail-gallery-compact">
@@ -557,10 +561,12 @@
   <!-- CART MODAL -->
   <div id="cartModal" class="modal-overlay">
     <div class="modal-box">
-      <button class="modal-close" onclick="closeModal('cartModal')">✕</button>
       <div class="modal-header">
         <span>🛒 ตะกร้าสินค้าของคุณ</span>
-        <button type="button" class="btn-action btn-danger" style="height: 28px; padding: 0 8px; font-size: 0.68rem;" onclick="clearCart()">🗑️ เคลียร์ตะกร้า</button>
+        <div style="display: flex; align-items: center; gap: 6px;">
+          <button type="button" class="btn-action btn-danger" style="height: 28px; padding: 0 8px; font-size: 0.68rem;" onclick="clearCart()">🗑️ เคลียร์ตะกร้า</button>
+          <button class="modal-close" onclick="closeModal('cartModal')">✕</button>
+        </div>
       </div>
       <div id="cartItemList" style="max-height: 45vh; overflow-y: auto; padding-right: 2px;">- ไม่มีรายการสินค้า -</div>
       
@@ -579,8 +585,10 @@
   <!-- SHIPPING MODAL -->
   <div id="shippingModal" class="modal-overlay">
     <div class="modal-box">
-      <button class="modal-close" onclick="closeModal('shippingModal')">✕</button>
-      <div class="modal-header">ข้อมูลการจัดส่ง & ชำระเงิน</div>
+      <div class="modal-header">
+        <span>ข้อมูลการจัดส่ง & ชำระเงิน</span>
+        <button class="modal-close" onclick="closeModal('shippingModal')">✕</button>
+      </div>
       
       <div class="bank-payment-box">
         <div style="font-weight:bold; font-size:0.82rem;">📲 โอนเงินชำระค่าสินค้าผ่านบัญชี</div>
@@ -608,7 +616,10 @@
   <!-- ORDER SUMMARY MODAL -->
   <div id="orderSummaryModal" class="modal-overlay">
     <div class="modal-box" style="max-width: 600px;">
-      <div class="modal-header" style="color: #111;">🎉 สรุปรายการสั่งซื้อสำเร็จ!</div>
+      <div class="modal-header" style="color: #111;">
+        <span>🎉 สรุปรายการสั่งซื้อสำเร็จ!</span>
+        <button class="modal-close" onclick="closeModal('orderSummaryModal')">✕</button>
+      </div>
       <p style="font-size: 0.8rem; color: var(--text-muted);">ระบบบันทึกรายการคำสั่งซื้อเรียบร้อยแล้ว</p>
 
       <div id="printableOrderArea">
@@ -1439,7 +1450,7 @@
 
       const newQty = item.qty + delta;
       if (newQty > maxLimit) {
-        alert(`⚠️ ไม่สามารถเพิ่มสินค้าได้เนื่องจากเกินสต็อกที่มี (${maxLimit} ชิ้น)`);
+        alert(`⚠️ ไม่สามารถเพิ่มสินค้าได้เนื่องจากเกินจำนวนสต็อกที่มี (${maxLimit} ชิ้น)`);
         return;
       }
 
@@ -1480,7 +1491,7 @@
       };
 
       let subtotal = 0;
-      cart.forEach(it => subtotal += (it.price * it.qty));
+      cart.filter(Boolean).forEach(it => subtotal += (it.price * it.qty));
       const grandTotal = subtotal + systemSettings.shippingFee;
 
       document.getElementById("summarySenderName").innerText = systemSettings.senderName;
