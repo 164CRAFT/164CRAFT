@@ -114,7 +114,7 @@
     .profile-icon-btn:hover { transform: scale(1.05); }
     .profile-icon-btn img { width: 100%; height: 100%; object-fit: cover; }
 
-    /* FLOATING ACCOUNT MENU (POPUP) */
+    /* FLOATING ACCOUNT MENU */
     .account-dropdown-menu {
       position: absolute; top: 65px; right: 12px; width: 240px; background: #fff;
       border: 1px solid var(--border-color); border-radius: 12px; box-shadow: var(--shadow-pop);
@@ -176,20 +176,15 @@
     }
     .filter-counter-text { font-size: 0.6rem; color: var(--text-muted); font-weight: normal; text-transform: none; }
     
-    /* ปรับขนาดช่องสิทธิ์ VIP ให้เล็กลง กระชับ */
+    /* SECRET VIP BOX */
     .secret-code-box { 
       background: #fff; border: 1px solid var(--border-color); border-radius: var(--radius); padding: 8px 10px;
       box-shadow: var(--shadow-soft);
     }
     .secret-input-wrap { display: flex; flex-direction: column; gap: 6px; width: 100%; }
     .secret-code-box input { 
-      text-transform: uppercase; 
-      font-weight: 800; 
-      letter-spacing: 1px; 
-      font-size: 0.8rem; 
-      background: #fafafa; 
-      height: 34px;
-      padding: 4px 10px;
+      text-transform: uppercase; font-weight: 800; letter-spacing: 1px; font-size: 0.8rem; 
+      background: #fafafa; height: 34px; padding: 4px 10px;
     }
     .secret-status-tag {
       font-size: 0.65rem; margin-top: 6px; line-height: 1.3; display: none;
@@ -197,35 +192,43 @@
     }
     .secret-status-tag.active { display: block; color: #065f46; }
 
-    /* CATEGORIES LIST */
-    .sidebar-categories-list {
-      display: flex; flex-direction: row; overflow-x: auto; gap: 6px; padding-bottom: 6px; scrollbar-width: thin;
-      -webkit-overflow-scrolling: touch; width: 100%; white-space: nowrap;
+    /* BRAND DRAWER (POPUP HOVER MENU FOR BRAND FILTER) */
+    .brand-drawer-container {
+      position: relative;
+      display: inline-block;
+      width: 100%;
     }
-    .sidebar-categories-list::-webkit-scrollbar { height: 3px; }
-    .sidebar-categories-list::-webkit-scrollbar-thumb { background: #d1d1cc; border-radius: 2px; }
-
-    .sidebar-cat-btn {
-      flex: 0 0 auto; white-space: nowrap; background: #fff; border: 1px solid var(--border-color);
-      border-radius: var(--radius); padding: 7px 12px; font-size: 0.72rem; font-weight: 750;
-      letter-spacing: 0.04em; text-transform: uppercase; cursor: pointer; transition: all 0.2s ease;
-      display: inline-flex; align-items: center; justify-content: space-between; gap: 6px;
-      box-shadow: var(--shadow-soft);
+    .brand-drawer-btn {
+      width: 100%; background: #fff; border: 1px solid var(--border-dark); border-radius: var(--radius);
+      padding: 9px 12px; font-size: 0.78rem; font-weight: 800; text-transform: uppercase;
+      cursor: pointer; display: flex; justify-content: space-between; align-items: center;
+      box-shadow: var(--shadow-soft); transition: background 0.2s;
     }
-    .sidebar-cat-btn:hover { background: #f4f4f0; border-color: var(--border-dark); transform: translateY(-1px); }
-    .sidebar-cat-btn.active { background: #111; color: #fff; border-color: #111; box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
-    .cat-count-badge { font-size: 0.6rem; padding: 1px 4px; background: #eee; color: #111; border-radius: 3px; font-weight: 850; }
-    .sidebar-cat-btn.active .cat-count-badge { background: #333; color: #fff; }
+    .brand-drawer-btn:hover { background: #111; color: #fff; }
 
-    @media(min-width: 992px) {
-      .sidebar-categories-list {
-        flex-direction: column; overflow-x: visible; overflow-y: auto; max-height: calc(100vh - 250px);
-        white-space: normal; padding-bottom: 0; gap: 5px;
-      }
-      .sidebar-cat-btn { width: 100%; white-space: normal; box-shadow: none; background: #fafafa; padding: 8px 10px; }
+    /* ลิ้นชักแนวตั้ง (แสดงเมื่อเอาเมาส์ชี้ หรือคลิก) */
+    .brand-drawer-dropdown {
+      position: absolute; top: 100%; left: 0; width: 100%; background: #fff;
+      border: 1px solid var(--border-color); border-radius: 8px; box-shadow: var(--shadow-pop);
+      display: none; flex-direction: column; z-index: 500; overflow: hidden; margin-top: 4px;
+      max-height: 280px; overflow-y: auto;
+    }
+    .brand-drawer-container:hover .brand-drawer-dropdown {
+      display: flex; /* รองรับ hover บนคอมพิวเตอร์ */
+    }
+    .brand-drawer-dropdown.show {
+      display: flex; /* รองรับคลิกบนมือถือ */
     }
 
-    /* PRODUCTS GRID - จัดระเบียบชิ้นแรกซ้ายบนสุดเสมอ เป็นตารางระเบียบ */
+    .brand-drawer-item {
+      padding: 10px 14px; font-size: 0.75rem; font-weight: 750; text-transform: uppercase;
+      color: #111; border-bottom: 1px solid #f0f0ed; cursor: pointer; display: flex;
+      justify-content: space-between; align-items: center; background: #fff; transition: background 0.15s;
+    }
+    .brand-drawer-item:hover { background: #f4f4f1; }
+    .brand-drawer-item.active { background: #111; color: #fff; }
+
+    /* PRODUCTS GRID */
     .main-container { 
       width: 100%; padding: 14px 12px 48px 12px; display: flex; flex-direction: column; align-items: flex-start; 
     }
@@ -439,12 +442,21 @@
         </div>
       </div>
 
+      <!-- แบรนด์ฟิลเตอร์แบบ Hover / Popup ลิ้นชักแนวตั้ง -->
       <div>
         <div class="sidebar-section-title">
           <span>🏷️ ตัวกรองแบรนด์</span>
           <span class="filter-counter-text" id="filterOverviewCount">กำลังโหลด...</span>
         </div>
-        <div class="sidebar-categories-list" id="categoriesContainer"></div>
+        <div class="brand-drawer-container">
+          <button type="button" class="brand-drawer-btn" onclick="toggleBrandDrawer(event)">
+            <span id="currentBrandLabel">📁 เลือกแบรนด์สินค้า (ทั้งหมด)</span>
+            <span>▾</span>
+          </button>
+          <div class="brand-drawer-dropdown" id="brandDrawerDropdown">
+            <!-- รายการแบรนด์จะถูกเรนเดอร์มาที่นี่ -->
+          </div>
+        </div>
       </div>
     </aside>
 
@@ -523,7 +535,7 @@
     </div>
   </div>
 
-  <!-- CART MODAL (ปรับแก้จำนวนสินค้าได้ + ตรวจสอบ/แก้ไข) -->
+  <!-- CART MODAL -->
   <div id="cartModal" class="modal-overlay">
     <div class="modal-box">
       <button class="modal-close" onclick="closeModal('cartModal')">✕</button>
@@ -542,7 +554,7 @@
     </div>
   </div>
 
-  <!-- SHIPPING MODAL (เพิ่มช่อง Note) -->
+  <!-- SHIPPING MODAL -->
   <div id="shippingModal" class="modal-overlay">
     <div class="modal-box">
       <button class="modal-close" onclick="closeModal('shippingModal')">✕</button>
@@ -561,9 +573,7 @@
         <div class="form-group"><label>เบอร์โทรศัพท์</label><input type="tel" id="shipPhone" class="form-control" maxlength="10" required /></div>
         <div class="form-group"><label>อีเมล (Email)</label><input type="email" id="shipEmail" class="form-control" required /></div>
         <div class="form-group"><label>ที่อยู่จัดส่ง</label><textarea id="shipAddress" class="form-control" rows="2" required></textarea></div>
-        
-        <!-- ช่อง Note สำหรับเพิ่มบันทึกถึงร้านค้า -->
-        <div class="form-group"><label>Note (บันทึกเพิ่มเติมถึงร้านค้า เช่น จุดสังเกตบ้าน, เวลาสะดวกรับ)</label><input type="text" id="shipNote" class="form-control" placeholder="ระบุข้อความถึงร้านค้า (ถ้ามี)..." /></div>
+        <div class="form-group"><label>Note (บันทึกเพิ่มเติมถึงร้านค้า)</label><input type="text" id="shipNote" class="form-control" placeholder="ระบุข้อความถึงร้านค้า (ถ้ามี)..." /></div>
 
         <div style="display: flex; gap: 8px; margin-top: 8px;">
           <button type="button" class="btn-action btn-secondary" style="flex: 1; height: 40px;" onclick="closeModal('shippingModal'); openModal('cartModal');">⬅️ ย้อนกลับไปตะกร้า</button>
@@ -573,9 +583,9 @@
     </div>
   </div>
 
-  <!-- ORDER SUMMARY MODAL -->
+  <!-- ORDER SUMMARY MODAL (ปรับแต่งแสดงรูปภาพ ชื่อ รหัส SKU จำนวน ราคา ยอดรวม) -->
   <div id="orderSummaryModal" class="modal-overlay">
-    <div class="modal-box" style="max-width: 560px;">
+    <div class="modal-box" style="max-width: 600px;">
       <div class="modal-header" style="color: #111;">🎉 สรุปรายการสั่งซื้อสำเร็จ!</div>
       <p style="font-size: 0.8rem; color: var(--text-muted);">ระบบบันทึกรายการคำสั่งซื้อเรียบร้อยแล้ว</p>
 
@@ -587,10 +597,10 @@
           <div><strong>ที่อยู่:</strong> <span id="summarySenderAddress">-</span></div>
         </div>
 
-        <div style="font-weight: bold; font-size: 0.85rem; margin-top: 6px;">📦 รายการสินค้าที่สั่งซื้อ:</div>
-        <div id="summaryItemsList" style="max-height: 150px; overflow-y: auto;"></div>
+        <div style="font-weight: bold; font-size: 0.88rem; margin-top: 8px;">📦 รายการสินค้าที่สั่งซื้อ:</div>
+        <div id="summaryItemsList" style="max-height: 200px; overflow-y: auto; border: 1px solid var(--border-color); border-radius: var(--radius); padding: 6px; background: #fff; margin-top: 4px;"></div>
 
-        <div class="shipping-info-box">
+        <div class="shipping-info-box" style="margin-top: 8px;">
           <div style="font-weight: bold; margin-bottom: 4px; border-bottom: 1px solid #ddd; padding-bottom: 4px;">🚚 ข้อมูลผู้รับ (Receiver):</div>
           <div><strong>ชื่อผู้รับ:</strong> <span id="summaryCustomerName">-</span></div>
           <div><strong>เบอร์โทร:</strong> <span id="summaryCustomerPhone">-</span></div>
@@ -599,7 +609,7 @@
           <div id="summaryNoteContainer" style="margin-top: 4px; color: #b45309; display:none;"><strong>Note:</strong> <span id="summaryCustomerNote">-</span></div>
         </div>
 
-        <div class="bank-payment-box" style="margin-top: 6px; text-align: left;">
+        <div class="bank-payment-box" style="margin-top: 8px; text-align: left;">
           <div style="font-weight: bold; font-size: 0.82rem; margin-bottom: 4px; border-bottom: 1px solid #ddd; padding-bottom: 4px;">💳 ข้อมูลการชำระเงิน:</div>
           <div><strong>ธนาคาร:</strong> <span id="summaryBankName">-</span></div>
           <div><strong>เลขที่บัญชี:</strong> <span id="summaryAccountNo" style="font-weight: bold; color: #000;">-</span></div>
@@ -607,14 +617,14 @@
           <div id="summaryQrDisplay" style="text-align: center;"></div>
         </div>
 
-        <div style="border-top: 2px solid var(--border-dark); padding-top: 6px; margin-top: 6px;">
+        <div style="border-top: 2px solid var(--border-dark); padding-top: 8px; margin-top: 8px;">
           <div style="display: flex; justify-content: space-between; font-size: 0.82rem; color: var(--text-muted);"><span>ค่าสินค้า:</span><span id="summarySubtotal">฿0</span></div>
           <div style="display: flex; justify-content: space-between; font-size: 0.82rem; color: var(--text-muted);"><span>ค่าจัดส่ง (<span id="summaryShippingName">EMS</span>):</span><span id="summaryShippingFee">฿50</span></div>
-          <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 1.05rem; color: #000; margin-top: 4px;"><span>ยอดรวมสุทธิ:</span><span id="summaryGrandTotal">฿0</span></div>
+          <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 1.1rem; color: #000; margin-top: 4px;"><span>ยอดรวมสุทธิ:</span><span id="summaryGrandTotal">฿0</span></div>
         </div>
       </div>
 
-      <div style="display: flex; gap: 8px; margin-top: 8px;">
+      <div style="display: flex; gap: 8px; margin-top: 10px;">
         <button class="btn-action btn-secondary" style="flex: 1; height: 40px;" onclick="window.print()">🖨️ พิมพ์เอกสาร</button>
         <button class="btn-action" style="flex: 1; height: 40px;" onclick="closeModal('orderSummaryModal')">เสร็จสิ้น / ปิด</button>
       </div>
@@ -664,7 +674,7 @@
 
     let activeCategory = "ALL";
     let activeSecretCode = "";
-    let cart = []; // เก็บตะกร้าสินค้า [ { product, scale, optionName, price, qty } ]
+    let cart = [];
     let currentSelectedProduct = null;
     let appliedOptionDiscount = 0;
 
@@ -737,6 +747,13 @@
     function closeAccountDropdownOutside(event) {
       const menu = document.getElementById("accountDropdownMenu");
       if (menu && menu.style.display === "flex") menu.style.display = "none";
+    }
+
+    /* เปิด/ปิด ลิ้นชักตัวกรองแบรนด์ */
+    function toggleBrandDrawer(event) {
+      event.stopPropagation();
+      const dropdown = document.getElementById("brandDrawerDropdown");
+      dropdown.classList.toggle("show");
     }
 
     function saveUserProfileModal(e) {
@@ -833,9 +850,7 @@
         input.placeholder = "•••••••• (เปิดสิทธิ์แล้ว)";
 
         statusTag.className = "secret-status-tag active";
-        statusTag.innerHTML = `
-          <div style="font-weight:bold;">✓ สิทธิ์ VIP: <span style="letter-spacing:1px;">${maskedCode}</span> [ACTIVE]</div>
-        `;
+        statusTag.innerHTML = `<div style="font-weight:bold;">✓ สิทธิ์ VIP: ${maskedCode} [ACTIVE]</div>`;
         renderCategories();
         renderProducts();
         alert("✓ ปลดล็อกสิทธิ์ VIP สำเร็จ!");
@@ -871,23 +886,30 @@
     }
 
     function renderCategories() {
-      const cont = document.getElementById("categoriesContainer");
+      const cont = document.getElementById("brandDrawerDropdown");
       const totalAll = getProductCountByBrand("ALL");
+      const labelEl = document.getElementById("currentBrandLabel");
+
+      if (activeCategory === "ALL") {
+        labelEl.innerText = `📁 เลือกแบรนด์สินค้า (ทั้งหมด ${totalAll})`;
+      } else {
+        labelEl.innerText = `📁 แบรนด์: ${activeCategory}`;
+      }
 
       let html = `
-        <button class="sidebar-cat-btn ${activeCategory === 'ALL' ? 'active' : ''}" onclick="selectCategory('ALL')">
-          <span>ALL MODELS</span>
-          <span class="cat-count-badge">${totalAll}</span>
-        </button>
+        <div class="brand-drawer-item ${activeCategory === 'ALL' ? 'active' : ''}" onclick="selectCategory('ALL')">
+          <span>ALL MODELS (${totalAll})</span>
+          <span>✓</span>
+        </div>
       `;
 
       brands.forEach(b => {
         const count = getProductCountByBrand(b);
         html += `
-          <button class="sidebar-cat-btn ${activeCategory === b ? 'active' : ''}" onclick="selectCategory('${b}')">
-            <span>${b}</span>
-            <span class="cat-count-badge">${count}</span>
-          </button>
+          <div class="brand-drawer-item ${activeCategory === b ? 'active' : ''}" onclick="selectCategory('${b}')">
+            <span>${b} (${count})</span>
+            <span>✓</span>
+          </div>
         `;
       });
       cont.innerHTML = html;
@@ -897,6 +919,7 @@
       activeCategory = cat;
       renderCategories();
       renderProducts();
+      document.getElementById("brandDrawerDropdown").classList.remove("show");
     }
 
     function renderProducts() {
@@ -1098,7 +1121,6 @@
       const selectedOpt = (currentSelectedProduct.options && currentSelectedProduct.options[optIdx]) ? currentSelectedProduct.options[optIdx] : { name: 'Standard', extraPrice: 0 };
       const finalPrice = calculateModalPrice();
 
-      // ตรวจสอบว่ามีสินค้ารายการนี้ในตะกร้าแล้วหรือยัง (เช็ค SKU, scale, optionName)
       const existingIndex = cart.findIndex(item => 
         item.product.id === currentSelectedProduct.id && 
         item.scale === scale && 
@@ -1127,7 +1149,6 @@
       document.getElementById("cartCount").innerText = totalQty;
     }
 
-    /* CART & CHECKOUT (ปรับจำนวนสินค้าได้) */
     function renderCart() {
       const list = document.getElementById("cartItemList");
       if (cart.length === 0) {
@@ -1138,8 +1159,7 @@
 
       let subtotal = 0;
       list.innerHTML = cart.map((item, idx) => {
-        const itemTotal = item.price * item.qty;
-        subtotal += itemTotal;
+        subtotal += (item.price * item.qty);
         const thumb = (item.product.images && item.product.images.length > 0) ? item.product.images[0] : '';
         return `
           <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #ddd; padding:8px 0; gap:8px;">
@@ -1157,7 +1177,7 @@
                 <button type="button" style="width:24px; height:24px; border:none; background:transparent; font-weight:bold; cursor:pointer;" onclick="changeCartQty(${idx}, 1)">+</button>
               </div>
               <div style="text-align:right; min-width:50px;">
-                <div style="font-weight:bold; font-size:0.82rem;">฿${itemTotal}</div>
+                <div style="font-weight:bold; font-size:0.82rem;">฿${item.price * item.qty}</div>
                 <span style="color:var(--danger); cursor:pointer; font-size:0.68rem;" onclick="removeCartItem(${idx})">ลบ</span>
               </div>
             </div>
@@ -1171,9 +1191,7 @@
 
     function changeCartQty(idx, delta) {
       cart[idx].qty += delta;
-      if (cart[idx].qty <= 0) {
-        cart.splice(idx, 1);
-      }
+      if (cart[idx].qty <= 0) cart.splice(idx, 1);
       updateCartBadge();
       renderCart();
     }
@@ -1229,12 +1247,26 @@
       document.getElementById("summaryShippingFee").innerText = "฿" + systemSettings.shippingFee;
       document.getElementById("summaryGrandTotal").innerText = "฿" + grandTotal;
 
-      document.getElementById("summaryItemsList").innerHTML = cart.map(it => `
-        <div style="display:flex; justify-content:space-between; font-size:0.82rem; padding:4px 0;">
-          <span>${it.product.name} (${it.scale}) x ${it.qty}</span>
-          <strong>฿${it.price * it.qty}</strong>
-        </div>
-      `).join('');
+      // ปรับปรุงการแสดงผลรายการสินค้าในใบสรุปให้แสดง รูปภาพ, ชื่อ, SKU, จำนวน, ราคา, ยอดรวม
+      document.getElementById("summaryItemsList").innerHTML = cart.map(it => {
+        const thumb = (it.product.images && it.product.images.length > 0) ? it.product.images[0] : '';
+        const lineTotal = it.price * it.qty;
+        return `
+          <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid #eee; padding:6px 0; gap:8px;">
+            <div style="display:flex; align-items:center; gap:8px; overflow:hidden;">
+              <img src="${thumb}" style="width:36px; height:36px; object-fit:cover; border-radius:4px; border:1px solid #ccc; flex-shrink:0;" />
+              <div style="overflow:hidden;">
+                <div style="font-weight:bold; font-size:0.78rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${it.product.name}</div>
+                <div style="font-size:0.65rem; color:#666;">SKU: ${it.product.id} | สเกล: ${it.scale} | ${it.optionName}</div>
+              </div>
+            </div>
+            <div style="text-align:right; flex-shrink:0; font-size:0.78rem;">
+              <div>${it.qty} ชิ้น x ฿${it.price}</div>
+              <strong style="color:#111;">฿${lineTotal}</strong>
+            </div>
+          </div>
+        `;
+      }).join('');
 
       closeModal('shippingModal');
       openModal('orderSummaryModal');
