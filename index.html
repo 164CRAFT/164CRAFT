@@ -38,7 +38,6 @@
       -webkit-text-size-adjust: 100%;
     }
 
-    /* 🛡️ ป้องกันการกดค้างเพื่อเซฟรูป/วิดีโอในมือถือ และป้องกันการไฮไลท์/ลากรูป */
     img, video {
       -webkit-touch-callout: none;
       -webkit-user-select: none;
@@ -680,7 +679,6 @@
     let currentSelectedProduct = null;
     let appliedOptionDiscount = 0;
 
-    // 🛡️ ป้องกันการคลิกขวาและลากรูปภาพ/วิดีโอเพื่อเซฟ
     document.addEventListener('contextmenu', function(e) {
       if (e.target.tagName === 'IMG' || e.target.tagName === 'VIDEO') {
         e.preventDefault();
@@ -937,10 +935,10 @@
     function getProductCountByBrand(brand = "ALL") {
       return products.filter(p => {
         const readyStock = p.readyStock !== undefined ? p.readyStock : 0;
-        const preorderStock = p.preorderStock !== undefined ? p.preorderStock : 0;
+        const preorderActive = p.preorderActive || false;
         
         if (activeSaleMode === 'READY' && readyStock <= 0) return false;
-        if (activeSaleMode === 'PREORDER' && preorderStock <= 0) return false;
+        if (activeSaleMode === 'PREORDER' && !preorderActive) return false;
 
         const prodSecret = (p.secretCode || "").trim().toUpperCase();
         if (activeSecretCode) {
@@ -962,10 +960,10 @@
 
       const currentFilteredCount = products.filter(p => {
         const readyStock = p.readyStock !== undefined ? p.readyStock : 0;
-        const preorderStock = p.preorderStock !== undefined ? p.preorderStock : 0;
+        const preorderActive = p.preorderActive || false;
 
         if (activeSaleMode === 'READY' && readyStock <= 0) return false;
-        if (activeSaleMode === 'PREORDER' && preorderStock <= 0) return false;
+        if (activeSaleMode === 'PREORDER' && !preorderActive) return false;
 
         const prodSecret = (p.secretCode || "").trim().toUpperCase();
         if (activeSecretCode) {
@@ -1022,10 +1020,10 @@
 
       const filtered = products.filter(p => {
         const readyStock = p.readyStock !== undefined ? p.readyStock : 0;
-        const preorderStock = p.preorderStock !== undefined ? p.preorderStock : 0;
+        const preorderActive = p.preorderActive || false;
 
         if (activeSaleMode === 'READY' && readyStock <= 0) return false;
-        if (activeSaleMode === 'PREORDER' && preorderStock <= 0) return false;
+        if (activeSaleMode === 'PREORDER' && !preorderActive) return false;
 
         const prodSecret = (p.secretCode || "").trim().toUpperCase();
         if (activeSecretCode) {
@@ -1065,10 +1063,11 @@
         const isExclusive = p.secretCode ? `<span class="exclusive-badge">EXCLUSIVE</span>` : '';
         
         const readyStock = p.readyStock !== undefined ? p.readyStock : 0;
+        const preorderUnlimited = p.preorderUnlimited || false;
         const preorderStock = p.preorderStock !== undefined ? p.preorderStock : 0;
 
         const stockBadgeHtml = (activeSaleMode === "PREORDER")
-          ? `<div class="stock-badge preorder">⏳ พรีออเดอร์ (${preorderStock})</div>`
+          ? `<div class="stock-badge preorder">⏳ พรีออเดอร์ (${preorderUnlimited ? 'ไม่จำกัด' : preorderStock})</div>`
           : `<div class="stock-badge ready">📦 พร้อมส่ง (${readyStock})</div>`;
 
         let mediaHtml = '';
@@ -1148,13 +1147,14 @@
       if (detailBasePrice) detailBasePrice.innerText = "฿" + prod.basePrice;
       
       const readyStock = prod.readyStock !== undefined ? prod.readyStock : 0;
+      const preorderUnlimited = prod.preorderUnlimited || false;
       const preorderStock = prod.preorderStock !== undefined ? prod.preorderStock : 0;
       const stockStatusEl = document.getElementById("detailStockStatus");
 
       if (stockStatusEl) {
         if (activeSaleMode === "PREORDER") {
           stockStatusEl.style.color = "#c2410c";
-          stockStatusEl.innerText = `⏳ พรีออเดอร์ (โควต้า ${preorderStock} ชิ้น)`;
+          stockStatusEl.innerText = `⏳ พรีออเดอร์ (${preorderUnlimited ? 'ไม่จำกัดจำนวน' : 'โควต้า ' + preorderStock + ' ชิ้น'})`;
         } else {
           stockStatusEl.style.color = "#059669";
           stockStatusEl.innerText = `📦 พร้อมส่ง (เหลือ ${readyStock} ชิ้น)`;
