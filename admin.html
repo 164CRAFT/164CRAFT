@@ -70,7 +70,14 @@
     .btn-secondary:hover { background: #f0f0ed; border-color: var(--border-dark); }
     .btn-danger { background: var(--danger); color: #fff; border-color: var(--danger); }
 
-    .admin-wrapper { max-width: 1100px; width: 100%; margin: 24px auto; padding: 0 16px; flex: 1; }
+    .admin-wrapper { 
+      max-width: 1100px; 
+      width: 100%; 
+      margin: 24px auto; 
+      padding: 0 16px; 
+      flex: 1; 
+      display: none; 
+    }
     .admin-card-container {
       background: var(--bg-card); border: 1px solid var(--border-color);
       border-radius: calc(var(--radius) * 1.5); padding: 24px; box-shadow: var(--shadow);
@@ -108,7 +115,7 @@
 
     .modal-overlay {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.65); backdrop-filter: blur(4px);
+      background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(5px);
       display: none; align-items: flex-end; justify-content: center; z-index: 1000; padding: 0;
     }
     @media(min-width: 640px) { .modal-overlay { align-items: center; justify-content: center; padding: 20px; } }
@@ -117,7 +124,7 @@
       border-radius: 16px 16px 0 0; padding: 20px 18px; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
       display: flex; flex-direction: column; gap: 14px; position: relative; overflow-y: auto;
     }
-    @media(min-width: 640px) { .modal-box { width: min(95vw, 760px); border-radius: calc(var(--radius) * 1.5); padding: 28px; } }
+    @media(min-width: 640px) { .modal-box { width: min(95vw, 680px); border-radius: calc(var(--radius) * 1.5); padding: 28px; } }
     .modal-header {
       font-size: 1rem; font-weight: 800; padding-bottom: 10px; border-bottom: 1px solid var(--border-color);
       display: flex; align-items: center; justify-content: space-between;
@@ -155,6 +162,13 @@
       font-size: 7px; padding: 2px 4px; font-weight: 800; text-transform: uppercase;
     }
 
+    .tags-container { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 0.5rem; }
+    .tag-chip {
+      background: #f0f0ec; border: 1px solid var(--border-color); padding: 6px 10px;
+      font-size: .78rem; font-weight: 600; border-radius: var(--radius); display: flex; align-items: center; gap: 6px;
+    }
+    .tag-chip .del-btn { color: var(--danger); cursor: pointer; font-weight: bold; padding: 0 4px; }
+
     .scale-price-row {
       display: grid; grid-template-columns: 1fr 1.3fr; gap: 8px; align-items: center;
       border: 1px solid var(--border-color); background: #fafaf8; padding: 8px 10px; border-radius: var(--radius); margin-top: 6px;
@@ -165,43 +179,32 @@
     }
     .scale-check:has(input:checked) { border-color: #111; background: #111; color: #fff; }
 
-    .opt-card-row {
-      background: #fafaf8; border: 1px solid var(--border-color); border-radius: var(--radius);
-      padding: 12px 14px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 10px;
-    }
-    .opt-main-inputs {
-      display: grid; grid-template-columns: 2fr 1fr auto; gap: 8px; align-items: end;
-    }
-    .opt-codes-section {
-      background: #ffffff; border: 1px dashed #cbd5e1; border-radius: 6px;
-      padding: 10px 12px; display: flex; flex-direction: column; gap: 8px;
-    }
-    .opt-code-single-row {
-      display: grid; grid-template-columns: 1.5fr 1fr auto; gap: 8px; align-items: center;
-    }
-
-    .admin-filter-bar {
-      display: flex; flex-direction: column; gap: 8px; background: #fafaf8;
-      border: 1px solid var(--border-color); border-radius: var(--radius); padding: 10px 12px; margin-bottom: 10px;
-    }
-    .admin-filter-chips { display: flex; flex-wrap: wrap; gap: 6px; }
-    .admin-filter-btn {
-      background: #fff; border: 1px solid var(--border-color); border-radius: var(--radius);
-      padding: 4px 10px; font-size: 0.75rem; font-weight: 600; cursor: pointer; transition: all 0.15s;
-    }
-    .admin-filter-btn:hover { border-color: #111; }
-    .admin-filter-btn.active { background: #111; color: #fff; border-color: #111; }
-
     .admin-prod-item {
       display: flex; justify-content: space-between; align-items: center;
       border: 1px solid var(--border-color); background: #fafaf8; padding: 10px 12px; border-radius: var(--radius); margin-bottom: 8px; gap: 10px;
     }
-    .tags-container { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 0.5rem; }
-    .tag-chip {
-      background: #f0f0ec; border: 1px solid var(--border-color); padding: 6px 10px;
-      font-size: .78rem; font-weight: 600; border-radius: var(--radius); display: flex; align-items: center; gap: 6px;
+
+    .opt-card-row {
+      background: #fafaf8;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 10px 12px;
+      margin-bottom: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
     }
-    .tag-chip .del-btn { color: var(--danger); cursor: pointer; font-weight: bold; padding: 0 4px; }
+    .opt-grid-inputs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    @media(min-width: 600px) {
+      .opt-grid-inputs {
+        grid-template-columns: 2fr 1fr 1.5fr 1fr auto;
+        align-items: center;
+      }
+    }
 
     .footer {
       background: #111; color: #aaa; border-top: 1px solid #111;
@@ -222,20 +225,20 @@
     </div>
   </header>
 
-  <div class="admin-wrapper">
+  <div class="admin-wrapper" id="adminMainContent">
     <div class="admin-card-container">
       <div class="admin-section-title">
         <span>🛠️ แผงควบคุมระบบจัดการหลังบ้าน</span>
-        <span style="font-size: 0.72rem; color: var(--accent-vip); background: var(--accent-vip-bg); padding: 3px 8px; border-radius: 12px; border: 1px solid #a7f3d0; width: fit-content;">● ระบบ HD Video Engine เปิดใช้งาน</span>
+        <span style="font-size: 0.72rem; color: var(--accent-vip); background: var(--accent-vip-bg); padding: 3px 8px; border-radius: 12px; border: 1px solid #a7f3d0; width: fit-content;">● เชื่อมต่อ Firebase สำเร็จ</span>
       </div>
       <p class="admin-desc">
-        ข้อมูลเชื่อมต่อตรงกับ Firebase Cloud (`craft-2cc07`) รองรับการแสดงวิดีโอแบบคมชัดสูง (HD 720p) และระบบลิงก์ตรง
+        ข้อมูลทั้งหมดซิงค์ตรงกับฐานข้อมูล Firebase Cloud บนโปรเจกต์ craft-2cc07 แบบเรียลไทม์
       </p>
 
       <div class="admin-menu-grid">
         <div class="admin-menu-box">
           <div class="admin-menu-title">✏️ จัดการสินค้า & เพิ่มสินค้า</div>
-          <div class="admin-menu-desc">ค้นหา กรองสินค้า เพิ่ม แก้ไข หรือลบสินค้า พร้อมระบบ VDO คมชัดสูง</div>
+          <div class="admin-menu-desc">เพิ่ม แก้ไข หรือลบสินค้า พร้อมอัปโหลดรูปภาพหลายรูป วิดีโอ และชุดตัวเลือกโค้ดส่วนลด</div>
           <button class="btn-action" style="margin-top: auto;" onclick="openManageProductsModal()">จัดการสินค้า</button>
         </div>
 
@@ -266,6 +269,7 @@
     </div>
   </div>
 
+  <!-- PASSCODE MODAL -->
   <div id="passcodeModal" class="modal-overlay" style="display: flex;">
     <div class="modal-box" style="max-width: 380px; text-align: center; cursor: default;">
       <div class="modal-header" style="justify-content: center; border-bottom: none; padding-bottom: 0;">🔒 ยืนยันสิทธิ์ผู้ดูแลระบบ</div>
@@ -293,6 +297,7 @@
     </div>
   </div>
 
+  <!-- FORGOT PIN MODAL -->
   <div id="forgotPinModal" class="modal-overlay">
     <div class="modal-box" style="max-width: 400px; text-align: center;">
       <div class="modal-header">
@@ -317,10 +322,11 @@
     </div>
   </div>
 
+  <!-- MANAGE PRODUCTS MODAL -->
   <div id="manageProductsModal" class="modal-overlay">
-    <div class="modal-box">
+    <div class="modal-box" style="max-width: 650px;">
       <div class="modal-header">
-        <span>✏️ รายการสินค้าทั้งหมด</span>
+        <span>✏️ จัดการสินค้าทั้งหมด</span>
         <button class="modal-close" onclick="closeModal('manageProductsModal')">✕</button>
       </div>
       
@@ -330,22 +336,7 @@
         </button>
       </div>
 
-      <div class="admin-filter-bar">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-          <span style="font-size:0.75rem; font-weight:800; color:#333;">🏷️ ตัวกรองแบรนด์:</span>
-          <span id="adminFilteredCount" style="font-size:0.72rem; color:var(--text-muted);"></span>
-        </div>
-        <div class="admin-filter-chips" id="adminBrandFilterChips"></div>
-
-        <div style="display:flex; gap:6px; margin-top:4px;">
-          <span style="font-size:0.75rem; font-weight:800; color:#333; line-height:26px;">ประเภท:</span>
-          <button type="button" class="admin-filter-btn active" id="filterVipAllBtn" onclick="setAdminVipFilter('ALL')">ทั้งหมด</button>
-          <button type="button" class="admin-filter-btn" id="filterVipNormalBtn" onclick="setAdminVipFilter('NORMAL')">สินค้าทั่วไป</button>
-          <button type="button" class="admin-filter-btn" id="filterVipOnlyBtn" onclick="setAdminVipFilter('VIP')">เฉพาะ VIP 🔒</button>
-        </div>
-      </div>
-
-      <div class="form-group" style="margin-top: 2px;">
+      <div class="form-group" style="margin-top: 4px;">
         <input type="text" id="adminSearchInput" class="form-control" placeholder="🔍 ค้นหาด้วยชื่อสินค้า หรือ SKU..." onkeyup="renderAdminProductList()" />
       </div>
 
@@ -357,8 +348,9 @@
     </div>
   </div>
 
+  <!-- ADD / EDIT PRODUCT MODAL -->
   <div id="addProductModal" class="modal-overlay">
-    <div class="modal-box">
+    <div class="modal-box" style="max-width: 720px;">
       <div class="modal-header">
         <span id="productModalTitle">📦 เพิ่มรายการสินค้าใหม่</span>
         <button class="modal-close" onclick="closeModal('addProductModal')">✕</button>
@@ -370,7 +362,7 @@
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
           <div class="form-group">
             <label>รหัสสินค้า (SKU)</label>
-            <input type="text" id="pId" class="form-control" placeholder="เช่น DU01" required />
+            <input type="text" id="pId" class="form-control" placeholder="เช่น HON002" required />
           </div>
           <div class="form-group">
             <label>แบรนด์</label>
@@ -380,7 +372,7 @@
 
         <div class="form-group">
           <label>ชื่อสินค้า</label>
-          <input type="text" id="pName" class="form-control" placeholder="เช่น Ducati Panigale V4 S" required />
+          <input type="text" id="pName" class="form-control" placeholder="เช่น Honda Civic Type R" required />
         </div>
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
@@ -395,44 +387,15 @@
         </div>
 
         <div class="form-group">
-          <div style="display:flex; justify-content:space-between; align-items:center;">
-            <label>📸 อัปโหลดรูปภาพสินค้า (ระบบบีบอัดให้อัตโนมัติ)</label>
-            <span id="imgCompressStatus" style="font-size:0.7rem; color:#059669; font-weight:bold;"></span>
-          </div>
+          <label>📸 อัปโหลดรูปภาพ (เลือกได้หลายรูป)</label>
           <input type="file" id="pImageInput" class="form-control" accept="image/*" multiple onchange="handleImageUpload(event)" />
           <div id="adminImagesPreviewList" class="image-preview-grid" style="display:none;"></div>
         </div>
 
-        <div class="form-group" style="background:#fafaf8; border:1px solid var(--border-color); border-radius:var(--radius); padding:12px;">
-          <div style="display:flex; justify-content:space-between; align-items:center;">
-            <label style="font-weight:bold; color:#111;">🎥 วิดีโอพรีวิวสินค้า (HD Engine คมชัดสูง)</label>
-            <span id="vdoCompressStatus" style="font-size:0.72rem; font-weight:bold;"></span>
-          </div>
-          <p style="font-size:0.72rem; color:var(--text-muted); margin-bottom:8px; line-height:1.4;">
-            💡 <strong>คำแนะนำเพื่อความคมชัดสูงสุด:</strong><br>
-            • <strong>วิธีที่ 1 (แนะนำที่สุด):</strong> วาง <strong>URL ลิงก์ตรงของไฟล์ MP4</strong> (เช่น ลิงก์จาก Firebase Storage, Google Drive direct, หรือโฮสต์วิดีโอ) ภาพจะชัด 1080p/4K เต็มประสิทธิภาพ ไม่ถูกจำกัดขนาด<br>
-            • <strong>วิธีที่ 2:</strong> อัปโหลดคลิปสั้น (3-6 วินาที) จากเครื่อง ระบบจะบีบอัดเป็น HD 720p ให้โดยคงความคมชัดไว้สูงสุด
-          </p>
-          
-          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
-            <div>
-              <label style="font-size:0.72rem; color:#0284c7; font-weight:bold;">🔗 วางลิงก์ตรงของ VDO (.mp4) [ชัดสูงสุด]</label>
-              <input type="url" id="pVdoUrlInput" class="form-control" placeholder="https://.../video.mp4" oninput="handleVdoUrlInput(this.value)" style="font-size:0.8rem; padding:8px 10px;" />
-            </div>
-            <div>
-              <label style="font-size:0.72rem; color:#555; font-weight:bold;">📁 หรือเลือกคลิปสั้นจากเครื่อง</label>
-              <input type="file" id="pVdoInput" class="form-control" accept="video/mp4,video/webm,video/quicktime" onchange="handleHdCompressVdo(event)" style="font-size:0.75rem; padding:6px;" />
-            </div>
-          </div>
-
-          <div id="adminVdoContainer" style="display:none; margin-top:8px; align-items:center; gap:12px; background:#fff; padding:8px; border:1px solid #ddd; border-radius:6px;">
-            <video id="adminVdoPlayer" src="" controls autoplay loop style="width:110px; height:70px; object-fit:cover; border-radius:4px; background:#000;"></video>
-            <div style="flex:1; overflow:hidden;">
-              <div id="adminVdoStatus" style="font-size:0.75rem; color:#059669; font-weight:bold;">✓ วิดีโอพร้อมแสดงผลแบบ HD</div>
-              <div id="adminVdoDetails" style="font-size:0.68rem; color:#666; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"></div>
-            </div>
-            <button type="button" class="btn-action btn-danger" style="height:32px; padding:0 10px; font-size:0.72rem;" onclick="removeVdo()">✕ ลบ VDO</button>
-          </div>
+        <div class="form-group">
+          <label>🎥 อัปโหลดวิดีโอพรีวิว (MP4)</label>
+          <input type="file" id="pVdoInput" class="form-control" accept="video/mp4" onchange="handleVdoUpload(event)" />
+          <div id="adminVdoPreviewArea" style="margin-top:2px; font-size:0.75rem; color:#059669; font-weight:700;"></div>
         </div>
 
         <div class="form-group">
@@ -448,10 +411,10 @@
         <div style="margin-top:10px;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 6px;">
             <label style="font-size:0.82rem; font-weight:800;">⚙️ ตัวเลือกสินค้า & ส่วนลด</label>
-            <button type="button" class="btn-action btn-secondary" style="height:32px; padding:0 12px; font-size:0.75rem;" onclick="addDynamicOptionRow()">+ เพิ่มชุดตัวเลือกใหม่</button>
+            <button type="button" class="btn-action btn-secondary" style="height:32px; padding:0 12px; font-size:0.75rem;" onclick="addDynamicOptionRow()">+ เพิ่มตัวเลือก</button>
           </div>
           <p style="font-size:0.75rem; color:var(--text-muted); margin-bottom:8px;">
-            ในแต่ละตัวเลือก สามารถกดสร้างและลบโค้ดส่วนลดได้อย่างอิสระ ไม่จำกัดจำนวนโค้ด
+            กำหนดชื่อตัวเลือก, ราคาเพิ่ม (+฿), โค้ดส่วนลดเฉพาะตัวเลือก และจำนวนเงินส่วนลด (-฿)
           </p>
           <div id="dynamicOptionsList"></div>
         </div>
@@ -464,6 +427,7 @@
     </div>
   </div>
 
+  <!-- VIP CODES MODAL -->
   <div id="vipCodesModal" class="modal-overlay">
     <div class="modal-box" style="max-width: 480px;">
       <div class="modal-header">
@@ -488,6 +452,7 @@
     </div>
   </div>
 
+  <!-- CONFIG MODAL (BRANDS & SCALES) -->
   <div id="configModal" class="modal-overlay">
     <div class="modal-box" style="max-width: 480px;">
       <div class="modal-header">
@@ -522,6 +487,7 @@
     </div>
   </div>
 
+  <!-- BANK CONFIG MODAL -->
   <div id="bankConfigModal" class="modal-overlay">
     <div class="modal-box" style="max-width: 500px;">
       <div class="modal-header">
@@ -555,6 +521,7 @@
     </div>
   </div>
 
+  <!-- SETTINGS MODAL -->
   <div id="settingsModal" class="modal-overlay">
     <div class="modal-box" style="max-width: 480px;">
       <div class="modal-header">
@@ -577,18 +544,20 @@
     </div>
   </div>
 
+  <!-- Firebase App SDK & Firestore -->
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
   <script>
+    // อัปเดต Project ID เป็น craft-2cc07 ตามโปรเจกต์ปัจจุบันของคุณ
     const firebaseConfig = {
-      apiKey: "AIzaSyBqtlTy3dmasVPe1HfssaWrvsfJl1nTINc",
+      apiKey: "AIzaSyBqt1Y3dskVPe1FnFunsV8sD61M_7dK7c4",
       authDomain: "craft-2cc07.firebaseapp.com",
       projectId: "craft-2cc07",
       storageBucket: "craft-2cc07.firebasestorage.app",
       messagingSenderId: "371408751439",
-      appId: "1:371408751439:web:fa489eaf0a36c0c6b2533a",
-      measurementId: "G-Z5TTL1VDKR"
+      appId: "1:371408751439:web:fa489eaf0a36oc06b2533a",
+      measurementId: "G-Z6TFLVDNR"
     };
 
     firebase.initializeApp(firebaseConfig);
@@ -617,9 +586,6 @@
     let tempProductImages = [];
     let tempProductVdo = "";
 
-    let adminFilterBrand = "ALL";
-    let adminFilterVip = "ALL";
-
     function sortAlphabetically(arr) {
       return arr.sort((a, b) => a.localeCompare(b, 'th', { sensitivity: 'base' }));
     }
@@ -631,7 +597,11 @@
         vipCodes: vipCodesList,
         passcode: adminPasscode,
         settings: systemSettings
-      }).catch(err => console.error("Error saving settings: ", err));
+      }).then(() => {
+        console.log("Settings saved to Firestore successfully.");
+      }).catch((err) => {
+        console.error("Error saving settings: ", err);
+      });
     }
 
     function initAdminPanel() {
@@ -646,16 +616,16 @@
         }
       }).catch(err => console.log("Error loading settings:", err));
 
-      db.collection("products").onSnapshot((snapshot) => {
+      db.collection("products").get().then((snapshot) => {
         products = [];
         snapshot.forEach((doc) => products.push(doc.data()));
-        renderAdminBrandFilterChips();
-        renderAdminProductList();
       });
 
       if (sessionStorage.getItem("admin_logged_in") === "true") {
+        document.getElementById("adminMainContent").style.display = "block";
         closeModal('passcodeModal');
       } else {
+        document.getElementById("adminMainContent").style.display = "none";
         openPasscodeModal();
       }
     }
@@ -664,6 +634,7 @@
     function closeModal(id) { document.getElementById(id).style.display = "none"; }
 
     function openPasscodeModal() {
+      document.getElementById("adminMainContent").style.display = "none";
       const input = document.getElementById("passcodeInput");
       input.value = "";
       document.getElementById("pinStatusMsg").innerText = "";
@@ -681,6 +652,7 @@
           statusMsg.style.color = "#059669";
           statusMsg.innerText = "✓ รหัสผ่านถูกต้อง เข้าสู่ระบบสำเร็จ!";
           sessionStorage.setItem("admin_logged_in", "true");
+          document.getElementById("adminMainContent").style.display = "block";
           setTimeout(() => closeModal('passcodeModal'), 350);
         } else {
           statusMsg.style.color = "var(--danger)";
@@ -694,6 +666,7 @@
 
     function logoutAdmin() {
       sessionStorage.removeItem("admin_logged_in");
+      document.getElementById("adminMainContent").style.display = "none";
       openPasscodeModal();
     }
 
@@ -712,7 +685,7 @@
         adminPasscode = newPin;
         saveDataToFirestore();
 
-        alert(`✓ สร้างรหัส PIN ใหม่เรียบร้อยแล้ว!\n\nรหัส PIN ใหม่ของคุณคือ: ${newPin}`);
+        alert(`✓ สร้างรหัส PIN ใหม่เรียบร้อยแล้ว!\n\nรหัส PIN ใหม่ของคุณคือ: ${newPin}\n(ระบบเปิดโปรแกรมเมลให้อัตโนมัติ)`);
         window.open(`mailto:${systemSettings.adminEmail}?subject=Admin%20New%20PIN&body=Your%20new%20PIN%20is:%20${newPin}`, '_blank');
         
         closeModal('forgotPinModal');
@@ -723,79 +696,39 @@
     }
 
     function openManageProductsModal() {
-      adminFilterBrand = "ALL";
-      adminFilterVip = "ALL";
-      renderAdminBrandFilterChips();
-      renderAdminProductList();
-      openModal('manageProductsModal');
-    }
-
-    function renderAdminBrandFilterChips() {
-      const cont = document.getElementById("adminBrandFilterChips");
-      let html = `<button type="button" class="admin-filter-btn ${adminFilterBrand === 'ALL' ? 'active' : ''}" onclick="setAdminBrandFilter('ALL')">ทั้งหมด (${products.length})</button>`;
-      
-      brands.forEach(b => {
-        const count = products.filter(p => p.brand && p.brand.toUpperCase() === b.toUpperCase()).length;
-        html += `<button type="button" class="admin-filter-btn ${adminFilterBrand === b ? 'active' : ''}" onclick="setAdminBrandFilter('${b}')">${b} (${count})</button>`;
+      db.collection("products").get().then((snapshot) => {
+        products = [];
+        snapshot.forEach((doc) => products.push(doc.data()));
+        renderAdminProductList();
+        openModal('manageProductsModal');
       });
-      cont.innerHTML = html;
-    }
-
-    function setAdminBrandFilter(brand) {
-      adminFilterBrand = brand;
-      renderAdminBrandFilterChips();
-      renderAdminProductList();
-    }
-
-    function setAdminVipFilter(type) {
-      adminFilterVip = type;
-      document.getElementById("filterVipAllBtn").className = `admin-filter-btn ${type === 'ALL' ? 'active' : ''}`;
-      document.getElementById("filterVipNormalBtn").className = `admin-filter-btn ${type === 'NORMAL' ? 'active' : ''}`;
-      document.getElementById("filterVipOnlyBtn").className = `admin-filter-btn ${type === 'VIP' ? 'active' : ''}`;
-      renderAdminProductList();
     }
 
     function renderAdminProductList() {
       const cont = document.getElementById("adminProductList");
       const q = (document.getElementById("adminSearchInput").value || "").trim().toLowerCase();
-      
-      const filtered = products.filter(p => {
-        if (adminFilterBrand !== "ALL" && (!p.brand || p.brand.toUpperCase() !== adminFilterBrand.toUpperCase())) {
-          return false;
-        }
-        const hasVip = (p.secretCode && p.secretCode.trim() !== "");
-        if (adminFilterVip === "NORMAL" && hasVip) return false;
-        if (adminFilterVip === "VIP" && !hasVip) return false;
-
-        const matchName = p.name && p.name.toLowerCase().includes(q);
-        const matchId = p.id && p.id.toLowerCase().includes(q);
-        return matchName || matchId;
-      });
-
-      document.getElementById("adminFilteredCount").innerText = `แสดงอยู่ ${filtered.length} จากทั้งหมด ${products.length} ชิ้น`;
+      const filtered = products.filter(p => p.name.toLowerCase().includes(q) || p.id.toLowerCase().includes(q));
 
       if (filtered.length === 0) {
-        cont.innerHTML = `<div style="text-align:center; padding:25px; color:#888; background:#fff; border:1px dashed #ccc; border-radius:8px;">ไม่พบสินค้าที่ตรงกับตัวกรอง</div>`;
+        cont.innerHTML = `<div style="text-align:center; padding:15px; color:#888;">ไม่พบสินค้า</div>`;
         return;
       }
 
       cont.innerHTML = filtered.map(p => {
         const thumb = (p.images && p.images.length > 0) ? p.images[0] : '';
         const secretNotice = p.secretCode ? `<span style="color:var(--accent-vip); font-weight:bold;">[VIP: ${p.secretCode}]</span> ` : '';
-        const hasVdoNotice = p.vdo ? `<span style="color:#0284c7; font-weight:bold;">[🎥 มี VDO]</span> ` : '';
-        const optCount = p.options ? p.options.length : 0;
         return `
           <div class="admin-prod-item">
             <div style="display:flex; gap:10px; align-items:center; overflow:hidden;">
-              <img src="${thumb}" style="width:42px; height:42px; object-fit:cover; border-radius:4px; border:1px solid #ddd; flex-shrink:0;" />
+              <img src="${thumb}" style="width:38px; height:38px; object-fit:cover; border-radius:4px; border:1px solid #ddd; flex-shrink:0;" />
               <div style="overflow:hidden;">
-                <div style="font-weight:bold; font-size:0.82rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${p.name}</div>
-                <div style="font-size:0.72rem; color:#666;">SKU: ${p.id} | ${p.brand} | ${secretNotice}${hasVdoNotice}(${optCount} ตัวเลือก)</div>
+                <div style="font-weight:bold; font-size:0.8rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${p.name}</div>
+                <div style="font-size:0.7rem; color:#666;">SKU: ${p.id} | ${p.brand} | ${secretNotice}</div>
               </div>
             </div>
             <div style="display:flex; gap:5px; flex-shrink:0;">
-              <button class="btn-action btn-secondary" style="height:32px; padding:0 10px; font-size:0.75rem;" onclick="editProduct('${p.id}')">แก้ไข</button>
-              <button class="btn-action btn-danger" style="height:32px; padding:0 10px; font-size:0.75rem;" onclick="deleteProduct('${p.id}')">ลบ</button>
+              <button class="btn-action btn-secondary" style="height:30px; padding:0 8px; font-size:0.7rem;" onclick="editProduct('${p.id}')">แก้ไข</button>
+              <button class="btn-action btn-danger" style="height:30px; padding:0 8px; font-size:0.7rem;" onclick="deleteProduct('${p.id}')">ลบ</button>
             </div>
           </div>
         `;
@@ -809,7 +742,9 @@
       document.getElementById("addProductForm").reset();
 
       tempProductImages = [];
-      removeVdo();
+      tempProductVdo = "";
+      renderAdminImagePreview();
+      document.getElementById("adminVdoPreviewArea").innerHTML = "";
 
       const bSelect = document.getElementById("pBrandSelect");
       bSelect.innerHTML = brands.map(b => `<option value="${b}">${b}</option>`).join('');
@@ -861,49 +796,18 @@
       }).join('');
     }
 
-    function compressImageFile(file, maxWidth = 800, quality = 0.72) {
-      return new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = (event) => {
-          const img = new Image();
-          img.src = event.target.result;
-          img.onload = () => {
-            let width = img.width;
-            let height = img.height;
-            if (width > maxWidth) {
-              height = Math.round((height * maxWidth) / width);
-              width = maxWidth;
-            }
-            const canvas = document.createElement('canvas');
-            canvas.width = width;
-            canvas.height = height;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0, width, height);
-            resolve(canvas.toDataURL('image/jpeg', quality));
-          };
-        };
-      });
-    }
-
-    async function handleImageUpload(event) {
+    function handleImageUpload(event) {
       const files = event.target.files;
       if (!files || files.length === 0) return;
-
-      const statusEl = document.getElementById("imgCompressStatus");
-      statusEl.innerText = "กำลังบีบอัดรูปภาพ...";
-
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        if (file.type.startsWith('image/')) {
-          const compressedBase64 = await compressImageFile(file);
-          tempProductImages.push(compressedBase64);
-        }
-      }
-
-      statusEl.innerText = "✓ บีบอัดรูปภาพเรียบร้อย";
-      setTimeout(() => statusEl.innerText = "", 2500);
-      renderAdminImagePreview();
+      Array.from(files).forEach(file => {
+        if (!file.type.startsWith('image/')) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          tempProductImages.push(e.target.result);
+          renderAdminImagePreview();
+        };
+        reader.readAsDataURL(file);
+      });
       event.target.value = '';
     }
 
@@ -929,237 +833,43 @@
       `).join('');
     }
 
-    function compressVideoFileHD(file, targetWidth = 640, targetBitrate = 950000) {
-      return new Promise((resolve, reject) => {
-        const video = document.createElement('video');
-        video.src = URL.createObjectURL(file);
-        video.muted = true;
-        video.playsInline = true;
-
-        video.onloadedmetadata = () => {
-          let width = Math.min(video.videoWidth, targetWidth);
-          let height = Math.round((video.videoHeight * width) / video.videoWidth);
-          if (height % 2 !== 0) height++;
-
-          const canvas = document.createElement('canvas');
-          canvas.width = width;
-          canvas.height = height;
-          const ctx = canvas.getContext('2d');
-
-          const stream = canvas.captureStream(30);
-          
-          let mimeType = 'video/webm;codecs=vp9';
-          if (!MediaRecorder.isTypeSupported(mimeType)) {
-            mimeType = 'video/webm;codecs=vp8';
-          }
-          if (!MediaRecorder.isTypeSupported(mimeType)) {
-            mimeType = 'video/webm';
-          }
-
-          const recorder = new MediaRecorder(stream, {
-            mimeType: mimeType,
-            videoBitsPerSecond: targetBitrate
-          });
-
-          const chunks = [];
-          recorder.ondataavailable = (e) => {
-            if (e.data.size > 0) chunks.push(e.data);
-          };
-
-          recorder.onstop = () => {
-            const blob = new Blob(chunks, { type: mimeType });
-            const reader = new FileReader();
-            reader.readAsDataURL(blob);
-            reader.onloadend = () => {
-              URL.revokeObjectURL(video.src);
-              resolve({
-                dataUrl: reader.result,
-                size: blob.size,
-                originalSize: file.size,
-                width: width,
-                height: height
-              });
-            };
-          };
-
-          video.play();
-          recorder.start();
-
-          function drawFrame() {
-            if (!video.paused && !video.ended) {
-              ctx.drawImage(video, 0, 0, width, height);
-              requestAnimationFrame(drawFrame);
-            }
-          }
-          drawFrame();
-
-          video.onended = () => {
-            recorder.stop();
-          };
-        };
-
-        video.onerror = (err) => {
-          URL.revokeObjectURL(video.src);
-          reject(err);
-        };
-      });
-    }
-
-    async function handleHdCompressVdo(event) {
+    function handleVdoUpload(event) {
       const file = event.target.files[0];
       if (!file) return;
-
-      const statusEl = document.getElementById("vdoCompressStatus");
-      statusEl.innerText = "⏳ กำลังประมวลผลวิดีโอระดับ HD...";
-      statusEl.style.color = "#d97706";
-
-      try {
-        const result = await compressVideoFileHD(file);
-        
-        if (result.size <= 500 * 1024) {
-          tempProductVdo = result.dataUrl;
-          document.getElementById("pVdoUrlInput").value = "";
-          statusEl.innerText = `✓ บีบอัด HD สำเร็จ (${result.width}x${result.height}px, ${(result.size / 1024).toFixed(0)} KB)`;
-          statusEl.style.color = "#059669";
-          displayVdoPreview(tempProductVdo, `HD Video (${result.width}x${result.height}px - ${(result.size / 1024).toFixed(0)} KB)`);
-        } else {
-          alert(`⚠️ วิดีโอนี้มีความยาวเกินไป (${(result.size / 1024).toFixed(0)} KB)\nแนะนำให้อัปโหลดไฟล์ไปยัง Firebase Storage หรือ Google Drive แล้วนำ "ลิงก์ตรง URL" มาวางในช่องด้านซ้ายแทนครับ`);
-          removeVdo();
-          statusEl.innerText = "";
-        }
-      } catch (err) {
-        console.error("VDO Compress Error: ", err);
-        statusEl.innerText = "✕ ไม่สามารถบีบอัดได้ แนะนำให้วางลิงก์ URL ตรง";
-        statusEl.style.color = "var(--danger)";
-      }
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        tempProductVdo = e.target.result;
+        document.getElementById("adminVdoPreviewArea").innerHTML = `<span style="color:#059669;">✓ อัปโหลดวิดีโอสำเร็จ</span>`;
+      };
+      reader.readAsDataURL(file);
     }
 
-    function handleVdoUrlInput(url) {
-      const trimmed = (url || "").trim();
-      if (!trimmed) {
-        if (!document.getElementById("pVdoInput").files.length) {
-          removeVdo();
-        }
-        return;
-      }
-      tempProductVdo = trimmed;
-      document.getElementById("pVdoInput").value = '';
-      document.getElementById("vdoCompressStatus").innerText = "✓ ลิงก์ตรง (ความคมชัดสูงสุด 100%)";
-      document.getElementById("vdoCompressStatus").style.color = "#0284c7";
-      displayVdoPreview(tempProductVdo, `Direct URL (ความคมชัดระดับต้นฉบับ)`);
-    }
-
-    function displayVdoPreview(src, detailText) {
-      const container = document.getElementById("adminVdoContainer");
-      const player = document.getElementById("adminVdoPlayer");
-      const details = document.getElementById("adminVdoDetails");
-
-      player.src = src;
-      details.innerText = detailText || src;
-      container.style.display = "flex";
-    }
-
-    function removeVdo() {
-      tempProductVdo = "";
-      document.getElementById("pVdoInput").value = "";
-      document.getElementById("pVdoUrlInput").value = "";
-      document.getElementById("vdoCompressStatus").innerText = "";
-      const player = document.getElementById("adminVdoPlayer");
-      player.pause();
-      player.removeAttribute('src');
-      player.load();
-      document.getElementById("adminVdoContainer").style.display = "none";
-    }
-
-    function createCodeRowHtml(code = '', discount = 0) {
-      return `
-        <div class="opt-code-single-row">
-          <input type="text" class="form-control opt-single-code" placeholder="โค้ดส่วนลด (เช่น VIP10)" value="${code}" style="text-transform:uppercase; min-height:34px; font-size:0.8rem;" />
-          <div style="display:flex; align-items:center; gap:4px;">
-            <span style="font-size:0.75rem; color:var(--danger); font-weight:bold;">-฿</span>
-            <input type="number" class="form-control opt-single-discount" placeholder="0" value="${discount !== undefined ? discount : 0}" style="min-height:34px; font-size:0.8rem;" />
-          </div>
-          <button type="button" class="btn-action btn-danger" style="height:34px; padding:0 8px; font-size:0.7rem;" onclick="this.closest('.opt-code-single-row').remove()" title="ลบโค้ดนี้">✕</button>
-        </div>
-      `;
-    }
-
-    function addDynamicOptionRow(opt = { name: '', extraPrice: 0, codes: [] }) {
+    function addDynamicOptionRow(opt = { name: '', extraPrice: 0, vipCode: '', vipDiscount: 0 }) {
       const cont = document.getElementById("dynamicOptionsList");
       const row = document.createElement("div");
       row.className = "opt-card-row";
-
-      let codesList = opt.codes || [];
-      if (!codesList.length && opt.vipCode) {
-        codesList.push({ code: opt.vipCode, discount: opt.vipDiscount || 0 });
-      }
-
-      let codesHtml = '';
-      if (codesList.length > 0) {
-        codesList.forEach(c => {
-          codesHtml += createCodeRowHtml(c.code || '', c.discount || 0);
-        });
-      }
-
       row.innerHTML = `
-        <div class="opt-main-inputs">
+        <div class="opt-grid-inputs">
           <div style="display:flex; flex-direction:column; gap:2px;">
-            <label style="font-size:0.72rem; color:#444; font-weight:bold;">ชื่อตัวเลือก</label>
+            <label style="font-size:0.7rem; color:#555; font-weight:bold;">ชื่อตัวเลือก</label>
             <input type="text" class="form-control opt-name" placeholder="เช่น ล้อ TE37" value="${opt.name || ''}" required style="min-height:36px;" />
           </div>
           <div style="display:flex; flex-direction:column; gap:2px;">
-            <label style="font-size:0.72rem; color:#444; font-weight:bold;">ราคาเพิ่ม (+฿)</label>
+            <label style="font-size:0.7rem; color:#555; font-weight:bold;">ราคาเพิ่ม (+฿)</label>
             <input type="number" class="form-control opt-extra" placeholder="0" value="${opt.extraPrice !== undefined ? opt.extraPrice : 0}" style="min-height:36px;" />
           </div>
-          <button type="button" class="btn-action btn-danger" style="height:36px; padding:0 10px; margin-bottom:1px;" onclick="this.closest('.opt-card-row').remove()" title="ลบชุดตัวเลือกนี้">✕ ลบชุดนี้</button>
-        </div>
-
-        <div class="opt-codes-section">
-          <div style="display:flex; justify-content:space-between; align-items:center;">
-            <span style="font-size:0.72rem; font-weight:bold; color:var(--accent-vip);">🎟️ โค้ดส่วนลดของตัวเลือกนี้</span>
-            <button type="button" class="btn-action btn-secondary" style="height:26px; padding:0 8px; font-size:0.68rem;" onclick="addCodeToOption(this)">+ เพิ่มโค้ด</button>
+          <div style="display:flex; flex-direction:column; gap:2px;">
+            <label style="font-size:0.7rem; color:var(--accent-vip); font-weight:bold;">🎟️ โค้ดลด</label>
+            <input type="text" class="form-control opt-code" placeholder="เช่น WHEEL10" value="${opt.vipCode || ''}" style="text-transform:uppercase; min-height:36px;" />
           </div>
-          <div class="opt-codes-container">${codesHtml}</div>
+          <div style="display:flex; flex-direction:column; gap:2px;">
+            <label style="font-size:0.7rem; color:var(--danger); font-weight:bold;">ลดเงิน (-฿)</label>
+            <input type="number" class="form-control opt-discount" placeholder="0" value="${opt.vipDiscount !== undefined ? opt.vipDiscount : 0}" style="min-height:36px;" />
+          </div>
+          <button type="button" class="btn-action btn-danger" style="height:36px; padding:0 10px; margin-top:auto;" onclick="this.closest('.opt-card-row').remove()" title="ลบตัวเลือกนี้">✕ ลบ</button>
         </div>
       `;
       cont.appendChild(row);
-    }
-
-    function addCodeToOption(btn) {
-      const container = btn.closest('.opt-codes-section').querySelector('.opt-codes-container');
-      const tempDiv = document.createElement('div');
-      tempDiv.innerHTML = createCodeRowHtml('', 0);
-      container.appendChild(tempDiv.firstElementChild);
-    }
-
-    function getOptionsPayload() {
-      const options = [];
-      document.querySelectorAll("#dynamicOptionsList .opt-card-row").forEach(card => {
-        const nameInput = card.querySelector(".opt-name");
-        const extraInput = card.querySelector(".opt-extra");
-
-        if (nameInput && nameInput.value.trim() !== '') {
-          const codes = [];
-          card.querySelectorAll(".opt-code-single-row").forEach(codeRow => {
-            const cInput = codeRow.querySelector(".opt-single-code");
-            const dInput = codeRow.querySelector(".opt-single-discount");
-            const codeVal = (cInput.value || "").trim().toUpperCase();
-            const discountVal = parseFloat(dInput.value) || 0;
-            if (codeVal) {
-              codes.push({ code: codeVal, discount: discountVal });
-            }
-          });
-
-          options.push({
-            name: nameInput.value.trim(),
-            extraPrice: parseFloat(extraInput.value) || 0,
-            codes: codes,
-            vipCode: codes.length > 0 ? codes[0].code : '',
-            vipDiscount: codes.length > 0 ? codes[0].discount : 0
-          });
-        }
-      });
-      return options;
     }
 
     function handleProductSubmit(e) {
@@ -1178,32 +888,41 @@
         scalePrices[inp.getAttribute("data-scale")] = parseFloat(inp.value) || basePrice;
       });
 
-      const options = getOptionsPayload();
+      const options = [];
+      document.querySelectorAll("#dynamicOptionsList .opt-card-row").forEach(card => {
+        const nameInput = card.querySelector(".opt-name");
+        const extraInput = card.querySelector(".opt-extra");
+        const codeInput = card.querySelector(".opt-code");
+        const discountInput = card.querySelector(".opt-discount");
+
+        if (nameInput && nameInput.value.trim() !== '') {
+          options.push({
+            name: nameInput.value.trim(),
+            extraPrice: parseFloat(extraInput.value) || 0,
+            vipCode: (codeInput.value || "").trim().toUpperCase(),
+            vipDiscount: parseFloat(discountInput.value) || 0
+          });
+        }
+      });
 
       if (tempProductImages.length === 0) tempProductImages.push('https://via.placeholder.com/400?text=164CRAFT');
 
       const payload = {
         id, name, brand, basePrice, secretCode,
         images: [...tempProductImages],
-        vdo: tempProductVdo || "",
+        vdo: tempProductVdo,
         scales: checkedScales,
         scalePrices,
         options
       };
 
-      const payloadSize = new Blob([JSON.stringify(payload)]).size;
-      if (payloadSize > 1048576) {
-        alert(`✕ ข้อมูลมีขนาดรวม ${(payloadSize / 1024).toFixed(0)} KB ซึ่งเกินขีดจำกัด 1 MB ของ Firestore!\nแนะนำให้ใช้วิธีวาง "ลิงก์ตรงของ VDO" แทนการอัปโหลดไฟล์ครับ`);
-        return;
-      }
-
       db.collection("products").doc(id).set(payload).then(() => {
-        alert("✓ บันทึกสินค้าลง Firebase สำเร็จเรียบร้อย!");
+        alert("บันทึกสินค้าลง Firebase สำเร็จ!");
         closeModal('addProductModal');
         openManageProductsModal();
       }).catch((err) => {
         console.error("Error writing product: ", err);
-        alert("เกิดข้อผิดพลาดในการบันทึกข้อมูล: " + err.message);
+        alert("เกิดข้อผิดพลาดในการบันทึกข้อมูล (โปรดตรวจสอบ Firestore Rules)");
       });
     }
 
@@ -1225,19 +944,8 @@
         renderVipSelectOptions(prod.secretCode || "");
 
         tempProductImages = prod.images ? [...prod.images] : [];
+        tempProductVdo = prod.vdo || "";
         renderAdminImagePreview();
-
-        if (prod.vdo) {
-          tempProductVdo = prod.vdo;
-          if (prod.vdo.startsWith('data:video')) {
-            displayVdoPreview(prod.vdo, "วิดีโอ HD ในระบบ");
-          } else {
-            document.getElementById("pVdoUrlInput").value = prod.vdo;
-            displayVdoPreview(prod.vdo, "ลิงก์ตรงระดับต้นฉบับ");
-          }
-        } else {
-          removeVdo();
-        }
 
         renderAdminScalesInputs(prod.scales, prod.scalePrices);
 
@@ -1257,7 +965,8 @@
       if (!confirm(`ต้องการลบ SKU: ${productId} จาก Firebase หรือไม่?`)) return;
       db.collection("products").doc(productId).delete().then(() => {
         alert("ลบสินค้าสำเร็จ");
-      }).catch((err) => alert("เกิดข้อผิดพลาดในการลบ: " + err.message));
+        openManageProductsModal();
+      }).catch((err) => alert("เกิดข้อผิดพลาดในการลบ"));
     }
 
     function openVipCodesModal() {
