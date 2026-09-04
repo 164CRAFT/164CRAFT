@@ -160,7 +160,7 @@
     }
     .secret-status-tag.active { display: block; color: #065f46; }
 
-    /* CATEGORIES LIST - โทรศัพท์เป็นแนวนอนเลื่อนซ้ายขวา / Window (Desktop) เป็นแนวตั้ง */
+    /* CATEGORIES LIST */
     .sidebar-categories-list {
       display: flex; 
       flex-direction: row; 
@@ -198,7 +198,6 @@
     .cat-count-badge { font-size: 0.6rem; padding: 1px 4px; background: #e2e2dd; color: #111; border-radius: 3px; font-weight: 800; }
     .sidebar-cat-btn.active .cat-count-badge { background: #333; color: #fff; }
 
-    /* เมื่อหน้าจอเป็น Desktop (Window / 992px ขึ้นไป) ให้เปลี่ยนเป็นแนวตั้ง */
     @media(min-width: 992px) {
       .sidebar-categories-list {
         flex-direction: column;
@@ -363,19 +362,17 @@
         <input type="text" id="searchInput" placeholder="ค้นหาสินค้า / SKU..." onkeyup="renderProducts()" />
       </div>
 
-      <!-- GOOGLE AUTH CONTAINER -->
+      <!-- GOOGLE AUTH CONTAINER (ซ่อนปุ่มออกจากระบบจากหน้า Header ปกติ ตามความต้องการ) -->
       <div id="authContainer" style="display: flex; align-items: center; gap: 4px;">
         <button id="loginBtn" class="btn-action btn-secondary" onclick="loginWithGoogle()">
           🔑 เข้าสู่ระบบ
         </button>
-        <div id="userProfile" style="display: none; align-items: center; gap: 4px; cursor: pointer;" onclick="openModal('accountModal')" title="คลิกเพื่อตั้งค่าบัญชี">
+        <div id="userProfile" style="display: none; align-items: center; gap: 4px; cursor: pointer;" onclick="openModal('accountModal')" title="คลิกเพื่อดูข้อมูลบัญชี">
           <img id="userAvatar" src="" style="width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--border-dark);" alt="User" />
-          <span id="userName" style="font-size: 0.68rem; font-weight: 700; max-width: 60px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"></span>
-          <button class="btn-action btn-danger" style="padding: 0 5px; font-size: 0.65rem; height: 28px;" onclick="event.stopPropagation(); logoutGoogle()">ออก</button>
+          <span id="userName" style="font-size: 0.68rem; font-weight: 700; max-width: 65px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"></span>
         </div>
       </div>
 
-      <button class="btn-action btn-secondary" onclick="window.location.href='admin.html'">🛠️ หลังบ้าน</button>
       <button class="btn-action" onclick="renderCart(); openModal('cartModal');">
         🛒 ตะกร้า (<span id="cartCount">0</span>)
       </button>
@@ -411,7 +408,6 @@
           <span>🏷️ ตัวกรองแบรนด์</span>
           <span class="filter-counter-text" id="filterOverviewCount">กำลังโหลด...</span>
         </div>
-        <!-- แถบคัดกรอง: แสดงเป็นแนวตั้งในหน้าจอคอม และสไลด์แนวนอนในมือถือ -->
         <div class="sidebar-categories-list" id="categoriesContainer"></div>
       </div>
     </aside>
@@ -423,21 +419,30 @@
     </main>
   </div>
 
-  <!-- ACCOUNT MODAL -->
+  <!-- ACCOUNT MODAL (ปรับปรุง UI แจ้งสิทธิ์บัญชี และเพิ่มปุ่มเข้าหลังบ้านเฉพาะ Admin) -->
   <div id="accountModal" class="modal-overlay">
     <div class="modal-box" style="max-width: 480px;">
       <button class="modal-close" onclick="closeModal('accountModal')">✕</button>
-      <div class="modal-header">👤 ตั้งค่าข้อมูลบัญชีผู้ใช้</div>
+      <div class="modal-header">👤 ข้อมูลบัญชีผู้ใช้ & ตั้งค่า</div>
 
-      <div style="display: flex; align-items: center; gap: 10px; background: #fafaf8; padding: 10px; border-radius: var(--radius); border: 1px solid var(--border-color);">
-        <img id="modalUserAvatar" src="" style="width: 45px; height: 45px; border-radius: 50%; border: 1px solid #111;" alt="Avatar" />
+      <div style="display: flex; align-items: center; gap: 10px; background: #fafaf8; padding: 12px; border-radius: var(--radius); border: 1px solid var(--border-color);">
+        <img id="modalUserAvatar" src="" style="width: 48px; height: 48px; border-radius: 50%; border: 1px solid #111;" alt="Avatar" />
         <div style="overflow: hidden;">
-          <div id="modalUserName" style="font-weight: 800; font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">-</div>
+          <div id="modalUserName" style="font-weight: 800; font-size: 0.95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">-</div>
           <div id="modalUserEmail" style="font-size: 0.75rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">-</div>
         </div>
       </div>
 
-      <div style="background: var(--accent-vip-bg); border: 1px solid #86efac; border-radius: var(--radius); padding: 8px 10px;">
+      <!-- กล่องแจ้งสิทธิ์บัญชี และปุ่มเข้าหลังบ้านเฉพาะ Admin -->
+      <div id="modalAdminSection" style="display: none; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: var(--radius); padding: 10px 12px; align-items: center; justify-content: space-between;">
+        <div>
+          <div style="font-weight: 800; font-size: 0.78rem; color: #1e40af;">🛡️ สิทธิ์ผู้ดูแลระบบ (Admin)</div>
+          <div style="font-size: 0.68rem; color: #3b82f6; margin-top: 1px;">คุณมีสิทธิ์จัดการหลังบ้านร้านค้า</div>
+        </div>
+        <button type="button" class="btn-action" style="background: #2563eb; height: 32px; font-size: 0.72rem; padding: 0 10px;" onclick="window.location.href='admin.html'">🛠️ เข้าหลังบ้าน</button>
+      </div>
+
+      <div style="background: var(--accent-vip-bg); border: 1px solid #86efac; border-radius: var(--radius); padding: 8px 12px;">
         <div style="font-weight: 800; font-size: 0.78rem; color: #065f46;">💎 สถานะบัญชีผู้ใช้</div>
         <div style="font-size: 0.7rem; color: #047857; margin-top: 2px;">เชื่อมต่อผ่าน Google Account ปลอดภัยและพร้อมใช้งาน</div>
       </div>
@@ -455,7 +460,11 @@
           <label>ที่อยู่จัดส่งเริ่มต้น</label>
           <textarea id="profileAddress" class="form-control" rows="3" placeholder="บ้านเลขที่, ถนน, แขวง/ตำบล, เขต/อำเภอ, จังหวัด, รหัสไปรษณีย์" required></textarea>
         </div>
-        <button type="submit" class="btn-action" style="width: 100%; margin-top: 4px;">💾 บันทึกการตั้งค่าบัญชี</button>
+        
+        <div style="display: flex; gap: 8px; margin-top: 4px;">
+          <button type="submit" class="btn-action" style="flex: 2;">💾 บันทึกการตั้งค่าบัญชี</button>
+          <button type="button" class="btn-action btn-danger" style="flex: 1;" onclick="logoutGoogle()">🚪 ออกจากระบบ</button>
+        </div>
       </form>
     </div>
   </div>
@@ -616,6 +625,9 @@
     const auth = firebase.auth();
     const googleProvider = new firebase.auth.GoogleAuthProvider();
 
+    // รายชื่ออีเมลที่เป็น Admin (ตรงกับหน้าหลังบ้าน)
+    const ALLOWED_ADMIN_EMAILS = ["craft.studio164@gmail.com"];
+
     let brands = ["Ducati", "Honda", "Isuzu", "Kawasaki", "Toyota", "Yamaha"];
     let scalesList = ["1/12", "1/32", "1/43", "1/64"];
     let vipCodesList = ["MEMBER99", "SECRET88", "VIP164"];
@@ -657,6 +669,7 @@
         const userProfile = document.getElementById("userProfile");
         const userAvatar = document.getElementById("userAvatar");
         const userName = document.getElementById("userName");
+        const adminSection = document.getElementById("modalAdminSection");
 
         if (user) {
           loginBtn.style.display = "none";
@@ -668,6 +681,14 @@
           document.getElementById("modalUserName").innerText = user.displayName || "สมาชิก 164CRAFT";
           document.getElementById("modalUserEmail").innerText = user.email;
 
+          // ตรวจสอบว่าเป็น Admin หรือไม่ เพื่อแสดงปุ่มเข้าหลังบ้านใน Modal บัญชี
+          const userEmail = (user.email || "").toLowerCase();
+          if (ALLOWED_ADMIN_EMAILS.includes(userEmail)) {
+            adminSection.style.display = "flex";
+          } else {
+            adminSection.style.display = "none";
+          }
+
           const shipNameInput = document.getElementById("shipName");
           const shipEmailInput = document.getElementById("shipEmail");
           const profileName = document.getElementById("profileName");
@@ -678,6 +699,7 @@
         } else {
           loginBtn.style.display = "inline-flex";
           userProfile.style.display = "none";
+          adminSection.style.display = "none";
         }
       });
     }
@@ -694,6 +716,7 @@
     function logoutGoogle() {
       auth.signOut().then(() => {
         alert("ออกจากระบบเรียบร้อย");
+        closeModal('accountModal');
       }).catch((error) => {
         console.error("Logout error:", error);
       });
