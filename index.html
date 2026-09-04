@@ -60,8 +60,9 @@
     .brand-photo {
       width: 34px; height: 34px; background: var(--accent); color: #fff;
       border-radius: var(--radius); display: flex; align-items: center; justify-content: center;
-      font-size: 0.7rem; font-weight: 800; letter-spacing: 0.5px; flex-shrink: 0;
+      font-size: 0.7rem; font-weight: 800; letter-spacing: 0.5px; flex-shrink: 0; overflow: hidden;
     }
+    .brand-photo img { width: 100%; height: 100%; object-fit: cover; }
     .brand-name { font-size: 0.85rem; font-weight: 850; letter-spacing: 1px; white-space: nowrap; }
     @media(min-width: 480px) {
       .brand-name { font-size: 1rem; }
@@ -196,7 +197,7 @@
     }
     .secret-status-tag.active { display: block; }
 
-    /* BRAND DRAWER (CLICK TO TOGGLE OPEN/CLOSE) */
+    /* BRAND DRAWER */
     .brand-drawer-container { position: relative; display: inline-block; width: 100%; }
     .brand-drawer-btn {
       width: 100%; background: #fff; border: 1px solid var(--border-dark); border-radius: var(--radius);
@@ -204,7 +205,7 @@
       cursor: pointer; display: flex; justify-content: space-between; align-items: center;
       box-shadow: var(--shadow-soft); transition: background 0.2s;
     }
-    .brand-drawer-btn:hover { background: #111; color: #fff; }
+    .brand-drawer-btn:hover { background: var(--accent); color: #fff; }
 
     .brand-drawer-dropdown {
       position: absolute; top: 100%; left: 0; width: 100%; background: #fff;
@@ -429,7 +430,7 @@
         </div>
       </div>
 
-      <!-- ตัวคัดกรอง: แสดงผลแบบ [ ALL MODELS (4) ] และคลิกเปิด-ปิดค้างไว้ได้ -->
+      <!-- ตัวคัดกรอง -->
       <div>
         <div class="sidebar-section-title-row">
           <span>🏷️ ตัวคัดกรอง</span>
@@ -654,7 +655,9 @@
       qrCodeUrl: "",
       senderName: "164CRAFT คลังกระจายสินค้า",
       senderPhone: "0812345678",
-      senderAddress: "99/1 ถ.พหลโยธิน แขวงลาดยาว เขตจตุจักร กรุงเทพฯ 10900"
+      senderAddress: "99/1 ถ.พหลโยธิน แขวงลาดยาว เขตจตุจักร กรุงเทพฯ 10900",
+      logoUrl: "",
+      themeColor: "#111111"
     };
     let products = [];
 
@@ -813,7 +816,20 @@
     }
 
     function applyShopSettings() {
-      document.getElementById("siteTitleText").innerText = systemSettings.storeName;
+      document.getElementById("siteTitleText").innerText = systemSettings.storeName || "164CRAFT";
+      
+      // ดึงโลโก้และสีธีมที่ตั้งค่าจาก Admin มาแสดงผลหน้าแรกทันที
+      const logoBox = document.getElementById("siteLogoText");
+      if (systemSettings.logoUrl) {
+        logoBox.innerHTML = `<img src="${systemSettings.logoUrl}" style="width:100%; height:100%; object-fit:cover;" />`;
+      } else {
+        logoBox.innerHTML = systemSettings.storeName ? systemSettings.storeName.substring(0, 3).toUpperCase() : "164";
+      }
+
+      if (systemSettings.themeColor) {
+        document.documentElement.style.setProperty('--accent', systemSettings.themeColor);
+      }
+
       document.getElementById("cartShippingDisplay").innerText = `การจัดส่ง: ${systemSettings.shippingName} (฿${systemSettings.shippingFee})`;
       document.getElementById("payBankName").innerText = systemSettings.bankName;
       document.getElementById("payAccountNo").innerText = systemSettings.accountNo;
