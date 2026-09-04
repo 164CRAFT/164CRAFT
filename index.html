@@ -85,7 +85,7 @@
       .header-vip-box { display: flex; }
     }
     .header-vip-input {
-      background: transparent; border: none; color: var(--text-main); height: 30px; width: 120px; padding: 0 6px;
+      background: transparent; border: none; color: var(--text-main); height: 30px; width: 110px; padding: 0 6px;
       font-size: 0.75rem; font-weight: 800; text-transform: uppercase; outline: none; letter-spacing: 0.5px;
     }
     .header-vip-input::placeholder { color: #888; font-weight: normal; letter-spacing: 0px; text-transform: none; }
@@ -389,7 +389,7 @@
       
       <!-- หน้าปกเว็บหลัก: ช่องกรอกรหัสพร้อมปุ่มปลดล็อก -->
       <div class="header-vip-box">
-        <input type="password" id="headerVipInput" class="header-vip-input" placeholder="🗝️ กรอกรหัส (ปลดล็อค)" autocomplete="off" onkeydown="if(event.key==='Enter') applyHeaderVipCode()" />
+        <input type="password" id="headerVipInput" class="header-vip-input" placeholder="🗝️ กรอกรหัส" autocomplete="off" onkeydown="if(event.key==='Enter') applyHeaderVipCode()" />
         <button type="button" class="btn-action" style="height:28px; padding:0 8px; font-size:0.7rem; background:#111; color:#fff; border:none; border-radius:6px;" onclick="applyHeaderVipCode()">ปลดล็อก</button>
       </div>
 
@@ -402,7 +402,7 @@
             <img id="userAvatar" src="" alt="User" />
           </div>
 
-          <!-- เมนูย่อยบัญชี: จัดเรียงให้ Admin อยู่บน และกรอกรหัสอยู่ล่าง (ความยาวเท่ากัน) -->
+          <!-- เมนูย่อยบัญชี: จัดเรียงให้ Admin อยู่บน และกรอกรหัสอยู่ล่าง (ลบหัวข้อและคำว่าปลดล็อคออกแล้ว) -->
           <div id="accountDropdownMenu" class="account-dropdown-menu" onclick="event.stopPropagation()">
             <div class="dropdown-header-info">
               <div class="dropdown-user-name" id="dropdownUserName">-</div>
@@ -413,10 +413,9 @@
               🛠️ เข้าสู่ระบบหลังบ้าน (Admin)
             </div>
 
-            <div style="padding: 8px 12px; background: #fafafa; border-bottom: 1px solid var(--border-color);">
-              <div style="font-size: 0.68rem; font-weight: 800; color: #444; margin-bottom: 3px;">🗝️ กรอกรหัส (ปลดล็อค)</div>
+            <div style="padding: 8px 10px; background: #fafafa; border-bottom: 1px solid var(--border-color);">
               <div class="header-vip-box" style="display: flex; width: 100%;">
-                <input type="password" id="dropdownVipInput" class="header-vip-input" placeholder="🗝️ กรอกรหัส (ปลดล็อค)" style="width: 100%; height: 28px; font-size: 0.72rem;" autocomplete="off" onkeydown="if(event.key==='Enter') applyDropdownVipCode()" />
+                <input type="password" id="dropdownVipInput" class="header-vip-input" placeholder="🗝️ กรอกรหัส" style="width: 100%; height: 28px; font-size: 0.72rem;" autocomplete="off" onkeydown="if(event.key==='Enter') applyDropdownVipCode()" />
                 <button type="button" class="btn-action" style="height: 28px; padding: 0 8px; font-size: 0.7rem; background:#111; color:#fff; border:none; border-radius:6px;" onclick="applyDropdownVipCode()">ปลดล็อก</button>
               </div>
             </div>
