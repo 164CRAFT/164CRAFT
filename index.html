@@ -195,7 +195,7 @@
     }
     .secret-status-tag.active { display: block; }
 
-    /* BRAND DRAWER (POPUP HOVER & SCROLLABLE DROPDOWN) */
+    /* BRAND DRAWER (HOVER TO SHOW, SCROLLABLE, LEAVE TO CONFIRM) */
     .brand-drawer-container { position: relative; display: inline-block; width: 100%; }
     .brand-drawer-btn {
       width: 100%; background: #fff; border: 1px solid var(--border-dark); border-radius: var(--radius);
@@ -215,9 +215,6 @@
     }
     .brand-drawer-dropdown::-webkit-scrollbar { width: 5px; }
     .brand-drawer-dropdown::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
-
-    .brand-drawer-container:hover .brand-drawer-dropdown { display: flex; }
-    .brand-drawer-dropdown.show { display: flex; }
 
     .brand-drawer-item {
       padding: 10px 14px; font-size: 0.75rem; font-weight: 750; text-transform: uppercase;
@@ -370,7 +367,7 @@
     </div>
     <div class="header-actions" style="position: relative;">
       
-      <!-- HEADER VIP PASS BOX (ใช้ข้อความ [🔒 กรอกรหัส VIP]) -->
+      <!-- HEADER VIP PASS BOX -->
       <div class="header-vip-box">
         <input type="password" id="headerVipInput" class="header-vip-input" placeholder="🔒 กรอกรหัส VIP" autocomplete="off" />
         <button type="button" class="btn-action" style="height:32px; padding:0 10px; font-size:0.72rem; background:#111; color:#fff; border:none;" onclick="applyHeaderVipCode()">ปลดล็อก</button>
@@ -433,13 +430,13 @@
         </div>
       </div>
 
-      <!-- เปลี่ยนข้อความหัวข้อจาก ตัวกรองแบรนด์ เป็น ตัวคัดกรอง -->
+      <!-- ตัวคัดกรอง: ใช้ระบบเอาเมาส์ชี้เพื่อเลือกสกอร์แบรนด์ และเอาเมาส์ออกเพื่อยืนยัน -->
       <div>
         <div class="sidebar-section-title">
           <span>🏷️ ตัวคัดกรอง</span>
           <span class="filter-counter-text" id="filterOverviewCount">กำลังโหลด...</span>
         </div>
-        <div class="brand-drawer-container">
+        <div class="brand-drawer-container" onmouseenter="showBrandDrawer()" onmouseleave="hideBrandDrawer()">
           <button type="button" class="brand-drawer-btn" onclick="toggleBrandDrawer(event)">
             <span id="currentBrandLabel">ALL MODELS (4)</span>
             <span>▾</span>
@@ -739,10 +736,21 @@
       if (menu && menu.style.display === "flex") menu.style.display = "none";
     }
 
+    /* ฟังก์ชันเปิด/ปิดลิ้นชักแบรนด์ด้วยการเอาเมาส์ชี้และกดคลิก */
     function toggleBrandDrawer(event) {
       event.stopPropagation();
       const dropdown = document.getElementById("brandDrawerDropdown");
       dropdown.classList.toggle("show");
+    }
+
+    function showBrandDrawer() {
+      const dropdown = document.getElementById("brandDrawerDropdown");
+      dropdown.classList.add("show");
+    }
+
+    function hideBrandDrawer() {
+      const dropdown = document.getElementById("brandDrawerDropdown");
+      dropdown.classList.remove("show");
     }
 
     function saveUserProfileModal(e) {
