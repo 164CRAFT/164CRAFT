@@ -118,7 +118,7 @@
     .profile-icon-btn img { width: 100%; height: 100%; object-fit: cover; }
 
     .account-dropdown-menu {
-      position: absolute; top: 65px; right: 12px; width: 240px; background: #fff;
+      position: absolute; top: 65px; right: 12px; width: 260px; background: #fff;
       border: 1px solid var(--border-color); border-radius: 12px; box-shadow: var(--shadow-pop);
       display: none; flex-direction: column; z-index: 1000; overflow: hidden;
       animation: fadeInDropdown 0.15s ease-out;
@@ -375,6 +375,7 @@
     </div>
     <div class="header-actions" style="position: relative;">
       
+      <!-- ช่องกรอกรหัส VIP แถบบน (เฉพาะจอใหญ่) -->
       <div class="header-vip-box">
         <input type="password" id="headerVipInput" class="header-vip-input" placeholder="🔒 กรอกรหัส VIP" autocomplete="off" onkeydown="if(event.key==='Enter') applyHeaderVipCode()" />
         <button type="button" class="btn-action" style="height:32px; padding:0 10px; font-size:0.72rem; background:#111; color:#fff; border:none;" onclick="applyHeaderVipCode()">ปลดล็อก</button>
@@ -389,10 +390,20 @@
             <img id="userAvatar" src="" alt="User" />
           </div>
 
+          <!-- เมนูย่อยบัญชี (เพิ่มช่องกรอกรหัส VIP ตรงนี้) -->
           <div id="accountDropdownMenu" class="account-dropdown-menu">
             <div class="dropdown-header-info">
               <div class="dropdown-user-name" id="dropdownUserName">-</div>
               <div class="dropdown-user-email" id="dropdownUserEmail">-</div>
+            </div>
+
+            <!-- ช่องกรอกรหัส VIP ในเมนูดรอปดาวน์ (รองรับมือถือและทุกหน้าจอ) -->
+            <div style="padding: 10px 14px; background: #fafafa; border-bottom: 1px solid var(--border-color);">
+              <div style="font-size: 0.72rem; font-weight: 850; color: #333; margin-bottom: 4px;">🔒 กรอกรหัสสิทธิ์ VIP</div>
+              <div style="display: flex; gap: 4px;">
+                <input type="password" id="dropdownVipInput" class="form-control" placeholder="รหัส VIP..." style="height: 34px; font-size: 0.75rem; text-transform: uppercase;" autocomplete="off" onkeydown="if(event.key==='Enter') applyDropdownVipCode()" />
+                <button type="button" class="btn-action" style="height: 34px; padding: 0 10px; font-size: 0.72rem;" onclick="applyDropdownVipCode()">ตกลง</button>
+              </div>
             </div>
             
             <div id="adminMenuLink" class="dropdown-menu-item" style="display: none;" onclick="window.location.href='admin.html'">
@@ -900,7 +911,18 @@
 
     function applyHeaderVipCode() {
       const input = document.getElementById("headerVipInput");
-      const code = (input.value || "").trim().toUpperCase();
+      processVipCode(input.value);
+    }
+
+    function applyDropdownVipCode() {
+      const input = document.getElementById("dropdownVipInput");
+      processVipCode(input.value);
+      const menu = document.getElementById("accountDropdownMenu");
+      if (menu) menu.style.display = "none";
+    }
+
+    function processVipCode(rawCode) {
+      const code = (rawCode || "").trim().toUpperCase();
       const statusTag = document.getElementById("secretStatusTag");
 
       if (!code) { clearHeaderVipCode(); return; }
@@ -908,8 +930,11 @@
       if (vipCodesList.includes(code)) {
         activeSecretCode = code;
         const maskedCode = code.length > 2 ? code.substring(0, 2) + "•".repeat(code.length - 2) : "••••••";
-        input.value = "";
-        input.placeholder = "🔒 กรอกรหัส VIP";
+        
+        const headerInput = document.getElementById("headerVipInput");
+        if (headerInput) headerInput.value = "";
+        const dropdownInput = document.getElementById("dropdownVipInput");
+        if (dropdownInput) dropdownInput.value = "";
 
         statusTag.className = "secret-status-tag active";
         statusTag.innerHTML = `<div style="font-weight:bold;">✓ สิทธิ์ VIP: ${maskedCode} [ACTIVE]</div>`;
@@ -923,9 +948,11 @@
 
     function clearHeaderVipCode() {
       activeSecretCode = "";
-      const input = document.getElementById("headerVipInput");
-      input.value = "";
-      input.placeholder = "🔒 กรอกรหัส VIP";
+      const headerInput = document.getElementById("headerVipInput");
+      if (headerInput) headerInput.value = "";
+      const dropdownInput = document.getElementById("dropdownVipInput");
+      if (dropdownInput) dropdownInput.value = "";
+
       document.getElementById("secretStatusTag").className = "secret-status-tag";
       document.getElementById("secretStatusTag").innerHTML = "";
       renderCategories();
@@ -1388,7 +1415,6 @@
       document.getElementById("netTotalDisplay").innerText = `ราคารวมทั้งสิ้น: ฿${grandTotal} (รวมค่าส่ง ฿${systemSettings.shippingFee})`;
     }
 
-    // 🛡️ จำกัดการปรับจำนวนสินค้าในตะกร้าตามสต็อกจริง
     function changeCartQty(idx, delta) {
       const item = cart[idx];
       const prod = item.product;
