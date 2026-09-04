@@ -85,7 +85,7 @@
       .header-vip-box { display: flex; }
     }
     .header-vip-input {
-      background: transparent; border: none; color: var(--text-main); height: 30px; width: 110px; padding: 0 6px;
+      background: transparent; border: none; color: var(--text-main); height: 30px; width: 120px; padding: 0 6px;
       font-size: 0.75rem; font-weight: 800; text-transform: uppercase; outline: none; letter-spacing: 0.5px;
     }
     .header-vip-input::placeholder { color: #888; font-weight: normal; letter-spacing: 0px; text-transform: none; }
@@ -116,7 +116,7 @@
     .profile-icon-btn img { width: 100%; height: 100%; object-fit: cover; }
 
     .account-dropdown-menu {
-      position: absolute; top: 65px; right: 12px; width: 230px; background: #fff;
+      position: absolute; top: 65px; right: 12px; width: 240px; background: #fff;
       border: 1px solid var(--border-color); border-radius: 12px; box-shadow: var(--shadow-pop);
       display: none; flex-direction: column; z-index: 1000; overflow: hidden;
       animation: fadeInDropdown 0.15s ease-out;
@@ -387,9 +387,9 @@
     </div>
     <div class="header-actions" style="position: relative;">
       
-      <!-- หน้าปกเว็บหลัก: ช่องกรอกรหัส พร้อมปุ่มปลดล็อกอยู่ในกรอบเดียวกัน -->
+      <!-- หน้าปกเว็บหลัก: ช่องกรอกรหัสพร้อมปุ่มปลดล็อก -->
       <div class="header-vip-box">
-        <input type="password" id="headerVipInput" class="header-vip-input" placeholder="🗝️ กรอกรหัส" autocomplete="off" onkeydown="if(event.key==='Enter') applyHeaderVipCode()" />
+        <input type="password" id="headerVipInput" class="header-vip-input" placeholder="🗝️ กรอกรหัส (ปลดล็อค)" autocomplete="off" onkeydown="if(event.key==='Enter') applyHeaderVipCode()" />
         <button type="button" class="btn-action" style="height:28px; padding:0 8px; font-size:0.7rem; background:#111; color:#fff; border:none; border-radius:6px;" onclick="applyHeaderVipCode()">ปลดล็อก</button>
       </div>
 
@@ -402,24 +402,25 @@
             <img id="userAvatar" src="" alt="User" />
           </div>
 
-          <!-- เมนูย่อยบัญชี: ป้องกันการปิด Popup เมื่อคลิก และใช้ดีไซน์กรอบรหัสแบบเดียวกัน -->
+          <!-- เมนูย่อยบัญชี: จัดเรียงให้ Admin อยู่บน และกรอกรหัสอยู่ล่าง (ความยาวเท่ากัน) -->
           <div id="accountDropdownMenu" class="account-dropdown-menu" onclick="event.stopPropagation()">
             <div class="dropdown-header-info">
               <div class="dropdown-user-name" id="dropdownUserName">-</div>
               <div class="dropdown-user-email" id="dropdownUserEmail">-</div>
             </div>
-
-            <div style="padding: 8px 10px; background: #fafafa; border-bottom: 1px solid var(--border-color);">
-              <div style="font-size: 0.68rem; font-weight: 800; color: #444; margin-bottom: 3px;">🗝️ กรอกรหัส</div>
-              <div class="header-vip-box" style="display: flex; width: 100%;">
-                <input type="password" id="dropdownVipInput" class="header-vip-input" placeholder="กรอกรหัส" style="width: 100%; height: 28px; font-size: 0.72rem;" autocomplete="off" onkeydown="if(event.key==='Enter') applyDropdownVipCode()" />
-                <button type="button" class="btn-action" style="height: 28px; padding: 0 8px; font-size: 0.7rem; background:#111; color:#fff; border:none; border-radius:6px;" onclick="applyDropdownVipCode()">ปลดล็อก</button>
-              </div>
-            </div>
             
             <div id="adminMenuLink" class="dropdown-menu-item" style="display: none;" onclick="window.location.href='admin.html'">
               🛠️ เข้าสู่ระบบหลังบ้าน (Admin)
             </div>
+
+            <div style="padding: 8px 12px; background: #fafafa; border-bottom: 1px solid var(--border-color);">
+              <div style="font-size: 0.68rem; font-weight: 800; color: #444; margin-bottom: 3px;">🗝️ กรอกรหัส (ปลดล็อค)</div>
+              <div class="header-vip-box" style="display: flex; width: 100%;">
+                <input type="password" id="dropdownVipInput" class="header-vip-input" placeholder="🗝️ กรอกรหัส (ปลดล็อค)" style="width: 100%; height: 28px; font-size: 0.72rem;" autocomplete="off" onkeydown="if(event.key==='Enter') applyDropdownVipCode()" />
+                <button type="button" class="btn-action" style="height: 28px; padding: 0 8px; font-size: 0.7rem; background:#111; color:#fff; border:none; border-radius:6px;" onclick="applyDropdownVipCode()">ปลดล็อก</button>
+              </div>
+            </div>
+
             <div class="dropdown-menu-item" onclick="openModal('accountModal'); toggleAccountDropdown(event);">
               📍 ตั้งค่าที่อยู่จัดส่ง
             </div>
@@ -439,7 +440,7 @@
     </div>
   </header>
 
-  <!-- ช่องค้นหาสำหรับมือถือ (แสดงเฉพาะหน้าจอมือถือ) -->
+  <!-- ช่องค้นหาสำหรับมือถือ -->
   <div class="mobile-search-bar">
     <div class="mobile-search-bar-wrap">
       <input type="text" id="mobileSearchInput" placeholder="ค้นหาสินค้า หรือ SKU..." onkeyup="syncSearchAndRender(this)" />
@@ -454,7 +455,7 @@
         <button type="button" class="sale-mode-btn" id="modePreorderBtn" onclick="switchSaleMode('PREORDER')">⏳ พรีออเดอร์</button>
       </div>
 
-      <!-- ช่องค้นหาสำหรับหน้าจอเดสก์ท็อปใน Sidebar (แสดงเฉพาะหน้าจอคอมพิวเตอร์) -->
+      <!-- ช่องค้นหาสำหรับเดสก์ท็อปใน Sidebar -->
       <div>
         <div class="desktop-search-box">
           <div class="desktop-search-wrap">
@@ -1450,7 +1451,7 @@
 
       const newQty = item.qty + delta;
       if (newQty > maxLimit) {
-        alert(`⚠️ ไม่สามารถเพิ่มจำนวนได้ เนื่องจากเกินสต็อกที่มี (${maxLimit} ชิ้น)`);
+        alert(`⚠️ ไม่สามารถเพิ่มสินค้าได้เนื่องจากเกินสต็อกที่มี (${maxLimit} ชิ้น)`);
         return;
       }
 
