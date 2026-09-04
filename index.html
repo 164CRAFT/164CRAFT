@@ -58,7 +58,6 @@
     }
     .brand-info { display: flex; align-items: center; gap: 8px; cursor: pointer; }
     
-    /* โลโก้แบรนด์ (แสดงรูปโลโก้จาก Admin หากมี) */
     .brand-photo {
       width: 34px; height: 34px; background: transparent; color: var(--accent);
       border-radius: var(--radius); display: flex; align-items: center; justify-content: center;
@@ -213,13 +212,10 @@
       position: absolute; top: 100%; left: 0; width: 100%; background: #fff;
       border: 1px solid var(--border-color); border-radius: 8px; box-shadow: var(--shadow-pop);
       display: none; flex-direction: column; z-index: 500; overflow: hidden; margin-top: 4px;
-      max-height: 220px;
-      overflow-y: auto;
-      scrollbar-width: thin;
+      max-height: 220px; overflow-y: auto; scrollbar-width: thin;
     }
     .brand-drawer-dropdown::-webkit-scrollbar { width: 5px; }
     .brand-drawer-dropdown::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
-
     .brand-drawer-dropdown.show { display: flex; }
 
     .brand-drawer-item {
@@ -364,8 +360,8 @@
 
   <header class="header">
     <div class="brand-info" onclick="window.location.href='index.html'">
-      <div class="brand-photo" id="siteLogoText"></div>
-      <div class="brand-name" id="siteTitleText"></div>
+      <div class="brand-photo" id="siteLogoText">164</div>
+      <div class="brand-name" id="siteTitleText">164CRAFT</div>
     </div>
     <div class="header-actions" style="position: relative;">
       
@@ -385,7 +381,6 @@
             <img id="userAvatar" src="" alt="User" />
           </div>
 
-          <!-- FLOATING MENU -->
           <div id="accountDropdownMenu" class="account-dropdown-menu">
             <div class="dropdown-header-info">
               <div class="dropdown-user-name" id="dropdownUserName">-</div>
@@ -423,16 +418,12 @@
   <div class="store-layout">
     <aside class="sidebar-container">
       
-      <!-- ช่องค้นหาหลักใน Sidebar สำหรับหน้าจอคอมพิวเตอร์ -->
-      <div>
-        <div class="sidebar-search-box">
-          <div class="sidebar-search-wrap">
-            <input type="text" id="sidebarSearchInput" placeholder="ค้นหาสินค้า / SKU..." onkeyup="syncSidebarSearch(this)" />
-          </div>
+      <div class="sidebar-search-box">
+        <div class="sidebar-search-wrap">
+          <input type="text" id="sidebarSearchInput" placeholder="ค้นหาสินค้า / SKU..." onkeyup="syncSidebarSearch(this)" />
         </div>
       </div>
 
-      <!-- ตัวคัดกรอง -->
       <div>
         <div class="sidebar-section-title-row">
           <span>🏷️ ตัวคัดกรอง</span>
@@ -441,7 +432,7 @@
         <div class="brand-drawer-container" id="brandDrawerContainer">
           <button type="button" class="brand-drawer-btn" onclick="toggleBrandDrawer(event)">
             <span id="currentBrandName">ALL MODELS</span>
-            <span id="currentBrandCount">(4)</span>
+            <span id="currentBrandCount">(0)</span>
           </button>
           <div class="brand-drawer-dropdown" id="brandDrawerDropdown"></div>
         </div>
@@ -695,7 +686,7 @@
           document.getElementById("dropdownUserName").innerText = user.displayName || "สมาชิก 164CRAFT";
           document.getElementById("dropdownUserEmail").innerText = user.email;
 
-          document.getElementById("modalUserAvatar").src = user.photoURL || "https://via.placeholder.com/45";
+          document.getElementById("modalUserAvatar").src = user.photoURL || "https://via.placeholder.com/50";
           document.getElementById("modalUserName").innerText = user.displayName || "สมาชิก 164CRAFT";
           document.getElementById("modalUserEmail").innerText = user.email;
 
@@ -824,7 +815,7 @@
       if (systemSettings.logoUrl) {
         logoBox.innerHTML = `<img src="${systemSettings.logoUrl}" alt="Logo" />`;
       } else {
-        logoBox.innerHTML = "";
+        logoBox.innerHTML = "164";
       }
 
       if (systemSettings.themeColor) {
