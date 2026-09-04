@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>164CRAFT - Scale Model Store</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -19,7 +19,7 @@
       --accent-vip-bg: #ecfdf5;
       --danger: #dc2626;
       --radius: 10px;
-      --shadow-soft: 0 4px 20px -2px rgba(0, 0, 0, 0.04), 0 2px 6px -2px rgba(0, 0, 0, 0.02);
+      --shadow-soft: 0 4px 20px -2px rgba(0, 0, 0, 0.04);
       --shadow-hover: 0 12px 30px -4px rgba(0, 0, 0, 0.08);
       --shadow-pop: 0 10px 25px -5px rgba(0, 0, 0, 0.15);
     }
@@ -35,7 +35,6 @@
       width: 100%;
       overflow-x: hidden;
       -webkit-font-smoothing: antialiased;
-      -webkit-text-size-adjust: 100%;
     }
 
     /* HEADER */
@@ -50,15 +49,13 @@
       position: sticky;
       top: 0;
       z-index: 100;
-      backdrop-filter: blur(12px);
+      backdrop-filter: blur(8px);
       width: 100%;
     }
     @media(min-width: 768px) {
       .header { padding: 0 32px; height: 70px; }
     }
     .brand-info { display: flex; align-items: center; gap: 8px; cursor: pointer; }
-    
-    /* โลโก้แบรนด์ (แสดงรูปโลโก้จาก Admin หากมี) */
     .brand-photo {
       width: 34px; height: 34px; background: transparent; color: var(--accent);
       border-radius: var(--radius); display: flex; align-items: center; justify-content: center;
@@ -84,18 +81,18 @@
     .header-vip-input {
       background: #fff; border: 1px solid var(--border-color);
       border-radius: 6px; color: var(--text-main); height: 32px; width: 135px; padding: 0 8px;
-      font-size: 0.75rem; font-weight: 800; text-transform: uppercase; outline: none; letter-spacing: 0.5px;
+      font-size: 0.75rem; font-weight: 800; text-transform: uppercase; outline: none;
     }
     .header-vip-input:focus { border-color: var(--border-dark); }
-    .header-vip-input::placeholder { color: #888; font-weight: normal; letter-spacing: 0px; text-transform: none; }
+    .header-vip-input::placeholder { color: #888; font-weight: normal; text-transform: none; }
 
     .btn-action {
       height: 36px; border-radius: var(--radius);
       border: 1px solid var(--border-dark); padding: 0 10px; font-size: 0.75rem;
       font-weight: 750; background: var(--accent); color: #fff;
-      cursor: pointer; transition: all 0.2s ease;
+      cursor: pointer; transition: background 0.15s ease;
       display: inline-flex; align-items: center; justify-content: center; gap: 4px;
-      white-space: nowrap; box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      white-space: nowrap;
     }
     @media(min-width: 640px) {
       .btn-action { height: 38px; padding: 0 12px; font-size: 0.78rem; gap: 6px; }
@@ -104,24 +101,17 @@
     .btn-secondary { background: #fff; color: var(--text-main); border-color: var(--border-color); box-shadow: none; }
     .btn-secondary:hover { background: #f4f4f0; border-color: var(--border-dark); }
     
-    /* ICON PROFILE BUTTON */
     .profile-icon-btn {
       width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--border-dark);
       background: #eee; cursor: pointer; overflow: hidden; display: flex; align-items: center; justify-content: center;
-      transition: transform 0.2s;
     }
-    .profile-icon-btn:hover { transform: scale(1.05); }
     .profile-icon-btn img { width: 100%; height: 100%; object-fit: cover; }
 
-    /* FLOATING ACCOUNT MENU */
     .account-dropdown-menu {
       position: absolute; top: 65px; right: 12px; width: 240px; background: #fff;
       border: 1px solid var(--border-color); border-radius: 12px; box-shadow: var(--shadow-pop);
       display: none; flex-direction: column; z-index: 1000; overflow: hidden;
-      animation: fadeInDropdown 0.15s ease-out;
     }
-    @keyframes fadeInDropdown { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
-    
     .dropdown-header-info { padding: 12px 14px; background: #fafafa; border-bottom: 1px solid var(--border-color); }
     .dropdown-user-name { font-weight: 850; font-size: 0.85rem; color: #111; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .dropdown-user-email { font-size: 0.7rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -129,13 +119,13 @@
     .dropdown-menu-item {
       padding: 11px 14px; font-size: 0.78rem; font-weight: 750; color: #111;
       display: flex; align-items: center; gap: 8px; cursor: pointer; border-bottom: 1px solid #f0f0ed;
-      background: #fff; transition: background 0.15s; border-left: 3px solid transparent; text-decoration: none;
+      background: #fff; border-left: 3px solid transparent; text-decoration: none;
     }
     .dropdown-menu-item:hover { background: #f4f4f1; border-left-color: #111; }
     .dropdown-menu-item.danger { color: var(--danger); }
     .dropdown-menu-item.danger:hover { background: #fef2f2; border-left-color: var(--danger); }
 
-    .mobile-search-bar { padding: 12px 14px 0 14px; background: transparent; display: block; width: 100%; }
+    .mobile-search-bar { padding: 12px 14px 0 14px; display: block; width: 100%; }
     @media(min-width: 640px) { .mobile-search-bar { display: none; } }
     .mobile-search-bar input {
       width: 100%; height: 42px; padding: 8px 12px 8px 38px;
@@ -155,9 +145,7 @@
     }
     @media(min-width: 992px) { .store-layout { grid-template-columns: 260px 1fr; } }
 
-    /* SIDEBAR */
     .sidebar-container {
-      background: transparent;
       padding: 14px; display: flex; flex-direction: column; gap: 12px; width: 100%;
     }
     @media(min-width: 992px) {
@@ -175,7 +163,6 @@
     }
     .filter-counter-text { font-size: 0.6rem; color: var(--text-muted); font-weight: normal; text-transform: none; }
     
-    /* SIDEBAR SEARCH BOX */
     .sidebar-search-box {
       background: #fff; border: 1px solid var(--border-color); border-radius: var(--radius); padding: 10px;
       box-shadow: var(--shadow-soft);
@@ -184,7 +171,7 @@
     .sidebar-search-wrap input {
       width: 100%; height: 38px; padding: 6px 10px 6px 32px;
       border: 1px solid var(--border-color); background: #fafafa;
-      border-radius: 6px; font-size: 0.82rem; outline: none; transition: all 0.2s;
+      border-radius: 6px; font-size: 0.82rem; outline: none;
     }
     .sidebar-search-wrap input:focus { background: #fff; border-color: var(--border-dark); }
     .sidebar-search-wrap:before {
@@ -192,7 +179,6 @@
       transform: translateY(-52%); font-size: 1rem; color: #888; z-index: 2;
     }
 
-    /* VIP TAG NOTIFICATION */
     .secret-status-tag {
       font-size: 0.68rem; margin-top: 4px; line-height: 1.3; display: none;
       padding: 4px 8px; background: var(--accent-vip-bg); border: 1px solid #6ee7b7; border-radius: 4px; color: #065f46;
@@ -205,7 +191,7 @@
       width: 100%; background: #fff; border: 1px solid var(--border-dark); border-radius: var(--radius);
       padding: 9px 12px; font-size: 0.78rem; font-weight: 800; text-transform: uppercase;
       cursor: pointer; display: flex; justify-content: space-between; align-items: center;
-      box-shadow: var(--shadow-soft); transition: background 0.2s;
+      box-shadow: var(--shadow-soft);
     }
     .brand-drawer-btn:hover { background: var(--accent); color: #fff; }
 
@@ -213,19 +199,14 @@
       position: absolute; top: 100%; left: 0; width: 100%; background: #fff;
       border: 1px solid var(--border-color); border-radius: 8px; box-shadow: var(--shadow-pop);
       display: none; flex-direction: column; z-index: 500; overflow: hidden; margin-top: 4px;
-      max-height: 220px;
-      overflow-y: auto;
-      scrollbar-width: thin;
+      max-height: 220px; overflow-y: auto; scrollbar-width: thin;
     }
-    .brand-drawer-dropdown::-webkit-scrollbar { width: 5px; }
-    .brand-drawer-dropdown::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
-
     .brand-drawer-dropdown.show { display: flex; }
 
     .brand-drawer-item {
       padding: 10px 14px; font-size: 0.75rem; font-weight: 750; text-transform: uppercase;
       color: #111; border-bottom: 1px solid #f0f0ed; cursor: pointer; display: flex;
-      justify-content: space-between; align-items: center; background: #fff; transition: background 0.15s;
+      justify-content: space-between; align-items: center; background: #fff;
     }
     .brand-drawer-item:hover { background: #f4f4f1; }
     .brand-drawer-item.active { background: #111; color: #fff; }
@@ -247,33 +228,29 @@
     .product-card {
       position: relative; background: var(--bg-card); border: 1px solid var(--border-color);
       border-radius: var(--radius); padding: 0; gap: 0; overflow: hidden; box-shadow: var(--shadow-soft);
-      transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease; display: flex; flex-direction: column;
-      width: 100%; height: 100%;
+      display: flex; flex-direction: column; width: 100%; height: 100%;
     }
-    .product-card:hover { border-color: var(--border-dark); transform: translateY(-3px); box-shadow: var(--shadow-hover); }
+    .product-card:hover { border-color: var(--border-dark); box-shadow: var(--shadow-hover); }
     .media-preview-container {
       height: auto; aspect-ratio: 1/1; background: radial-gradient(circle at 50% 45%, #fafafa 0 35%, #eef0ed 36% 100%);
       border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center;
       position: relative; overflow: hidden; cursor: pointer; width: 100%;
     }
     .media-preview-container img, .media-preview-container video {
-      width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; padding: 10px; transition: transform 0.3s ease;
+      width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; padding: 10px;
     }
-    .product-card:hover .media-preview-container img { transform: scale(1.04); }
 
     .badge {
       position: absolute; top: 8px; right: 8px; background: #111; color: #fff; padding: 3px 6px;
       font-size: .55rem; letter-spacing: .08em; text-transform: uppercase; font-weight: 800; z-index: 2; border-radius: 4px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
     }
     .exclusive-badge {
       position: absolute; top: 8px; left: 8px; background: var(--accent-vip); color: #fff; padding: 3px 6px;
       font-size: .52rem; letter-spacing: .08em; text-transform: uppercase; font-weight: 850; z-index: 2; border-radius: 4px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.15);
     }
     .media-count-badge {
       position: absolute; bottom: 6px; right: 6px; background: rgba(0,0,0,0.75); color: #fff;
-      padding: 2px 5px; font-size: 0.58rem; font-weight: bold; border-radius: 4px; z-index: 2; backdrop-filter: blur(4px);
+      padding: 2px 5px; font-size: 0.58rem; font-weight: bold; border-radius: 4px; z-index: 2;
     }
 
     .product-code { padding: 10px 10px 0; font-size: .58rem; letter-spacing: .1em; color: #777; font-weight: 700; text-transform: uppercase; }
@@ -291,7 +268,7 @@
     /* MODAL */
     .modal-overlay {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(10, 10, 10, 0.75); backdrop-filter: blur(6px);
+      background: rgba(10, 10, 10, 0.75); backdrop-filter: blur(4px);
       display: none; align-items: flex-end; justify-content: center; z-index: 1000; padding: 0; cursor: pointer;
     }
     @media(min-width: 640px) { .modal-overlay { align-items: center; justify-content: center; padding: 20px; } }
@@ -309,7 +286,7 @@
     .modal-close {
       width: 32px; height: 32px; border: 1px solid var(--border-color); background: #fff;
       border-radius: var(--radius); font-size: 0.9rem; cursor: pointer; font-weight: bold;
-      display: flex; align-items: center; justify-content: center; transition: all 0.2s;
+      display: flex; align-items: center; justify-content: center;
     }
     .modal-close:hover { background: #111; color: #fff; border-color: #111; }
 
@@ -620,10 +597,10 @@
     </div>
   </div>
 
-  <!-- Firebase App SDK, Firestore & Auth -->
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <!-- Firebase App SDK, Firestore & Auth (Loaded with defer for speed) -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js" defer></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js" defer></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js" defer></script>
 
   <script>
     const firebaseConfig = {
@@ -1316,7 +1293,7 @@
         return `
           <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid #eee; padding:6px 0; gap:8px;">
             <div style="display:flex; gap:8px; align-items:center; overflow:hidden;">
-              <img src="${thumb}" style="width:36px; height:36px; object-fit:cover; border-radius:6px; border:1px solid #111; flex-shrink:0;" />
+              <img src="${thumb}" style="width:36px; height:36px; object-fit:cover; border-radius:4px; border:1px solid #ccc; flex-shrink:0;" />
               <div style="overflow:hidden;">
                 <div style="font-weight:bold; font-size:0.78rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${it.product.name}</div>
                 <div style="font-size:0.65rem; color:#666;">SKU: ${it.product.id} | สเกล: ${it.scale} | ${it.optionName}</div>
