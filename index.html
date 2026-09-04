@@ -77,7 +77,6 @@
 
     .header-actions { display: flex; gap: 8px; align-items: center; }
 
-    /* กรอบ VIP แบบมีเส้นขอบ 1 เส้น และปุ่มอยู่ภายใน */
     .header-vip-box {
       display: none; background: #fff; border: 1px solid var(--border-color); border-radius: var(--radius);
       padding: 2px 4px; align-items: center; gap: 4px; box-shadow: var(--shadow-soft);
@@ -137,7 +136,6 @@
     .dropdown-menu-item.danger { color: var(--danger); }
     .dropdown-menu-item.danger:hover { background: #fef2f2; border-left-color: var(--danger); }
 
-    /* ล็อกช่องค้นหาด้านบนให้ติดตรึงใต้ Header (Sticky) */
     .mobile-search-bar { 
       padding: 10px 12px; background: rgba(248, 248, 246, 0.95); backdrop-filter: blur(8px);
       display: block; width: 100%; position: sticky; top: 60px; z-index: 99;
@@ -189,6 +187,26 @@
       margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;
     }
     .filter-counter-text { font-size: 0.6rem; color: var(--text-muted); font-weight: normal; text-transform: none; }
+    
+    /* ช่องค้นหาเฉพาะหน้าจอเดสก์ท็อปใน Sidebar */
+    .desktop-search-box {
+      background: #fff; border: 1px solid var(--border-color); border-radius: var(--radius); padding: 10px;
+      box-shadow: var(--shadow-soft); display: none;
+    }
+    @media(min-width: 992px) {
+      .desktop-search-box { display: block; }
+    }
+    .desktop-search-wrap { position: relative; width: 100%; }
+    .desktop-search-wrap input {
+      width: 100%; height: 38px; padding: 6px 10px 6px 32px;
+      border: 1px solid var(--border-color); background: #fafafa;
+      border-radius: 6px; font-size: 0.82rem; outline: none; transition: all 0.2s;
+    }
+    .desktop-search-wrap input:focus { background: #fff; border-color: var(--border-dark); }
+    .desktop-search-wrap:before {
+      content: "⌕"; position: absolute; left: 10px; top: 50%;
+      transform: translateY(-52%); font-size: 1rem; color: #888; z-index: 2;
+    }
 
     .secret-status-tag {
       font-size: 0.68rem; margin-top: 4px; line-height: 1.3; display: none;
@@ -416,7 +434,7 @@
     </div>
   </header>
 
-  <!-- ช่องค้นหาด้านบนที่ถูกล็อก (Sticky) และลบช่องค้นหาใน Sidebar ออกแล้ว -->
+  <!-- ช่องค้นหาสำหรับมือถือ (แสดงเฉพาะหน้าจอมือถือ) -->
   <div class="mobile-search-bar">
     <div class="mobile-search-bar-wrap">
       <input type="text" id="mobileSearchInput" placeholder="ค้นหาสินค้า หรือ SKU..." onkeyup="syncSearchAndRender(this)" />
@@ -431,7 +449,14 @@
         <button type="button" class="sale-mode-btn" id="modePreorderBtn" onclick="switchSaleMode('PREORDER')">⏳ พรีออเดอร์</button>
       </div>
 
-      <!-- ลบช่องค้นหาใน Sidebar ออกเรียบร้อยแล้ว -->
+      <!-- ช่องค้นหาสำหรับหน้าจอเดสก์ท็อปใน Sidebar (แสดงเฉพาะหน้าจอคอมพิวเตอร์) -->
+      <div>
+        <div class="desktop-search-box">
+          <div class="desktop-search-wrap">
+            <input type="text" id="sidebarSearchInput" placeholder="ค้นหาสินค้า / SKU..." onkeyup="syncSidebarSearch(this)" />
+          </div>
+        </div>
+      </div>
 
       <div>
         <div class="sidebar-section-title-row">
@@ -883,12 +908,14 @@
 
     function syncSearchAndRender(el) {
       document.getElementById("mobileSearchInput").value = el.value;
-      document.getElementById("sidebarSearchInput").value = el.value;
+      const sidebarInput = document.getElementById("sidebarSearchInput");
+      if (sidebarInput) sidebarInput.value = el.value;
       renderProducts();
     }
 
     function syncSidebarSearch(el) {
-      document.getElementById("mobileSearchInput").value = el.value;
+      const mobileInput = document.getElementById("mobileSearchInput");
+      if (mobileInput) mobileInput.value = el.value;
       renderProducts();
     }
 
@@ -1025,7 +1052,9 @@
 
     function renderProducts() {
       const grid = document.getElementById("productGridContainer");
-      const search = (document.getElementById("mobileSearchInput").value || "").trim().toLowerCase();
+      const mobileSearch = (document.getElementById("mobileSearchInput")?.value || "").trim().toLowerCase();
+      const sidebarSearch = (document.getElementById("sidebarSearchInput")?.value || "").trim().toLowerCase();
+      const search = mobileSearch || sidebarSearch;
       const overviewCounter = document.getElementById("filterOverviewCount");
 
       const filtered = products.filter(p => {
