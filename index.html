@@ -1313,9 +1313,10 @@
       const firstSaleMode = cart[0].saleMode;
       const cartTypeBadge = firstSaleMode === "READY" ? "📦 พร้อมส่ง (In Stock)" : "⏳ พรีออเดอร์ (Pre-order)";
 
+      // ปรับขนาดตัวอักษรของป้ายประเภทคำสั่งซื้อในตะกร้าให้ใหญ่และเด่นชัดขึ้น
       list.innerHTML = `
-        <div style="font-size:0.72rem; font-weight:bold; color:#059669; background:#ecfdf5; padding:4px 8px; border-radius:4px; margin-bottom:8px; text-align:center;">
-          ประเภทคำสั่งซื้อในตะกร้า: ${cartTypeBadge} (ยึดตามชิ้นแรก)
+        <div style="font-size:0.88rem; font-weight:800; color:#065f46; background:#ecfdf5; border:1px solid #10b981; padding:8px 12px; border-radius:6px; margin-bottom:10px; text-align:center;">
+          ประเภทคำสั่งซื้อในตะกร้า: ${cartTypeBadge} <br><span style="font-size:0.72rem; font-weight:normal; color:#047857;">(ระบบยึดตามสินค้าชิ้นแรกในตะกร้า)</span>
         </div>
       ` + cart.map((item, idx) => {
         subtotal += (item.price * item.qty);
