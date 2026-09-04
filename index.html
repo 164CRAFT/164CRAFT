@@ -153,6 +153,7 @@
     }
     .sale-mode-btn.active { background: #111; color: #fff; border-color: #111; }
     .sale-mode-btn:hover:not(.active) { background: #f1f1ee; color: #111; }
+    .sale-mode-btn:disabled { opacity: 0.6; cursor: not-allowed; }
 
     .store-layout {
       display: grid; grid-template-columns: 1fr;
@@ -848,7 +849,15 @@
       }
     }
 
+    // 🔒 ฟังก์ชันสลับโหมด พร้อมตรวจสอบและล็อกปุ่มหากมีสินค้าค้างอยู่ในตะกร้า
     function switchSaleMode(mode) {
+      if (cart.length > 0) {
+        const activeType = cart[0].saleMode === 'READY' ? 'สินค้าพร้อมส่ง' : 'สินค้าพรีออเดอร์';
+        const targetType = mode === 'READY' ? 'พร้อมส่ง' : 'พรีออเดอร์';
+        alert(`⚠️ ไม่สามารถสลับไปดูโหมด "${targetType}" ได้!\n\nเนื่องจากในตะกร้าของคุณมี "${activeType}" ค้างอยู่ กรุณาเคลียร์ตะกร้าก่อนหากต้องการเปลี่ยนโหมดเลือกซื้อสินค้า`);
+        return;
+      }
+
       activeSaleMode = mode;
       document.getElementById("modeReadyBtn").className = `sale-mode-btn ${mode === 'READY' ? 'active' : ''}`;
       document.getElementById("modePreorderBtn").className = `sale-mode-btn ${mode === 'PREORDER' ? 'active' : ''}`;
@@ -1313,7 +1322,6 @@
       const firstSaleMode = cart[0].saleMode;
       const cartTypeBadge = firstSaleMode === "READY" ? "📦 พร้อมส่ง (In Stock)" : "⏳ พรีออเดอร์ (Pre-order)";
 
-      // ปรับขนาดตัวอักษรของป้ายประเภทคำสั่งซื้อในตะกร้าให้ใหญ่และเด่นชัดขึ้น
       list.innerHTML = `
         <div style="font-size:0.88rem; font-weight:800; color:#065f46; background:#ecfdf5; border:1px solid #10b981; padding:8px 12px; border-radius:6px; margin-bottom:10px; text-align:center;">
           ประเภทคำสั่งซื้อในตะกร้า: ${cartTypeBadge} <br><span style="font-size:0.72rem; font-weight:normal; color:#047857;">(ระบบยึดตามสินค้าชิ้นแรกในตะกร้า)</span>
