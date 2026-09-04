@@ -117,7 +117,7 @@
       border-radius: 16px 16px 0 0; padding: 20px 18px; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
       display: flex; flex-direction: column; gap: 14px; position: relative; overflow-y: auto;
     }
-    @media(min-width: 640px) { .modal-box { width: min(95vw, 720px); border-radius: calc(var(--radius) * 1.5); padding: 28px; } }
+    @media(min-width: 640px) { .modal-box { width: min(95vw, 740px); border-radius: calc(var(--radius) * 1.5); padding: 28px; } }
     .modal-header {
       font-size: 1rem; font-weight: 800; padding-bottom: 10px; border-bottom: 1px solid var(--border-color);
       display: flex; align-items: center; justify-content: space-between;
@@ -155,13 +155,6 @@
       font-size: 7px; padding: 2px 4px; font-weight: 800; text-transform: uppercase;
     }
 
-    .tags-container { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 0.5rem; }
-    .tag-chip {
-      background: #f0f0ec; border: 1px solid var(--border-color); padding: 6px 10px;
-      font-size: .78rem; font-weight: 600; border-radius: var(--radius); display: flex; align-items: center; gap: 6px;
-    }
-    .tag-chip .del-btn { color: var(--danger); cursor: pointer; font-weight: bold; padding: 0 4px; }
-
     .scale-price-row {
       display: grid; grid-template-columns: 1fr 1.3fr; gap: 8px; align-items: center;
       border: 1px solid var(--border-color); background: #fafaf8; padding: 8px 10px; border-radius: var(--radius); margin-top: 6px;
@@ -172,66 +165,37 @@
     }
     .scale-check:has(input:checked) { border-color: #111; background: #111; color: #fff; }
 
+    .opt-card-row {
+      background: #fafaf8; border: 1px solid var(--border-color); border-radius: var(--radius);
+      padding: 10px 12px; margin-bottom: 8px; display: flex; flex-direction: column; gap: 6px;
+    }
+    .opt-grid-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    @media(min-width: 600px) {
+      .opt-grid-inputs { grid-template-columns: 2fr 1fr 1.5fr 1fr auto; align-items: center; }
+    }
+
+    .admin-filter-bar {
+      display: flex; flex-direction: column; gap: 8px; background: #fafaf8;
+      border: 1px solid var(--border-color); border-radius: var(--radius); padding: 10px 12px; margin-bottom: 10px;
+    }
+    .admin-filter-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+    .admin-filter-btn {
+      background: #fff; border: 1px solid var(--border-color); border-radius: var(--radius);
+      padding: 4px 10px; font-size: 0.75rem; font-weight: 600; cursor: pointer; transition: all 0.15s;
+    }
+    .admin-filter-btn:hover { border-color: #111; }
+    .admin-filter-btn.active { background: #111; color: #fff; border-color: #111; }
+
     .admin-prod-item {
       display: flex; justify-content: space-between; align-items: center;
       border: 1px solid var(--border-color); background: #fafaf8; padding: 10px 12px; border-radius: var(--radius); margin-bottom: 8px; gap: 10px;
     }
-
-    /* กล่องชุดตัวเลือกสินค้า & ส่วนลด */
-    .opt-card-row {
-      background: #fafaf8;
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius);
-      padding: 10px 12px;
-      margin-bottom: 8px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
+    .tags-container { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 0.5rem; }
+    .tag-chip {
+      background: #f0f0ec; border: 1px solid var(--border-color); padding: 6px 10px;
+      font-size: .78rem; font-weight: 600; border-radius: var(--radius); display: flex; align-items: center; gap: 6px;
     }
-    .opt-grid-inputs {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-    }
-    @media(min-width: 600px) {
-      .opt-grid-inputs {
-        grid-template-columns: 2fr 1fr 1.5fr 1fr auto;
-        align-items: center;
-      }
-    }
-
-    /* แถบตัวกรองในหน้าจัดการสินค้า */
-    .admin-filter-bar {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      background: #fafaf8;
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius);
-      padding: 10px 12px;
-      margin-bottom: 10px;
-    }
-    .admin-filter-chips {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-    }
-    .admin-filter-btn {
-      background: #fff;
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius);
-      padding: 4px 10px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.15s;
-    }
-    .admin-filter-btn:hover { border-color: #111; }
-    .admin-filter-btn.active {
-      background: #111;
-      color: #fff;
-      border-color: #111;
-    }
+    .tag-chip .del-btn { color: var(--danger); cursor: pointer; font-weight: bold; padding: 0 4px; }
 
     .footer {
       background: #111; color: #aaa; border-top: 1px solid #111;
@@ -256,16 +220,16 @@
     <div class="admin-card-container">
       <div class="admin-section-title">
         <span>🛠️ แผงควบคุมระบบจัดการหลังบ้าน</span>
-        <span style="font-size: 0.72rem; color: var(--accent-vip); background: var(--accent-vip-bg); padding: 3px 8px; border-radius: 12px; border: 1px solid #a7f3d0; width: fit-content;">● เชื่อมต่อ Firebase สำเร็จ</span>
+        <span style="font-size: 0.72rem; color: var(--accent-vip); background: var(--accent-vip-bg); padding: 3px 8px; border-radius: 12px; border: 1px solid #a7f3d0; width: fit-content;">● ซิงค์ฐานข้อมูล Firebase เรียบร้อย</span>
       </div>
       <p class="admin-desc">
-        ข้อมูลทั้งหมดซิงค์ตรงกับฐานข้อมูล Firebase Cloud บนโปรเจกต์ caft-6b82e แบบเรียลไทม์
+        แก้ไขระบบรองรับวิดีโอ (VDO) อัปโหลดไฟล์โดยตรงหรือใส่ลิงก์ตรง และจัดการสินค้าแบบเรียลไทม์
       </p>
 
       <div class="admin-menu-grid">
         <div class="admin-menu-box">
           <div class="admin-menu-title">✏️ จัดการสินค้า & เพิ่มสินค้า</div>
-          <div class="admin-menu-desc">ค้นหา กรองสินค้า เพิ่ม แก้ไข หรือลบสินค้า พร้อมชุดตัวเลือกโค้ดส่วนลด</div>
+          <div class="admin-menu-desc">ค้นหา กรองสินค้า เพิ่ม แก้ไข หรือลบสินค้า พร้อมระบบวิดีโอและชุดตัวเลือก</div>
           <button class="btn-action" style="margin-top: auto;" onclick="openManageProductsModal()">จัดการสินค้า</button>
         </div>
 
@@ -309,8 +273,8 @@
           class="form-control pin-input-field" 
           placeholder="••••••" 
           maxlength="6" 
-          inputmode="numeric"
-          pattern="[0-9]*"
+          inputmode="numeric" 
+          pattern="[0-9]*" 
           oninput="handlePinAutoInput(this)" 
           autofocus 
         />
@@ -349,9 +313,9 @@
     </div>
   </div>
 
-  <!-- MANAGE PRODUCTS MODAL (มีตัวกรองแบรนด์และสถานะสินค้า) -->
+  <!-- MANAGE PRODUCTS MODAL -->
   <div id="manageProductsModal" class="modal-overlay">
-    <div class="modal-box" style="max-width: 720px;">
+    <div class="modal-box">
       <div class="modal-header">
         <span>✏️ รายการสินค้าทั้งหมด</span>
         <button class="modal-close" onclick="closeModal('manageProductsModal')">✕</button>
@@ -363,7 +327,6 @@
         </button>
       </div>
 
-      <!-- แถบตัวกรองการแสดงผลสินค้าในหน้าแอดมิน -->
       <div class="admin-filter-bar">
         <div style="display:flex; justify-content:space-between; align-items:center;">
           <span style="font-size:0.75rem; font-weight:800; color:#333;">🏷️ ตัวกรองแบรนด์:</span>
@@ -393,7 +356,7 @@
 
   <!-- ADD / EDIT PRODUCT MODAL -->
   <div id="addProductModal" class="modal-overlay">
-    <div class="modal-box" style="max-width: 720px;">
+    <div class="modal-box">
       <div class="modal-header">
         <span id="productModalTitle">📦 เพิ่มรายการสินค้าใหม่</span>
         <button class="modal-close" onclick="closeModal('addProductModal')">✕</button>
@@ -430,15 +393,38 @@
         </div>
 
         <div class="form-group">
-          <label>📸 อัปโหลดรูปภาพ (เลือกได้หลายรูป)</label>
+          <label>📸 อัปโหลดรูปภาพสินค้า (เลือกได้หลายรูป)</label>
           <input type="file" id="pImageInput" class="form-control" accept="image/*" multiple onchange="handleImageUpload(event)" />
           <div id="adminImagesPreviewList" class="image-preview-grid" style="display:none;"></div>
         </div>
 
-        <div class="form-group">
-          <label>🎥 อัปโหลดวิดีโอพรีวิว (MP4)</label>
-          <input type="file" id="pVdoInput" class="form-control" accept="video/mp4" onchange="handleVdoUpload(event)" />
-          <div id="adminVdoPreviewArea" style="margin-top:2px; font-size:0.75rem; color:#059669; font-weight:700;"></div>
+        <!-- กล่องจัดการ VDO ปรับปรุงใหม่: อัปโหลดไฟล์ตรง (ไม่เกิน 750KB) หรือใส่ URL ลิงก์ตรง -->
+        <div class="form-group" style="background:#fafaf8; border:1px solid var(--border-color); border-radius:var(--radius); padding:10px;">
+          <label style="font-weight:bold; color:#111;">🎥 วิดีโอพรีวิวสินค้า (VDO Preview)</label>
+          <p style="font-size:0.72rem; color:var(--text-muted); margin-bottom:6px;">
+            เลือกอัปโหลดไฟล์วิดีโอสั้น (.mp4 ไม่เกิน 750 KB เพื่อไม่ให้เกินข้อจำกัดฐานข้อมูล) หรือวาง URL วิดีโอโดยตรง
+          </p>
+          
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
+            <div>
+              <label style="font-size:0.7rem; color:#555;">📁 เลือกไฟล์วิดีโอจากเครื่อง</label>
+              <input type="file" id="pVdoInput" class="form-control" accept="video/mp4,video/webm" onchange="handleVdoFileUpload(event)" style="font-size:0.75rem; padding:6px;" />
+            </div>
+            <div>
+              <label style="font-size:0.7rem; color:#555;">🔗 หรือ วางลิงก์ตรงของ VDO (URL .mp4)</label>
+              <input type="url" id="pVdoUrlInput" class="form-control" placeholder="https://.../video.mp4" oninput="handleVdoUrlInput(this.value)" style="font-size:0.8rem; padding:7px 10px;" />
+            </div>
+          </div>
+
+          <!-- ตัวแสดงผล Preview VDO พร้อมปุ่มลบ -->
+          <div id="adminVdoContainer" style="display:none; margin-top:8px; align-items:center; gap:12px; background:#fff; padding:8px; border:1px solid #ddd; border-radius:6px;">
+            <video id="adminVdoPlayer" src="" controls muted autoplay loop style="width:90px; height:60px; object-fit:cover; border-radius:4px; background:#000;"></video>
+            <div style="flex:1; overflow:hidden;">
+              <div id="adminVdoStatus" style="font-size:0.75rem; color:#059669; font-weight:bold;">✓ วิดีโอพร้อมใช้งาน</div>
+              <div id="adminVdoDetails" style="font-size:0.68rem; color:#666; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"></div>
+            </div>
+            <button type="button" class="btn-action btn-danger" style="height:32px; padding:0 10px; font-size:0.72rem;" onclick="removeVdo()">✕ ลบ VDO</button>
+          </div>
         </div>
 
         <div class="form-group">
@@ -451,15 +437,11 @@
           <div id="scalePricesContainer"></div>
         </div>
 
-        <!-- ชุดตัวเลือกสินค้า & ส่วนลด (กดสร้าง - ลบ ตั้งราคา เพิ่มโค้ดได้) -->
         <div style="margin-top:10px;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 6px;">
             <label style="font-size:0.82rem; font-weight:800;">⚙️ ตัวเลือกสินค้า & ส่วนลด</label>
             <button type="button" class="btn-action btn-secondary" style="height:32px; padding:0 12px; font-size:0.75rem;" onclick="addDynamicOptionRow()">+ เพิ่มชุดตัวเลือกใหม่</button>
           </div>
-          <p style="font-size:0.75rem; color:var(--text-muted); margin-bottom:8px;">
-            สามารถกดสร้าง-ลบชุดตัวเลือก ตั้งราคาเพิ่ม (+฿) และกำหนดโค้ดส่วนลดพร้อมจำนวนเงินที่ลด (-฿) ได้อิสระ
-          </p>
           <div id="dynamicOptionsList"></div>
         </div>
 
@@ -627,9 +609,8 @@
 
     let products = [];
     let tempProductImages = [];
-    let tempProductVdo = "";
+    let tempProductVdo = ""; // เก็บ Base64 หรือ Direct URL
 
-    // ตัวแปรเก็บสถานะตัวกรองในหน้าแอดมิน
     let adminFilterBrand = "ALL";
     let adminFilterVip = "ALL";
 
@@ -644,11 +625,7 @@
         vipCodes: vipCodesList,
         passcode: adminPasscode,
         settings: systemSettings
-      }).then(() => {
-        console.log("Settings saved to Firestore successfully.");
-      }).catch((err) => {
-        console.error("Error saving settings: ", err);
-      });
+      }).catch(err => console.error("Error saving settings: ", err));
     }
 
     function initAdminPanel() {
@@ -729,7 +706,7 @@
         adminPasscode = newPin;
         saveDataToFirestore();
 
-        alert(`✓ สร้างรหัส PIN ใหม่เรียบร้อยแล้ว!\n\nรหัส PIN ใหม่ของคุณคือ: ${newPin}\n(ระบบเปิดโปรแกรมเมลให้อัตโนมัติ)`);
+        alert(`✓ สร้างรหัส PIN ใหม่เรียบร้อยแล้ว!\n\nรหัส PIN ใหม่ของคุณคือ: ${newPin}`);
         window.open(`mailto:${systemSettings.adminEmail}?subject=Admin%20New%20PIN&body=Your%20new%20PIN%20is:%20${newPin}`, '_blank');
         
         closeModal('forgotPinModal');
@@ -747,7 +724,6 @@
       openModal('manageProductsModal');
     }
 
-    // สร้างปุ่มตัวกรองแบรนด์ในหน้าจัดการสินค้า
     function renderAdminBrandFilterChips() {
       const cont = document.getElementById("adminBrandFilterChips");
       let html = `<button type="button" class="admin-filter-btn ${adminFilterBrand === 'ALL' ? 'active' : ''}" onclick="setAdminBrandFilter('ALL')">ทั้งหมด (${products.length})</button>`;
@@ -778,16 +754,13 @@
       const q = (document.getElementById("adminSearchInput").value || "").trim().toLowerCase();
       
       const filtered = products.filter(p => {
-        // กรองตามแบรนด์
         if (adminFilterBrand !== "ALL" && (!p.brand || p.brand.toUpperCase() !== adminFilterBrand.toUpperCase())) {
           return false;
         }
-        // กรองตามสถานะ VIP
         const hasVip = (p.secretCode && p.secretCode.trim() !== "");
         if (adminFilterVip === "NORMAL" && hasVip) return false;
         if (adminFilterVip === "VIP" && !hasVip) return false;
 
-        // กรองตามข้อความค้นหา
         const matchName = p.name && p.name.toLowerCase().includes(q);
         const matchId = p.id && p.id.toLowerCase().includes(q);
         return matchName || matchId;
@@ -803,6 +776,7 @@
       cont.innerHTML = filtered.map(p => {
         const thumb = (p.images && p.images.length > 0) ? p.images[0] : '';
         const secretNotice = p.secretCode ? `<span style="color:var(--accent-vip); font-weight:bold;">[VIP: ${p.secretCode}]</span> ` : '';
+        const hasVdoNotice = p.vdo ? `<span style="color:#0284c7; font-weight:bold;">[🎥 มี VDO]</span> ` : '';
         const optCount = p.options ? p.options.length : 0;
         return `
           <div class="admin-prod-item">
@@ -810,7 +784,7 @@
               <img src="${thumb}" style="width:42px; height:42px; object-fit:cover; border-radius:4px; border:1px solid #ddd; flex-shrink:0;" />
               <div style="overflow:hidden;">
                 <div style="font-weight:bold; font-size:0.82rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${p.name}</div>
-                <div style="font-size:0.72rem; color:#666;">SKU: ${p.id} | ${p.brand} | ${secretNotice} (${optCount} ตัวเลือก)</div>
+                <div style="font-size:0.72rem; color:#666;">SKU: ${p.id} | ${p.brand} | ${secretNotice}${hasVdoNotice}(${optCount} ตัวเลือก)</div>
               </div>
             </div>
             <div style="display:flex; gap:5px; flex-shrink:0;">
@@ -829,9 +803,7 @@
       document.getElementById("addProductForm").reset();
 
       tempProductImages = [];
-      tempProductVdo = "";
-      renderAdminImagePreview();
-      document.getElementById("adminVdoPreviewArea").innerHTML = "";
+      removeVdo(); // รีเซ็ต VDO
 
       const bSelect = document.getElementById("pBrandSelect");
       bSelect.innerHTML = brands.map(b => `<option value="${b}">${b}</option>`).join('');
@@ -839,7 +811,7 @@
       renderVipSelectOptions("");
       renderAdminScalesInputs();
       document.getElementById("dynamicOptionsList").innerHTML = "";
-      addDynamicOptionRow(); // สร้างตัวเลือกแถวแรกเริ่มต้น
+      addDynamicOptionRow();
 
       openModal('addProductModal');
     }
@@ -920,18 +892,64 @@
       `).join('');
     }
 
-    function handleVdoUpload(event) {
+    // --- ฟังก์ชันจัดการ VDO (แก้ไขการผิดพลาดและการจำกัดขนาด) ---
+    function handleVdoFileUpload(event) {
       const file = event.target.files[0];
       if (!file) return;
+
+      // ตรวจสอบขนาดไฟล์: Firebase Firestore จำกัดขนาด 1 MB ต่อ Document
+      // จึงจำกัดขนาดไฟล์ VDO ตรงนี้ไม่ให้เกิน 750 KB (768,000 bytes) เพื่อความปลอดภัย
+      const maxSizeBytes = 750 * 1024;
+      if (file.size > maxSizeBytes) {
+        alert(`✕ ไฟล์วิดีโอมีขนาดใหญ่เกินไป (${(file.size / 1024).toFixed(0)} KB)!\n\nฐานข้อมูล Firebase กำหนดให้ Document มีขนาดรวมไม่เกิน 1 MB\nแนะนำให้บีบอัดไฟล์ให้ต่ำกว่า 750 KB หรือใช้วิธีวาง "URL ลิงก์ตรงของ VDO" ด้านขวาแทนครับ`);
+        event.target.value = '';
+        return;
+      }
+
       const reader = new FileReader();
       reader.onload = (e) => {
         tempProductVdo = e.target.result;
-        document.getElementById("adminVdoPreviewArea").innerHTML = `<span style="color:#059669;">✓ อัปโหลดวิดีโอสำเร็จ</span>`;
+        document.getElementById("pVdoUrlInput").value = ""; // ล้างค่า url input
+        displayVdoPreview(tempProductVdo, `ไฟล์อัปโหลด: ${file.name} (${(file.size / 1024).toFixed(0)} KB)`);
       };
       reader.readAsDataURL(file);
     }
 
-    // ฟังก์ชันเพิ่มชุดตัวเลือก: กดสร้าง - ลบ ตั้งราคา และเพิ่มโค้ดส่วนลดได้
+    function handleVdoUrlInput(url) {
+      const trimmed = (url || "").trim();
+      if (!trimmed) {
+        if (!document.getElementById("pVdoInput").files.length) {
+          removeVdo();
+        }
+        return;
+      }
+      tempProductVdo = trimmed;
+      document.getElementById("pVdoInput").value = ''; // เคลียร์ file input
+      displayVdoPreview(tempProductVdo, `ลิงก์ตรง: ${tempProductVdo}`);
+    }
+
+    function displayVdoPreview(src, detailText) {
+      const container = document.getElementById("adminVdoContainer");
+      const player = document.getElementById("adminVdoPlayer");
+      const details = document.getElementById("adminVdoDetails");
+
+      player.src = src;
+      details.innerText = detailText || src;
+      container.style.display = "flex";
+    }
+
+    function removeVdo() {
+      tempProductVdo = "";
+      document.getElementById("pVdoInput").value = "";
+      document.getElementById("pVdoUrlInput").value = "";
+      const player = document.getElementById("adminVdoPlayer");
+      player.pause();
+      player.removeAttribute('src');
+      player.load();
+      document.getElementById("adminVdoContainer").style.display = "none";
+    }
+
+    // ฟังก์ชันเพิ่มชุดตัวเลือกสินค้า
     function addDynamicOptionRow(opt = { name: '', extraPrice: 0, vipCode: '', vipDiscount: 0 }) {
       const cont = document.getElementById("dynamicOptionsList");
       const row = document.createElement("div");
@@ -998,7 +1016,7 @@
       const payload = {
         id, name, brand, basePrice, secretCode,
         images: [...tempProductImages],
-        vdo: tempProductVdo,
+        vdo: tempProductVdo || "",
         scales: checkedScales,
         scalePrices,
         options
@@ -1010,7 +1028,7 @@
         openManageProductsModal();
       }).catch((err) => {
         console.error("Error writing product: ", err);
-        alert("เกิดข้อผิดพลาดในการบันทึกข้อมูล");
+        alert("เกิดข้อผิดพลาดในการบันทึกข้อมูล: " + err.message);
       });
     }
 
@@ -1032,8 +1050,20 @@
         renderVipSelectOptions(prod.secretCode || "");
 
         tempProductImages = prod.images ? [...prod.images] : [];
-        tempProductVdo = prod.vdo || "";
         renderAdminImagePreview();
+
+        // โหลด VDO เดิมถ้ามี
+        if (prod.vdo) {
+          tempProductVdo = prod.vdo;
+          if (prod.vdo.startsWith('data:video')) {
+            displayVdoPreview(prod.vdo, "วิดีโอที่บันทึกไว้ในระบบ (Base64)");
+          } else {
+            document.getElementById("pVdoUrlInput").value = prod.vdo;
+            displayVdoPreview(prod.vdo, prod.vdo);
+          }
+        } else {
+          removeVdo();
+        }
 
         renderAdminScalesInputs(prod.scales, prod.scalePrices);
 
