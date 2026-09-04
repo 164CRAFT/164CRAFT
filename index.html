@@ -164,10 +164,11 @@
         background: #fff;
       }
     }
-    .sidebar-section-title {
+    
+    .sidebar-section-title-row {
       font-size: 0.68rem; font-weight: 850; letter-spacing: 0.08em; text-transform: uppercase;
       color: #111; border-bottom: 2px solid var(--border-dark); padding-bottom: 4px;
-      margin-bottom: 8px; display: flex; flex-direction: column; gap: 2px;
+      margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;
     }
     .filter-counter-text { font-size: 0.6rem; color: var(--text-muted); font-weight: normal; text-transform: none; }
     
@@ -195,7 +196,7 @@
     }
     .secret-status-tag.active { display: block; }
 
-    /* BRAND DRAWER (HOVER TO SHOW, SCROLLABLE, LEAVE TO CONFIRM) */
+    /* BRAND DRAWER (CLICK TO TOGGLE & SCROLLABLE DROPDOWN) */
     .brand-drawer-container { position: relative; display: inline-block; width: 100%; }
     .brand-drawer-btn {
       width: 100%; background: #fff; border: 1px solid var(--border-dark); border-radius: var(--radius);
@@ -209,12 +210,15 @@
       position: absolute; top: 100%; left: 0; width: 100%; background: #fff;
       border: 1px solid var(--border-color); border-radius: 8px; box-shadow: var(--shadow-pop);
       display: none; flex-direction: column; z-index: 500; overflow: hidden; margin-top: 4px;
-      max-height: 220px; /* จำกัดความสูงเพื่อให้สามารถเลื่อนเมาส์สกอร์ (Scroll) ได้ */
-      overflow-y: auto;   /* เปิดใช้งาน scrollbar แนวตั้ง */
+      max-height: 220px;
+      overflow-y: auto;
       scrollbar-width: thin;
     }
     .brand-drawer-dropdown::-webkit-scrollbar { width: 5px; }
     .brand-drawer-dropdown::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
+
+    /* ควบคุมการเปิด-ปิดผ่าน Class 'show' โดยการคลิก */
+    .brand-drawer-dropdown.show { display: flex; }
 
     .brand-drawer-item {
       padding: 10px 14px; font-size: 0.75rem; font-weight: 750; text-transform: uppercase;
@@ -430,16 +434,15 @@
         </div>
       </div>
 
-      <!-- ตัวคัดกรอง: ใช้ระบบเอาเมาส์ชี้เพื่อเลือกสกอร์แบรนด์ และเอาเมาส์ออกเพื่อยืนยัน -->
+      <!-- ตัวคัดกรอง: คลิกเพื่อเปิด/ปิดลิ้นชัก หรือเลื่อนสกอร์เลือกแบรนด์ได้ -->
       <div>
-        <div class="sidebar-section-title">
+        <div class="sidebar-section-title-row">
           <span>🏷️ ตัวคัดกรอง</span>
           <span class="filter-counter-text" id="filterOverviewCount">กำลังโหลด...</span>
         </div>
-        <div class="brand-drawer-container" onmouseenter="showBrandDrawer()" onmouseleave="hideBrandDrawer()">
+        <div class="brand-drawer-container" id="brandDrawerContainer">
           <button type="button" class="brand-drawer-btn" onclick="toggleBrandDrawer(event)">
-            <span id="currentBrandLabel">ALL MODELS (4)</span>
-            <span>▾</span>
+            <span id="currentBrandLabel">ALL MODELS (4) ▾▴</span>
           </button>
           <div class="brand-drawer-dropdown" id="brandDrawerDropdown"></div>
         </div>
@@ -673,6 +676,7 @@
       initAuthListener();
       loadDataFromFirebase();
       initModalOutsideClick();
+      initBrandDrawerOutsideClick();
     }
 
     function initAuthListener() {
@@ -736,21 +740,21 @@
       if (menu && menu.style.display === "flex") menu.style.display = "none";
     }
 
-    /* ฟังก์ชันเปิด/ปิดลิ้นชักแบรนด์ด้วยการเอาเมาส์ชี้และกดคลิก */
+    /* ฟังก์ชันเปิด-ปิดลิ้นชักตัวคัดกรองแบรนด์โดยการคลิก */
     function toggleBrandDrawer(event) {
       event.stopPropagation();
       const dropdown = document.getElementById("brandDrawerDropdown");
       dropdown.classList.toggle("show");
     }
 
-    function showBrandDrawer() {
-      const dropdown = document.getElementById("brandDrawerDropdown");
-      dropdown.classList.add("show");
-    }
-
-    function hideBrandDrawer() {
-      const dropdown = document.getElementById("brandDrawerDropdown");
-      dropdown.classList.remove("show");
+    function initBrandDrawerOutsideClick() {
+      document.addEventListener('click', function(e) {
+        const container = document.getElementById("brandDrawerContainer");
+        const dropdown = document.getElementById("brandDrawerDropdown");
+        if (container && !container.contains(e.target)) {
+          dropdown.classList.remove("show");
+        }
+      });
     }
 
     function saveUserProfileModal(e) {
@@ -894,10 +898,10 @@
       const labelEl = document.getElementById("currentBrandLabel");
 
       if (activeCategory === "ALL") {
-        labelEl.innerText = `ALL MODELS (${totalAll})`;
+        labelEl.innerText = `ALL MODELS (${totalAll}) ▾▴`;
       } else {
         const count = getProductCountByBrand(activeCategory);
-        labelEl.innerText = `${activeCategory.toUpperCase()} (${count})`;
+        labelEl.innerText = `${activeCategory.toUpperCase()} (${count}) ▾▴`;
       }
 
       let html = `
