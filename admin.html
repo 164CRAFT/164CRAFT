@@ -47,7 +47,14 @@
       z-index: 100;
       backdrop-filter: blur(8px);
     }
-    .brand-info { display: flex; align-items: center; gap: 10px; }
+    .brand-info { 
+      display: flex; 
+      align-items: center; 
+      gap: 10px; 
+      cursor: pointer; 
+      transition: opacity 0.2s; 
+    }
+    .brand-info:hover { opacity: 0.8; }
     .brand-photo {
       width: 36px; height: 36px; background: var(--accent); color: #fff;
       border-radius: var(--radius); display: flex; align-items: center; justify-content: center;
@@ -229,7 +236,8 @@
 <body onload="initAdminPanel()">
 
   <header class="header">
-    <div class="brand-info">
+    <!-- เพิ่ม onclick เพื่อคลิกโลโก้หรือชื่อร้านแล้วกลับไปหน้าหน้าร้าน (index.html) -->
+    <div class="brand-info" onclick="window.location.href='index.html'" title="คลิกเพื่อไปที่หน้าร้าน">
       <div class="brand-photo">164</div>
       <div class="brand-name">164CRAFT ADMIN</div>
     </div>
@@ -1037,7 +1045,6 @@
 
       const statusEl = document.getElementById("vdoCompressStatus");
       
-      // กำหนดขนาดไฟล์สูงสุดที่รับได้เป็น 100 MB
       const maxAllowedSize = 100 * 1024 * 1024;
       if (file.size > maxAllowedSize) {
         alert(`⚠️ ไฟล์วิดีโอมีขนาดใหญ่เกินไป (${(file.size / (1024 * 1024)).toFixed(1)} MB)\nรองรับไฟล์สูงสุดไม่เกิน 100 MB กรุณาเลือกไฟล์ที่เล็กลง หรือใช้วิธีวางลิงก์ตรง`);
@@ -1381,7 +1388,7 @@
     }
 
     function deleteScale(s) {
-      if (scalesList.length <= 1) return alert("ต้องมีอย่างน้อย 1 สเกล");
+      if (scalesList.label <= 1) return alert("ต้องมีอย่างน้อย 1 สเกล");
       scalesList = scalesList.filter(x => x !== s);
       saveDataToFirestore();
       renderConfigChips();
