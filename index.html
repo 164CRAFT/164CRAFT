@@ -420,12 +420,9 @@
   <div class="store-layout">
     <aside class="sidebar-container">
       
-      <!-- แถบปุ่มเลือกคัดแยกโหมดสินค้า (พร้อมส่ง / พรีออเดอร์) -->
-      <div>
-        <div class="sale-mode-switch-bar">
-          <button type="button" class="sale-mode-btn active" id="modeReadyBtn" onclick="switchSaleMode('READY')">📦 พร้อมส่ง</button>
-          <button type="button" class="sale-mode-btn" id="modePreorderBtn" onclick="switchSaleMode('PREORDER')">⏳ พรีออเดอร์</button>
-        </div>
+      <div class="sale-mode-switch-bar">
+        <button type="button" class="sale-mode-btn active" id="modeReadyBtn" onclick="switchSaleMode('READY')">📦 พร้อมส่ง</button>
+        <button type="button" class="sale-mode-btn" id="modePreorderBtn" onclick="switchSaleMode('PREORDER')">⏳ พรีออเดอร์</button>
       </div>
 
       <div>
@@ -533,7 +530,6 @@
       <button class="modal-close" onclick="closeModal('cartModal')">✕</button>
       <div class="modal-header">
         <span>🛒 ตะกร้าสินค้าของคุณ</span>
-        <!-- 🆕 ปุ่ม Clear ตะกร้าสินค้า -->
         <button type="button" class="btn-action btn-danger" style="height: 28px; padding: 0 8px; font-size: 0.68rem;" onclick="clearCart()">🗑️ เคลียร์ตะกร้า</button>
       </div>
       <div id="cartItemList" style="max-height: 45vh; overflow-y: auto; padding-right: 2px;">- ไม่มีรายการสินค้า -</div>
@@ -671,7 +667,7 @@
     let products = [];
 
     let activeCategory = "ALL";
-    let activeSaleMode = "READY"; // โหมดที่กำลังดูอยู่ (READY หรือ PREORDER)
+    let activeSaleMode = "READY";
     let activeSecretCode = "";
     let cart = [];
     let currentSelectedProduct = null;
@@ -911,7 +907,6 @@
         const readyStock = p.readyStock !== undefined ? p.readyStock : 10;
         const preorderStock = p.preorderStock !== undefined ? p.preorderStock : 0;
         
-        // คัดกรองตามโหมดที่เลือกดู (ถ้าโหมดพร้อมส่ง แต่ readyStock เป็น 0 ให้ซ่อน / ถ้าโหมดพรีออเดอร์ แต่ preorderStock เป็น 0 ให้ซ่อน)
         if (activeSaleMode === 'READY' && readyStock <= 0) return false;
         if (activeSaleMode === 'PREORDER' && preorderStock <= 0) return false;
 
@@ -1065,7 +1060,7 @@
               ${countBadge}
             </div>
             <div class="product-code">SKU: ${p.id}</div>
-            <div class="product-title">${p.name}</div>
+            <div class="product-title" onclick="openDetailModal('${p.id}')" style="cursor:pointer;">${p.name}</div>
             <div class="product-price">฿${p.basePrice}</div>
             <button class="btn-action" onclick="openDetailModal('${p.id}')">เลือกสเกล / ซื้อสินค้า</button>
           </div>
@@ -1233,14 +1228,13 @@
       calculateModalPrice();
     }
 
-    // 🛒 เพิ่มลงตะกร้า โดยเช็กตามประเภทที่เลือกซื้อ (READY หรือ PREORDER) และยึดสินค้าชิ้นแรกในตะกร้าเป็นหลัก
     function addToCartFromModal() {
       if (!currentSelectedProduct) return;
 
-      const incomingSaleMode = activeSaleMode; // อิงตามโหมดหน้าเว็บที่ผู้ใช้กำลังดูและกดสั่งซื้อ (READY หรือ PREORDER)
+      const incomingSaleMode = activeSaleMode;
 
       if (cart.length > 0) {
-        const firstItemSaleMode = cart[0].saleMode; // ยึดตามสินค้าชิ้นแรกในตะกร้า
+        const firstItemSaleMode = cart[0].saleMode;
         if (firstItemSaleMode !== incomingSaleMode) {
           const currentTypeName = firstItemSaleMode === 'READY' ? 'สินค้าพร้อมส่ง' : 'สินค้าพรีออเดอร์';
           const newTypeName = incomingSaleMode === 'READY' ? 'สินค้าพร้อมส่ง' : 'สินค้าพรีออเดอร์';
@@ -1268,7 +1262,7 @@
           product: currentSelectedProduct,
           scale: scale,
           optionName: selectedOpt.name,
-          saleMode: incomingSaleMode, // บันทึกประเภทโหมดของสินค้าชิ้นนี้ลงตะกร้า
+          saleMode: incomingSaleMode,
           price: finalPrice,
           qty: 1
         });
@@ -1344,7 +1338,6 @@
       renderCart();
     }
 
-    // 🗑️ ฟังก์ชันเคลียร์ตะกร้าสินค้าทั้งหมด
     function clearCart() {
       if (cart.length === 0) return alert("ตะกร้าสินค้าว่างอยู่แล้ว");
       if (confirm("คุณต้องการเคลียร์สินค้าทั้งหมดออกจากตะกร้าใช่หรือไม่?")) {
