@@ -58,11 +58,11 @@
     }
     .brand-info { display: flex; align-items: center; gap: 8px; cursor: pointer; }
     
-    /* โลโก้ปรับพื้นหลังและสีข้อความให้เป็นสีเดียวกับธีม (Accent Color) */
+    /* โลโก้แบรนด์ (แสดงรูปโลโก้จาก Admin หากมี) */
     .brand-photo {
-      width: 34px; height: 34px; background: var(--accent); color: var(--bg-card);
+      width: 34px; height: 34px; background: transparent; color: var(--accent);
       border-radius: var(--radius); display: flex; align-items: center; justify-content: center;
-      font-size: 0.7rem; font-weight: 800; letter-spacing: 0.5px; flex-shrink: 0; overflow: hidden;
+      font-size: 0.7rem; font-weight: 800; flex-shrink: 0; overflow: hidden;
     }
     .brand-photo img { width: 100%; height: 100%; object-fit: cover; }
     .brand-name { font-size: 0.85rem; font-weight: 850; letter-spacing: 1px; white-space: nowrap; color: var(--accent); }
@@ -251,14 +251,11 @@
       width: 100%; height: 100%;
     }
     .product-card:hover { border-color: var(--border-dark); transform: translateY(-3px); box-shadow: var(--shadow-hover); }
-    
     .media-preview-container {
       height: auto; aspect-ratio: 1/1; background: radial-gradient(circle at 50% 45%, #fafafa 0 35%, #eef0ed 36% 100%);
       border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center;
       position: relative; overflow: hidden; cursor: pointer; width: 100%;
     }
-    
-    /* สไตล์การแสดงผลรูปภาพและวิดีโอแบบ Hover Play */
     .media-preview-container img, .media-preview-container video {
       width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; padding: 10px; transition: transform 0.3s ease;
     }
@@ -367,8 +364,8 @@
 
   <header class="header">
     <div class="brand-info" onclick="window.location.href='index.html'">
-      <div class="brand-photo" id="siteLogoText">164</div>
-      <div class="brand-name" id="siteTitleText">164CRAFT</div>
+      <div class="brand-photo" id="siteLogoText"></div>
+      <div class="brand-name" id="siteTitleText"></div>
     </div>
     <div class="header-actions" style="position: relative;">
       
@@ -821,13 +818,13 @@
     }
 
     function applyShopSettings() {
-      document.getElementById("siteTitleText").innerText = systemSettings.storeName || "164CRAFT";
+      document.getElementById("siteTitleText").innerText = systemSettings.storeName || "";
       
       const logoBox = document.getElementById("siteLogoText");
       if (systemSettings.logoUrl) {
         logoBox.innerHTML = `<img src="${systemSettings.logoUrl}" alt="Logo" />`;
       } else {
-        logoBox.innerHTML = systemSettings.storeName ? systemSettings.storeName.substring(0, 3).toUpperCase() : "164";
+        logoBox.innerHTML = "";
       }
 
       if (systemSettings.themeColor) {
@@ -1004,7 +1001,6 @@
         const countBadge = imgCount > 1 ? `<div class="media-count-badge">📷 ${imgCount} ภาพ</div>` : '';
         const isExclusive = p.secretCode ? `<span class="exclusive-badge">EXCLUSIVE</span>` : '';
 
-        // ตั้งค่าแสดงผลภาพปกติ และสลับเล่น VDO เมื่อเอาเมาส์มาวาง (Hover) หากมี VDO
         let mediaHtml = '';
         if (p.vdo) {
           mediaHtml = `
@@ -1033,7 +1029,6 @@
       }).join('');
     }
 
-    /* ฟังก์ชันควบคุมการเล่น VDO เฉพาะเมื่อเอาเมาส์มาวาง */
     function playCardVdo(cardEl) {
       const img = cardEl.querySelector('.prod-img');
       const vdo = cardEl.querySelector('.prod-vdo');
@@ -1320,8 +1315,8 @@
         const lineTotal = it.price * it.qty;
         return `
           <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid #eee; padding:6px 0; gap:8px;">
-            <div style="display:flex; align-items:center; gap:8px; overflow:hidden;">
-              <img src="${thumb}" style="width:36px; height:36px; object-fit:cover; border-radius:4px; border:1px solid #ccc; flex-shrink:0;" />
+            <div style="display:flex; gap:8px; align-items:center; overflow:hidden;">
+              <img src="${thumb}" style="width:36px; height:36px; object-fit:cover; border-radius:6px; border:1px solid #111; flex-shrink:0;" />
               <div style="overflow:hidden;">
                 <div style="font-weight:bold; font-size:0.78rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${it.product.name}</div>
                 <div style="font-size:0.65rem; color:#666;">SKU: ${it.product.id} | สเกล: ${it.scale} | ${it.optionName}</div>
