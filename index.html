@@ -1310,6 +1310,14 @@
         item.saleMode === incomingSaleMode
       );
 
+      const maxLimit = incomingSaleMode === 'READY' ? (currentSelectedProduct.readyStock || 0) : (currentSelectedProduct.preorderUnlimited ? 999999 : (currentSelectedProduct.preorderStock || 0));
+      const currentInCart = existingIndex > -1 ? cart[existingIndex].qty : 0;
+
+      if (currentInCart + 1 > maxLimit) {
+        alert(`⚠️ ไม่สามารถเพิ่มสินค้าได้เนื่องจากเกินจำนวนสต็อกที่มี (${maxLimit} ชิ้น)`);
+        return;
+      }
+
       if (existingIndex > -1) {
         cart[existingIndex].qty += 1;
       } else {
@@ -1380,9 +1388,20 @@
       document.getElementById("netTotalDisplay").innerText = `ราคารวมทั้งสิ้น: ฿${grandTotal} (รวมค่าส่ง ฿${systemSettings.shippingFee})`;
     }
 
+    // 🛡️ จำกัดการปรับจำนวนสินค้าในตะกร้าตามสต็อกจริง
     function changeCartQty(idx, delta) {
-      cart[idx].qty += delta;
-      if (cart[idx].qty <= 0) cart.splice(idx, 1);
+      const item = cart[idx];
+      const prod = item.product;
+      const maxLimit = item.saleMode === 'READY' ? (prod.readyStock || 0) : (prod.preorderUnlimited ? 999999 : (prod.preorderStock || 0));
+
+      const newQty = item.qty + delta;
+      if (newQty > maxLimit) {
+        alert(`⚠️ ไม่สามารถเพิ่มจำนวนได้ เนื่องจากเกินสต็อกที่มี (${maxLimit} ชิ้น)`);
+        return;
+      }
+
+      item.qty = newQty;
+      if (item.qty <= 0) cart.splice(idx, 1);
       updateCartBadge();
       renderCart();
     }
