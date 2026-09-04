@@ -211,7 +211,7 @@
         <span style="font-size: 0.72rem; color: var(--accent-vip); background: var(--accent-vip-bg); padding: 3px 8px; border-radius: 12px; border: 1px solid #a7f3d0; width: fit-content;">● Google Admin Authenticated</span>
       </div>
       <p class="admin-desc">
-        ระบบจัดการสินค้า โคลนสินค้า ตั้งค่าธีมเว็บ (มีผลร่วมกันทั้งหน้าแรกและหลังบ้าน) และบริหารจัดการสมาชิก
+        ระบบจัดการสินค้า โคลนสินค้า ตั้งค่าธีมเว็บ และบริหารจัดการสต็อกสินค้า (พร้อมส่ง / พรีออเดอร์)
       </p>
 
       <div class="admin-menu-grid">
@@ -291,8 +291,15 @@
         </div>
         <div class="admin-filter-chips" id="adminBrandFilterChips"></div>
 
-        <div style="display:flex; gap:6px; margin-top:4px;">
-          <span style="font-size:0.75rem; font-weight:800; color:#333; line-height:26px;">ประเภท:</span>
+        <div style="display:flex; gap:6px; margin-top:4px; flex-wrap: wrap;">
+          <span style="font-size:0.75rem; font-weight:800; color:#333; line-height:26px;">ประเภทการขาย:</span>
+          <button type="button" class="admin-filter-btn active" id="filterSaleAllBtn" onclick="setAdminSaleTypeFilter('ALL')">ทั้งหมด</button>
+          <button type="button" class="admin-filter-btn" id="filterSaleReadyBtn" onclick="setAdminSaleTypeFilter('READY')">📦 พร้อมส่ง</button>
+          <button type="button" class="admin-filter-btn" id="filterSalePreBtn" onclick="setAdminSaleTypeFilter('PREORDER')">⏳ พรีออเดอร์</button>
+        </div>
+
+        <div style="display:flex; gap:6px; margin-top:2px;">
+          <span style="font-size:0.75rem; font-weight:800; color:#333; line-height:26px;">สถานะ:</span>
           <button type="button" class="admin-filter-btn active" id="filterVipAllBtn" onclick="setAdminVipFilter('ALL')">ทั้งหมด</button>
           <button type="button" class="admin-filter-btn" id="filterVipNormalBtn" onclick="setAdminVipFilter('NORMAL')">ทั่วไป</button>
           <button type="button" class="admin-filter-btn" id="filterVipOnlyBtn" onclick="setAdminVipFilter('VIP')">เฉพาะ VIP 🔒</button>
@@ -389,7 +396,33 @@
           <input type="text" id="pName" class="form-control" placeholder="เช่น Ducati Panigale V4 S" required />
         </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+        <!-- 🆕 ส่วนเลือกระบบสต็อกสินค้า (พร้อมส่ง vs พรีออเดอร์) -->
+        <div class="form-group" style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: var(--radius); padding: 12px;">
+          <label style="font-weight: 800; color: #1e293b; margin-bottom: 8px; display: block;">⚙️ รูปแบบการขายและระบบสต็อกสินค้า</label>
+          
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 8px;">
+            <label class="scale-check" style="background: #fff; cursor: pointer;">
+              <input type="radio" name="productSaleType" value="READY" checked onchange="toggleSaleTypeFields()" /> 📦 สินค้าพร้อมส่ง (In Stock)
+            </label>
+            <label class="scale-check" style="background: #fff; cursor: pointer;">
+              <input type="radio" name="productSaleType" value="PREORDER" onchange="toggleSaleTypeFields()" /> ⏳ พรีออเดอร์ (สั่งผลิต)
+            </label>
+          </div>
+
+          <!-- ฟิลด์สต็อกพร้อมส่ง -->
+          <div id="readyStockGroup" class="form-group" style="margin-bottom: 0;">
+            <label style="font-size: 0.75rem; color: #0f172a;">จำนวนสต็อกคงเหลือ (พร้อมส่ง)</label>
+            <input type="number" id="pStockQty" class="form-control" placeholder="เช่น 10" value="10" min="0" />
+          </div>
+
+          <!-- ฟิลด์พรีออเดอร์ -->
+          <div id="preorderGroup" class="form-group" style="margin-bottom: 0; display: none;">
+            <label style="font-size: 0.75rem; color: #0f172a;">ระยะเวลารอสินค้า / รอบผลิต (Lead Time)</label>
+            <input type="text" id="pPreorderLeadTime" class="form-control" placeholder="เช่น จัดส่งภายใน 15-20 วัน" />
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 4px;">
           <div class="form-group">
             <label>ราคาเริ่มต้น (ตามสเกล)</label>
             <input type="number" id="pPrice" class="form-control" placeholder="175" required />
@@ -603,6 +636,7 @@
     let tempProductImages = [];
     let tempProductVdo = "";
     let adminFilterBrand = "ALL";
+    let adminFilterSaleType = "ALL";
     let adminFilterVip = "ALL";
 
     function sortAlphabetically(arr) {
@@ -712,6 +746,7 @@
 
     function openManageProductsModal() {
       adminFilterBrand = "ALL";
+      adminFilterSaleType = "ALL";
       adminFilterVip = "ALL";
       renderAdminBrandFilterChips();
       renderAdminProductList();
@@ -813,6 +848,14 @@
       renderAdminProductList();
     }
 
+    function setAdminSaleTypeFilter(type) {
+      adminFilterSaleType = type;
+      document.getElementById("filterSaleAllBtn").className = `admin-filter-btn ${type === 'ALL' ? 'active' : ''}`;
+      document.getElementById("filterSaleReadyBtn").className = `admin-filter-btn ${type === 'READY' ? 'active' : ''}`;
+      document.getElementById("filterSalePreBtn").className = `admin-filter-btn ${type === 'PREORDER' ? 'active' : ''}`;
+      renderAdminProductList();
+    }
+
     function setAdminVipFilter(type) {
       adminFilterVip = type;
       document.getElementById("filterVipAllBtn").className = `admin-filter-btn ${type === 'ALL' ? 'active' : ''}`;
@@ -829,6 +872,12 @@
         if (adminFilterBrand !== "ALL" && (!p.brand || p.brand.toUpperCase() !== adminFilterBrand.toUpperCase())) {
           return false;
         }
+        
+        const pSaleType = p.saleType || "READY";
+        if (adminFilterSaleType !== "ALL" && pSaleType !== adminFilterSaleType) {
+          return false;
+        }
+
         const hasVip = (p.secretCode && p.secretCode.trim() !== "");
         if (adminFilterVip === "NORMAL" && hasVip) return false;
         if (adminFilterVip === "VIP" && !hasVip) return false;
@@ -848,14 +897,17 @@
       cont.innerHTML = filtered.map(p => {
         const thumb = (p.images && p.images.length > 0) ? p.images[0] : '';
         const secretNotice = p.secretCode ? `<span style="color:var(--accent-vip); font-weight:bold;">[VIP: ${p.secretCode}]</span> ` : '';
-        const hasVdoNotice = p.vdo ? `<span style="color:#0284c7; font-weight:bold;">[🎥 VDO]</span> ` : '';
+        const saleTypeBadge = (p.saleType === "PREORDER") 
+          ? `<span style="color:#d97706; font-weight:bold;">[⏳ พรีออเดอร์: ${p.preorderLeadTime || 'สั่งผลิต'}]</span> `
+          : `<span style="color:#059669; font-weight:bold;">[📦 พร้อมส่ง: สต็อก ${p.stockQty !== undefined ? p.stockQty : 10}]</span> `;
+
         return `
           <div class="admin-prod-item">
             <div style="display:flex; gap:10px; align-items:center; overflow:hidden;">
               <img src="${thumb}" style="width:42px; height:42px; object-fit:cover; border-radius:4px; border:1px solid #ddd; flex-shrink:0;" />
               <div style="overflow:hidden;">
                 <div style="font-weight:bold; font-size:0.82rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${p.name}</div>
-                <div style="font-size:0.72rem; color:#666;">SKU: ${p.id} | ${p.brand} | ${secretNotice}${hasVdoNotice}</div>
+                <div style="font-size:0.72rem; color:#666;">SKU: ${p.id} | ${p.brand} | ${saleTypeBadge}${secretNotice}</div>
               </div>
             </div>
             <div style="display:flex; gap:4px; flex-shrink:0;">
@@ -868,11 +920,29 @@
       }).join('');
     }
 
+    function toggleSaleTypeFields() {
+      const saleType = document.querySelector('input[name="productSaleType"]:checked').value;
+      const readyGroup = document.getElementById("readyStockGroup");
+      const preorderGroup = document.getElementById("preorderGroup");
+
+      if (saleType === "READY") {
+        readyGroup.style.display = "block";
+        preorderGroup.style.display = "none";
+      } else {
+        readyGroup.style.display = "none";
+        preorderGroup.style.display = "block";
+      }
+    }
+
     function openAddProductModal() {
       closeModal('manageProductsModal');
       document.getElementById("productModalTitle").innerText = "📦 เพิ่มรายการสินค้าใหม่";
       document.getElementById("editingProductId").value = "";
       document.getElementById("addProductForm").reset();
+
+      document.querySelector('input[name="productSaleType"][value="READY"]').checked = true;
+      toggleSaleTypeFields();
+      document.getElementById("pStockQty").value = 10;
 
       tempProductImages = [];
       removeVdo();
@@ -899,6 +969,14 @@
         document.getElementById("pId").value = prod.id + "-COPY";
         document.getElementById("pName").value = prod.name + " (สำเนา)";
         document.getElementById("pPrice").value = prod.basePrice;
+
+        const saleType = prod.saleType || "READY";
+        document.querySelectorAll('input[name="productSaleType"]').forEach(rb => {
+          rb.checked = (rb.value === saleType);
+        });
+        toggleSaleTypeFields();
+        document.getElementById("pStockQty").value = prod.stockQty !== undefined ? prod.stockQty : 10;
+        document.getElementById("pPreorderLeadTime").value = prod.preorderLeadTime || "";
 
         const bSelect = document.getElementById("pBrandSelect");
         bSelect.innerHTML = brands.map(b => `<option value="${b}" ${b === prod.brand ? 'selected' : ''}>${b}</option>`).join('');
@@ -1230,6 +1308,10 @@
       const basePrice = parseFloat(document.getElementById("pPrice").value) || 0;
       const secretCode = (document.getElementById("pSecretCodeSelect").value || "").trim().toUpperCase();
 
+      const saleType = document.querySelector('input[name="productSaleType"]:checked').value;
+      const stockQty = saleType === "READY" ? (parseInt(document.getElementById("pStockQty").value) || 0) : 0;
+      const preorderLeadTime = saleType === "PREORDER" ? document.getElementById("pPreorderLeadTime").value.trim() : "";
+
       const checkedScales = Array.from(document.querySelectorAll('input[name="productScale"]:checked')).map(cb => cb.value);
       if (!checkedScales.length) return alert("กรุณาเลือกสเกลอย่างน้อย 1 สเกล");
 
@@ -1242,6 +1324,9 @@
 
       const payload = {
         id, name, brand, basePrice, secretCode,
+        saleType,
+        stockQty,
+        preorderLeadTime,
         images: [...tempProductImages],
         vdo: tempProductVdo || "",
         scales: checkedScales,
@@ -1267,6 +1352,14 @@
         document.getElementById("pId").value = prod.id;
         document.getElementById("pName").value = prod.name;
         document.getElementById("pPrice").value = prod.basePrice;
+
+        const saleType = prod.saleType || "READY";
+        document.querySelectorAll('input[name="productSaleType"]').forEach(rb => {
+          rb.checked = (rb.value === saleType);
+        });
+        toggleSaleTypeFields();
+        document.getElementById("pStockQty").value = prod.stockQty !== undefined ? prod.stockQty : 10;
+        document.getElementById("pPreorderLeadTime").value = prod.preorderLeadTime || "";
 
         document.getElementById("pBrandSelect").innerHTML = brands.map(b => `<option value="${b}" ${b === prod.brand ? 'selected' : ''}>${b}</option>`).join('');
         renderVipSelectOptions(prod.secretCode || "");
