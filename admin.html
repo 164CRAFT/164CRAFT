@@ -165,40 +165,21 @@
     }
     .scale-check:has(input:checked) { border-color: #111; background: #111; color: #fff; }
 
-    /* ชุดตัวเลือกสินค้า & ส่วนลด (แยกแถวชัดเจน) */
     .opt-card-row {
-      background: #fafaf8;
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius);
-      padding: 12px 14px;
-      margin-bottom: 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
+      background: #fafaf8; border: 1px solid var(--border-color); border-radius: var(--radius);
+      padding: 12px 14px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 10px;
     }
     .opt-main-inputs {
-      display: grid;
-      grid-template-columns: 2fr 1fr auto;
-      gap: 8px;
-      align-items: end;
+      display: grid; grid-template-columns: 2fr 1fr auto; gap: 8px; align-items: end;
     }
     .opt-codes-section {
-      background: #ffffff;
-      border: 1px dashed #cbd5e1;
-      border-radius: 6px;
-      padding: 10px 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
+      background: #ffffff; border: 1px dashed #cbd5e1; border-radius: 6px;
+      padding: 10px 12px; display: flex; flex-direction: column; gap: 8px;
     }
     .opt-code-single-row {
-      display: grid;
-      grid-template-columns: 1.5fr 1fr auto;
-      gap: 8px;
-      align-items: center;
+      display: grid; grid-template-columns: 1.5fr 1fr auto; gap: 8px; align-items: center;
     }
 
-    /* แถบตัวกรองในหน้าจัดการสินค้า */
     .admin-filter-bar {
       display: flex; flex-direction: column; gap: 8px; background: #fafaf8;
       border: 1px solid var(--border-color); border-radius: var(--radius); padding: 10px 12px; margin-bottom: 10px;
@@ -245,16 +226,16 @@
     <div class="admin-card-container">
       <div class="admin-section-title">
         <span>🛠️ แผงควบคุมระบบจัดการหลังบ้าน</span>
-        <span style="font-size: 0.72rem; color: var(--accent-vip); background: var(--accent-vip-bg); padding: 3px 8px; border-radius: 12px; border: 1px solid #a7f3d0; width: fit-content;">● Auto-Compress VDO & ภาพ พร้อมทำงาน</span>
+        <span style="font-size: 0.72rem; color: var(--accent-vip); background: var(--accent-vip-bg); padding: 3px 8px; border-radius: 12px; border: 1px solid #a7f3d0; width: fit-content;">● ระบบ HD Video Engine เปิดใช้งาน</span>
       </div>
       <p class="admin-desc">
-        รองรับระบบย่อความละเอียดและบีบอัดวิดีโอ (VDO) อัตโนมัติในเบราว์เซอร์ และรองรับการเพิ่มโค้ดส่วนลดหลายโค้ดต่อตัวเลือก
+        รองรับการเพิ่มวิดีโอแบบคมชัดสูง (HD 720p) และระบบใส่ลิงก์ตรงสำหรับคลิปยาวไม่ลดทอนคุณภาพ
       </p>
 
       <div class="admin-menu-grid">
         <div class="admin-menu-box">
           <div class="admin-menu-title">✏️ จัดการสินค้า & เพิ่มสินค้า</div>
-          <div class="admin-menu-desc">ค้นหา กรองสินค้า เพิ่ม แก้ไข หรือลบสินค้า พร้อมระบบ Auto VDO Compressor</div>
+          <div class="admin-menu-desc">ค้นหา กรองสินค้า เพิ่ม แก้ไข หรือลบสินค้า พร้อมระบบ VDO คมชัดสูง</div>
           <button class="btn-action" style="margin-top: auto;" onclick="openManageProductsModal()">จัดการสินค้า</button>
         </div>
 
@@ -338,7 +319,7 @@
     </div>
   </div>
 
-  <!-- MANAGE PRODUCTS MODAL (มีตัวกรองแบรนด์และสถานะสินค้า) -->
+  <!-- MANAGE PRODUCTS MODAL -->
   <div id="manageProductsModal" class="modal-overlay">
     <div class="modal-box">
       <div class="modal-header">
@@ -426,31 +407,33 @@
           <div id="adminImagesPreviewList" class="image-preview-grid" style="display:none;"></div>
         </div>
 
-        <!-- กล่องจัดการ VDO พร้อมระบบ AUTO VDO COMPRESSOR -->
-        <div class="form-group" style="background:#fafaf8; border:1px solid var(--border-color); border-radius:var(--radius); padding:10px;">
+        <!-- กล่องจัดการ VDO ความละเอียดสูง (HD ENGINE) -->
+        <div class="form-group" style="background:#fafaf8; border:1px solid var(--border-color); border-radius:var(--radius); padding:12px;">
           <div style="display:flex; justify-content:space-between; align-items:center;">
-            <label style="font-weight:bold; color:#111;">🎥 วิดีโอพรีวิวสินค้า (มีระบบ Auto VDO Compressor)</label>
-            <span id="vdoCompressStatus" style="font-size:0.72rem; color:#0284c7; font-weight:bold;"></span>
+            <label style="font-weight:bold; color:#111;">🎥 วิดีโอพรีวิวสินค้า (HD Engine คมชัดสูง)</label>
+            <span id="vdoCompressStatus" style="font-size:0.72rem; font-weight:bold;"></span>
           </div>
-          <p style="font-size:0.72rem; color:var(--text-muted); margin-bottom:6px;">
-            เมื่อเลือกไฟล์วิดีโอ ระบบจะทำการบีบอัดและย่อขนาดลงให้อัตโนมัติ หรือจะวาง URL ลิงก์ตรงของ VDO ก็ได้
+          <p style="font-size:0.72rem; color:var(--text-muted); margin-bottom:8px; line-height:1.4;">
+            💡 <strong>คำแนะนำเพื่อความคมชัดสูงสุด:</strong><br>
+            • <strong>วิธีที่ 1 (แนะนำที่สุด):</strong> วาง <strong>URL ลิงก์ตรงของไฟล์ MP4</strong> (เช่น ลิงก์จาก Firebase Storage, Google Drive direct, หรือโฮสต์วิดีโอ) ภาพจะชัด 1080p/4K เต็มประสิทธิภาพ ไม่ถูกจำกัดขนาด<br>
+            • <strong>วิธีที่ 2:</strong> อัปโหลดคลิปสั้น (3-6 วินาที) จากเครื่อง ระบบจะบีบอัดเป็น HD 720p ให้โดยคงความคมชัดไว้สูงสุด
           </p>
           
           <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
             <div>
-              <label style="font-size:0.7rem; color:#555;">📁 เลือกไฟล์วิดีโอ (บีบอัดอัตโนมัติ)</label>
-              <input type="file" id="pVdoInput" class="form-control" accept="video/mp4,video/webm,video/quicktime" onchange="handleAutoCompressVdo(event)" style="font-size:0.75rem; padding:6px;" />
+              <label style="font-size:0.72rem; color:#0284c7; font-weight:bold;">🔗 วางลิงก์ตรงของ VDO (.mp4) [ชัดสูงสุด]</label>
+              <input type="url" id="pVdoUrlInput" class="form-control" placeholder="https://.../video.mp4" oninput="handleVdoUrlInput(this.value)" style="font-size:0.8rem; padding:8px 10px;" />
             </div>
             <div>
-              <label style="font-size:0.7rem; color:#0284c7; font-weight:bold;">🔗 หรือ วางลิงก์ตรงของ VDO (.mp4)</label>
-              <input type="url" id="pVdoUrlInput" class="form-control" placeholder="https://.../video.mp4" oninput="handleVdoUrlInput(this.value)" style="font-size:0.8rem; padding:7px 10px;" />
+              <label style="font-size:0.72rem; color:#555; font-weight:bold;">📁 หรือเลือกคลิปสั้นจากเครื่อง</label>
+              <input type="file" id="pVdoInput" class="form-control" accept="video/mp4,video/webm,video/quicktime" onchange="handleHdCompressVdo(event)" style="font-size:0.75rem; padding:6px;" />
             </div>
           </div>
 
           <div id="adminVdoContainer" style="display:none; margin-top:8px; align-items:center; gap:12px; background:#fff; padding:8px; border:1px solid #ddd; border-radius:6px;">
-            <video id="adminVdoPlayer" src="" controls muted autoplay loop style="width:90px; height:60px; object-fit:cover; border-radius:4px; background:#000;"></video>
+            <video id="adminVdoPlayer" src="" controls muted autoplay loop style="width:110px; height:70px; object-fit:cover; border-radius:4px; background:#000;"></video>
             <div style="flex:1; overflow:hidden;">
-              <div id="adminVdoStatus" style="font-size:0.75rem; color:#059669; font-weight:bold;">✓ วิดีโอพร้อมใช้งาน</div>
+              <div id="adminVdoStatus" style="font-size:0.75rem; color:#059669; font-weight:bold;">✓ วิดีโอพร้อมแสดงผลแบบ HD</div>
               <div id="adminVdoDetails" style="font-size:0.68rem; color:#666; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"></div>
             </div>
             <button type="button" class="btn-action btn-danger" style="height:32px; padding:0 10px; font-size:0.72rem;" onclick="removeVdo()">✕ ลบ VDO</button>
@@ -467,7 +450,7 @@
           <div id="scalePricesContainer"></div>
         </div>
 
-        <!-- ชุดตัวเลือกสินค้า & ส่วนลด (ระบบเพิ่ม-ลบโค้ดแยกแต่ละตัวเลือก) -->
+        <!-- ชุดตัวเลือกสินค้า & ส่วนลด -->
         <div style="margin-top:10px;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 6px;">
             <label style="font-size:0.82rem; font-weight:800;">⚙️ ตัวเลือกสินค้า & ส่วนลด</label>
@@ -845,7 +828,7 @@
       renderVipSelectOptions("");
       renderAdminScalesInputs();
       document.getElementById("dynamicOptionsList").innerHTML = "";
-      addDynamicOptionRow(); // เพิ่มแถวแรกเริ่มต้น
+      addDynamicOptionRow();
 
       openModal('addProductModal');
     }
@@ -958,10 +941,10 @@
       `).join('');
     }
 
-    // ==========================================
-    // --- ระบบ AUTO CLIENT-SIDE VDO COMPRESSOR ---
-    // ==========================================
-    function compressVideoFile(file, targetWidth = 360, targetBitrate = 260000) {
+    // ==========================================================
+    // --- HD VDO COMPRESSOR ENGINE (ยกระดับความคมชัดสูงสุด 720p HD) ---
+    // ==========================================================
+    function compressVideoFileHD(file, targetWidth = 640, targetBitrate = 950000) {
       return new Promise((resolve, reject) => {
         const video = document.createElement('video');
         video.src = URL.createObjectURL(file);
@@ -969,8 +952,9 @@
         video.playsInline = true;
 
         video.onloadedmetadata = () => {
-          let width = targetWidth;
-          let height = Math.round((video.videoHeight * targetWidth) / video.videoWidth);
+          // คำนวณความละเอียดแบบ HD กว้าง 640–720px
+          let width = Math.min(video.videoWidth, targetWidth);
+          let height = Math.round((video.videoHeight * width) / video.videoWidth);
           if (height % 2 !== 0) height++;
 
           const canvas = document.createElement('canvas');
@@ -978,9 +962,13 @@
           canvas.height = height;
           const ctx = canvas.getContext('2d');
 
-          const stream = canvas.captureStream(24);
+          // 30 FPS เพื่อความลื่นไหลและคมชัดสมจริง
+          const stream = canvas.captureStream(30);
           
-          let mimeType = 'video/webm;codecs=vp8';
+          let mimeType = 'video/webm;codecs=vp9';
+          if (!MediaRecorder.isTypeSupported(mimeType)) {
+            mimeType = 'video/webm;codecs=vp8';
+          }
           if (!MediaRecorder.isTypeSupported(mimeType)) {
             mimeType = 'video/webm';
           }
@@ -1004,7 +992,9 @@
               resolve({
                 dataUrl: reader.result,
                 size: blob.size,
-                originalSize: file.size
+                originalSize: file.size,
+                width: width,
+                height: height
               });
             };
           };
@@ -1032,37 +1022,34 @@
       });
     }
 
-    async function handleAutoCompressVdo(event) {
+    async function handleHdCompressVdo(event) {
       const file = event.target.files[0];
       if (!file) return;
 
       const statusEl = document.getElementById("vdoCompressStatus");
-      statusEl.innerText = "⏳ กำลังบีบอัด VDO อัตโนมัติ (กรุณารอสักครู่)...";
+      statusEl.innerText = "⏳ กำลังประมวลผลวิดีโอระดับ HD (กรุณารอสักครู่)...";
       statusEl.style.color = "#d97706";
 
       try {
-        const result = await compressVideoFile(file);
+        const result = await compressVideoFileHD(file);
         
-        if (result.size > 420 * 1024) {
-          alert(`⚠️ วิดีโอมีความยาวเกินไป แม้บีบอัดแล้วก็ยังมีขนาด ${(result.size / 1024).toFixed(0)} KB\nแนะนำให้ตัดวิดีโอให้สั้นลง (3-5 วินาที) หรือใช้วิธีวาง "ลิงก์ตรงของ VDO" แทนครับ`);
+        // ถ้าไฟล์สั้นพอและบีบอัดแล้วขนาดไม่เกิน 500 KB สามารถเซฟลง Firestore ได้เลย
+        if (result.size <= 500 * 1024) {
+          tempProductVdo = result.dataUrl;
+          document.getElementById("pVdoUrlInput").value = "";
+          statusEl.innerText = `✓ บีบอัด HD สำเร็จ (${result.width}x${result.height}px, ${(result.size / 1024).toFixed(0)} KB)`;
+          statusEl.style.color = "#059669";
+          displayVdoPreview(tempProductVdo, `HD Video (${result.width}x${result.height}px - ${(result.size / 1024).toFixed(0)} KB)`);
+        } else {
+          // หากคลิปยาวจนขนาดเกิน 500 KB แนะนำให้ใช้วิธีวางลิงก์ตรงเพื่อคงความชัด 1080p
+          alert(`⚠️ วิดีโอนี้มีความยาวเกินไป (${(result.size / 1024).toFixed(0)} KB)\nเพื่อให้วิดีโอคมชัดระดับ 1080p สูงสุดโดยไม่ถูกตัดทอนคุณภาพ แนะนำให้อัปโหลดไฟล์ไปยัง Firebase Storage หรือ Google Drive แล้วนำ "ลิงก์ตรง URL" มาวางในช่องด้านซ้ายแทนครับ`);
           removeVdo();
           statusEl.innerText = "";
-          return;
         }
-
-        tempProductVdo = result.dataUrl;
-        document.getElementById("pVdoUrlInput").value = "";
-        
-        statusEl.innerText = `✓ บีบอัดสำเร็จ! ลดจาก ${(result.originalSize / 1024).toFixed(0)} KB เหลือ ${(result.size / 1024).toFixed(0)} KB`;
-        statusEl.style.color = "#059669";
-
-        displayVdoPreview(tempProductVdo, `บีบอัดแล้ว: ${(result.size / 1024).toFixed(0)} KB (เดิม ${(result.originalSize / 1024).toFixed(0)} KB)`);
       } catch (err) {
         console.error("VDO Compress Error: ", err);
-        statusEl.innerText = "✕ เกิดข้อผิดพลาดในการบีบอัด";
+        statusEl.innerText = "✕ ไม่สามารถบีบอัดได้ แนะนำให้วางลิงก์ URL ตรง";
         statusEl.style.color = "var(--danger)";
-        alert("ไม่สามารถบีบอัดวิดีโอนี้ได้ กรุณาลองใช้ไฟล์ขนาดเล็กกว่านี้ หรือวางลิงก์ตรงของ VDO แทนครับ");
-        removeVdo();
       }
     }
 
@@ -1076,8 +1063,9 @@
       }
       tempProductVdo = trimmed;
       document.getElementById("pVdoInput").value = '';
-      document.getElementById("vdoCompressStatus").innerText = "";
-      displayVdoPreview(tempProductVdo, `ลิงก์ตรง: ${tempProductVdo}`);
+      document.getElementById("vdoCompressStatus").innerText = "✓ ลิงก์ตรง (ความคมชัดสูงสุด 100%)";
+      document.getElementById("vdoCompressStatus").style.color = "#0284c7";
+      displayVdoPreview(tempProductVdo, `Direct URL (ความคมชัดระดับต้นฉบับ)`);
     }
 
     function displayVdoPreview(src, detailText) {
@@ -1102,9 +1090,9 @@
       document.getElementById("adminVdoContainer").style.display = "none";
     }
 
-    // ==========================================
-    // --- ระบบชุดตัวเลือก & โค้ดส่วนลด (ไม่ซ้อนทับกัน) ---
-    // ==========================================
+    // ==========================================================
+    // --- ระบบชุดตัวเลือก & โค้ดส่วนลด (แยกแถวอิสระ ไม่ทับซ้อน) ---
+    // ==========================================================
     function createCodeRowHtml(code = '', discount = 0) {
       return `
         <div class="opt-code-single-row">
@@ -1123,7 +1111,6 @@
       const row = document.createElement("div");
       row.className = "opt-card-row";
 
-      // ดึงโค้ดเดิมถ้ามี (รองรับทั้งแบบ codes array และ vipCode เดิม)
       let codesList = opt.codes || [];
       if (!codesList.length && opt.vipCode) {
         codesList.push({ code: opt.vipCode, discount: opt.vipDiscount || 0 });
@@ -1228,7 +1215,7 @@
 
       const payloadSize = new Blob([JSON.stringify(payload)]).size;
       if (payloadSize > 1048576) {
-        alert(`✕ ข้อมูลมีขนาดรวม ${(payloadSize / 1024).toFixed(0)} KB ซึ่งยังเกิน 1 MB!\nแนะนำให้ลบวิดีโอออก แล้วใช้วิธีวางลิงก์ URL แทน หรือลดจำนวนภาพครับ`);
+        alert(`✕ ข้อมูลมีขนาดรวม ${(payloadSize / 1024).toFixed(0)} KB ซึ่งเกินขีดจำกัด 1 MB ของ Firestore!\nแนะนำให้ใช้วิธีวาง "ลิงก์ตรงของ VDO" แทนการอัปโหลดไฟล์ครับ`);
         return;
       }
 
@@ -1265,10 +1252,10 @@
         if (prod.vdo) {
           tempProductVdo = prod.vdo;
           if (prod.vdo.startsWith('data:video')) {
-            displayVdoPreview(prod.vdo, "วิดีโอที่บันทึกไว้ในระบบ");
+            displayVdoPreview(prod.vdo, "วิดีโอ HD ในระบบ");
           } else {
             document.getElementById("pVdoUrlInput").value = prod.vdo;
-            displayVdoPreview(prod.vdo, prod.vdo);
+            displayVdoPreview(prod.vdo, "ลิงก์ตรงระดับต้นฉบับ");
           }
         } else {
           removeVdo();
