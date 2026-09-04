@@ -278,7 +278,7 @@
     }
 
     .product-code { padding: 10px 10px 0; font-size: .58rem; letter-spacing: .1em; color: #777; font-weight: 700; text-transform: uppercase; }
-    .product-title { padding: 3px 10px 0; min-height: 38px; font-size: .8rem; line-height: 1.25; font-weight: 850; color: #111; }
+    .product-title { padding: 3px 10px 0; min-height: 38px; font-size: .8rem; line-height: 1.25; font-weight: 850; color: #111; cursor: pointer; }
     @media(min-width: 640px) { .product-title { font-size: .88rem; padding: 4px 12px 0; } }
     .product-price { padding: 6px 10px 10px; font-size: .95rem; font-weight: 900; color: #111; }
     @media(min-width: 640px) { .product-price { padding: 8px 12px 12px; font-size: 1rem; } }
@@ -1060,7 +1060,7 @@
               ${countBadge}
             </div>
             <div class="product-code">SKU: ${p.id}</div>
-            <div class="product-title" onclick="openDetailModal('${p.id}')" style="cursor:pointer;">${p.name}</div>
+            <div class="product-title" onclick="openDetailModal('${p.id}')">${p.name}</div>
             <div class="product-price">฿${p.basePrice}</div>
             <button class="btn-action" onclick="openDetailModal('${p.id}')">เลือกสเกล / ซื้อสินค้า</button>
           </div>
@@ -1107,12 +1107,14 @@
       const preorderStock = prod.preorderStock !== undefined ? prod.preorderStock : 0;
       const stockStatusEl = document.getElementById("detailStockStatus");
 
-      if (activeSaleMode === "PREORDER") {
-        stockStatusEl.style.color = "#c2410c";
-        stockStatusEl.innerText = `⏳ พรีออเดอร์ (โควต้า ${preorderStock} ชิ้น)`;
-      } else {
-        stockStatusEl.style.color = "#059669";
-        stockStatusEl.innerText = `📦 พร้อมส่ง (เหลือ ${readyStock} ชิ้น)`;
+      if (stockStatusEl) {
+        if (activeSaleMode === "PREORDER") {
+          stockStatusEl.style.color = "#c2410c";
+          stockStatusEl.innerText = `⏳ พรีออเดอร์ (โควต้า ${preorderStock} ชิ้น)`;
+        } else {
+          stockStatusEl.style.color = "#059669";
+          stockStatusEl.innerText = `📦 พร้อมส่ง (เหลือ ${readyStock} ชิ้น)`;
+        }
       }
 
       const allMedia = [];
