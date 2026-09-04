@@ -266,7 +266,6 @@
     </div>
   </div>
 
-  <!-- PASSCODE MODAL -->
   <div id="passcodeModal" class="modal-overlay" style="display: flex;">
     <div class="modal-box" style="max-width: 380px; text-align: center; cursor: default;">
       <div class="modal-header" style="justify-content: center; border-bottom: none; padding-bottom: 0;">🔒 ยืนยันสิทธิ์ผู้ดูแลระบบ</div>
@@ -279,8 +278,8 @@
           class="form-control pin-input-field" 
           placeholder="••••••" 
           maxlength="6" 
-          inputmode="numeric" 
-          pattern="[0-9]*" 
+          inputmode="numeric"
+          pattern="[0-9]*"
           oninput="handlePinAutoInput(this)" 
           autofocus 
         />
@@ -294,7 +293,6 @@
     </div>
   </div>
 
-  <!-- FORGOT PIN MODAL -->
   <div id="forgotPinModal" class="modal-overlay">
     <div class="modal-box" style="max-width: 400px; text-align: center;">
       <div class="modal-header">
@@ -319,7 +317,6 @@
     </div>
   </div>
 
-  <!-- MANAGE PRODUCTS MODAL -->
   <div id="manageProductsModal" class="modal-overlay">
     <div class="modal-box">
       <div class="modal-header">
@@ -360,7 +357,6 @@
     </div>
   </div>
 
-  <!-- ADD / EDIT PRODUCT MODAL -->
   <div id="addProductModal" class="modal-overlay">
     <div class="modal-box">
       <div class="modal-header">
@@ -407,7 +403,6 @@
           <div id="adminImagesPreviewList" class="image-preview-grid" style="display:none;"></div>
         </div>
 
-        <!-- กล่องจัดการ VDO ความละเอียดสูง (HD ENGINE) -->
         <div class="form-group" style="background:#fafaf8; border:1px solid var(--border-color); border-radius:var(--radius); padding:12px;">
           <div style="display:flex; justify-content:space-between; align-items:center;">
             <label style="font-weight:bold; color:#111;">🎥 วิดีโอพรีวิวสินค้า (HD Engine คมชัดสูง)</label>
@@ -431,7 +426,7 @@
           </div>
 
           <div id="adminVdoContainer" style="display:none; margin-top:8px; align-items:center; gap:12px; background:#fff; padding:8px; border:1px solid #ddd; border-radius:6px;">
-            <video id="adminVdoPlayer" src="" controls muted autoplay loop style="width:110px; height:70px; object-fit:cover; border-radius:4px; background:#000;"></video>
+            <video id="adminVdoPlayer" src="" controls autoplay loop style="width:110px; height:70px; object-fit:cover; border-radius:4px; background:#000;"></video>
             <div style="flex:1; overflow:hidden;">
               <div id="adminVdoStatus" style="font-size:0.75rem; color:#059669; font-weight:bold;">✓ วิดีโอพร้อมแสดงผลแบบ HD</div>
               <div id="adminVdoDetails" style="font-size:0.68rem; color:#666; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"></div>
@@ -450,7 +445,6 @@
           <div id="scalePricesContainer"></div>
         </div>
 
-        <!-- ชุดตัวเลือกสินค้า & ส่วนลด -->
         <div style="margin-top:10px;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 6px;">
             <label style="font-size:0.82rem; font-weight:800;">⚙️ ตัวเลือกสินค้า & ส่วนลด</label>
@@ -470,7 +464,6 @@
     </div>
   </div>
 
-  <!-- VIP CODES MODAL -->
   <div id="vipCodesModal" class="modal-overlay">
     <div class="modal-box" style="max-width: 480px;">
       <div class="modal-header">
@@ -495,7 +488,6 @@
     </div>
   </div>
 
-  <!-- CONFIG MODAL (BRANDS & SCALES) -->
   <div id="configModal" class="modal-overlay">
     <div class="modal-box" style="max-width: 480px;">
       <div class="modal-header">
@@ -530,7 +522,6 @@
     </div>
   </div>
 
-  <!-- BANK CONFIG MODAL -->
   <div id="bankConfigModal" class="modal-overlay">
     <div class="modal-box" style="max-width: 500px;">
       <div class="modal-header">
@@ -553,7 +544,7 @@
 
         <div style="font-weight: bold; font-size: 0.82rem; color: #111; margin-bottom: 6px;">📦 ข้อมูลผู้จัดส่ง (Sender)</div>
         <div class="form-group"><label>ชื่อผู้ส่ง / ร้านค้า</label><input type="text" id="cfgSenderName" class="form-control" required /></div>
-        <div class="form-group"><label>เบอร์โทรศัพท์</label><input type="tel" id="cfgSenderPhone" class="form-control" maxlength="10" required /></div>
+        <div class="form-group"><label>เบอร์โทรศัพท์ผู้ส่ง</label><input type="tel" id="cfgSenderPhone" class="form-control" maxlength="10" required /></div>
         <div class="form-group"><label>ที่อยู่ผู้จัดส่ง</label><textarea id="cfgSenderAddress" class="form-control" rows="3" required></textarea></div>
 
         <div style="display: flex; gap: 8px; margin-top: 14px;">
@@ -564,7 +555,6 @@
     </div>
   </div>
 
-  <!-- SETTINGS MODAL -->
   <div id="settingsModal" class="modal-overlay">
     <div class="modal-box" style="max-width: 480px;">
       <div class="modal-header">
@@ -587,7 +577,6 @@
     </div>
   </div>
 
-  <!-- Firebase App SDK & Firestore -->
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
@@ -872,7 +861,6 @@
       }).join('');
     }
 
-    // --- CLIENT-SIDE IMAGE COMPRESSOR ---
     function compressImageFile(file, maxWidth = 800, quality = 0.72) {
       return new Promise((resolve) => {
         const reader = new FileReader();
@@ -941,7 +929,6 @@
       `).join('');
     }
 
-    // --- HD VDO COMPRESSOR ENGINE ---
     function compressVideoFileHD(file, targetWidth = 640, targetBitrate = 950000) {
       return new Promise((resolve, reject) => {
         const video = document.createElement('video');
@@ -1023,7 +1010,7 @@
       if (!file) return;
 
       const statusEl = document.getElementById("vdoCompressStatus");
-      statusEl.innerText = "⏳ กำลังประมวลผลวิดีโอระดับ HD (กรุณารอสักครู่)...";
+      statusEl.innerText = "⏳ กำลังประมวลผลวิดีโอระดับ HD...";
       statusEl.style.color = "#d97706";
 
       try {
@@ -1036,7 +1023,7 @@
           statusEl.style.color = "#059669";
           displayVdoPreview(tempProductVdo, `HD Video (${result.width}x${result.height}px - ${(result.size / 1024).toFixed(0)} KB)`);
         } else {
-          alert(`⚠️ วิดีโอนี้มีความยาวเกินไป (${(result.size / 1024).toFixed(0)} KB)\nเพื่อให้วิดีโอคมชัดระดับ 1080p สูงสุดโดยไม่ถูกตัดทอนคุณภาพ แนะนำให้อัปโหลดไฟล์ไปยัง Firebase Storage หรือ Google Drive แล้วนำ "ลิงก์ตรง URL" มาวางในช่องด้านซ้ายแทนครับ`);
+          alert(`⚠️ วิดีโอนี้มีความยาวเกินไป (${(result.size / 1024).toFixed(0)} KB)\nแนะนำให้อัปโหลดไฟล์ไปยัง Firebase Storage หรือ Google Drive แล้วนำ "ลิงก์ตรง URL" มาวางในช่องด้านซ้ายแทนครับ`);
           removeVdo();
           statusEl.innerText = "";
         }
@@ -1084,7 +1071,6 @@
       document.getElementById("adminVdoContainer").style.display = "none";
     }
 
-    // --- ระบบชุดตัวเลือก & โค้ดส่วนลด ---
     function createCodeRowHtml(code = '', discount = 0) {
       return `
         <div class="opt-code-single-row">
@@ -1274,7 +1260,6 @@
       }).catch((err) => alert("เกิดข้อผิดพลาดในการลบ: " + err.message));
     }
 
-    // VIP CODES
     function openVipCodesModal() {
       renderVipCodesList();
       openModal('vipCodesModal');
@@ -1308,7 +1293,6 @@
       renderVipCodesList();
     }
 
-    // CONFIG BRANDS & SCALES
     function openConfigModal() {
       renderConfigChips();
       openModal('configModal');
@@ -1371,7 +1355,6 @@
       renderConfigChips();
     }
 
-    // BANK & SENDER CONFIG
     function openBankConfigModal() {
       document.getElementById("cfgBankName").value = systemSettings.bankName;
       document.getElementById("cfgAccountNo").value = systemSettings.accountNo;
@@ -1410,7 +1393,6 @@
       closeModal('bankConfigModal');
     }
 
-    // SYSTEM SETTINGS
     function openSettingsModal() {
       document.getElementById("stgStoreName").value = systemSettings.storeName;
       document.getElementById("stgAdminEmail").value = systemSettings.adminEmail;
