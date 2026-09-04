@@ -77,19 +77,19 @@
 
     .header-actions { display: flex; gap: 8px; align-items: center; }
 
+    /* กรอบ VIP แบบไม่มีเส้นขอบ (ตามที่ต้องการ) */
     .header-vip-box {
-      display: none; background: #fafafa; border: 1px solid var(--border-color); border-radius: var(--radius);
-      padding: 3px 8px; align-items: center; gap: 6px; box-shadow: var(--shadow-soft);
+      display: none; background: #fafafa; border: none; border-radius: var(--radius);
+      padding: 3px 6px; align-items: center; gap: 6px; box-shadow: var(--shadow-soft);
     }
     @media(min-width: 850px) {
       .header-vip-box { display: flex; }
     }
     .header-vip-input {
-      background: #fff; border: 1px solid var(--border-color);
+      background: #fff; border: none;
       border-radius: 6px; color: var(--text-main); height: 32px; width: 135px; padding: 0 8px;
       font-size: 0.75rem; font-weight: 800; text-transform: uppercase; outline: none; letter-spacing: 0.5px;
     }
-    .header-vip-input:focus { border-color: var(--border-dark); }
     .header-vip-input::placeholder { color: #888; font-weight: normal; letter-spacing: 0px; text-transform: none; }
 
     .btn-action {
@@ -375,6 +375,7 @@
     </div>
     <div class="header-actions" style="position: relative;">
       
+      <!-- ช่องกรอกรหัส VIP บนปกเว็บ (ไม่มีเส้นขอบ) -->
       <div class="header-vip-box">
         <input type="password" id="headerVipInput" class="header-vip-input" placeholder="🔒 กรอกรหัส VIP" autocomplete="off" onkeydown="if(event.key==='Enter') applyHeaderVipCode()" />
         <button type="button" class="btn-action" style="height:32px; padding:0 10px; font-size:0.72rem; background:#111; color:#fff; border:none;" onclick="applyHeaderVipCode()">ปลดล็อก</button>
@@ -389,18 +390,16 @@
             <img id="userAvatar" src="" alt="User" />
           </div>
 
+          <!-- เมนูย่อยบัญชี (ปรับรูปแบบช่อง VIP ให้เหมือนกับหน้าปกเว็บ) -->
           <div id="accountDropdownMenu" class="account-dropdown-menu">
             <div class="dropdown-header-info">
               <div class="dropdown-user-name" id="dropdownUserName">-</div>
               <div class="dropdown-user-email" id="dropdownUserEmail">-</div>
             </div>
 
-            <div style="padding: 8px 10px; background: #fafafa; border-bottom: 1px solid var(--border-color);">
-              <div style="font-size: 0.68rem; font-weight: 800; color: #444; margin-bottom: 3px;">🔒 กรอกรหัส VIP</div>
-              <div style="display: flex; gap: 4px;">
-                <input type="password" id="dropdownVipInput" class="form-control" placeholder="รหัส VIP..." style="height: 28px; font-size: 0.72rem; padding: 2px 6px; text-transform: uppercase;" autocomplete="off" onkeydown="if(event.key==='Enter') applyDropdownVipCode()" />
-                <button type="button" class="btn-action" style="height: 28px; padding: 0 8px; font-size: 0.68rem;" onclick="applyDropdownVipCode()">ตกลง</button>
-              </div>
+            <div style="padding: 6px 10px; background: #fafafa; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; gap: 6px;">
+              <input type="password" id="dropdownVipInput" class="header-vip-input" placeholder="🔒 กรอกรหัส VIP" style="width: 100%; height: 32px; background: #fff; font-size: 0.72rem;" autocomplete="off" onkeydown="if(event.key==='Enter') applyDropdownVipCode()" />
+              <button type="button" class="btn-action" style="height: 32px; padding: 0 10px; font-size: 0.72rem; background:#111; color:#fff; border:none;" onclick="applyDropdownVipCode()">ปลดล็อก</button>
             </div>
             
             <div id="adminMenuLink" class="dropdown-menu-item" style="display: none;" onclick="window.location.href='admin.html'">
