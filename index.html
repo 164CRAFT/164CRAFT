@@ -43,7 +43,7 @@
       background: rgba(255, 255, 255, 0.95);
       border-bottom: 1px solid var(--border-color);
       padding: 0 12px;
-      height: 64px;
+      height: 60px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -54,7 +54,7 @@
       width: 100%;
     }
     @media(min-width: 768px) {
-      .header { padding: 0 32px; height: 72px; }
+      .header { padding: 0 32px; height: 70px; }
     }
     .brand-info { display: flex; align-items: center; gap: 8px; cursor: pointer; }
     .brand-photo {
@@ -70,21 +70,21 @@
 
     .header-actions { display: flex; gap: 8px; align-items: center; }
 
-    /* HEADER VIP PASS BOX (ย้ายสิทธิ์ VIP มาไว้ที่หัวเว็บแทนช่องค้นหาเดิม) */
+    /* HEADER VIP PASS BOX (ปรับโทนสีและข้อความใหม่ตามต้องการ) */
     .header-vip-box {
-      display: none; background: #111; border: 1px solid #333; border-radius: var(--radius);
-      padding: 4px 10px; align-items: center; gap: 6px; box-shadow: var(--shadow-soft);
+      display: none; background: #fafafa; border: 1px solid var(--border-color); border-radius: var(--radius);
+      padding: 3px 8px; align-items: center; gap: 6px; box-shadow: var(--shadow-soft);
     }
     @media(min-width: 850px) {
       .header-vip-box { display: flex; }
     }
     .header-vip-input {
-      background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 6px; color: #fff; height: 32px; width: 120px; padding: 0 8px;
-      font-size: 0.75rem; font-weight: 800; text-transform: uppercase; outline: none; letter-spacing: 1px;
+      background: #fff; border: 1px solid var(--border-color);
+      border-radius: 6px; color: var(--text-main); height: 32px; width: 135px; padding: 0 8px;
+      font-size: 0.75rem; font-weight: 800; text-transform: uppercase; outline: none; letter-spacing: 0.5px;
     }
-    .header-vip-input:focus { border-color: #34d399; }
-    .header-vip-input::placeholder { color: rgba(255,255,255,0.4); font-weight: normal; letter-spacing: 0px; }
+    .header-vip-input:focus { border-color: var(--border-dark); }
+    .header-vip-input::placeholder { color: #888; font-weight: normal; letter-spacing: 0px; text-transform: none; }
 
     .btn-action {
       height: 36px; border-radius: var(--radius);
@@ -171,7 +171,7 @@
     }
     .filter-counter-text { font-size: 0.6rem; color: var(--text-muted); font-weight: normal; text-transform: none; }
     
-    /* SIDEBAR SEARCH BOX (ช่องค้นหาใน Sidebar สำหรับมือถือเผื่อใช้งาน หรือเดสก์ท็อป) */
+    /* SIDEBAR SEARCH BOX */
     .sidebar-search-box {
       background: #fff; border: 1px solid var(--border-color); border-radius: var(--radius); padding: 10px;
       box-shadow: var(--shadow-soft);
@@ -195,7 +195,7 @@
     }
     .secret-status-tag.active { display: block; }
 
-    /* BRAND DRAWER (POPUP HOVER MENU FOR BRAND FILTER) */
+    /* BRAND DRAWER (POPUP HOVER & CLICK TOGGLE MENU) */
     .brand-drawer-container { position: relative; display: inline-block; width: 100%; }
     .brand-drawer-btn {
       width: 100%; background: #fff; border: 1px solid var(--border-dark); border-radius: var(--radius);
@@ -211,6 +211,7 @@
       display: none; flex-direction: column; z-index: 500; overflow: hidden; margin-top: 4px;
       max-height: 280px; overflow-y: auto;
     }
+    /* รองรับทั้งการเอาเมาส์ชี้ และการกดคลิกค้างไว้ */
     .brand-drawer-container:hover .brand-drawer-dropdown { display: flex; }
     .brand-drawer-dropdown.show { display: flex; }
 
@@ -365,11 +366,10 @@
     </div>
     <div class="header-actions" style="position: relative;">
       
-      <!-- ย้ายช่อง [🔒 สิทธิ์สมาชิก VIP] มาไว้ที่ Header ด้านบน -->
+      <!-- HEADER VIP PASS BOX (ย้ายสิทธิ์ VIP มาไว้ที่หัวเว็บ ปรับสีและข้อความใหม่เป็น 🔒 กรอกรหัส VIP) -->
       <div class="header-vip-box">
-        <span style="font-size:0.68rem; font-weight:800; color:#34d399; letter-spacing:0.5px;">🔒 VIP</span>
-        <input type="password" id="headerVipInput" class="header-vip-input" placeholder="กรอกรหัส..." autocomplete="off" />
-        <button type="button" class="btn-action" style="height:32px; padding:0 8px; font-size:0.7rem; background:#34d399; color:#111; border:none;" onclick="applyHeaderVipCode()">ปลดล็อก</button>
+        <input type="password" id="headerVipInput" class="header-vip-input" placeholder="🔒 กรอกรหัส VIP" autocomplete="off" />
+        <button type="button" class="btn-action" style="height:32px; padding:0 10px; font-size:0.72rem; background:#111; color:#fff; border:none;" onclick="applyHeaderVipCode()">ปลดล็อก</button>
       </div>
 
       <!-- GOOGLE AUTH CONTAINER -->
@@ -827,7 +827,6 @@
       renderProducts();
     }
 
-    // ฟังก์ชันปลดล็อก VIP จาก Header ด้านบน
     function applyHeaderVipCode() {
       const input = document.getElementById("headerVipInput");
       const code = (input.value || "").trim().toUpperCase();
@@ -839,7 +838,7 @@
         activeSecretCode = code;
         const maskedCode = code.length > 2 ? code.substring(0, 2) + "•".repeat(code.length - 2) : "••••••";
         input.value = "";
-        input.placeholder = "กรอกรหัส...";
+        input.placeholder = "🔒 กรอกรหัส VIP";
 
         statusTag.className = "secret-status-tag active";
         statusTag.innerHTML = `<div style="font-weight:bold;">✓ สิทธิ์ VIP: ${maskedCode} [ACTIVE]</div>`;
@@ -855,7 +854,7 @@
       activeSecretCode = "";
       const input = document.getElementById("headerVipInput");
       input.value = "";
-      input.placeholder = "กรอกรหัส...";
+      input.placeholder = "🔒 กรอกรหัส VIP";
       document.getElementById("secretStatusTag").className = "secret-status-tag";
       document.getElementById("secretStatusTag").innerHTML = "";
       renderCategories();
