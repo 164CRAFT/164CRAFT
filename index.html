@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>164CRAFT - Integrated Store & Management</title>
+  <title>164CRAFT - Scale Model Store</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
     :root {
@@ -72,6 +72,12 @@
       font-size: 0.85rem; outline: none; transition: all 0.2s;
     }
     .search-box input:focus { background: #fff; border-color: var(--border-dark); }
+    .search-box:before {
+      content: "⌕";
+      position: absolute; left: 12px; top: 50%;
+      transform: translateY(-52%);
+      font-size: 1rem; color: #777; z-index: 2;
+    }
 
     .btn-action {
       height: 38px; border-radius: var(--radius);
@@ -109,7 +115,7 @@
     /* SIDEBAR */
     .sidebar-container {
       background: #ffffff; border-bottom: 1px solid var(--border-color);
-      padding: 20px 16px; display: flex; flex-direction: column; gap: 20px;
+      padding: 20px 16px; display: flex; flex-direction: column; gap: 16px;
     }
     @media(min-width: 992px) {
       .sidebar-container {
@@ -120,31 +126,34 @@
     .sidebar-section-title {
       font-size: 0.72rem; font-weight: 850; letter-spacing: 0.08em; text-transform: uppercase;
       color: #111; border-bottom: 2px solid var(--border-dark); padding-bottom: 6px;
-      margin-bottom: 12px; display: flex; flex-direction: column; gap: 3px;
+      margin-bottom: 10px; display: flex; flex-direction: column; gap: 3px;
     }
     .filter-counter-text { font-size: 0.65rem; color: var(--text-muted); font-weight: normal; text-transform: none; }
     
-    .secret-code-box { background: #fafaf8; border: 1px solid var(--border-color); border-radius: var(--radius); padding: 14px; }
+    .secret-code-box { background: #fafaf8; border: 1px solid var(--border-color); border-radius: var(--radius); padding: 12px; }
     .secret-input-wrap { display: flex; flex-direction: column; gap: 6px; }
     .secret-code-box input { text-transform: uppercase; font-weight: 800; letter-spacing: 1px; font-size: 16px; background: #fff; }
     @media(min-width: 768px) { .secret-code-box input { font-size: 0.85rem; } }
     .secret-status-tag {
-      font-size: 0.72rem; margin-top: 10px; line-height: 1.4; display: none;
-      padding: 8px; background: #f0fdf4; border: 1px solid #86efac; border-radius: var(--radius);
+      font-size: 0.7rem; margin-top: 8px; line-height: 1.4; display: none;
+      padding: 6px 8px; background: #f0fdf4; border: 1px solid #86efac; border-radius: var(--radius);
     }
     .secret-status-tag.active { display: block; color: #065f46; }
 
+    /* CATEGORIES HORIZONTAL SCROLL */
     .sidebar-categories-list {
       display: flex; flex-direction: row; overflow-x: auto; gap: 6px; padding-bottom: 6px; scrollbar-width: thin;
+      -webkit-overflow-scrolling: touch;
     }
-    @media(min-width: 992px) { .sidebar-categories-list { flex-direction: column; overflow-x: visible; } }
+    .sidebar-categories-list::-webkit-scrollbar { height: 4px; }
+    .sidebar-categories-list::-webkit-scrollbar-thumb { background: #ccc; border-radius: 2px; }
+
     .sidebar-cat-btn {
       flex: 0 0 auto; white-space: nowrap; background: #fafaf8; border: 1px solid var(--border-color);
       border-radius: var(--radius); padding: 8px 12px; font-size: 0.76rem; font-weight: 700;
       letter-spacing: 0.04em; text-transform: uppercase; cursor: pointer; transition: all 0.15s ease;
-      display: flex; align-items: center; gap: 6px; justify-content: space-between;
+      display: flex; align-items: center; gap: 6px;
     }
-    @media(min-width: 992px) { .sidebar-cat-btn { width: 100%; white-space: normal; } }
     .sidebar-cat-btn:hover { background: #f0f0ed; border-color: var(--border-dark); }
     .sidebar-cat-btn.active { background: #111; color: #fff; border-color: #111; }
     .cat-count-badge { font-size: 0.65rem; padding: 1px 4px; background: #e2e2dd; color: #111; border-radius: 3px; font-weight: 800; }
@@ -229,6 +238,7 @@
       border: 1px solid var(--border-color); border-radius: var(--radius);
       display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative;
     }
+    @media(min-width: 768px) { .detail-main-media-box { max-height: 310px; } }
     .detail-main-media-box img, .detail-main-media-box video { width: 100%; height: 100%; object-fit: contain; padding: 6px; }
     .detail-thumbs-compact { display: flex; flex-direction: row; gap: 6px; overflow-x: auto; padding-bottom: 4px; }
     .detail-thumb-item { flex: 0 0 54px; height: 50px; border: 1px solid var(--border-color); border-radius: 4px; background: #fafaf8; cursor: pointer; overflow: hidden; position: relative; }
@@ -455,12 +465,11 @@
     </div>
   </div>
 
-  <!-- Firebase App SDK & Firestore (เชื่อมฐานข้อมูลจาก Firebase Console ของคุณ) -->
+  <!-- Firebase App SDK & Firestore -->
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
   <script>
-    // ตั้งค่า Firebase ตาม Project ID ที่คุณตั้งไว้ (caft-6b82e)
     const firebaseConfig = {
       apiKey: "AIzaSyAga6WtuHA-6e-TFrgnHkeVI2HfMMyZ_pc",
       authDomain: "caft-6b82e.firebaseapp.com",
@@ -502,15 +511,14 @@
       return arr.sort((a, b) => a.localeCompare(b, 'th', { sensitivity: 'base' }));
     }
 
-    // ฟังก์ชันหลักเริ่มทำงานพร้อมโหลดข้อมูลจาก Firebase Firestore
     function initStoreFront() {
       loadDataFromFirebase();
       initModalOutsideClick();
     }
 
-    // ดึงข้อมูลสินค้าและตั้งค่าจาก Firestore แบบเรียลไทม์
     function loadDataFromFirebase() {
-      db.collection("store_data").doc("settings").get().then((doc) => {
+      // ดึงข้อมูลการตั้งค่า แบรนด์ สเกล และรหัส VIP
+      db.collection("store_data").doc("settings").onSnapshot((doc) => {
         if (doc.exists) {
           const data = doc.data();
           if (data.brands) brands = sortAlphabetically(data.brands);
@@ -520,9 +528,9 @@
         }
         applyShopSettings();
         renderCategories();
-      }).catch(err => console.log("Error loading settings:", err));
+      }, (err) => console.log("Error loading settings:", err));
 
-      // โหลดรายการสินค้าแบบเรียลไทม์ (Real-time listener)
+      // ดึงสินค้าแบบเรียลไทม์ (เมื่อแอดมินเพิ่ม/แก้/ลบ สินค้าจะอัปเดตทันที)
       db.collection("products").onSnapshot((snapshot) => {
         products = [];
         snapshot.forEach((doc) => {
@@ -532,10 +540,6 @@
         renderProducts();
       }, (err) => {
         console.log("Error loading products:", err);
-        // Fallback ใช้ข้อมูลจาก localStorage เผื่อออฟไลน์
-        products = JSON.parse(localStorage.getItem("craft_products")) || [];
-        renderCategories();
-        renderProducts();
       });
     }
 
@@ -639,7 +643,7 @@
           if (prodSecret !== "") return false;
         }
         if (brand === "ALL") return true;
-        return p.brand.toUpperCase() === brand.toUpperCase();
+        return p.brand && p.brand.toUpperCase() === brand.toUpperCase();
       }).length;
     }
 
@@ -689,8 +693,10 @@
           if (prodSecret !== "") return false;
         }
 
-        const matchesCat = (activeCategory === "ALL" || p.brand.toUpperCase() === activeCategory.toUpperCase());
-        const matchesSearch = p.name.toLowerCase().includes(search) || p.id.toLowerCase().includes(search) || p.brand.toLowerCase().includes(search);
+        const matchesCat = (activeCategory === "ALL" || (p.brand && p.brand.toUpperCase() === activeCategory.toUpperCase()));
+        const matchesSearch = (p.name && p.name.toLowerCase().includes(search)) || 
+                              (p.id && p.id.toLowerCase().includes(search)) || 
+                              (p.brand && p.brand.toLowerCase().includes(search));
 
         return matchesCat && matchesSearch;
       });
@@ -748,7 +754,7 @@
       document.getElementById("detailTitle").innerText = prod.name;
       document.getElementById("detailSku").innerText = prod.id;
       document.getElementById("detailBrand").innerText = prod.brand;
-      document.getElementById("detailScales").innerText = prod.scales.join(", ");
+      document.getElementById("detailScales").innerText = (prod.scales || []).join(", ");
       document.getElementById("detailBasePrice").innerText = "฿" + prod.basePrice;
       
       const allMedia = [];
@@ -756,7 +762,7 @@
       if (prod.images) prod.images.forEach((img, i) => allMedia.push({ type: 'image', src: img, label: `รูป ${i+1}` }));
 
       document.getElementById("detailMediaCount").innerText = `${allMedia.length} รายการ`;
-      document.getElementById("detailOptionCount").innerText = `${prod.options.length} ตัวเลือก`;
+      document.getElementById("detailOptionCount").innerText = `${(prod.options || []).length} ตัวเลือก`;
 
       const mainMedia = document.getElementById("detailMainMedia");
       const thumbsBox = document.getElementById("detailMediaThumbs");
@@ -774,13 +780,13 @@
       }
 
       const scaleSelect = document.getElementById("detailScaleSelect");
-      scaleSelect.innerHTML = prod.scales.map(sc => {
-        const scPrice = prod.scalePrices[sc] || prod.basePrice;
+      scaleSelect.innerHTML = (prod.scales || []).map(sc => {
+        const scPrice = (prod.scalePrices && prod.scalePrices[sc]) ? prod.scalePrices[sc] : prod.basePrice;
         return `<option value="${sc}">${sc} (฿${scPrice})</option>`;
       }).join('');
 
       const optSelect = document.getElementById("detailOptionSelect");
-      optSelect.innerHTML = prod.options.map((opt, idx) => `
+      optSelect.innerHTML = (prod.options || []).map((opt, idx) => `
         <option value="${idx}">${opt.name} (+฿${opt.extraPrice})</option>
       `).join('');
 
@@ -807,8 +813,8 @@
       if (!currentSelectedProduct) return 0;
       const scale = document.getElementById("detailScaleSelect").value;
       const optIdx = parseInt(document.getElementById("detailOptionSelect").value) || 0;
-      const basePrice = currentSelectedProduct.scalePrices[scale] || currentSelectedProduct.basePrice;
-      const optExtra = currentSelectedProduct.options[optIdx] ? currentSelectedProduct.options[optIdx].extraPrice : 0;
+      const basePrice = (currentSelectedProduct.scalePrices && currentSelectedProduct.scalePrices[scale]) ? currentSelectedProduct.scalePrices[scale] : currentSelectedProduct.basePrice;
+      const optExtra = (currentSelectedProduct.options && currentSelectedProduct.options[optIdx]) ? currentSelectedProduct.options[optIdx].extraPrice : 0;
 
       let total = basePrice + optExtra - appliedVipDiscount;
       if (total < 0) total = 0;
@@ -821,7 +827,7 @@
       if (!currentSelectedProduct) return;
       const code = (document.getElementById("promoCodeInput").value || "").trim().toUpperCase();
       const optIdx = parseInt(document.getElementById("detailOptionSelect").value) || 0;
-      const selectedOpt = currentSelectedProduct.options[optIdx];
+      const selectedOpt = currentSelectedProduct.options ? currentSelectedProduct.options[optIdx] : null;
 
       if (selectedOpt && selectedOpt.vipCode && selectedOpt.vipCode.toUpperCase() === code) {
         appliedVipDiscount = selectedOpt.vipDiscount || 0;
@@ -837,7 +843,7 @@
       if (!currentSelectedProduct) return;
       const scale = document.getElementById("detailScaleSelect").value;
       const optIdx = parseInt(document.getElementById("detailOptionSelect").value) || 0;
-      const selectedOpt = currentSelectedProduct.options[optIdx] || { name: 'Standard', extraPrice: 0 };
+      const selectedOpt = (currentSelectedProduct.options && currentSelectedProduct.options[optIdx]) ? currentSelectedProduct.options[optIdx] : { name: 'Standard', extraPrice: 0 };
       const finalPrice = calculateModalPrice();
 
       cart.push({
