@@ -43,7 +43,7 @@
       background: rgba(255, 255, 255, 0.95);
       border-bottom: 1px solid var(--border-color);
       padding: 0 12px;
-      height: 60px;
+      height: 64px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -54,7 +54,7 @@
       width: 100%;
     }
     @media(min-width: 768px) {
-      .header { padding: 0 32px; height: 70px; }
+      .header { padding: 0 32px; height: 72px; }
     }
     .brand-info { display: flex; align-items: center; gap: 8px; cursor: pointer; }
     .brand-photo {
@@ -70,24 +70,21 @@
 
     .header-actions { display: flex; gap: 8px; align-items: center; }
 
-    .search-box { position: relative; display: none; }
-    @media(min-width: 640px) {
-      .search-box { display: block; }
+    /* HEADER VIP PASS BOX (ย้ายสิทธิ์ VIP มาไว้ที่หัวเว็บแทนช่องค้นหาเดิม) */
+    .header-vip-box {
+      display: none; background: #111; border: 1px solid #333; border-radius: var(--radius);
+      padding: 4px 10px; align-items: center; gap: 6px; box-shadow: var(--shadow-soft);
     }
-    .search-box input {
-      width: 170px; height: 38px;
-      padding: 8px 12px 8px 34px;
-      border: 1px solid var(--border-color);
-      background: #fafafa; border-radius: var(--radius);
-      font-size: 0.85rem; outline: none; transition: all 0.2s;
+    @media(min-width: 850px) {
+      .header-vip-box { display: flex; }
     }
-    .search-box input:focus { background: #fff; border-color: var(--border-dark); box-shadow: 0 0 0 3px rgba(0,0,0,0.04); }
-    .search-box:before {
-      content: "⌕";
-      position: absolute; left: 12px; top: 50%;
-      transform: translateY(-52%);
-      font-size: 1.1rem; color: #888; z-index: 2;
+    .header-vip-input {
+      background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 6px; color: #fff; height: 32px; width: 120px; padding: 0 8px;
+      font-size: 0.75rem; font-weight: 800; text-transform: uppercase; outline: none; letter-spacing: 1px;
     }
+    .header-vip-input:focus { border-color: #34d399; }
+    .header-vip-input::placeholder { color: rgba(255,255,255,0.4); font-weight: normal; letter-spacing: 0px; }
 
     .btn-action {
       height: 36px; border-radius: var(--radius);
@@ -95,8 +92,7 @@
       font-weight: 750; background: var(--accent); color: #fff;
       cursor: pointer; transition: all 0.2s ease;
       display: inline-flex; align-items: center; justify-content: center; gap: 4px;
-      white-space: nowrap;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      white-space: nowrap; box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     }
     @media(min-width: 640px) {
       .btn-action { height: 38px; padding: 0 12px; font-size: 0.78rem; gap: 6px; }
@@ -141,8 +137,7 @@
     .mobile-search-bar input {
       width: 100%; height: 42px; padding: 8px 12px 8px 38px;
       border: 1px solid var(--border-color); background: #fff;
-      border-radius: var(--radius); font-size: 16px; outline: none;
-      box-shadow: var(--shadow-soft);
+      border-radius: var(--radius); font-size: 16px; outline: none; box-shadow: var(--shadow-soft);
     }
     .mobile-search-bar-wrap { position: relative; width: 100%; }
     .mobile-search-bar-wrap:before {
@@ -176,28 +171,32 @@
     }
     .filter-counter-text { font-size: 0.6rem; color: var(--text-muted); font-weight: normal; text-transform: none; }
     
-    /* SECRET VIP BOX */
-    .secret-code-box { 
-      background: #fff; border: 1px solid var(--border-color); border-radius: var(--radius); padding: 8px 10px;
+    /* SIDEBAR SEARCH BOX (ช่องค้นหาใน Sidebar สำหรับมือถือเผื่อใช้งาน หรือเดสก์ท็อป) */
+    .sidebar-search-box {
+      background: #fff; border: 1px solid var(--border-color); border-radius: var(--radius); padding: 10px;
       box-shadow: var(--shadow-soft);
     }
-    .secret-input-wrap { display: flex; flex-direction: column; gap: 6px; width: 100%; }
-    .secret-code-box input { 
-      text-transform: uppercase; font-weight: 800; letter-spacing: 1px; font-size: 0.8rem; 
-      background: #fafafa; height: 34px; padding: 4px 10px;
+    .sidebar-search-wrap { position: relative; width: 100%; }
+    .sidebar-search-wrap input {
+      width: 100%; height: 38px; padding: 6px 10px 6px 32px;
+      border: 1px solid var(--border-color); background: #fafafa;
+      border-radius: 6px; font-size: 0.82rem; outline: none; transition: all 0.2s;
     }
+    .sidebar-search-wrap input:focus { background: #fff; border-color: var(--border-dark); }
+    .sidebar-search-wrap:before {
+      content: "⌕"; position: absolute; left: 10px; top: 50%;
+      transform: translateY(-52%); font-size: 1rem; color: #888; z-index: 2;
+    }
+
+    /* VIP TAG NOTIFICATION */
     .secret-status-tag {
-      font-size: 0.65rem; margin-top: 6px; line-height: 1.3; display: none;
-      padding: 6px 8px; background: var(--accent-vip-bg); border: 1px solid #6ee7b7; border-radius: var(--radius);
+      font-size: 0.68rem; margin-top: 4px; line-height: 1.3; display: none;
+      padding: 4px 8px; background: var(--accent-vip-bg); border: 1px solid #6ee7b7; border-radius: 4px; color: #065f46;
     }
-    .secret-status-tag.active { display: block; color: #065f46; }
+    .secret-status-tag.active { display: block; }
 
     /* BRAND DRAWER (POPUP HOVER MENU FOR BRAND FILTER) */
-    .brand-drawer-container {
-      position: relative;
-      display: inline-block;
-      width: 100%;
-    }
+    .brand-drawer-container { position: relative; display: inline-block; width: 100%; }
     .brand-drawer-btn {
       width: 100%; background: #fff; border: 1px solid var(--border-dark); border-radius: var(--radius);
       padding: 9px 12px; font-size: 0.78rem; font-weight: 800; text-transform: uppercase;
@@ -206,19 +205,14 @@
     }
     .brand-drawer-btn:hover { background: #111; color: #fff; }
 
-    /* ลิ้นชักแนวตั้ง (แสดงเมื่อเอาเมาส์ชี้ หรือคลิก) */
     .brand-drawer-dropdown {
       position: absolute; top: 100%; left: 0; width: 100%; background: #fff;
       border: 1px solid var(--border-color); border-radius: 8px; box-shadow: var(--shadow-pop);
       display: none; flex-direction: column; z-index: 500; overflow: hidden; margin-top: 4px;
       max-height: 280px; overflow-y: auto;
     }
-    .brand-drawer-container:hover .brand-drawer-dropdown {
-      display: flex; /* รองรับ hover บนคอมพิวเตอร์ */
-    }
-    .brand-drawer-dropdown.show {
-      display: flex; /* รองรับคลิกบนมือถือ */
-    }
+    .brand-drawer-container:hover .brand-drawer-dropdown { display: flex; }
+    .brand-drawer-dropdown.show { display: flex; }
 
     .brand-drawer-item {
       padding: 10px 14px; font-size: 0.75rem; font-weight: 750; text-transform: uppercase;
@@ -241,12 +235,7 @@
     }
 
     .product-grid { 
-      display: grid; 
-      grid-template-columns: repeat(2, minmax(0, 1fr)); 
-      gap: 12px; 
-      width: 100%;
-      align-items: start;
-      justify-items: stretch;
+      display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; width: 100%; align-items: start; justify-items: stretch;
     }
     @media(min-width: 580px) { .product-grid { grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 16px; } }
     @media(min-width: 1024px) { .product-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; } }
@@ -358,7 +347,7 @@
     textarea.form-control { min-height: 70px; }
 
     .shipping-info-box { background: #fafaf8; border: 1px dashed #888; border-radius: var(--radius); padding: 10px; font-size: .82rem; line-height: 1.4; margin-top: 8px; }
-    .bank-payment-box { background: #f4f4f1; border: 1px solid var(--border-color); border-radius: var(--radius); padding: 10px; font-size: .82rem; margin-top: 8px; text-align: center; }
+    .bank-payment-box { background: #f4f4f1; border: 1px solid var(--border-color); border-radius: var(--radius); padding: 10px; font-size: 0.82rem; margin-top: 8px; text-align: center; }
     .qr-preview-img { max-width: 130px; max-height: 130px; object-fit: contain; margin: 6px auto; display: block; border-radius: 6px; border: 1px solid #ccc; }
 
     .footer {
@@ -375,8 +364,12 @@
       <div class="brand-name" id="siteTitleText">164CRAFT</div>
     </div>
     <div class="header-actions" style="position: relative;">
-      <div class="search-box">
-        <input type="text" id="searchInput" placeholder="ค้นหาสินค้า / SKU..." onkeyup="renderProducts()" />
+      
+      <!-- ย้ายช่อง [🔒 สิทธิ์สมาชิก VIP] มาไว้ที่ Header ด้านบน -->
+      <div class="header-vip-box">
+        <span style="font-size:0.68rem; font-weight:800; color:#34d399; letter-spacing:0.5px;">🔒 VIP</span>
+        <input type="password" id="headerVipInput" class="header-vip-input" placeholder="กรอกรหัส..." autocomplete="off" />
+        <button type="button" class="btn-action" style="height:32px; padding:0 8px; font-size:0.7rem; background:#34d399; color:#111; border:none;" onclick="applyHeaderVipCode()">ปลดล็อก</button>
       </div>
 
       <!-- GOOGLE AUTH CONTAINER -->
@@ -426,23 +419,17 @@
 
   <div class="store-layout">
     <aside class="sidebar-container">
+      
+      <!-- ช่องค้นหาหลักใน Sidebar สำหรับหน้าจอคอมพิวเตอร์ -->
       <div>
-        <div class="sidebar-section-title">
-          <span>🔒 สิทธิ์สมาชิก VIP</span>
-        </div>
-        <div class="secret-code-box">
-          <div class="secret-input-wrap">
-            <input type="password" id="secretCodeInput" class="form-control" placeholder="กรอกโค้ด VIP..." autocomplete="off" />
-            <div style="display: flex; gap: 6px;">
-              <button type="button" class="btn-action" style="flex: 2; padding: 4px 8px; font-size: 0.7rem;" onclick="applySecretAccessCode()">ปลดล็อก</button>
-              <button type="button" class="btn-action btn-secondary" style="flex: 1; padding: 4px 6px; font-size: 0.68rem;" onclick="clearSecretAccessCode()">ล้าง</button>
-            </div>
+        <div class="sidebar-search-box">
+          <div class="sidebar-search-wrap">
+            <input type="text" id="sidebarSearchInput" placeholder="ค้นหาสินค้า / SKU..." onkeyup="syncSidebarSearch(this)" />
           </div>
-          <div id="secretStatusTag" class="secret-status-tag"></div>
         </div>
       </div>
 
-      <!-- แบรนด์ฟิลเตอร์แบบ Hover / Popup ลิ้นชักแนวตั้ง -->
+      <!-- ตัวกรองแบรนด์แบบ Popup ลิ้นชักแนวตั้ง (แสดงจำนวนสินค้าแทนเครื่องหมายถูก) -->
       <div>
         <div class="sidebar-section-title">
           <span>🏷️ ตัวกรองแบรนด์</span>
@@ -453,11 +440,10 @@
             <span id="currentBrandLabel">📁 เลือกแบรนด์สินค้า (ทั้งหมด)</span>
             <span>▾</span>
           </button>
-          <div class="brand-drawer-dropdown" id="brandDrawerDropdown">
-            <!-- รายการแบรนด์จะถูกเรนเดอร์มาที่นี่ -->
-          </div>
+          <div class="brand-drawer-dropdown" id="brandDrawerDropdown"></div>
         </div>
       </div>
+      <div id="secretStatusTag" class="secret-status-tag" style="margin-top:6px;"></div>
     </aside>
 
     <main class="main-container">
@@ -583,7 +569,7 @@
     </div>
   </div>
 
-  <!-- ORDER SUMMARY MODAL (ปรับแต่งแสดงรูปภาพ ชื่อ รหัส SKU จำนวน ราคา ยอดรวม) -->
+  <!-- ORDER SUMMARY MODAL -->
   <div id="orderSummaryModal" class="modal-overlay">
     <div class="modal-box" style="max-width: 600px;">
       <div class="modal-header" style="color: #111;">🎉 สรุปรายการสั่งซื้อสำเร็จ!</div>
@@ -749,7 +735,6 @@
       if (menu && menu.style.display === "flex") menu.style.display = "none";
     }
 
-    /* เปิด/ปิด ลิ้นชักตัวกรองแบรนด์ */
     function toggleBrandDrawer(event) {
       event.stopPropagation();
       const dropdown = document.getElementById("brandDrawerDropdown");
@@ -832,22 +817,29 @@
     }
 
     function syncSearchAndRender(el) {
-      document.getElementById("searchInput").value = el.value;
+      document.getElementById("mobileSearchInput").value = el.value;
+      document.getElementById("sidebarSearchInput").value = el.value;
       renderProducts();
     }
 
-    function applySecretAccessCode() {
-      const input = document.getElementById("secretCodeInput");
+    function syncSidebarSearch(el) {
+      document.getElementById("mobileSearchInput").value = el.value;
+      renderProducts();
+    }
+
+    // ฟังก์ชันปลดล็อก VIP จาก Header ด้านบน
+    function applyHeaderVipCode() {
+      const input = document.getElementById("headerVipInput");
       const code = (input.value || "").trim().toUpperCase();
       const statusTag = document.getElementById("secretStatusTag");
 
-      if (!code) { clearSecretAccessCode(); return; }
+      if (!code) { clearHeaderVipCode(); return; }
 
       if (vipCodesList.includes(code)) {
         activeSecretCode = code;
         const maskedCode = code.length > 2 ? code.substring(0, 2) + "•".repeat(code.length - 2) : "••••••";
         input.value = "";
-        input.placeholder = "•••••••• (เปิดสิทธิ์แล้ว)";
+        input.placeholder = "กรอกรหัส...";
 
         statusTag.className = "secret-status-tag active";
         statusTag.innerHTML = `<div style="font-weight:bold;">✓ สิทธิ์ VIP: ${maskedCode} [ACTIVE]</div>`;
@@ -859,11 +851,11 @@
       }
     }
 
-    function clearSecretAccessCode() {
+    function clearHeaderVipCode() {
       activeSecretCode = "";
-      const input = document.getElementById("secretCodeInput");
+      const input = document.getElementById("headerVipInput");
       input.value = "";
-      input.placeholder = "กรอกโค้ด VIP...";
+      input.placeholder = "กรอกรหัส...";
       document.getElementById("secretStatusTag").className = "secret-status-tag";
       document.getElementById("secretStatusTag").innerHTML = "";
       renderCategories();
@@ -898,8 +890,8 @@
 
       let html = `
         <div class="brand-drawer-item ${activeCategory === 'ALL' ? 'active' : ''}" onclick="selectCategory('ALL')">
-          <span>ALL MODELS (${totalAll})</span>
-          <span>✓</span>
+          <span>ALL MODELS</span>
+          <span>(${totalAll})</span>
         </div>
       `;
 
@@ -907,8 +899,8 @@
         const count = getProductCountByBrand(b);
         html += `
           <div class="brand-drawer-item ${activeCategory === b ? 'active' : ''}" onclick="selectCategory('${b}')">
-            <span>${b} (${count})</span>
-            <span>✓</span>
+            <span>${b}</span>
+            <span>(${count})</span>
           </div>
         `;
       });
@@ -924,7 +916,7 @@
 
     function renderProducts() {
       const grid = document.getElementById("productGridContainer");
-      const search = (document.getElementById("searchInput").value || "").trim().toLowerCase();
+      const search = (document.getElementById("mobileSearchInput").value || "").trim().toLowerCase();
       const overviewCounter = document.getElementById("filterOverviewCount");
 
       const filtered = products.filter(p => {
@@ -1247,7 +1239,6 @@
       document.getElementById("summaryShippingFee").innerText = "฿" + systemSettings.shippingFee;
       document.getElementById("summaryGrandTotal").innerText = "฿" + grandTotal;
 
-      // ปรับปรุงการแสดงผลรายการสินค้าในใบสรุปให้แสดง รูปภาพ, ชื่อ, SKU, จำนวน, ราคา, ยอดรวม
       document.getElementById("summaryItemsList").innerHTML = cart.map(it => {
         const thumb = (it.product.images && it.product.images.length > 0) ? it.product.images[0] : '';
         const lineTotal = it.price * it.qty;
