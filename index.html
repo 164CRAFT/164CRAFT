@@ -387,9 +387,9 @@
     </div>
     <div class="header-actions" style="position: relative;">
       
-      <!-- หน้าปกเว็บหลัก: ช่องกรอก VIP พร้อมปุ่มปลดล็อกอยู่ในกรอบเดียวกัน -->
+      <!-- หน้าปกเว็บหลัก: ช่องกรอกรหัส พร้อมปุ่มปลดล็อกอยู่ในกรอบเดียวกัน -->
       <div class="header-vip-box">
-        <input type="password" id="headerVipInput" class="header-vip-input" placeholder="🔒 กรอกรหัส VIP" autocomplete="off" onkeydown="if(event.key==='Enter') applyHeaderVipCode()" />
+        <input type="password" id="headerVipInput" class="header-vip-input" placeholder="🗝️ กรอกรหัส" autocomplete="off" onkeydown="if(event.key==='Enter') applyHeaderVipCode()" />
         <button type="button" class="btn-action" style="height:28px; padding:0 8px; font-size:0.7rem; background:#111; color:#fff; border:none; border-radius:6px;" onclick="applyHeaderVipCode()">ปลดล็อก</button>
       </div>
 
@@ -402,7 +402,7 @@
             <img id="userAvatar" src="" alt="User" />
           </div>
 
-          <!-- เมนูย่อยบัญชี: ป้องกันการปิด Popup เมื่อคลิก และใช้ดีไซน์กรอบ VIP แบบเดียวกัน -->
+          <!-- เมนูย่อยบัญชี: ป้องกันการปิด Popup เมื่อคลิก และใช้ดีไซน์กรอบรหัสแบบเดียวกัน -->
           <div id="accountDropdownMenu" class="account-dropdown-menu" onclick="event.stopPropagation()">
             <div class="dropdown-header-info">
               <div class="dropdown-user-name" id="dropdownUserName">-</div>
@@ -410,9 +410,9 @@
             </div>
 
             <div style="padding: 8px 10px; background: #fafafa; border-bottom: 1px solid var(--border-color);">
-              <div style="font-size: 0.68rem; font-weight: 800; color: #444; margin-bottom: 3px;">🔒 กรอกรหัส VIP</div>
+              <div style="font-size: 0.68rem; font-weight: 800; color: #444; margin-bottom: 3px;">🗝️ กรอกรหัส</div>
               <div class="header-vip-box" style="display: flex; width: 100%;">
-                <input type="password" id="dropdownVipInput" class="header-vip-input" placeholder="กรอกรหัส VIP" style="width: 100%; height: 28px; font-size: 0.72rem;" autocomplete="off" onkeydown="if(event.key==='Enter') applyDropdownVipCode()" />
+                <input type="password" id="dropdownVipInput" class="header-vip-input" placeholder="กรอกรหัส" style="width: 100%; height: 28px; font-size: 0.72rem;" autocomplete="off" onkeydown="if(event.key==='Enter') applyDropdownVipCode()" />
                 <button type="button" class="btn-action" style="height: 28px; padding: 0 8px; font-size: 0.7rem; background:#111; color:#fff; border:none; border-radius:6px;" onclick="applyDropdownVipCode()">ปลดล็อก</button>
               </div>
             </div>
@@ -963,12 +963,12 @@
         if (dropdownInput) dropdownInput.value = "";
 
         statusTag.className = "secret-status-tag active";
-        statusTag.innerHTML = `<div style="font-weight:bold;">✓ สิทธิ์ VIP: ${maskedCode} [ACTIVE]</div>`;
+        statusTag.innerHTML = `<div style="font-weight:bold;">✓ ปลดล็อกสำเร็จ: ${maskedCode} [ACTIVE]</div>`;
         renderCategories();
         renderProducts();
-        alert("✓ ปลดล็อกสิทธิ์ VIP สำเร็จ!");
+        alert("✓ ปลดล็อกสำเร็จ!");
       } else {
-        alert("✕ ไม่พบรหัส VIP นี้ในระบบ");
+        alert("✕ ไม่พบรหัสนี้ในระบบ");
       }
     }
 
@@ -1450,7 +1450,7 @@
 
       const newQty = item.qty + delta;
       if (newQty > maxLimit) {
-        alert(`⚠️ ไม่สามารถเพิ่มสินค้าได้เนื่องจากเกินจำนวนสต็อกที่มี (${maxLimit} ชิ้น)`);
+        alert(`⚠️ ไม่สามารถเพิ่มจำนวนได้ เนื่องจากเกินสต็อกที่มี (${maxLimit} ชิ้น)`);
         return;
       }
 
