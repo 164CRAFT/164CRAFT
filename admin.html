@@ -220,16 +220,16 @@
     <div class="admin-card-container">
       <div class="admin-section-title">
         <span>🛠️ แผงควบคุมระบบจัดการหลังบ้าน</span>
-        <span style="font-size: 0.72rem; color: var(--accent-vip); background: var(--accent-vip-bg); padding: 3px 8px; border-radius: 12px; border: 1px solid #a7f3d0; width: fit-content;">● ระบบ Auto-Compress พร้อมทำงาน</span>
+        <span style="font-size: 0.72rem; color: var(--accent-vip); background: var(--accent-vip-bg); padding: 3px 8px; border-radius: 12px; border: 1px solid #a7f3d0; width: fit-content;">● Auto-Compress VDO & ภาพ เปิดใช้งาน</span>
       </div>
       <p class="admin-desc">
-        แก้ไขปัญหาขนาดไฟล์เกิน 1MB: ระบบจะบีบอัดรูปภาพให้อัตโนมัติ ป้องกัน Error บน Cloud Firestore
+        รองรับระบบย่อความละเอียดและบีบอัดวิดีโอ (VDO) อัตโนมัติในเบราว์เซอร์ เพื่อให้บันทึกลง Firestore ได้ทันที
       </p>
 
       <div class="admin-menu-grid">
         <div class="admin-menu-box">
           <div class="admin-menu-title">✏️ จัดการสินค้า & เพิ่มสินค้า</div>
-          <div class="admin-menu-desc">ค้นหา กรองสินค้า เพิ่ม แก้ไข หรือลบสินค้า พร้อมระบบบีบอัดภาพและวิดีโอ</div>
+          <div class="admin-menu-desc">ค้นหา กรองสินค้า เพิ่ม แก้ไข หรือลบสินค้า พร้อมระบบ Auto VDO Compressor</div>
           <button class="btn-action" style="margin-top: auto;" onclick="openManageProductsModal()">จัดการสินค้า</button>
         </div>
 
@@ -401,17 +401,20 @@
           <div id="adminImagesPreviewList" class="image-preview-grid" style="display:none;"></div>
         </div>
 
-        <!-- กล่องจัดการ VDO ป้องกันขนาดเกิน 1MB -->
+        <!-- กล่องจัดการ VDO พร้อมระบบ AUTO VDO COMPRESSOR -->
         <div class="form-group" style="background:#fafaf8; border:1px solid var(--border-color); border-radius:var(--radius); padding:10px;">
-          <label style="font-weight:bold; color:#111;">🎥 วิดีโอพรีวิวสินค้า (VDO)</label>
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <label style="font-weight:bold; color:#111;">🎥 วิดีโอพรีวิวสินค้า (มีระบบ Auto VDO Compressor)</label>
+            <span id="vdoCompressStatus" style="font-size:0.72rem; color:#0284c7; font-weight:bold;"></span>
+          </div>
           <p style="font-size:0.72rem; color:var(--text-muted); margin-bottom:6px;">
-            ⚠️ คำแนะนำ: ฐานข้อมูล Firestore จำกัดขนาดทั้งเอกสารไม่เกิน 1 MB หากวิดีโอมีความยาว/ความจุเกิน <strong>แนะนำให้ใส่เป็นลิงก์ URL ตรงของไฟล์ MP4</strong>
+            เมื่อเลือกไฟล์วิดีโอ ระบบจะทำการบีบอัดและย่อขนาดลงให้อัตโนมัติ หรือจะวาง URL ลิงก์ตรงของ VDO ก็ได้
           </p>
           
           <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
             <div>
-              <label style="font-size:0.7rem; color:#555;">📁 เลือกไฟล์วิดีโอสั้น (ไม่เกิน 400 KB)</label>
-              <input type="file" id="pVdoInput" class="form-control" accept="video/mp4,video/webm" onchange="handleVdoFileUpload(event)" style="font-size:0.75rem; padding:6px;" />
+              <label style="font-size:0.7rem; color:#555;">📁 เลือกไฟล์วิดีโอ (บีบอัดอัตโนมัติ)</label>
+              <input type="file" id="pVdoInput" class="form-control" accept="video/mp4,video/webm,video/quicktime" onchange="handleAutoCompressVdo(event)" style="font-size:0.75rem; padding:6px;" />
             </div>
             <div>
               <label style="font-size:0.7rem; color:#0284c7; font-weight:bold;">🔗 หรือ วางลิงก์ตรงของ VDO (.mp4)</label>
@@ -439,7 +442,6 @@
           <div id="scalePricesContainer"></div>
         </div>
 
-        <!-- ชุดตัวเลือกสินค้า & ส่วนลด -->
         <div style="margin-top:10px;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 6px;">
             <label style="font-size:0.82rem; font-weight:800;">⚙️ ตัวเลือกสินค้า & ส่วนลด</label>
@@ -858,7 +860,7 @@
       }).join('');
     }
 
-    // --- CLIENT-SIDE IMAGE COMPRESSOR (บีบอัดภาพให้อัตโนมัติ ป้องกัน Document เกิน 1MB) ---
+    // --- CLIENT-SIDE IMAGE COMPRESSOR (บีบอัดภาพให้อัตโนมัติ) ---
     function compressImageFile(file, maxWidth = 800, quality = 0.72) {
       return new Promise((resolve) => {
         const reader = new FileReader();
@@ -878,7 +880,6 @@
             canvas.height = height;
             const ctx = canvas.getContext('2d');
             ctx.drawImage(img, 0, 0, width, height);
-            // บีบอัดเป็น JPEG ขนาดเบามาก (~30-60 KB)
             resolve(canvas.toDataURL('image/jpeg', quality));
           };
         };
@@ -928,26 +929,116 @@
       `).join('');
     }
 
-    // --- ฟังก์ชันจัดการ VDO (จำกัดขนาดไม่ให้เกิน 350 KB เพื่อไม่ให้เกินโควตา 1MB รวมของ Firestore) ---
-    function handleVdoFileUpload(event) {
+    // ==========================================
+    // --- ระบบ AUTO CLIENT-SIDE VDO COMPRESSOR ---
+    // ==========================================
+    function compressVideoFile(file, targetWidth = 360, targetBitrate = 260000) {
+      return new Promise((resolve, reject) => {
+        const video = document.createElement('video');
+        video.src = URL.createObjectURL(file);
+        video.muted = true;
+        video.playsInline = true;
+
+        video.onloadedmetadata = () => {
+          // คำนวณขนาดภาพแบบคงอัตราส่วนเดิม
+          let width = targetWidth;
+          let height = Math.round((video.videoHeight * targetWidth) / video.videoWidth);
+          if (height % 2 !== 0) height++; // ให้เป็นเลขคู่เพื่อความเข้ากันได้ของ Encoder
+
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+
+          // ดึงสตรีมภาพจาก Canvas
+          const stream = canvas.captureStream(24); // 24 FPS เพื่อความลื่นไหลและประหยัดขนาด
+          
+          let mimeType = 'video/webm;codecs=vp8';
+          if (!MediaRecorder.isTypeSupported(mimeType)) {
+            mimeType = 'video/webm';
+          }
+
+          const recorder = new MediaRecorder(stream, {
+            mimeType: mimeType,
+            videoBitsPerSecond: targetBitrate
+          });
+
+          const chunks = [];
+          recorder.ondataavailable = (e) => {
+            if (e.data.size > 0) chunks.push(e.data);
+          };
+
+          recorder.onstop = () => {
+            const blob = new Blob(chunks, { type: mimeType });
+            const reader = new FileReader();
+            reader.readAsDataURL(blob);
+            reader.onloadend = () => {
+              URL.revokeObjectURL(video.src);
+              resolve({
+                dataUrl: reader.result,
+                size: blob.size,
+                originalSize: file.size
+              });
+            };
+          };
+
+          video.play();
+          recorder.start();
+
+          // เรนเดอร์แต่ละเฟรมของ VDO ลง Canvas เพื่อให้ Recorder อัดลง WebM ที่บีบอัดแล้ว
+          function drawFrame() {
+            if (!video.paused && !video.ended) {
+              ctx.drawImage(video, 0, 0, width, height);
+              requestAnimationFrame(drawFrame);
+            }
+          }
+          drawFrame();
+
+          video.onended = () => {
+            recorder.stop();
+          };
+        };
+
+        video.onerror = (err) => {
+          URL.revokeObjectURL(video.src);
+          reject(err);
+        };
+      });
+    }
+
+    async function handleAutoCompressVdo(event) {
       const file = event.target.files[0];
       if (!file) return;
 
-      // จำกัดไม่เกิน 350 KB หากเป็นไฟล์ตรงเพื่อความปลอดภัย
-      const maxSizeBytes = 350 * 1024;
-      if (file.size > maxSizeBytes) {
-        alert(`✕ ไฟล์วิดีโอมีขนาด ${(file.size / 1024).toFixed(0)} KB ซึ่งใหญ่เกินไป!\n\nฐานข้อมูล Firebase กำหนดให้ Document มีขนาดรวมไม่เกิน 1 MB\nแนะนำให้ใช้วิธีวาง "URL ลิงก์ตรงของ VDO (.mp4)" ด้านขวาแทนครับ จะไม่มีข้อจำกัดเรื่องขนาด`);
-        event.target.value = '';
-        return;
-      }
+      const statusEl = document.getElementById("vdoCompressStatus");
+      statusEl.innerText = "⏳ กำลังบีบอัด VDO อัตโนมัติ (กรุณารอสักครู่)...";
+      statusEl.style.color = "#d97706";
 
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        tempProductVdo = e.target.result;
+      try {
+        const result = await compressVideoFile(file);
+        
+        // ตรวจสอบขนาดหลังบีบอัด (ต้องไม่เกิน 380 KB เพื่อให้รวมกับรูปแล้วไม่เกิน 1 MB)
+        if (result.size > 420 * 1024) {
+          alert(`⚠️ วิดีโอมีความยาวเกินไป แม้บีบอัดแล้วก็ยังมีขนาด ${(result.size / 1024).toFixed(0)} KB\nแนะนำให้ตัดวิดีโอให้สั้นลง (3-5 วินาที) หรือใช้วิธีวาง "ลิงก์ตรงของ VDO" แทนครับ`);
+          removeVdo();
+          statusEl.innerText = "";
+          return;
+        }
+
+        tempProductVdo = result.dataUrl;
         document.getElementById("pVdoUrlInput").value = "";
-        displayVdoPreview(tempProductVdo, `ไฟล์อัปโหลด: ${file.name} (${(file.size / 1024).toFixed(0)} KB)`);
-      };
-      reader.readAsDataURL(file);
+        
+        statusEl.innerText = `✓ บีบอัดสำเร็จ! ลดจาก ${(result.originalSize / 1024).toFixed(0)} KB เหลือ ${(result.size / 1024).toFixed(0)} KB`;
+        statusEl.style.color = "#059669";
+
+        displayVdoPreview(tempProductVdo, `บีบอัดแล้ว: ${(result.size / 1024).toFixed(0)} KB (เดิม ${(result.originalSize / 1024).toFixed(0)} KB)`);
+      } catch (err) {
+        console.error("VDO Compress Error: ", err);
+        statusEl.innerText = "✕ เกิดข้อผิดพลาดในการบีบอัด";
+        statusEl.style.color = "var(--danger)";
+        alert("ไม่สามารถบีบอัดวิดีโอนี้ได้ กรุณาลองใช้ไฟล์ขนาดเล็กกว่านี้ หรือวางลิงก์ตรงของ VDO แทนครับ");
+        removeVdo();
+      }
     }
 
     function handleVdoUrlInput(url) {
@@ -960,6 +1051,7 @@
       }
       tempProductVdo = trimmed;
       document.getElementById("pVdoInput").value = '';
+      document.getElementById("vdoCompressStatus").innerText = "";
       displayVdoPreview(tempProductVdo, `ลิงก์ตรง: ${tempProductVdo}`);
     }
 
@@ -977,6 +1069,7 @@
       tempProductVdo = "";
       document.getElementById("pVdoInput").value = "";
       document.getElementById("pVdoUrlInput").value = "";
+      document.getElementById("vdoCompressStatus").innerText = "";
       const player = document.getElementById("adminVdoPlayer");
       player.pause();
       player.removeAttribute('src');
@@ -1057,10 +1150,10 @@
         options
       };
 
-      // ตรวจสอบขนาด JSON String โดยประมาณเพื่อแจ้งเตือนก่อนส่ง
+      // ตรวจสอบขนาดของ Payload ทั้งหมดก่อนส่งขึ้น Firestore
       const payloadSize = new Blob([JSON.stringify(payload)]).size;
       if (payloadSize > 1048576) {
-        alert(`✕ ข้อมูลมีขนาดรวม ${(payloadSize / 1024).toFixed(0)} KB ซึ่งเกินขีดจำกัด 1 MB ของ Firestore!\nกรุณาลดจำนวนรูปภาพหรือนำไฟล์วิดีโอออก แล้วใช้วิธีวางลิงก์ URL แทนครับ`);
+        alert(`✕ ข้อมูลมีขนาดรวม ${(payloadSize / 1024).toFixed(0)} KB ซึ่งยังเกิน 1 MB!\nแนะนำให้ลบวิดีโอออก แล้วใช้วิธีวางลิงก์ URL แทน หรือลดจำนวนภาพครับ`);
         return;
       }
 
