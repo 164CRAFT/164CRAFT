@@ -153,7 +153,6 @@
     }
     .sale-mode-btn.active { background: #111; color: #fff; border-color: #111; }
     .sale-mode-btn:hover:not(.active) { background: #f1f1ee; color: #111; }
-    .sale-mode-btn:disabled { opacity: 0.6; cursor: not-allowed; }
 
     .store-layout {
       display: grid; grid-template-columns: 1fr;
@@ -370,7 +369,6 @@
     </div>
     <div class="header-actions" style="position: relative;">
       
-      <!-- ช่องกรอกรหัส VIP พร้อมรองรับกด Enter -->
       <div class="header-vip-box">
         <input type="password" id="headerVipInput" class="header-vip-input" placeholder="🔒 กรอกรหัส VIP" autocomplete="off" onkeydown="if(event.key==='Enter') applyHeaderVipCode()" />
         <button type="button" class="btn-action" style="height:32px; padding:0 10px; font-size:0.72rem; background:#111; color:#fff; border:none;" onclick="applyHeaderVipCode()">ปลดล็อก</button>
@@ -509,7 +507,6 @@
           <div class="form-group">
             <label>โค้ดส่วนลดประจำตัวเลือก (ถ้ามี):</label>
             <div style="display:flex; gap: 6px;">
-              <!-- ช่องกรอกโค้ดส่วนลด พร้อมรองรับกด Enter -->
               <input type="text" id="promoCodeInput" class="form-control" placeholder="กรอกโค้ด..." style="text-transform: uppercase;" onkeydown="if(event.key==='Enter') applyPromoCode()">
               <button type="button" class="btn-action btn-secondary" style="padding:4px 10px; white-space:nowrap;" onclick="applyPromoCode()">ใช้โค้ด</button>
             </div>
@@ -677,7 +674,11 @@
     let appliedOptionDiscount = 0;
 
     function sortAlphabetically(arr) {
-      return arr.sort((a, b) => a.localeCompare(b, 'th', { sensitivity: 'base' }));
+      return arr.sort((a, b) => {
+        const valA = typeof a === 'object' ? a.code : a;
+        const valB = typeof b === 'object' ? b.code : b;
+        return valA.localeCompare(valB, 'th', { sensitivity: 'base' });
+      });
     }
 
     function initStoreFront() {
@@ -784,7 +785,9 @@
           const data = doc.data();
           if (data.brands) brands = sortAlphabetically(data.brands);
           if (data.scales) scalesList = sortAlphabetically(data.scales);
-          if (data.vipCodes) vipCodesList = sortAlphabetically(data.vipCodes);
+          if (data.vipCodes) {
+            vipCodesList = data.vipCodes.map(item => typeof item === 'object' ? item.code : item);
+          }
           if (data.settings) systemSettings = data.settings;
         }
         applyShopSettings();
@@ -914,7 +917,7 @@
 
     function getProductCountByBrand(brand = "ALL") {
       return products.filter(p => {
-        const readyStock = p.readyStock !== undefined ? p.readyStock : 10;
+        const readyStock = p.readyStock !== undefined ? p.readyStock : 0;
         const preorderStock = p.preorderStock !== undefined ? p.preorderStock : 0;
         
         if (activeSaleMode === 'READY' && readyStock <= 0) return false;
@@ -939,7 +942,7 @@
       const labelCount = document.getElementById("currentBrandCount");
 
       const currentFilteredCount = products.filter(p => {
-        const readyStock = p.readyStock !== undefined ? p.readyStock : 10;
+        const readyStock = p.readyStock !== undefined ? p.readyStock : 0;
         const preorderStock = p.preorderStock !== undefined ? p.preorderStock : 0;
 
         if (activeSaleMode === 'READY' && readyStock <= 0) return false;
@@ -999,7 +1002,7 @@
       const overviewCounter = document.getElementById("filterOverviewCount");
 
       const filtered = products.filter(p => {
-        const readyStock = p.readyStock !== undefined ? p.readyStock : 10;
+        const readyStock = p.readyStock !== undefined ? p.readyStock : 0;
         const preorderStock = p.preorderStock !== undefined ? p.preorderStock : 0;
 
         if (activeSaleMode === 'READY' && readyStock <= 0) return false;
@@ -1042,7 +1045,7 @@
         const countBadge = imgCount > 1 ? `<div class="media-count-badge">📷 ${imgCount} ภาพ</div>` : '';
         const isExclusive = p.secretCode ? `<span class="exclusive-badge">EXCLUSIVE</span>` : '';
         
-        const readyStock = p.readyStock !== undefined ? p.readyStock : 10;
+        const readyStock = p.readyStock !== undefined ? p.readyStock : 0;
         const preorderStock = p.preorderStock !== undefined ? p.preorderStock : 0;
 
         const stockBadgeHtml = (activeSaleMode === "PREORDER")
@@ -1125,7 +1128,7 @@
       const detailBasePrice = document.getElementById("detailBasePrice");
       if (detailBasePrice) detailBasePrice.innerText = "฿" + prod.basePrice;
       
-      const readyStock = prod.readyStock !== undefined ? prod.readyStock : 10;
+      const readyStock = prod.readyStock !== undefined ? prod.readyStock : 0;
       const preorderStock = prod.preorderStock !== undefined ? prod.preorderStock : 0;
       const stockStatusEl = document.getElementById("detailStockStatus");
 
