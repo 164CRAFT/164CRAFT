@@ -563,7 +563,6 @@
           userAvatar.src = user.photoURL || "https://via.placeholder.com/32";
           userName.innerText = user.displayName || user.email;
 
-          // เติมข้อมูลลงช่องสั่งซื้อให้อัตโนมัติ
           const shipNameInput = document.getElementById("shipName");
           const shipEmailInput = document.getElementById("shipEmail");
           if (shipNameInput && !shipNameInput.value) shipNameInput.value = user.displayName || "";
