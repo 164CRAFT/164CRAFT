@@ -243,16 +243,16 @@
     <div class="admin-card-container">
       <div class="admin-section-title">
         <span>🛠️ แผงควบคุมระบบจัดการหลังบ้าน</span>
-        <span style="font-size: 0.72rem; color: var(--accent-vip); background: var(--accent-vip-bg); padding: 3px 8px; border-radius: 12px; border: 1px solid #a7f3d0; width: fit-content;">● HD VDO & ภาพ พร้อมทำงาน</span>
+        <span style="font-size: 0.72rem; color: var(--accent-vip); background: var(--accent-vip-bg); padding: 3px 8px; border-radius: 12px; border: 1px solid #a7f3d0; width: fit-content;">● HD VDO & สูงสุด 100 MB พร้อมทำงาน</span>
       </div>
       <p class="admin-desc">
-        รองรับระบบประมวลผลวิดีโอ (VDO) ความคมชัดสูงระดับ HD และจัดการโค้ดส่วนลดหลายโค้ดต่อตัวเลือกสินค้า
+        รองรับระบบอัปโหลดและบีบอัดวิดีโอ (VDO) ขนาดสูงสุด 100 MB ความคมชัดระดับ HD และจัดการโค้ดส่วนลดหลายโค้ดต่อตัวเลือกสินค้า
       </p>
 
       <div class="admin-menu-grid">
         <div class="admin-menu-box">
           <div class="admin-menu-title">✏️ จัดการสินค้า & เพิ่มสินค้า</div>
-          <div class="admin-menu-desc">ค้นหา กรองสินค้า เพิ่ม แก้ไข หรือลบสินค้า พร้อมระบบ HD VDO Compressor</div>
+          <div class="admin-menu-desc">ค้นหา กรองสินค้า เพิ่ม แก้ไข หรือลบสินค้า พร้อมระบบ HD VDO (รับไฟล์สูงสุด 100 MB)</div>
           <button class="btn-action" style="margin-top: auto;" onclick="openManageProductsModal()">จัดการสินค้า</button>
         </div>
 
@@ -424,19 +424,19 @@
           <div id="adminImagesPreviewList" class="image-preview-grid" style="display:none;"></div>
         </div>
 
-        <!-- กล่องจัดการ VDO ระบบความคมชัดสูง HD -->
+        <!-- กล่องจัดการ VDO ระบบความคมชัดสูง HD (รองรับสูงสุด 100 MB) -->
         <div class="form-group" style="background:#fafaf8; border:1px solid var(--border-color); border-radius:var(--radius); padding:10px;">
           <div style="display:flex; justify-content:space-between; align-items:center;">
-            <label style="font-weight:bold; color:#111;">🎥 วิดีโอพรีวิวสินค้า (ระบบ HD VDO)</label>
+            <label style="font-weight:bold; color:#111;">🎥 วิดีโอพรีวิวสินค้า (HD VDO - รับสูงสุด 100 MB)</label>
             <span id="vdoCompressStatus" style="font-size:0.72rem; color:#0284c7; font-weight:bold;"></span>
           </div>
           <p style="font-size:0.72rem; color:var(--text-muted); margin-bottom:6px;">
-            รองรับการประมวลผลวิดีโอความคมชัดระดับ HD หรือสามารถวางลิงก์ URL (.mp4) ได้
+            รองรับไฟล์วิดีโอขนาดใหญ่สูงสุด 100 MB เพื่อประมวลผลเป็น HD หรือวางลิงก์ URL (.mp4) ได้
           </p>
           
           <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
             <div>
-              <label style="font-size:0.7rem; color:#555;">📁 เลือกไฟล์วิดีโอ (ประมวลผลระบบ HD)</label>
+              <label style="font-size:0.7rem; color:#555;">📁 เลือกไฟล์วิดีโอ (สูงสุด 100 MB)</label>
               <input type="file" id="pVdoInput" class="form-control" accept="video/mp4,video/webm,video/quicktime" onchange="handleAutoCompressVdo(event)" style="font-size:0.75rem; padding:6px;" />
             </div>
             <div>
@@ -607,7 +607,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
   <script>
-    // Config ตรงกับโปรเจกต์ craft-2cc07
+    // Firebase Config (craft-2cc07)
     const firebaseConfig = {
       apiKey: "AIzaSyBqtlTy3dmasVPe1HfssaWrvsfJl1nTINc",
       authDomain: "craft-2cc07.firebaseapp.com",
@@ -956,8 +956,8 @@
       `).join('');
     }
 
-    // --- ระบบประมวลผล VDO ความคมชัดสูง (HD) ---
-    function compressVideoFile(file, targetWidth = 1280, targetBitrate = 1500000) {
+    // --- ระบบประมวลผล VDO ความคมชัดสูง HD (รองรับไฟล์สูงสุด 100 MB) ---
+    function compressVideoFile(file, targetWidth = 1280, targetBitrate = 2000000) {
       return new Promise((resolve, reject) => {
         const video = document.createElement('video');
         video.src = URL.createObjectURL(file);
@@ -1036,19 +1036,35 @@
       if (!file) return;
 
       const statusEl = document.getElementById("vdoCompressStatus");
+      
+      // กำหนดขนาดไฟล์สูงสุดที่รับได้เป็น 100 MB
+      const maxAllowedSize = 100 * 1024 * 1024;
+      if (file.size > maxAllowedSize) {
+        alert(`⚠️ ไฟล์วิดีโอมีขนาดใหญ่เกินไป (${(file.size / (1024 * 1024)).toFixed(1)} MB)\nรองรับไฟล์สูงสุดไม่เกิน 100 MB กรุณาเลือกไฟล์ที่เล็กลง หรือใช้วิธีวางลิงก์ตรง`);
+        event.target.value = '';
+        return;
+      }
+
       statusEl.innerText = "⏳ กำลังประมวลผล VDO ระดับ HD (กรุณารอสักครู่)...";
       statusEl.style.color = "#d97706";
 
       try {
-        const result = await compressVideoFile(file);
+        const result = await compressVideoFile(file, 1280, 2000000);
         
+        if (result.size > 900 * 1024) {
+          alert(`⚠️ ไฟล์ผลลัพธ์หลังบีบอัดยังมีขนาดใหญ่เกินไป (${(result.size / 1024).toFixed(0)} KB)\nแนะนำให้ตัดวิดีโอให้สั้นลง หรือใช้วิธีวาง "ลิงก์ตรงของ VDO (.mp4)" แทนครับ`);
+          removeVdo();
+          statusEl.innerText = "";
+          return;
+        }
+
         tempProductVdo = result.dataUrl;
         document.getElementById("pVdoUrlInput").value = "";
         
-        statusEl.innerText = `✓ ประมวลผล HD สำเร็จ! ขนาดไฟล์: ${(result.size / 1024 / 1024).toFixed(2)} MB`;
+        statusEl.innerText = `✓ ประมวลผล HD สำเร็จ! ขนาดไฟล์: ${(result.size / 1024).toFixed(0)} KB`;
         statusEl.style.color = "#059669";
 
-        displayVdoPreview(tempProductVdo, `HD VDO: ${(result.size / 1024 / 1024).toFixed(2)} MB`);
+        displayVdoPreview(tempProductVdo, `HD VDO: ${(result.size / 1024).toFixed(0)} KB (จากต้นฉบับ ${(result.originalSize / (1024 * 1024)).toFixed(1)} MB)`);
       } catch (err) {
         console.error("VDO Processing Error: ", err);
         statusEl.innerText = "✕ เกิดข้อผิดพลาดในการประมวลผลวิดีโอ";
