@@ -117,7 +117,7 @@
       border-radius: 16px 16px 0 0; padding: 20px 18px; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
       display: flex; flex-direction: column; gap: 14px; position: relative; overflow-y: auto;
     }
-    @media(min-width: 640px) { .modal-box { width: min(95vw, 740px); border-radius: calc(var(--radius) * 1.5); padding: 28px; } }
+    @media(min-width: 640px) { .modal-box { width: min(95vw, 760px); border-radius: calc(var(--radius) * 1.5); padding: 28px; } }
     .modal-header {
       font-size: 1rem; font-weight: 800; padding-bottom: 10px; border-bottom: 1px solid var(--border-color);
       display: flex; align-items: center; justify-content: space-between;
@@ -165,15 +165,40 @@
     }
     .scale-check:has(input:checked) { border-color: #111; background: #111; color: #fff; }
 
+    /* ชุดตัวเลือกสินค้า & ส่วนลด (แยกแถวชัดเจน) */
     .opt-card-row {
-      background: #fafaf8; border: 1px solid var(--border-color); border-radius: var(--radius);
-      padding: 10px 12px; margin-bottom: 8px; display: flex; flex-direction: column; gap: 6px;
+      background: #fafaf8;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 12px 14px;
+      margin-bottom: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
     }
-    .opt-grid-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    @media(min-width: 600px) {
-      .opt-grid-inputs { grid-template-columns: 2fr 1fr 1.5fr 1fr auto; align-items: center; }
+    .opt-main-inputs {
+      display: grid;
+      grid-template-columns: 2fr 1fr auto;
+      gap: 8px;
+      align-items: end;
+    }
+    .opt-codes-section {
+      background: #ffffff;
+      border: 1px dashed #cbd5e1;
+      border-radius: 6px;
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .opt-code-single-row {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr auto;
+      gap: 8px;
+      align-items: center;
     }
 
+    /* แถบตัวกรองในหน้าจัดการสินค้า */
     .admin-filter-bar {
       display: flex; flex-direction: column; gap: 8px; background: #fafaf8;
       border: 1px solid var(--border-color); border-radius: var(--radius); padding: 10px 12px; margin-bottom: 10px;
@@ -220,10 +245,10 @@
     <div class="admin-card-container">
       <div class="admin-section-title">
         <span>🛠️ แผงควบคุมระบบจัดการหลังบ้าน</span>
-        <span style="font-size: 0.72rem; color: var(--accent-vip); background: var(--accent-vip-bg); padding: 3px 8px; border-radius: 12px; border: 1px solid #a7f3d0; width: fit-content;">● Auto-Compress VDO & ภาพ เปิดใช้งาน</span>
+        <span style="font-size: 0.72rem; color: var(--accent-vip); background: var(--accent-vip-bg); padding: 3px 8px; border-radius: 12px; border: 1px solid #a7f3d0; width: fit-content;">● Auto-Compress VDO & ภาพ พร้อมทำงาน</span>
       </div>
       <p class="admin-desc">
-        รองรับระบบย่อความละเอียดและบีบอัดวิดีโอ (VDO) อัตโนมัติในเบราว์เซอร์ เพื่อให้บันทึกลง Firestore ได้ทันที
+        รองรับระบบย่อความละเอียดและบีบอัดวิดีโอ (VDO) อัตโนมัติในเบราว์เซอร์ และรองรับการเพิ่มโค้ดส่วนลดหลายโค้ดต่อตัวเลือก
       </p>
 
       <div class="admin-menu-grid">
@@ -313,7 +338,7 @@
     </div>
   </div>
 
-  <!-- MANAGE PRODUCTS MODAL -->
+  <!-- MANAGE PRODUCTS MODAL (มีตัวกรองแบรนด์และสถานะสินค้า) -->
   <div id="manageProductsModal" class="modal-overlay">
     <div class="modal-box">
       <div class="modal-header">
@@ -442,11 +467,15 @@
           <div id="scalePricesContainer"></div>
         </div>
 
+        <!-- ชุดตัวเลือกสินค้า & ส่วนลด (ระบบเพิ่ม-ลบโค้ดแยกแต่ละตัวเลือก) -->
         <div style="margin-top:10px;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 6px;">
             <label style="font-size:0.82rem; font-weight:800;">⚙️ ตัวเลือกสินค้า & ส่วนลด</label>
             <button type="button" class="btn-action btn-secondary" style="height:32px; padding:0 12px; font-size:0.75rem;" onclick="addDynamicOptionRow()">+ เพิ่มชุดตัวเลือกใหม่</button>
           </div>
+          <p style="font-size:0.75rem; color:var(--text-muted); margin-bottom:8px;">
+            ในแต่ละตัวเลือก สามารถกดสร้างและลบโค้ดส่วนลดได้อย่างอิสระ ไม่จำกัดจำนวนโค้ด
+          </p>
           <div id="dynamicOptionsList"></div>
         </div>
 
@@ -816,7 +845,7 @@
       renderVipSelectOptions("");
       renderAdminScalesInputs();
       document.getElementById("dynamicOptionsList").innerHTML = "";
-      addDynamicOptionRow();
+      addDynamicOptionRow(); // เพิ่มแถวแรกเริ่มต้น
 
       openModal('addProductModal');
     }
@@ -860,7 +889,7 @@
       }).join('');
     }
 
-    // --- CLIENT-SIDE IMAGE COMPRESSOR (บีบอัดภาพให้อัตโนมัติ) ---
+    // --- CLIENT-SIDE IMAGE COMPRESSOR ---
     function compressImageFile(file, maxWidth = 800, quality = 0.72) {
       return new Promise((resolve) => {
         const reader = new FileReader();
@@ -940,18 +969,16 @@
         video.playsInline = true;
 
         video.onloadedmetadata = () => {
-          // คำนวณขนาดภาพแบบคงอัตราส่วนเดิม
           let width = targetWidth;
           let height = Math.round((video.videoHeight * targetWidth) / video.videoWidth);
-          if (height % 2 !== 0) height++; // ให้เป็นเลขคู่เพื่อความเข้ากันได้ของ Encoder
+          if (height % 2 !== 0) height++;
 
           const canvas = document.createElement('canvas');
           canvas.width = width;
           canvas.height = height;
           const ctx = canvas.getContext('2d');
 
-          // ดึงสตรีมภาพจาก Canvas
-          const stream = canvas.captureStream(24); // 24 FPS เพื่อความลื่นไหลและประหยัดขนาด
+          const stream = canvas.captureStream(24);
           
           let mimeType = 'video/webm;codecs=vp8';
           if (!MediaRecorder.isTypeSupported(mimeType)) {
@@ -985,7 +1012,6 @@
           video.play();
           recorder.start();
 
-          // เรนเดอร์แต่ละเฟรมของ VDO ลง Canvas เพื่อให้ Recorder อัดลง WebM ที่บีบอัดแล้ว
           function drawFrame() {
             if (!video.paused && !video.ended) {
               ctx.drawImage(video, 0, 0, width, height);
@@ -1017,7 +1043,6 @@
       try {
         const result = await compressVideoFile(file);
         
-        // ตรวจสอบขนาดหลังบีบอัด (ต้องไม่เกิน 380 KB เพื่อให้รวมกับรูปแล้วไม่เกิน 1 MB)
         if (result.size > 420 * 1024) {
           alert(`⚠️ วิดีโอมีความยาวเกินไป แม้บีบอัดแล้วก็ยังมีขนาด ${(result.size / 1024).toFixed(0)} KB\nแนะนำให้ตัดวิดีโอให้สั้นลง (3-5 วินาที) หรือใช้วิธีวาง "ลิงก์ตรงของ VDO" แทนครับ`);
           removeVdo();
@@ -1077,33 +1102,99 @@
       document.getElementById("adminVdoContainer").style.display = "none";
     }
 
-    // ฟังก์ชันเพิ่มชุดตัวเลือก
-    function addDynamicOptionRow(opt = { name: '', extraPrice: 0, vipCode: '', vipDiscount: 0 }) {
+    // ==========================================
+    // --- ระบบชุดตัวเลือก & โค้ดส่วนลด (ไม่ซ้อนทับกัน) ---
+    // ==========================================
+    function createCodeRowHtml(code = '', discount = 0) {
+      return `
+        <div class="opt-code-single-row">
+          <input type="text" class="form-control opt-single-code" placeholder="โค้ดส่วนลด (เช่น VIP10)" value="${code}" style="text-transform:uppercase; min-height:34px; font-size:0.8rem;" />
+          <div style="display:flex; align-items:center; gap:4px;">
+            <span style="font-size:0.75rem; color:var(--danger); font-weight:bold;">-฿</span>
+            <input type="number" class="form-control opt-single-discount" placeholder="0" value="${discount !== undefined ? discount : 0}" style="min-height:34px; font-size:0.8rem;" />
+          </div>
+          <button type="button" class="btn-action btn-danger" style="height:34px; padding:0 8px; font-size:0.7rem;" onclick="this.closest('.opt-code-single-row').remove()" title="ลบโค้ดนี้">✕</button>
+        </div>
+      `;
+    }
+
+    function addDynamicOptionRow(opt = { name: '', extraPrice: 0, codes: [] }) {
       const cont = document.getElementById("dynamicOptionsList");
       const row = document.createElement("div");
       row.className = "opt-card-row";
+
+      // ดึงโค้ดเดิมถ้ามี (รองรับทั้งแบบ codes array และ vipCode เดิม)
+      let codesList = opt.codes || [];
+      if (!codesList.length && opt.vipCode) {
+        codesList.push({ code: opt.vipCode, discount: opt.vipDiscount || 0 });
+      }
+
+      let codesHtml = '';
+      if (codesList.length > 0) {
+        codesList.forEach(c => {
+          codesHtml += createCodeRowHtml(c.code || '', c.discount || 0);
+        });
+      }
+
       row.innerHTML = `
-        <div class="opt-grid-inputs">
+        <div class="opt-main-inputs">
           <div style="display:flex; flex-direction:column; gap:2px;">
-            <label style="font-size:0.7rem; color:#444; font-weight:bold;">ชื่อตัวเลือก</label>
+            <label style="font-size:0.72rem; color:#444; font-weight:bold;">ชื่อตัวเลือก</label>
             <input type="text" class="form-control opt-name" placeholder="เช่น ล้อ TE37" value="${opt.name || ''}" required style="min-height:36px;" />
           </div>
           <div style="display:flex; flex-direction:column; gap:2px;">
-            <label style="font-size:0.7rem; color:#444; font-weight:bold;">ราคาเพิ่ม (+฿)</label>
+            <label style="font-size:0.72rem; color:#444; font-weight:bold;">ราคาเพิ่ม (+฿)</label>
             <input type="number" class="form-control opt-extra" placeholder="0" value="${opt.extraPrice !== undefined ? opt.extraPrice : 0}" style="min-height:36px;" />
           </div>
-          <div style="display:flex; flex-direction:column; gap:2px;">
-            <label style="font-size:0.7rem; color:var(--accent-vip); font-weight:bold;">🎟️ โค้ดส่วนลด</label>
-            <input type="text" class="form-control opt-code" placeholder="เช่น WHEEL10" value="${opt.vipCode || ''}" style="text-transform:uppercase; min-height:36px;" />
+          <button type="button" class="btn-action btn-danger" style="height:36px; padding:0 10px; margin-bottom:1px;" onclick="this.closest('.opt-card-row').remove()" title="ลบชุดตัวเลือกนี้">✕ ลบชุดนี้</button>
+        </div>
+
+        <div class="opt-codes-section">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-size:0.72rem; font-weight:bold; color:var(--accent-vip);">🎟️ โค้ดส่วนลดของตัวเลือกนี้</span>
+            <button type="button" class="btn-action btn-secondary" style="height:26px; padding:0 8px; font-size:0.68rem;" onclick="addCodeToOption(this)">+ เพิ่มโค้ด</button>
           </div>
-          <div style="display:flex; flex-direction:column; gap:2px;">
-            <label style="font-size:0.7rem; color:var(--danger); font-weight:bold;">ส่วนลดเงิน (-฿)</label>
-            <input type="number" class="form-control opt-discount" placeholder="0" value="${opt.vipDiscount !== undefined ? opt.vipDiscount : 0}" style="min-height:36px;" />
-          </div>
-          <button type="button" class="btn-action btn-danger" style="height:36px; padding:0 10px; margin-top:auto;" onclick="this.closest('.opt-card-row').remove()" title="ลบตัวเลือกนี้">✕ ลบ</button>
+          <div class="opt-codes-container">${codesHtml}</div>
         </div>
       `;
       cont.appendChild(row);
+    }
+
+    function addCodeToOption(btn) {
+      const container = btn.closest('.opt-codes-section').querySelector('.opt-codes-container');
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = createCodeRowHtml('', 0);
+      container.appendChild(tempDiv.firstElementChild);
+    }
+
+    function getOptionsPayload() {
+      const options = [];
+      document.querySelectorAll("#dynamicOptionsList .opt-card-row").forEach(card => {
+        const nameInput = card.querySelector(".opt-name");
+        const extraInput = card.querySelector(".opt-extra");
+
+        if (nameInput && nameInput.value.trim() !== '') {
+          const codes = [];
+          card.querySelectorAll(".opt-code-single-row").forEach(codeRow => {
+            const cInput = codeRow.querySelector(".opt-single-code");
+            const dInput = codeRow.querySelector(".opt-single-discount");
+            const codeVal = (cInput.value || "").trim().toUpperCase();
+            const discountVal = parseFloat(dInput.value) || 0;
+            if (codeVal) {
+              codes.push({ code: codeVal, discount: discountVal });
+            }
+          });
+
+          options.push({
+            name: nameInput.value.trim(),
+            extraPrice: parseFloat(extraInput.value) || 0,
+            codes: codes,
+            vipCode: codes.length > 0 ? codes[0].code : '',
+            vipDiscount: codes.length > 0 ? codes[0].discount : 0
+          });
+        }
+      });
+      return options;
     }
 
     function handleProductSubmit(e) {
@@ -1122,22 +1213,7 @@
         scalePrices[inp.getAttribute("data-scale")] = parseFloat(inp.value) || basePrice;
       });
 
-      const options = [];
-      document.querySelectorAll("#dynamicOptionsList .opt-card-row").forEach(card => {
-        const nameInput = card.querySelector(".opt-name");
-        const extraInput = card.querySelector(".opt-extra");
-        const codeInput = card.querySelector(".opt-code");
-        const discountInput = card.querySelector(".opt-discount");
-
-        if (nameInput && nameInput.value.trim() !== '') {
-          options.push({
-            name: nameInput.value.trim(),
-            extraPrice: parseFloat(extraInput.value) || 0,
-            vipCode: (codeInput.value || "").trim().toUpperCase(),
-            vipDiscount: parseFloat(discountInput.value) || 0
-          });
-        }
-      });
+      const options = getOptionsPayload();
 
       if (tempProductImages.length === 0) tempProductImages.push('https://via.placeholder.com/400?text=164CRAFT');
 
@@ -1150,7 +1226,6 @@
         options
       };
 
-      // ตรวจสอบขนาดของ Payload ทั้งหมดก่อนส่งขึ้น Firestore
       const payloadSize = new Blob([JSON.stringify(payload)]).size;
       if (payloadSize > 1048576) {
         alert(`✕ ข้อมูลมีขนาดรวม ${(payloadSize / 1024).toFixed(0)} KB ซึ่งยังเกิน 1 MB!\nแนะนำให้ลบวิดีโอออก แล้วใช้วิธีวางลิงก์ URL แทน หรือลดจำนวนภาพครับ`);
