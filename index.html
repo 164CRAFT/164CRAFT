@@ -100,6 +100,8 @@
     .btn-action:hover { background: var(--accent-hover); }
     .btn-secondary { background: #fff; color: var(--text-main); border-color: var(--border-color); box-shadow: none; }
     .btn-secondary:hover { background: #f4f4f0; border-color: var(--border-dark); }
+    .btn-danger { background: var(--danger); color: #fff; border-color: var(--danger); }
+    .btn-danger:hover { background: #b91c1c; }
     
     .profile-icon-btn {
       width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--border-dark);
@@ -143,7 +145,6 @@
       transform: translateY(-52%); font-size: 1.2rem; color: #888; z-index: 2;
     }
 
-    /* 🆕 แถบปุ่มเลือกคัดแยกโหมดสินค้า (พร้อมส่ง vs พรีออเดอร์) */
     .sale-mode-switch-bar {
       display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; background: #fff; padding: 6px; border: 1px solid var(--border-color); border-radius: var(--radius); box-shadow: var(--shadow-soft);
     }
@@ -419,7 +420,7 @@
   <div class="store-layout">
     <aside class="sidebar-container">
       
-      <!-- 🆕 ปุ่มสลับเลือกโหมดสินค้า (พร้อมส่ง / พรีออเดอร์) -->
+      <!-- แถบปุ่มเลือกคัดแยกโหมดสินค้า (พร้อมส่ง / พรีออเดอร์) -->
       <div>
         <div class="sale-mode-switch-bar">
           <button type="button" class="sale-mode-btn active" id="modeReadyBtn" onclick="switchSaleMode('READY')">📦 พร้อมส่ง</button>
@@ -530,7 +531,11 @@
   <div id="cartModal" class="modal-overlay">
     <div class="modal-box">
       <button class="modal-close" onclick="closeModal('cartModal')">✕</button>
-      <div class="modal-header">🛒 ตะกร้าสินค้าของคุณ</div>
+      <div class="modal-header">
+        <span>🛒 ตะกร้าสินค้าของคุณ</span>
+        <!-- 🆕 ปุ่ม Clear ตะกร้าสินค้า -->
+        <button type="button" class="btn-action btn-danger" style="height: 28px; padding: 0 8px; font-size: 0.68rem;" onclick="clearCart()">🗑️ เคลียร์ตะกร้า</button>
+      </div>
       <div id="cartItemList" style="max-height: 45vh; overflow-y: auto; padding-right: 2px;">- ไม่มีรายการสินค้า -</div>
       
       <div style="background: #fafafa; border: 1px solid var(--border-color); padding: 10px; border-radius: var(--radius); margin-top: 4px;">
@@ -666,7 +671,7 @@
     let products = [];
 
     let activeCategory = "ALL";
-    let activeSaleMode = "READY"; // 🆕 ค่าเริ่มต้นเป็นโหมดสินค้าพร้อมส่ง
+    let activeSaleMode = "READY"; // โหมดที่กำลังดูอยู่ (READY หรือ PREORDER)
     let activeSecretCode = "";
     let cart = [];
     let currentSelectedProduct = null;
@@ -847,12 +852,11 @@
       }
     }
 
-    // 🆕 ฟังก์ชันสลับโหมดการแสดงผลสินค้า (READY vs PREORDER)
     function switchSaleMode(mode) {
       activeSaleMode = mode;
       document.getElementById("modeReadyBtn").className = `sale-mode-btn ${mode === 'READY' ? 'active' : ''}`;
       document.getElementById("modePreorderBtn").className = `sale-mode-btn ${mode === 'PREORDER' ? 'active' : ''}`;
-      activeCategory = "ALL"; // รีเซ็ตหมวดหมู่แบรนด์เมื่อสลับโหมด
+      activeCategory = "ALL";
       renderCategories();
       renderProducts();
     }
@@ -904,8 +908,12 @@
 
     function getProductCountByBrand(brand = "ALL") {
       return products.filter(p => {
-        const pSaleType = p.saleType || "READY";
-        if (pSaleType !== activeSaleMode) return false;
+        const readyStock = p.readyStock !== undefined ? p.readyStock : 10;
+        const preorderStock = p.preorderStock !== undefined ? p.preorderStock : 0;
+        
+        // คัดกรองตามโหมดที่เลือกดู (ถ้าโหมดพร้อมส่ง แต่ readyStock เป็น 0 ให้ซ่อน / ถ้าโหมดพรีออเดอร์ แต่ preorderStock เป็น 0 ให้ซ่อน)
+        if (activeSaleMode === 'READY' && readyStock <= 0) return false;
+        if (activeSaleMode === 'PREORDER' && preorderStock <= 0) return false;
 
         const prodSecret = (p.secretCode || "").trim().toUpperCase();
         if (activeSecretCode) {
@@ -926,8 +934,11 @@
       const labelCount = document.getElementById("currentBrandCount");
 
       const currentFilteredCount = products.filter(p => {
-        const pSaleType = p.saleType || "READY";
-        if (pSaleType !== activeSaleMode) return false;
+        const readyStock = p.readyStock !== undefined ? p.readyStock : 10;
+        const preorderStock = p.preorderStock !== undefined ? p.preorderStock : 0;
+
+        if (activeSaleMode === 'READY' && readyStock <= 0) return false;
+        if (activeSaleMode === 'PREORDER' && preorderStock <= 0) return false;
 
         const prodSecret = (p.secretCode || "").trim().toUpperCase();
         if (activeSecretCode) {
@@ -983,8 +994,11 @@
       const overviewCounter = document.getElementById("filterOverviewCount");
 
       const filtered = products.filter(p => {
-        const pSaleType = p.saleType || "READY";
-        if (pSaleType !== activeSaleMode) return false;
+        const readyStock = p.readyStock !== undefined ? p.readyStock : 10;
+        const preorderStock = p.preorderStock !== undefined ? p.preorderStock : 0;
+
+        if (activeSaleMode === 'READY' && readyStock <= 0) return false;
+        if (activeSaleMode === 'PREORDER' && preorderStock <= 0) return false;
 
         const prodSecret = (p.secretCode || "").trim().toUpperCase();
         if (activeSecretCode) {
@@ -1023,10 +1037,12 @@
         const countBadge = imgCount > 1 ? `<div class="media-count-badge">📷 ${imgCount} ภาพ</div>` : '';
         const isExclusive = p.secretCode ? `<span class="exclusive-badge">EXCLUSIVE</span>` : '';
         
-        const pSaleType = p.saleType || "READY";
-        const stockBadgeHtml = (pSaleType === "PREORDER")
-          ? `<div class="stock-badge preorder">⏳ พรีออเดอร์</div>`
-          : `<div class="stock-badge ready">📦 พร้อมส่ง (${p.stockQty !== undefined ? p.stockQty : 10})</div>`;
+        const readyStock = p.readyStock !== undefined ? p.readyStock : 10;
+        const preorderStock = p.preorderStock !== undefined ? p.preorderStock : 0;
+
+        const stockBadgeHtml = (activeSaleMode === "PREORDER")
+          ? `<div class="stock-badge preorder">⏳ พรีออเดอร์ (${preorderStock})</div>`
+          : `<div class="stock-badge ready">📦 พร้อมส่ง (${readyStock})</div>`;
 
         let mediaHtml = '';
         if (p.vdo) {
@@ -1092,14 +1108,16 @@
       document.getElementById("detailScales").innerText = (prod.scales || []).join(", ");
       document.getElementById("detailBasePrice").innerText = "฿" + prod.basePrice;
       
-      const pSaleType = prod.saleType || "READY";
+      const readyStock = prod.readyStock !== undefined ? prod.readyStock : 10;
+      const preorderStock = prod.preorderStock !== undefined ? prod.preorderStock : 0;
       const stockStatusEl = document.getElementById("detailStockStatus");
-      if (pSaleType === "PREORDER") {
+
+      if (activeSaleMode === "PREORDER") {
         stockStatusEl.style.color = "#c2410c";
-        stockStatusEl.innerText = `⏳ พรีออเดอร์ (${prod.preorderLeadTime || 'รอผลิต'})`;
+        stockStatusEl.innerText = `⏳ พรีออเดอร์ (โควต้า ${preorderStock} ชิ้น)`;
       } else {
         stockStatusEl.style.color = "#059669";
-        stockStatusEl.innerText = `📦 พร้อมส่ง (เหลือ ${prod.stockQty !== undefined ? prod.stockQty : 10} ชิ้น)`;
+        stockStatusEl.innerText = `📦 พร้อมส่ง (เหลือ ${readyStock} ชิ้น)`;
       }
 
       const allMedia = [];
@@ -1215,19 +1233,18 @@
       calculateModalPrice();
     }
 
-    // 🆕 ตรวจสอบและเพิ่มสินค้าลงตะกร้า (ห้ามซื้อสินค้าพร้อมส่งและพรีออเดอร์ปะปนกัน)
+    // 🛒 เพิ่มลงตะกร้า โดยเช็กตามประเภทที่เลือกซื้อ (READY หรือ PREORDER) และยึดสินค้าชิ้นแรกในตะกร้าเป็นหลัก
     function addToCartFromModal() {
       if (!currentSelectedProduct) return;
-      
-      const prodSaleType = currentSelectedProduct.saleType || "READY";
 
-      // เช็กว่ามีสินค้าประเภทอื่นค้างอยู่ในตะกร้าหรือไม่
+      const incomingSaleMode = activeSaleMode; // อิงตามโหมดหน้าเว็บที่ผู้ใช้กำลังดูและกดสั่งซื้อ (READY หรือ PREORDER)
+
       if (cart.length > 0) {
-        const existingCartSaleType = cart[0].product.saleType || "READY";
-        if (existingCartSaleType !== prodSaleType) {
-          const currentTypeName = existingCartSaleType === 'READY' ? 'สินค้าพร้อมส่ง' : 'สินค้าพรีออเดอร์';
-          const newTypeName = prodSaleType === 'READY' ? 'สินค้าพร้อมส่ง' : 'สินค้าพรีออเดอร์';
-          alert(`⚠️ ไม่สามารถสั่งซื้อสินค้าทั้ง 2 ระบบพร้อมกันได้!\n\nในตะกร้าของคุณมี "${currentTypeName}" อยู่ กรุณาเคลียร์ตะกร้าก่อนหากต้องการสั่งซื้อ "${newTypeName}"`);
+        const firstItemSaleMode = cart[0].saleMode; // ยึดตามสินค้าชิ้นแรกในตะกร้า
+        if (firstItemSaleMode !== incomingSaleMode) {
+          const currentTypeName = firstItemSaleMode === 'READY' ? 'สินค้าพร้อมส่ง' : 'สินค้าพรีออเดอร์';
+          const newTypeName = incomingSaleMode === 'READY' ? 'สินค้าพร้อมส่ง' : 'สินค้าพรีออเดอร์';
+          alert(`⚠️ ไม่สามารถสั่งซื้อสินค้าทั้ง 2 ระบบพร้อมกันได้!\n\nในตะกร้าของคุณมี "${currentTypeName}" อยู่ (ยึดตามชิ้นแรกที่เลือก)\nกรุณาเคลียร์ตะกร้าก่อนหากต้องการสั่งซื้อ "${newTypeName}"`);
           return;
         }
       }
@@ -1240,7 +1257,8 @@
       const existingIndex = cart.findIndex(item => 
         item.product.id === currentSelectedProduct.id && 
         item.scale === scale && 
-        item.optionName === selectedOpt.name
+        item.optionName === selectedOpt.name &&
+        item.saleMode === incomingSaleMode
       );
 
       if (existingIndex > -1) {
@@ -1250,6 +1268,7 @@
           product: currentSelectedProduct,
           scale: scale,
           optionName: selectedOpt.name,
+          saleMode: incomingSaleMode, // บันทึกประเภทโหมดของสินค้าชิ้นนี้ลงตะกร้า
           price: finalPrice,
           qty: 1
         });
@@ -1257,7 +1276,7 @@
 
       updateCartBadge();
       closeModal("detailModal");
-      alert(`เพิ่มลงตะกร้าแล้ว`);
+      alert(`เพิ่มลงตะกร้าเรียบร้อย (${incomingSaleMode === 'READY' ? 'พร้อมส่ง' : 'พรีออเดอร์'})`);
     }
 
     function updateCartBadge() {
@@ -1274,11 +1293,12 @@
       }
 
       let subtotal = 0;
-      const cartType = (cart[0].product.saleType || "READY") === "READY" ? "📦 พร้อมส่ง" : "⏳ พรีออเดอร์";
+      const firstSaleMode = cart[0].saleMode;
+      const cartTypeBadge = firstSaleMode === "READY" ? "📦 พร้อมส่ง (In Stock)" : "⏳ พรีออเดอร์ (Pre-order)";
 
       list.innerHTML = `
         <div style="font-size:0.72rem; font-weight:bold; color:#059669; background:#ecfdf5; padding:4px 8px; border-radius:4px; margin-bottom:8px; text-align:center;">
-          ประเภทคำสั่งซื้อในตะกร้าปัจจุบัน: ${cartType}
+          ประเภทคำสั่งซื้อในตะกร้า: ${cartTypeBadge} (ยึดตามชิ้นแรก)
         </div>
       ` + cart.map((item, idx) => {
         subtotal += (item.price * item.qty);
@@ -1322,6 +1342,16 @@
       cart.splice(idx, 1);
       updateCartBadge();
       renderCart();
+    }
+
+    // 🗑️ ฟังก์ชันเคลียร์ตะกร้าสินค้าทั้งหมด
+    function clearCart() {
+      if (cart.length === 0) return alert("ตะกร้าสินค้าว่างอยู่แล้ว");
+      if (confirm("คุณต้องการเคลียร์สินค้าทั้งหมดออกจากตะกร้าใช่หรือไม่?")) {
+        cart = [];
+        updateCartBadge();
+        renderCart();
+      }
     }
 
     function openShippingModal() {
@@ -1372,12 +1402,13 @@
       document.getElementById("summaryItemsList").innerHTML = cart.map(it => {
         const thumb = (it.product.images && it.product.images.length > 0) ? it.product.images[0] : '';
         const lineTotal = it.price * it.qty;
+        const modeLabel = it.saleMode === 'READY' ? '[พร้อมส่ง]' : '[พรีออเดอร์]';
         return `
           <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid #eee; padding:6px 0; gap:8px;">
             <div style="display:flex; gap:8px; align-items:center; overflow:hidden;">
               <img src="${thumb}" style="width:36px; height:36px; object-fit:cover; border-radius:6px; border:1px solid #111; flex-shrink:0;" />
               <div style="overflow:hidden;">
-                <div style="font-weight:bold; font-size:0.78rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${it.product.name}</div>
+                <div style="font-weight:bold; font-size:0.78rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${it.product.name} ${modeLabel}</div>
                 <div style="font-size:0.65rem; color:#666;">SKU: ${it.product.id} | สเกล: ${it.scale} | ${it.optionName}</div>
               </div>
             </div>
