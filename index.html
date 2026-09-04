@@ -21,6 +21,7 @@
       --radius: 10px;
       --shadow-soft: 0 4px 20px -2px rgba(0, 0, 0, 0.04), 0 2px 6px -2px rgba(0, 0, 0, 0.02);
       --shadow-hover: 0 12px 30px -4px rgba(0, 0, 0, 0.08);
+      --shadow-pop: 0 10px 25px -5px rgba(0, 0, 0, 0.15);
     }
 
     html { scroll-behavior: smooth; width: 100%; height: 100%; }
@@ -37,11 +38,11 @@
       -webkit-text-size-adjust: 100%;
     }
 
-    /* HEADER - จัดระเบียบใหม่ให้ไม่ล้นหน้าจอมือถือ */
+    /* HEADER */
     .header {
       background: rgba(255, 255, 255, 0.95);
       border-bottom: 1px solid var(--border-color);
-      padding: 0 10px;
+      padding: 0 12px;
       height: 60px;
       display: flex;
       justify-content: space-between;
@@ -53,7 +54,7 @@
       width: 100%;
     }
     @media(min-width: 768px) {
-      .header { padding: 0 28px; height: 70px; }
+      .header { padding: 0 32px; height: 70px; }
     }
     .brand-info { display: flex; align-items: center; gap: 8px; cursor: pointer; }
     .brand-photo {
@@ -67,8 +68,7 @@
       .brand-photo { width: 36px; height: 36px; }
     }
 
-    .header-actions { display: flex; gap: 5px; align-items: center; }
-    @media(min-width: 640px) { .header-actions { gap: 10px; } }
+    .header-actions { display: flex; gap: 8px; align-items: center; }
 
     .search-box { position: relative; display: none; }
     @media(min-width: 640px) {
@@ -104,7 +104,37 @@
     .btn-action:hover { background: var(--accent-hover); }
     .btn-secondary { background: #fff; color: var(--text-main); border-color: var(--border-color); box-shadow: none; }
     .btn-secondary:hover { background: #f4f4f0; border-color: var(--border-dark); }
-    .btn-danger { background: var(--danger); color: #fff; border-color: var(--danger); }
+    
+    /* ICON PROFILE BUTTON */
+    .profile-icon-btn {
+      width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--border-dark);
+      background: #eee; cursor: pointer; overflow: hidden; display: flex; align-items: center; justify-content: center;
+      transition: transform 0.2s;
+    }
+    .profile-icon-btn:hover { transform: scale(1.05); }
+    .profile-icon-btn img { width: 100%; height: 100%; object-fit: cover; }
+
+    /* FLOATING ACCOUNT MENU (POPUP) */
+    .account-dropdown-menu {
+      position: absolute; top: 65px; right: 12px; width: 240px; background: #fff;
+      border: 1px solid var(--border-color); border-radius: 12px; box-shadow: var(--shadow-pop);
+      display: none; flex-direction: column; z-index: 1000; overflow: hidden;
+      animation: fadeInDropdown 0.15s ease-out;
+    }
+    @keyframes fadeInDropdown { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+    
+    .dropdown-header-info { padding: 12px 14px; background: #fafafa; border-bottom: 1px solid var(--border-color); }
+    .dropdown-user-name { font-weight: 850; font-size: 0.85rem; color: #111; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .dropdown-user-email { font-size: 0.7rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    .dropdown-menu-item {
+      padding: 11px 14px; font-size: 0.78rem; font-weight: 750; color: #111;
+      display: flex; align-items: center; gap: 8px; cursor: pointer; border-bottom: 1px solid #f0f0ed;
+      background: #fff; transition: background 0.15s; border-left: 3px solid transparent; text-decoration: none;
+    }
+    .dropdown-menu-item:hover { background: #f4f4f1; border-left-color: #111; }
+    .dropdown-menu-item.danger { color: var(--danger); }
+    .dropdown-menu-item.danger:hover { background: #fef2f2; border-left-color: var(--danger); }
 
     .mobile-search-bar { padding: 12px 14px 0 14px; background: transparent; display: block; width: 100%; }
     @media(min-width: 640px) { .mobile-search-bar { display: none; } }
@@ -166,38 +196,19 @@
     }
     .secret-status-tag.active { display: block; color: #065f46; }
 
-    /* CATEGORIES LIST - แนวนอนบนมือถือ แนวตั้งบนคอม */
+    /* CATEGORIES LIST */
     .sidebar-categories-list {
-      display: flex; 
-      flex-direction: row; 
-      overflow-x: auto; 
-      gap: 8px; 
-      padding-bottom: 8px; 
-      scrollbar-width: thin;
-      -webkit-overflow-scrolling: touch; 
-      width: 100%;
-      white-space: nowrap;
+      display: flex; flex-direction: row; overflow-x: auto; gap: 8px; padding-bottom: 8px; scrollbar-width: thin;
+      -webkit-overflow-scrolling: touch; width: 100%; white-space: nowrap;
     }
     .sidebar-categories-list::-webkit-scrollbar { height: 4px; }
     .sidebar-categories-list::-webkit-scrollbar-thumb { background: #d1d1cc; border-radius: 2px; }
 
     .sidebar-cat-btn {
-      flex: 0 0 auto; 
-      white-space: nowrap; 
-      background: #fff; 
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius); 
-      padding: 8px 14px; 
-      font-size: 0.75rem; 
-      font-weight: 750;
-      letter-spacing: 0.04em; 
-      text-transform: uppercase; 
-      cursor: pointer; 
-      transition: all 0.2s ease;
-      display: inline-flex; 
-      align-items: center; 
-      justify-content: space-between;
-      gap: 8px;
+      flex: 0 0 auto; white-space: nowrap; background: #fff; border: 1px solid var(--border-color);
+      border-radius: var(--radius); padding: 8px 14px; font-size: 0.75rem; font-weight: 750;
+      letter-spacing: 0.04em; text-transform: uppercase; cursor: pointer; transition: all 0.2s ease;
+      display: inline-flex; align-items: center; justify-content: space-between; gap: 8px;
       box-shadow: var(--shadow-soft);
     }
     .sidebar-cat-btn:hover { background: #f4f4f0; border-color: var(--border-dark); transform: translateY(-1px); }
@@ -207,47 +218,26 @@
 
     @media(min-width: 992px) {
       .sidebar-categories-list {
-        flex-direction: column;
-        overflow-x: visible;
-        overflow-y: auto;
-        max-height: calc(100vh - 280px);
-        white-space: normal;
-        padding-bottom: 0;
-        gap: 6px;
+        flex-direction: column; overflow-x: visible; overflow-y: auto; max-height: calc(100vh - 280px);
+        white-space: normal; padding-bottom: 0; gap: 6px;
       }
-      .sidebar-cat-btn {
-        width: 100%;
-        white-space: normal;
-        box-shadow: none;
-        background: #fafafa;
-      }
+      .sidebar-cat-btn { width: 100%; white-space: normal; box-shadow: none; background: #fafafa; }
     }
 
     /* PRODUCTS GRID */
     .main-container { 
-      width: 100%; 
-      padding: 16px 14px 48px 14px; 
-      display: flex; 
-      flex-direction: column; 
-      align-items: center; 
+      width: 100%; padding: 16px 14px 48px 14px; display: flex; flex-direction: column; align-items: center; 
     }
     @media(min-width: 768px) { .main-container { padding: 32px 32px 64px 32px; } }
     
-    .main-inner-wrap {
-      width: 100%;
-      max-width: 1300px;
-    }
+    .main-inner-wrap { width: 100%; max-width: 1300px; }
     .main-inner-wrap:before {
       content: "164CRAFT / SCALE MODEL ARCHIVE"; display: block; font-size: .65rem; font-weight: 850;
       letter-spacing: .25em; color: #888; margin-bottom: 14px; text-align: left;
     }
 
     .product-grid { 
-      display: grid; 
-      grid-template-columns: repeat(2, minmax(0, 1fr)); 
-      gap: 12px; 
-      width: 100%;
-      justify-content: center;
+      display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; width: 100%; justify-content: center;
     }
     @media(min-width: 600px) { .product-grid { grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 18px; } }
     @media(min-width: 1024px) { .product-grid { grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 22px; } }
@@ -256,8 +246,7 @@
       position: relative; background: var(--bg-card); border: 1px solid var(--border-color);
       border-radius: var(--radius); padding: 0; gap: 0; overflow: hidden; box-shadow: var(--shadow-soft);
       transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease; display: flex; flex-direction: column;
-      width: 100%;
-      margin: 0 auto;
+      width: 100%; margin: 0 auto;
     }
     .product-card:hover { border-color: var(--border-dark); transform: translateY(-3px); box-shadow: var(--shadow-hover); }
     .media-preview-container {
@@ -266,8 +255,7 @@
       position: relative; overflow: hidden; cursor: pointer; width: 100%;
     }
     .media-preview-container img, .media-preview-container video {
-      width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; padding: 10px;
-      transition: transform 0.3s ease;
+      width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; padding: 10px; transition: transform 0.3s ease;
     }
     .product-card:hover .media-preview-container img { transform: scale(1.04); }
 
@@ -293,8 +281,7 @@
     @media(min-width: 640px) { .product-price { padding: 8px 14px 14px; font-size: 1.05rem; } }
     
     .product-card > .btn-action { 
-      width: calc(100% - 24px); margin: 0 12px 12px; min-height: 36px; font-size: 0.75rem; 
-      border-radius: calc(var(--radius) - 2px);
+      width: calc(100% - 24px); margin: 0 12px 12px; min-height: 36px; font-size: 0.75rem; border-radius: calc(var(--radius) - 2px);
     }
     @media(min-width: 640px) { .product-card > .btn-action { width: calc(100% - 28px); margin: 0 14px 14px; min-height: 40px; font-size: 0.8rem; } }
 
@@ -370,28 +357,57 @@
     }
   </style>
 </head>
-<body onload="initStoreFront()">
+<body onload="initStoreFront()" onclick="closeAccountDropdownOutside(event)">
 
-  <!-- HEADER (ลบปุ่มหลังบ้านออกเรียบร้อยแล้ว จัดวางให้อยู่พอดีมือถือ) -->
   <header class="header">
     <div class="brand-info" onclick="window.location.href='index.html'">
       <div class="brand-photo" id="siteLogoText">164</div>
       <div class="brand-name" id="siteTitleText">164CRAFT</div>
     </div>
-    <div class="header-actions">
+    <div class="header-actions" style="position: relative;">
       <div class="search-box">
         <input type="text" id="searchInput" placeholder="ค้นหาสินค้า / SKU..." onkeyup="renderProducts()" />
       </div>
 
-      <!-- GOOGLE AUTH CONTAINER -->
-      <div id="authContainer" style="display: flex; align-items: center; gap: 5px;">
+      <!-- GOOGLE AUTH CONTAINER WITH ICON & FLOATING MENU -->
+      <div id="authContainer" style="display: flex; align-items: center; gap: 6px;">
         <button id="loginBtn" class="btn-action btn-secondary" onclick="loginWithGoogle()">
           🔑 เข้าสู่ระบบ
         </button>
-        <div id="userProfile" style="display: none; align-items: center; gap: 5px; cursor: pointer;" onclick="openModal('accountModal')" title="คลิกเพื่อตั้งค่าบัญชี">
-          <img id="userAvatar" src="" style="width: 30px; height: 30px; border-radius: 50%; border: 2px solid var(--border-dark);" alt="User" />
-          <span id="userName" style="font-size: 0.7rem; font-weight: 800; max-width: 65px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"></span>
-          <button class="btn-action btn-danger" style="padding: 0 5px; font-size: 0.65rem; height: 28px;" onclick="event.stopPropagation(); logoutGoogle()">ออก</button>
+        
+        <!-- รูป Icon บัญชี (ซ่อนไว้จนกว่าจะล็อกอิน) -->
+        <div id="userProfile" style="display: none; position: relative;">
+          <div class="profile-icon-btn" onclick="toggleAccountDropdown(event)" title="เมนูบัญชี">
+            <img id="userAvatar" src="" alt="User" />
+          </div>
+
+          <!-- เมนูลอย (Floating Account Menu) -->
+          <div id="accountDropdownMenu" class="account-dropdown-menu">
+            <div class="dropdown-header-info">
+              <div class="dropdown-user-name" id="dropdownUserName">-</div>
+              <div class="dropdown-user-email" id="dropdownUserEmail">-</div>
+            </div>
+            
+            <!-- เมนู 1: เข้าถึงหลังบ้าน (เฉพาะ Admin ตัวจริง) -->
+            <div id="adminMenuLink" class="dropdown-menu-item" style="display: none;" onclick="window.location.href='admin.html'">
+              🛠️ เข้าสู่ระบบหลังบ้าน (Admin)
+            </div>
+
+            <!-- เมนู 2: ตั้งค่าที่อยู่ -->
+            <div class="dropdown-menu-item" onclick="openModal('accountModal'); toggleAccountDropdown(event);">
+              📍 ตั้งค่าที่อยู่จัดส่ง
+            </div>
+
+            <!-- เมนู 3: ประวัติการสั่งซื้อ -->
+            <div class="dropdown-menu-item" onclick="alert('ฟีเจอร์ประวัติการสั่งซื้อ จะแสดงรายการสั่งซื้อของคุณที่นี่เร็วๆ นี้'); toggleAccountDropdown(event);">
+              📦 ประวัติการสั่งซื้อ
+            </div>
+
+            <!-- เมนู 4: ออกจากระบบ -->
+            <div class="dropdown-menu-item danger" onclick="logoutGoogle(); toggleAccountDropdown(event);">
+              🚪 ออกจากระบบ
+            </div>
+          </div>
         </div>
       </div>
 
@@ -441,14 +457,14 @@
     </main>
   </div>
 
-  <!-- ACCOUNT MODAL -->
+  <!-- ACCOUNT MODAL (ตั้งค่าที่อยู่) -->
   <div id="accountModal" class="modal-overlay">
     <div class="modal-box" style="max-width: 480px;">
       <button class="modal-close" onclick="closeModal('accountModal')">✕</button>
-      <div class="modal-header">👤 ตั้งค่าข้อมูลบัญชีผู้ใช้</div>
+      <div class="modal-header">📍 ตั้งค่าข้อมูลที่อยู่จัดส่ง</div>
 
       <div style="display: flex; align-items: center; gap: 12px; background: #fafafa; padding: 12px; border-radius: var(--radius); border: 1px solid var(--border-color);">
-        <img id="modalUserAvatar" src="" style="width: 50px; height: 50px; border-radius: 50%; border: 2px solid #111;" alt="Avatar" />
+        <img id="modalUserAvatar" src="" style="width: 45px; height: 45px; border-radius: 50%; border: 2px solid #111;" alt="Avatar" />
         <div style="overflow: hidden;">
           <div id="modalUserName" style="font-weight: 850; font-size: 0.95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">-</div>
           <div id="modalUserEmail" style="font-size: 0.76rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">-</div>
@@ -456,8 +472,8 @@
       </div>
 
       <div style="background: var(--accent-vip-bg); border: 1px solid #6ee7b7; border-radius: var(--radius); padding: 10px 12px;">
-        <div style="font-weight: 850; font-size: 0.8rem; color: #065f46;">💎 สถานะบัญชีผู้ใช้</div>
-        <div style="font-size: 0.72rem; color: #047857; margin-top: 2px;">เชื่อมต่อผ่าน Google Account ปลอดภัยและพร้อมใช้งาน</div>
+        <div style="font-weight: 850; font-size: 0.8rem; color: #065f46;">💎 บัญชีผู้ใช้งานปลอดภัย</div>
+        <div style="font-size: 0.72rem; color: #047857; margin-top: 2px;">ข้อมูลที่อยู่ของคุณจะถูกใช้กรอกอัตโนมัติเมื่อทำการสั่งซื้อสินค้า</div>
       </div>
 
       <form onsubmit="saveUserProfileModal(event)">
@@ -473,7 +489,7 @@
           <label>ที่อยู่จัดส่งเริ่มต้น</label>
           <textarea id="profileAddress" class="form-control" rows="3" placeholder="บ้านเลขที่, ถนน, แขวง/ตำบล, เขต/อำเภอ, จังหวัด, รหัสไปรษณีย์" required></textarea>
         </div>
-        <button type="submit" class="btn-action" style="width: 100%; margin-top: 6px; height: 42px;">💾 บันทึกการตั้งค่าบัญชี</button>
+        <button type="submit" class="btn-action" style="width: 100%; margin-top: 6px; height: 42px;">💾 บันทึกที่อยู่จัดส่ง</button>
       </form>
     </div>
   </div>
@@ -634,6 +650,9 @@
     const auth = firebase.auth();
     const googleProvider = new firebase.auth.GoogleAuthProvider();
 
+    // กำหนดอีเมลที่มีสิทธิ์เข้าถึงหลังบ้าน (Admin)
+    const ALLOWED_ADMIN_EMAILS = ["craft.studio164@gmail.com"];
+
     let brands = ["Ducati", "Honda", "Isuzu", "Kawasaki", "Toyota", "Yamaha"];
     let scalesList = ["1/12", "1/32", "1/43", "1/64"];
     let vipCodesList = ["MEMBER99", "SECRET88", "VIP164"];
@@ -668,23 +687,33 @@
       initModalOutsideClick();
     }
 
-    /* GOOGLE AUTHENTICATION */
+    /* GOOGLE AUTHENTICATION & ADMIN PERMISSION CHECK */
     function initAuthListener() {
       auth.onAuthStateChanged((user) => {
         const loginBtn = document.getElementById("loginBtn");
         const userProfile = document.getElementById("userProfile");
         const userAvatar = document.getElementById("userAvatar");
-        const userName = document.getElementById("userName");
+        const adminMenuLink = document.getElementById("adminMenuLink");
 
         if (user) {
           loginBtn.style.display = "none";
-          userProfile.style.display = "flex";
+          userProfile.style.display = "block";
           userAvatar.src = user.photoURL || "https://via.placeholder.com/32";
-          userName.innerText = user.displayName || user.email;
+
+          document.getElementById("dropdownUserName").innerText = user.displayName || "สมาชิก 164CRAFT";
+          document.getElementById("dropdownUserEmail").innerText = user.email;
 
           document.getElementById("modalUserAvatar").src = user.photoURL || "https://via.placeholder.com/50";
           document.getElementById("modalUserName").innerText = user.displayName || "สมาชิก 164CRAFT";
           document.getElementById("modalUserEmail").innerText = user.email;
+
+          // ตรวจสอบว่าเป็น Admin หรือไม่ เพื่อแสดงเมนูหลังบ้าน
+          const userEmail = (user.email || "").toLowerCase();
+          if (ALLOWED_ADMIN_EMAILS.includes(userEmail)) {
+            adminMenuLink.style.display = "flex";
+          } else {
+            adminMenuLink.style.display = "none";
+          }
 
           const shipNameInput = document.getElementById("shipName");
           const shipEmailInput = document.getElementById("shipEmail");
@@ -717,6 +746,20 @@
       });
     }
 
+    /* TOGGLE FLOATING ACCOUNT DROPDOWN */
+    function toggleAccountDropdown(event) {
+      event.stopPropagation();
+      const menu = document.getElementById("accountDropdownMenu");
+      menu.style.display = (menu.style.display === "flex") ? "none" : "flex";
+    }
+
+    function closeAccountDropdownOutside(event) {
+      const menu = document.getElementById("accountDropdownMenu");
+      if (menu && menu.style.display === "flex") {
+        menu.style.display = "none";
+      }
+    }
+
     function saveUserProfileModal(e) {
       e.preventDefault();
       const name = document.getElementById("profileName").value;
@@ -727,7 +770,7 @@
       document.getElementById("shipPhone").value = phone;
       document.getElementById("shipAddress").value = address;
 
-      alert("✓ บันทึกข้อมูลบัญชีและตั้งค่าการจัดส่งเรียบร้อยแล้ว!");
+      alert("✓ บันทึกข้อมูลที่อยู่จัดส่งเรียบร้อยแล้ว!");
       closeModal('accountModal');
     }
 
@@ -803,7 +846,7 @@
       renderProducts();
     }
 
-    // VIP ACCESS
+    /* VIP ACCESS */
     function applySecretAccessCode() {
       const input = document.getElementById("secretCodeInput");
       const code = (input.value || "").trim().toUpperCase();
@@ -845,7 +888,7 @@
       renderProducts();
     }
 
-    // CATEGORIES & COUNTER
+    /* CATEGORIES & COUNTER */
     function getProductCountByBrand(brand = "ALL") {
       return products.filter(p => {
         const prodSecret = (p.secretCode || "").trim().toUpperCase();
@@ -890,7 +933,7 @@
       renderProducts();
     }
 
-    // PRODUCTS GRID
+    /* PRODUCTS GRID */
     function renderProducts() {
       const grid = document.getElementById("productGridContainer");
       const search = (document.getElementById("searchInput").value || "").trim().toLowerCase();
@@ -957,7 +1000,7 @@
       }).join('');
     }
 
-    // DETAIL MODAL
+    /* DETAIL MODAL */
     function openDetailModal(productId) {
       const prod = products.find(p => p.id === productId);
       if (!prod) return;
@@ -1104,7 +1147,7 @@
       alert(`เพิ่มลงตะกร้าแล้ว`);
     }
 
-    // CART & CHECKOUT
+    /* CART & CHECKOUT */
     function renderCart() {
       const list = document.getElementById("cartItemList");
       if (cart.length === 0) {
