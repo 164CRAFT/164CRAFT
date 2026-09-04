@@ -370,8 +370,9 @@
     </div>
     <div class="header-actions" style="position: relative;">
       
+      <!-- ช่องกรอกรหัส VIP พร้อมรองรับกด Enter -->
       <div class="header-vip-box">
-        <input type="password" id="headerVipInput" class="header-vip-input" placeholder="🔒 กรอกรหัส VIP" autocomplete="off" />
+        <input type="password" id="headerVipInput" class="header-vip-input" placeholder="🔒 กรอกรหัส VIP" autocomplete="off" onkeydown="if(event.key==='Enter') applyHeaderVipCode()" />
         <button type="button" class="btn-action" style="height:32px; padding:0 10px; font-size:0.72rem; background:#111; color:#fff; border:none;" onclick="applyHeaderVipCode()">ปลดล็อก</button>
       </div>
 
@@ -508,7 +509,8 @@
           <div class="form-group">
             <label>โค้ดส่วนลดประจำตัวเลือก (ถ้ามี):</label>
             <div style="display:flex; gap: 6px;">
-              <input type="text" id="promoCodeInput" class="form-control" placeholder="กรอกโค้ด..." style="text-transform: uppercase;">
+              <!-- ช่องกรอกโค้ดส่วนลด พร้อมรองรับกด Enter -->
+              <input type="text" id="promoCodeInput" class="form-control" placeholder="กรอกโค้ด..." style="text-transform: uppercase;" onkeydown="if(event.key==='Enter') applyPromoCode()">
               <button type="button" class="btn-action btn-secondary" style="padding:4px 10px; white-space:nowrap;" onclick="applyPromoCode()">ใช้โค้ด</button>
             </div>
             <div id="promoStatusMsg" style="font-size:0.72rem; margin-top:2px; font-weight:bold;"></div>
@@ -849,7 +851,6 @@
       }
     }
 
-    // 🔒 ฟังก์ชันสลับโหมด พร้อมตรวจสอบและล็อกปุ่มหากมีสินค้าค้างอยู่ในตะกร้า
     function switchSaleMode(mode) {
       if (cart.length > 0) {
         const activeType = cart[0].saleMode === 'READY' ? 'สินค้าพร้อมส่ง' : 'สินค้าพรีออเดอร์';
