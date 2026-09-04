@@ -190,7 +190,7 @@
     .tags-container { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 0.5rem; }
     .tag-chip {
       background: #f0f0ec; border: 1px solid var(--border-color); padding: 6px 10px;
-      font-size: .78rem; font-weight: 600; border-radius: var(--radius); display: flex; align-items: center; gap: 6px; flex-direction: column; align-items: flex-start;
+      font-size: .78rem; font-weight: 600; border-radius: var(--radius); display: flex; align-items: center; gap: 6px; flex-direction: column; align-items: flex-start; width: 100%;
     }
     .tag-chip .del-btn { color: var(--danger); cursor: pointer; font-weight: bold; padding: 0 4px; float: right; }
   </style>
@@ -389,9 +389,9 @@
           <input type="text" id="pName" class="form-control" placeholder="เช่น Ducati Panigale V4 S" required />
         </div>
 
-        <!-- ⚙️ ส่วนตั้งค่าสต็อกคู่ (พิมพ์เลข 0 ตัวแรกได้, ค่าเริ่มต้นเป็น 0) -->
+        <!-- ⚙️ ส่วนตั้งค่าสต็อกและการขายพรีออเดอร์ -->
         <div class="form-group" style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: var(--radius); padding: 12px;">
-          <label style="font-weight: 800; color: #1e293b; margin-bottom: 8px; display: block;">⚙️ ตั้งค่าสต็อกและการขาย (เปิดขายพร้อมกันทั้ง 2 ระบบ)</label>
+          <label style="font-weight: 800; color: #1e293b; margin-bottom: 8px; display: block;">⚙️ ตั้งค่าสต็อกและการขาย (พร้อมส่ง & พรีออเดอร์)</label>
           
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
             <!-- สต็อกพร้อมส่ง -->
@@ -399,16 +399,27 @@
               <label style="font-size: 0.75rem; color: #065f46; font-weight: bold; display: block; margin-bottom: 4px;">📦 สต็อกพร้อมส่ง (In Stock)</label>
               <div style="display: flex; align-items: center; gap: 6px;">
                 <input type="text" inputmode="numeric" id="pReadyStock" class="form-control" value="0" onfocus="this.select()" style="background:#fff;" />
-                <span style="font-size: 0.75rem; color: #065f46; white-space: nowrap;">ชิ้น</span>
+                <span style="font-size: 0.75rem; color: #065f46; white-space: nowrap;">ชิ้น (0=ไม่แสดง)</span>
               </div>
             </div>
 
-            <!-- สต็อกพรีออเดอร์ -->
+            <!-- โควต้าพรีออเดอร์ (มีเปิด-ปิด, ใส่จำนวน, และไม่จำกัด) -->
             <div style="background: #fff7ed; border: 1px solid #f97316; padding: 10px; border-radius: 6px;">
-              <label style="font-size: 0.75rem; color: #c2410c; font-weight: bold; display: block; margin-bottom: 4px;">⏳ โควต้าพรีออเดอร์ (Pre-order)</label>
-              <div style="display: flex; align-items: center; gap: 6px;">
-                <input type="text" inputmode="numeric" id="pPreorderStock" class="form-control" value="0" onfocus="this.select()" style="background:#fff;" />
-                <span style="font-size: 0.75rem; color: #c2410c; white-space: nowrap;">ชิ้น</span>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                <label style="font-size: 0.75rem; color: #c2410c; font-weight: bold;">⏳ พรีออเดอร์ (Pre-order)</label>
+                <label style="font-size: 0.7rem; display: flex; align-items: center; gap: 3px; cursor: pointer;">
+                  <input type="checkbox" id="pPreorderActive" onchange="togglePreorderInputs(this.checked)" /> เปิดขาย
+                </label>
+              </div>
+
+              <div id="preorderSettingsGroup" style="display: none; flex-direction: column; gap: 6px; margin-top: 4px;">
+                <div style="display: flex; align-items: center; gap: 6px;">
+                  <input type="text" inputmode="numeric" id="pPreorderStock" class="form-control" value="0" onfocus="this.select()" style="background:#fff;" placeholder="จำนวนโควต้า" />
+                  <span style="font-size: 0.7rem; color: #c2410c; white-space: nowrap;">ชิ้น</span>
+                </div>
+                <label style="font-size: 0.7rem; color: #9a3412; display: flex; align-items: center; gap: 4px; cursor: pointer; margin-top: 2px;">
+                  <input type="checkbox" id="pPreorderUnlimited" onchange="toggleUnlimitedPreorder(this.checked)" /> สั่งได้ไม่จำกัดจำนวน (Unlimited)
+                </label>
               </div>
             </div>
           </div>
@@ -476,7 +487,6 @@
           <div id="scalePricesContainer"></div>
         </div>
 
-        <!-- ⚙️ ตัวเลือกสินค้า & ส่วนลด (ค่าเริ่มต้นจะปิด/ว่างเปล่าไว้) -->
         <div style="margin-top:10px;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 6px;">
             <label style="font-size:0.82rem; font-weight:800;">⚙️ ตัวเลือกสินค้า & ส่วนลด</label>
@@ -493,7 +503,7 @@
     </div>
   </div>
 
-  <!-- VIP CODES MODAL (เพิ่มช่องโน๊ตข้อความ) -->
+  <!-- VIP CODES MODAL -->
   <div id="vipCodesModal" class="modal-overlay" onclick="checkOutsideModalClick(event, 'vipCodesModal')">
     <div class="modal-box" style="max-width: 500px;">
       <div class="modal-header">
@@ -504,7 +514,7 @@
       <form onsubmit="handleAddVipCode(event)" style="display:flex; flex-direction:column; gap:8px; margin-top: 4px;">
         <div style="display: flex; gap: 6px;">
           <input type="text" id="newVipCodeInput" class="form-control" placeholder="รหัส VIP ใหม่ (เช่น VIP164)..." style="text-transform:uppercase; flex: 1;" required />
-          <input type="text" id="newVipNoteInput" class="form-control" placeholder="โน้ตข้อความ (เช่น สำหรับ VIP กลุ่ม A)..." style="flex: 1.5;" />
+          <input type="text" id="newVipNoteInput" class="form-control" placeholder="โน้ตข้อความ..." style="flex: 1.5;" />
           <button type="submit" class="btn-action" style="padding: 0 16px;">+ เพิ่ม</button>
         </div>
       </form>
@@ -613,7 +623,6 @@
 
     let brands = ["Ducati", "Honda", "Isuzu", "Kawasaki", "Toyota", "Yamaha"];
     let scalesList = ["1/12", "1/32", "1/43", "1/64"];
-    // รองรับรหัส VIP แบบเก็บ Object { code, note } หรือแบบ String เดิม
     let vipCodesList = [{ code: "MEMBER99", note: "สมาชิกทั่วไป" }, { code: "VIP164", note: "วีไอพีพิเศษ" }];
 
     let systemSettings = {
@@ -664,7 +673,6 @@
           if (data.brands) brands = sortAlphabetically(data.brands);
           if (data.scales) scalesList = sortAlphabetically(data.scales);
           if (data.vipCodes) {
-            // แปลงข้อมูลเก่าที่เป็น string ให้เป็น object เสมอ
             vipCodesList = data.vipCodes.map(item => typeof item === 'string' ? { code: item, note: '' } : item);
           }
           if (data.settings) systemSettings = data.settings;
@@ -892,8 +900,12 @@
         const thumb = (p.images && p.images.length > 0) ? p.images[0] : '';
         const secretNotice = p.secretCode ? `<span style="color:var(--accent-vip); font-weight:bold;">[VIP: ${p.secretCode}]</span> ` : '';
         const readyStock = p.readyStock !== undefined ? p.readyStock : 0;
-        const preorderStock = p.preorderStock !== undefined ? p.preorderStock : 0;
-        const stockInfo = `<span style="color:#0284c7; font-weight:bold;">[📦 พร้อมส่ง: ${readyStock} | ⏳ พรีออเดอร์: ${preorderStock}]</span> `;
+        
+        let preorderInfo = "ปิด";
+        if (p.preorderActive) {
+          preorderInfo = p.preorderUnlimited ? "ไม่จำกัด" : (p.preorderStock || 0);
+        }
+        const stockInfo = `<span style="color:#0284c7; font-weight:bold;">[📦 พร้อมส่ง: ${readyStock} | ⏳ พรีออเดอร์: ${preorderInfo}]</span> `;
 
         return `
           <div class="admin-prod-item">
@@ -914,6 +926,17 @@
       }).join('');
     }
 
+    function togglePreorderInputs(isActive) {
+      const group = document.getElementById("preorderSettingsGroup");
+      group.style.display = isActive ? "flex" : "none";
+    }
+
+    function toggleUnlimitedPreorder(isUnlimited) {
+      const stockInput = document.getElementById("pPreorderStock");
+      stockInput.disabled = isUnlimited;
+      if (isUnlimited) stockInput.value = "999999";
+    }
+
     function openAddProductModal() {
       closeModal('manageProductsModal');
       document.getElementById("productModalTitle").innerText = "📦 เพิ่มรายการสินค้าใหม่";
@@ -921,7 +944,11 @@
       document.getElementById("addProductForm").reset();
 
       document.getElementById("pReadyStock").value = "0";
+      document.getElementById("pPreorderActive").checked = false;
       document.getElementById("pPreorderStock").value = "0";
+      document.getElementById("pPreorderStock").disabled = false;
+      document.getElementById("pPreorderUnlimited").checked = false;
+      document.getElementById("preorderSettingsGroup").style.display = "none";
       document.getElementById("pPrice").value = "0";
       document.getElementById("pPreorderLeadTime").value = "";
 
@@ -933,8 +960,6 @@
 
       renderVipSelectOptions("");
       renderAdminScalesInputs();
-      
-      // ⚙️ ตั้งค่าเริ่มต้นให้ส่วนตัวเลือกสินค้าปิด/ว่างเปล่าไว้
       document.getElementById("dynamicOptionsList").innerHTML = "";
 
       openModal('addProductModal');
@@ -953,7 +978,16 @@
         document.getElementById("pPrice").value = prod.basePrice !== undefined ? prod.basePrice : "0";
 
         document.getElementById("pReadyStock").value = prod.readyStock !== undefined ? prod.readyStock : "0";
+        
+        const isPreActive = prod.preorderActive || false;
+        document.getElementById("pPreorderActive").checked = isPreActive;
+        document.getElementById("preorderSettingsGroup").style.display = isPreActive ? "flex" : "none";
         document.getElementById("pPreorderStock").value = prod.preorderStock !== undefined ? prod.preorderStock : "0";
+        
+        const isUnlimited = prod.preorderUnlimited || false;
+        document.getElementById("pPreorderUnlimited").checked = isUnlimited;
+        document.getElementById("pPreorderStock").disabled = isUnlimited;
+
         document.getElementById("pPreorderLeadTime").value = prod.preorderLeadTime || "";
 
         const bSelect = document.getElementById("pBrandSelect");
@@ -1287,7 +1321,9 @@
       const secretCode = (document.getElementById("pSecretCodeSelect").value || "").trim().toUpperCase();
 
       const readyStock = parseInt(document.getElementById("pReadyStock").value) || 0;
-      const preorderStock = parseInt(document.getElementById("pPreorderStock").value) || 0;
+      const preorderActive = document.getElementById("pPreorderActive").checked;
+      const preorderStock = preorderActive ? (parseInt(document.getElementById("pPreorderStock").value) || 0) : 0;
+      const preorderUnlimited = preorderActive && document.getElementById("pPreorderUnlimited").checked;
       const preorderLeadTime = document.getElementById("pPreorderLeadTime").value.trim();
 
       const checkedScales = Array.from(document.querySelectorAll('input[name="productScale"]:checked')).map(cb => cb.value);
@@ -1303,7 +1339,9 @@
       const payload = {
         id, name, brand, basePrice, secretCode,
         readyStock,
-        preorderStock,
+        preorderActive,
+        preorderStock: preorderUnlimited ? 999999 : preorderStock,
+        preorderUnlimited,
         preorderLeadTime,
         images: [...tempProductImages],
         vdo: tempProductVdo || "",
@@ -1313,7 +1351,7 @@
       };
 
       db.collection("products").doc(id).set(payload).then(() => {
-        alert("✓ บันทึกสินค้า (รองรับทั้งพร้อมส่งและพรีออเดอร์) สำเร็จ!");
+        alert("✓ บันทึกสินค้าสำเร็จ!");
         closeModal('addProductModal');
         openManageProductsModal();
       }).catch(err => alert("เกิดข้อผิดพลาด: " + err.message));
@@ -1332,7 +1370,16 @@
         document.getElementById("pPrice").value = prod.basePrice !== undefined ? prod.basePrice : "0";
 
         document.getElementById("pReadyStock").value = prod.readyStock !== undefined ? prod.readyStock : "0";
+        
+        const isPreActive = prod.preorderActive || false;
+        document.getElementById("pPreorderActive").checked = isPreActive;
+        document.getElementById("preorderSettingsGroup").style.display = isPreActive ? "flex" : "none";
         document.getElementById("pPreorderStock").value = prod.preorderStock !== undefined ? prod.preorderStock : "0";
+        
+        const isUnlimited = prod.preorderUnlimited || false;
+        document.getElementById("pPreorderUnlimited").checked = isUnlimited;
+        document.getElementById("pPreorderStock").disabled = isUnlimited;
+
         document.getElementById("pPreorderLeadTime").value = prod.preorderLeadTime || "";
 
         document.getElementById("pBrandSelect").innerHTML = brands.map(b => `<option value="${b}" ${b === prod.brand ? 'selected' : ''}>${b}</option>`).join('');
