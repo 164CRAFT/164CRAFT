@@ -1094,14 +1094,26 @@
       if (!prod) return;
       currentSelectedProduct = prod;
       appliedOptionDiscount = 0;
-      document.getElementById("promoCodeInput").value = "";
-      document.getElementById("promoStatusMsg").innerText = "";
+      
+      const promoInput = document.getElementById("promoCodeInput");
+      if (promoInput) promoInput.value = "";
+      const promoMsg = document.getElementById("promoStatusMsg");
+      if (promoMsg) promoMsg.innerText = "";
 
-      document.getElementById("detailTitle").innerText = prod.name;
-      document.getElementById("detailSku").innerText = prod.id;
-      document.getElementById("detailBrand").innerText = prod.brand;
-      document.getElementById("detailScales").innerText = (prod.scales || []).join(", ");
-      document.getElementById("detailBasePrice").innerText = "฿" + prod.basePrice;
+      const detailTitle = document.getElementById("detailTitle");
+      if (detailTitle) detailTitle.innerText = prod.name;
+
+      const detailSku = document.getElementById("detailSku");
+      if (detailSku) detailSku.innerText = prod.id;
+
+      const detailBrand = document.getElementById("detailBrand");
+      if (detailBrand) detailBrand.innerText = prod.brand;
+
+      const detailScales = document.getElementById("detailScales");
+      if (detailScales) detailScales.innerText = (prod.scales || []).join(", ");
+
+      const detailBasePrice = document.getElementById("detailBasePrice");
+      if (detailBasePrice) detailBasePrice.innerText = "฿" + prod.basePrice;
       
       const readyStock = prod.readyStock !== undefined ? prod.readyStock : 10;
       const preorderStock = prod.preorderStock !== undefined ? prod.preorderStock : 0;
@@ -1121,37 +1133,46 @@
       if (prod.vdo) allMedia.push({ type: 'video', src: prod.vdo, label: 'วิดีโอ' });
       if (prod.images) prod.images.forEach((img, i) => allMedia.push({ type: 'image', src: img, label: `รูป ${i+1}` }));
 
-      document.getElementById("detailMediaCount").innerText = `${allMedia.length} รายการ`;
-      document.getElementById("detailOptionCount").innerText = `${(prod.options || []).length} ตัวเลือก`;
+      const detailMediaCount = document.getElementById("detailMediaCount");
+      if (detailMediaCount) detailMediaCount.innerText = `${allMedia.length} รายการ`;
+
+      const detailOptionCount = document.getElementById("detailOptionCount");
+      if (detailOptionCount) detailOptionCount.innerText = `${(prod.options || []).length} ตัวเลือก`;
 
       const mainMedia = document.getElementById("detailMainMedia");
       const thumbsBox = document.getElementById("detailMediaThumbs");
 
       if (allMedia.length > 0) {
         switchDetailMedia(allMedia[0].src, allMedia[0].type);
-        thumbsBox.innerHTML = allMedia.map((m, idx) => `
-          <div class="detail-thumb-item ${idx === 0 ? 'active' : ''}" onclick="selectDetailThumb(this, '${m.src}', '${m.type}')">
-            ${m.type === 'video' ? `<video src="${m.src}"></video><span>VDO</span>` : `<img src="${m.src}" alt="" />`}
-          </div>
-        `).join('');
+        if (thumbsBox) {
+          thumbsBox.innerHTML = allMedia.map((m, idx) => `
+            <div class="detail-thumb-item ${idx === 0 ? 'active' : ''}" onclick="selectDetailThumb(this, '${m.src}', '${m.type}')">
+              ${m.type === 'video' ? `<video src="${m.src}"></video><span>VDO</span>` : `<img src="${m.src}" alt="" />`}
+            </div>
+          `).join('');
+        }
       } else {
-        mainMedia.innerHTML = `<span style="color:#999;">ไม่มีสื่อ</span>`;
-        thumbsBox.innerHTML = '';
+        if (mainMedia) mainMedia.innerHTML = `<span style="color:#999;">ไม่มีสื่อ</span>`;
+        if (thumbsBox) thumbsBox.innerHTML = '';
       }
 
       const scaleSelect = document.getElementById("detailScaleSelect");
-      scaleSelect.innerHTML = (prod.scales || []).map(sc => {
-        const scPrice = (prod.scalePrices && prod.scalePrices[sc] !== undefined) ? prod.scalePrices[sc] : prod.basePrice;
-        return `<option value="${sc}">${sc} (฿${scPrice})</option>`;
-      }).join('');
+      if (scaleSelect) {
+        scaleSelect.innerHTML = (prod.scales || []).map(sc => {
+          const scPrice = (prod.scalePrices && prod.scalePrices[sc] !== undefined) ? prod.scalePrices[sc] : prod.basePrice;
+          return `<option value="${sc}">${sc} (฿${scPrice})</option>`;
+        }).join('');
+      }
 
       const optSelect = document.getElementById("detailOptionSelect");
-      if (prod.options && prod.options.length > 0) {
-        optSelect.innerHTML = prod.options.map((opt, idx) => `
-          <option value="${idx}">${opt.name} (+฿${opt.extraPrice || 0})</option>
-        `).join('');
-      } else {
-        optSelect.innerHTML = `<option value="0">ตัวเลือกมาตรฐาน (+฿0)</option>`;
+      if (optSelect) {
+        if (prod.options && prod.options.length > 0) {
+          optSelect.innerHTML = prod.options.map((opt, idx) => `
+            <option value="${idx}">${opt.name} (+฿${opt.extraPrice || 0})</option>
+          `).join('');
+        } else {
+          optSelect.innerHTML = `<option value="0">ตัวเลือกมาตรฐาน (+฿0)</option>`;
+        }
       }
 
       calculateModalPrice();
