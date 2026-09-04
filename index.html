@@ -51,7 +51,7 @@
     @media(min-width: 768px) {
       .header { padding: 0 32px; height: 72px; }
     }
-    .brand-info { display: flex; align-items: center; gap: 10px; }
+    .brand-info { display: flex; align-items: center; gap: 10px; cursor: pointer; }
     .brand-photo {
       width: 38px; height: 38px; background: var(--accent); color: #fff;
       border-radius: var(--radius); display: flex; align-items: center; justify-content: center;
@@ -293,7 +293,7 @@
 <body onload="initStoreFront()">
 
   <header class="header">
-    <div class="brand-info">
+    <div class="brand-info" onclick="window.location.href='index.html'">
       <div class="brand-photo" id="siteLogoText">164</div>
       <div class="brand-name" id="siteTitleText">164CRAFT</div>
     </div>
@@ -307,10 +307,10 @@
         <button id="loginBtn" class="btn-action btn-secondary" onclick="loginWithGoogle()">
           🔑 เข้าสู่ระบบ
         </button>
-        <div id="userProfile" style="display: none; align-items: center; gap: 6px;">
+        <div id="userProfile" style="display: none; align-items: center; gap: 6px; cursor: pointer;" onclick="window.location.href='account.html'" title="คลิกเพื่อดูข้อมูลบัญชี">
           <img id="userAvatar" src="" style="width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--border-dark);" alt="User" />
           <span id="userName" style="font-size: 0.75rem; font-weight: 700; max-width: 80px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"></span>
-          <button class="btn-action btn-secondary" style="padding: 0 8px; font-size: 0.7rem; height: 32px;" onclick="logoutGoogle()">ออก</button>
+          <button class="btn-action btn-secondary" style="padding: 0 8px; font-size: 0.7rem; height: 32px;" onclick="event.stopPropagation(); logoutGoogle()">ออก</button>
         </div>
       </div>
 
@@ -506,8 +506,8 @@
       projectId: "craft-2cc07",
       storageBucket: "craft-2cc07.firebasestorage.app",
       messagingSenderId: "371408751439",
-      appId: "1:371408751439:web:fa489eaf0a36c0c6b2533a",
-      measurementId: "G-Z5TTL1VDKR"
+      appId: "1:371408751439:web:b39039944fcdd104b2533a",
+      measurementId: "G-58S5EEG536"
     };
 
     firebase.initializeApp(firebaseConfig);
@@ -916,8 +916,25 @@
         return;
       }
 
-      if (selectedOpt && selectedOpt.vipCode && selectedOpt.vipCode.toUpperCase() === code) {
-        appliedOptionDiscount = selectedOpt.vipDiscount || 0;
+      let foundDiscount = 0;
+      let isValid = false;
+
+      if (selectedOpt) {
+        if (selectedOpt.codes && Array.isArray(selectedOpt.codes)) {
+          const matchCode = selectedOpt.codes.find(c => (c.code || "").toUpperCase() === code);
+          if (matchCode) {
+            isValid = true;
+            foundDiscount = matchCode.discount || 0;
+          }
+        }
+        if (!isValid && selectedOpt.vipCode && selectedOpt.vipCode.toUpperCase() === code) {
+          isValid = true;
+          foundDiscount = selectedOpt.vipDiscount || 0;
+        }
+      }
+
+      if (isValid) {
+        appliedOptionDiscount = foundDiscount;
         statusMsg.style.color = "var(--accent-vip)";
         statusMsg.innerText = `✓ ใช้โค้ดสำเร็จ! ได้รับส่วนลด ฿${appliedOptionDiscount}`;
       } else {
