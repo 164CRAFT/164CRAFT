@@ -307,10 +307,11 @@
         <button id="loginBtn" class="btn-action btn-secondary" onclick="loginWithGoogle()">
           🔑 เข้าสู่ระบบ
         </button>
-        <div id="userProfile" style="display: none; align-items: center; gap: 6px; cursor: pointer;" onclick="window.location.href='account.html'" title="คลิกเพื่อดูข้อมูลบัญชี">
+        <!-- คลิกที่โปรไฟล์เพื่อเปิด Account Modal ตั้งค่าบัญชี -->
+        <div id="userProfile" style="display: none; align-items: center; gap: 6px; cursor: pointer;" onclick="openModal('accountModal')" title="คลิกเพื่อตั้งค่าบัญชี">
           <img id="userAvatar" src="" style="width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--border-dark);" alt="User" />
           <span id="userName" style="font-size: 0.75rem; font-weight: 700; max-width: 80px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"></span>
-          <button class="btn-action btn-secondary" style="padding: 0 8px; font-size: 0.7rem; height: 32px;" onclick="event.stopPropagation(); logoutGoogle()">ออก</button>
+          <button class="btn-action btn-danger" style="padding: 0 8px; font-size: 0.7rem; height: 32px;" onclick="event.stopPropagation(); logoutGoogle()">ออก</button>
         </div>
       </div>
 
@@ -357,6 +358,43 @@
     <main class="main-container">
       <section class="product-grid" id="productGridContainer"></section>
     </main>
+  </div>
+
+  <!-- ACCOUNT MODAL (หน้าต่างตั้งค่าข้อมูลบัญชี) -->
+  <div id="accountModal" class="modal-overlay">
+    <div class="modal-box" style="max-width: 500px;">
+      <button class="modal-close" onclick="closeModal('accountModal')">✕</button>
+      <div class="modal-header">👤 ตั้งค่าข้อมูลบัญชีผู้ใช้</div>
+
+      <div style="display: flex; align-items: center; gap: 12px; background: #fafaf8; padding: 12px; border-radius: var(--radius); border: 1px solid var(--border-color);">
+        <img id="modalUserAvatar" src="" style="width: 50px; height: 50px; border-radius: 50%; border: 1px solid #111;" alt="Avatar" />
+        <div>
+          <div id="modalUserName" style="font-weight: 800; font-size: 0.95rem;">-</div>
+          <div id="modalUserEmail" style="font-size: 0.78rem; color: var(--text-muted);">-</div>
+        </div>
+      </div>
+
+      <div style="background: var(--accent-vip-bg); border: 1px solid #86efac; border-radius: var(--radius); padding: 10px 12px;">
+        <div style="font-weight: 800; font-size: 0.8rem; color: #065f46;">💎 สถานะบัญชีผู้ใช้</div>
+        <div style="font-size: 0.72rem; color: #047857; margin-top: 2px;">เชื่อมต่อผ่าน Google Account ปลอดภัยและพร้อมใช้งาน</div>
+      </div>
+
+      <form onsubmit="saveUserProfileModal(event)">
+        <div class="form-group">
+          <label>ชื่อ-นามสกุล ผู้รับหลัก</label>
+          <input type="text" id="profileName" class="form-control" required />
+        </div>
+        <div class="form-group">
+          <label>เบอร์โทรศัพท์ติดต่อ</label>
+          <input type="tel" id="profilePhone" class="form-control" placeholder="0812345678" maxlength="10" required />
+        </div>
+        <div class="form-group">
+          <label>ที่อยู่จัดส่งเริ่มต้น</label>
+          <textarea id="profileAddress" class="form-control" rows="3" placeholder="บ้านเลขที่, ถนน, แขวง/ตำบล, เขต/อำเภอ, จังหวัด, รหัสไปรษณีย์" required></textarea>
+        </div>
+        <button type="submit" class="btn-action" style="width: 100%; margin-top: 6px;">💾 บันทึกการตั้งค่าบัญชี</button>
+      </form>
+    </div>
   </div>
 
   <!-- DETAIL MODAL -->
@@ -563,10 +601,18 @@
           userAvatar.src = user.photoURL || "https://via.placeholder.com/32";
           userName.innerText = user.displayName || user.email;
 
+          // เติมข้อมูลใน Modal บัญชี
+          document.getElementById("modalUserAvatar").src = user.photoURL || "https://via.placeholder.com/50";
+          document.getElementById("modalUserName").innerText = user.displayName || "สมาชิก 164CRAFT";
+          document.getElementById("modalUserEmail").innerText = user.email;
+
           const shipNameInput = document.getElementById("shipName");
           const shipEmailInput = document.getElementById("shipEmail");
+          const profileName = document.getElementById("profileName");
+          
           if (shipNameInput && !shipNameInput.value) shipNameInput.value = user.displayName || "";
           if (shipEmailInput && !shipEmailInput.value) shipEmailInput.value = user.email || "";
+          if (profileName && !profileName.value) profileName.value = user.displayName || "";
         } else {
           loginBtn.style.display = "inline-flex";
           userProfile.style.display = "none";
@@ -589,6 +635,21 @@
       }).catch((error) => {
         console.error("Logout error:", error);
       });
+    }
+
+    function saveUserProfileModal(e) {
+      e.preventDefault();
+      const name = document.getElementById("profileName").value;
+      const phone = document.getElementById("profilePhone").value;
+      const address = document.getElementById("profileAddress").value;
+
+      // เติมข้อมูลลงฟอร์มชำระเงินอัตโนมัติเพื่อความสะดวก
+      document.getElementById("shipName").value = name;
+      document.getElementById("shipPhone").value = phone;
+      document.getElementById("shipAddress").value = address;
+
+      alert("✓ บันทึกข้อมูลบัญชีและตั้งค่าการจัดส่งเรียบร้อยแล้ว!");
+      closeModal('accountModal');
     }
 
     function loadDataFromFirebase() {
