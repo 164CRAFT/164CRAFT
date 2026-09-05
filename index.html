@@ -372,13 +372,18 @@
     .bank-payment-box { background: #f4f4f1; border: 1px solid var(--border-color); border-radius: var(--radius); padding: 10px; font-size: 0.82rem; margin-top: 8px; text-align: center; }
     .qr-preview-img { max-width: 130px; max-height: 130px; object-fit: contain; margin: 6px auto; display: block; border-radius: 6px; border: 1px solid #ccc; }
 
-    /* Custom Popup Modal Styles */
-    .custom-alert-box {
-      width: min(90vw, 360px); background: #fff; border: 1px solid var(--border-color);
-      border-radius: 14px; padding: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-      display: flex; flex-direction: column; gap: 12px; text-align: center; cursor: default;
+    /* Custom Toast Notification Styles */
+    #toastNotification {
+      position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(20px);
+      background: rgba(17, 17, 17, 0.92); color: #fff; padding: 12px 20px;
+      border-radius: 30px; font-size: 0.82rem; font-weight: 700; z-index: 9999;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25); display: flex; align-items: center; gap: 8px;
+      opacity: 0; pointer-events: none; transition: opacity 0.3s ease, transform 0.3s ease;
+      backdrop-filter: blur(8px); white-space: nowrap;
     }
-    .custom-alert-msg { font-size: 0.88rem; font-weight: 750; color: #111; line-height: 1.5; white-space: pre-line; }
+    #toastNotification.show {
+      opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto;
+    }
 
     .footer {
       background: #111; color: #aaa; border-top: 1px solid #111;
@@ -429,7 +434,7 @@
             <div class="dropdown-menu-item" onclick="openModal('accountModal'); toggleAccountDropdown(event);">
               📍 ตั้งค่าที่อยู่จัดส่ง
             </div>
-            <div class="dropdown-menu-item" onclick="showPopup('ฟีเจอร์ประวัติการสั่งซื้อ จะแสดงรายการสั่งซื้อของคุณที่นี่เร็วๆ นี้'); toggleAccountDropdown(event);">
+            <div class="dropdown-menu-item" onclick="showToast('ฟีเจอร์ประวัติการสั่งซื้อ จะแสดงรายการสั่งซื้อของคุณที่นี่เร็วๆ นี้'); toggleAccountDropdown(event);">
               📦 ประวัติการสั่งซื้อ
             </div>
             <div class="dropdown-menu-item danger" onclick="logoutGoogle(); toggleAccountDropdown(event);">
@@ -580,7 +585,7 @@
       </div>
 
       <div style="display: flex; gap: 8px; margin-top: 6px;">
-        <button class="btn-action btn-secondary" style="flex: 1; height: 40px;" onclick="closeModal('cartModal')">🔍 ตรวจสอบรายการต่อ</button>
+        <button class="btn-action btn-secondary" style="flex: 1; height: 40px;" onclick="closeModal('cartModal')">🔍 ดูสินค้าเพิ่มเติม</button>
         <button class="btn-action" style="flex: 1.2; height: 40px;" onclick="closeModal('cartModal'); openShippingModal();">ดำเนินการชำระเงิน</button>
       </div>
     </div>
@@ -668,12 +673,9 @@
     </div>
   </div>
 
-  <!-- CUSTOM ALERT MODAL -->
-  <div id="customAlertModal" class="modal-overlay">
-    <div class="custom-alert-box">
-      <div class="custom-alert-msg" id="customAlertText">ข้อความแจ้งเตือน</div>
-      <button type="button" class="btn-action" style="width:100%; height:38px; justify-content:center;" onclick="closeModal('customAlertModal')">ตกลง</button>
-    </div>
+  <!-- TOAST NOTIFICATION -->
+  <div id="toastNotification">
+    <span>✓</span> <span id="toastText">แจ้งเตือน</span>
   </div>
 
   <!-- Firebase App SDK, Firestore & Auth -->
@@ -726,9 +728,16 @@
     let currentSelectedProduct = null;
     let appliedOptionDiscount = 0;
 
-    function showPopup(message) {
-      document.getElementById("customAlertText").innerText = message;
-      openModal('customAlertModal');
+    let toastTimer = null;
+    function showToast(message) {
+      const toast = document.getElementById("toastNotification");
+      document.getElementById("toastText").innerText = message;
+      toast.classList.add("show");
+      
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        toast.classList.remove("show");
+      }, 2000);
     }
 
     document.addEventListener('contextmenu', function(e) {
@@ -799,12 +808,12 @@
 
     function loginWithGoogle() {
       auth.signInWithPopup(googleProvider).then((result) => {
-        showPopup("✓ เข้าสู่ระบบสำเร็จ: " + (result.user.displayName || result.user.email));
-      }).catch((error) => showPopup("เข้าสู่ระบบไม่สำเร็จ: " + error.message));
+        showToast("✓ เข้าสู่ระบบสำเร็จ");
+      }).catch((error) => showToast("เข้าสู่ระบบไม่สำเร็จ: " + error.message));
     }
 
     function logoutGoogle() {
-      auth.signOut().then(() => showPopup("ออกจากระบบเรียบร้อย"));
+      auth.signOut().then(() => showToast("ออกจากระบบเรียบร้อย"));
     }
 
     function toggleAccountDropdown(event) {
@@ -844,7 +853,7 @@
       document.getElementById("shipPhone").value = phone;
       document.getElementById("shipAddress").value = address;
 
-      showPopup("✓ บันทึกที่อยู่จัดส่งเรียบร้อยแล้ว!");
+      showToast("✓ บันทึกที่อยู่จัดส่งเรียบร้อยแล้ว!");
       closeModal('accountModal');
     }
 
@@ -875,10 +884,8 @@
       const modal = document.getElementById(id);
       if (modal) {
         modal.style.display = "flex";
-        // ถ้าเปิด Modal รายละเอียดสินค้า ให้เพิ่มสถานะ History state สำหรับรองรับปุ่มย้อนกลับ (Back Button) บนมือถือ
-        if (id === 'detailModal') {
-          history.pushState({ modalOpen: id }, "");
-        }
+        // บันทึก History state เพื่อรองรับปุ่มย้อนกลับ (Back Button) บนมือถือ สำหรับทุก Modal สำคัญ
+        history.pushState({ modalOpen: id }, "");
       }
     }
 
@@ -891,12 +898,15 @@
       }
     }
 
-    // ดักจับการกดปุ่มย้อนกลับ (Back Button) บนมือถือ เพื่อปิด Modal รายละเอียดสินค้าทันทีโดยไม่ออกจากเว็บ
+    // ดักจับการกดปุ่มย้อนกลับบนมือถือ เพื่อปิด Modal ที่กำลังเปิดอยู่ทันที
     window.addEventListener('popstate', (event) => {
-      const detailModal = document.getElementById('detailModal');
-      if (detailModal && detailModal.style.display === 'flex') {
-        closeModal('detailModal');
-      }
+      const modals = ['detailModal', 'cartModal', 'shippingModal', 'accountModal', 'orderSummaryModal'];
+      modals.forEach(id => {
+        const m = document.getElementById(id);
+        if (m && m.style.display === 'flex') {
+          closeModal(id);
+        }
+      });
     });
 
     function initModalOutsideClick() {
@@ -944,8 +954,7 @@
     function switchSaleMode(mode) {
       if (cart.length > 0) {
         const activeType = cart[0].saleMode === 'READY' ? 'สินค้าพร้อมส่ง' : 'สินค้าพรีออเดอร์';
-        const targetType = mode === 'READY' ? 'พร้อมส่ง' : 'พรีออเดอร์';
-        showPopup(`⚠️ ไม่สามารถสลับไปดูโหมด "${targetType}" ได้!\n\nเนื่องจากในตะกร้าของคุณมี "${activeType}" ค้างอยู่ กรุณาเคลียร์ตะกร้าก่อนหากต้องการเปลี่ยนโหมดเลือกซื้อสินค้า`);
+        showToast(`⚠️ มี "${activeType}" ค้างอยู่ในตะกร้า`);
         return;
       }
 
@@ -1001,9 +1010,9 @@
         statusTag.innerHTML = `<div style="font-weight:bold;">✓ ปลดล็อกสำเร็จ: ${maskedCode} [ACTIVE]</div>`;
         renderCategories();
         renderProducts();
-        showPopup("✓ ปลดล็อกสำเร็จ!");
+        showToast("✓ ปลดล็อกสำเร็จ!");
       } else {
-        showPopup("✕ ไม่พบรหัสนี้ในระบบ");
+        showToast("✕ ไม่พบรหัสนี้ในระบบ");
       }
     }
 
@@ -1383,7 +1392,7 @@
         if (firstItemSaleMode !== incomingSaleMode) {
           const currentTypeName = firstItemSaleMode === 'READY' ? 'สินค้าพร้อมส่ง' : 'สินค้าพรีออเดอร์';
           const newTypeName = incomingSaleMode === 'READY' ? 'สินค้าพร้อมส่ง' : 'สินค้าพรีออเดอร์';
-          showPopup(`⚠️ ไม่สามารถสั่งซื้อสินค้าทั้ง 2 ระบบพร้อมกันได้!\n\nในตะกร้าของคุณมี "${currentTypeName}" อยู่ (ยึดตามชิ้นแรกที่เลือก)\nกรุณาเคลียร์ตะกร้าก่อนหากต้องการสั่งซื้อ "${newTypeName}"`);
+          showToast(`⚠️ ไม่สามารถสั่งซื้อทั้ง 2 ระบบพร้อมกันได้`);
           return;
         }
       }
@@ -1404,7 +1413,7 @@
       const currentInCart = existingIndex > -1 ? cart[existingIndex].qty : 0;
 
       if (currentInCart + 1 > maxLimit) {
-        showPopup(`⚠️ ไม่สามารถเพิ่มสินค้าได้เนื่องจากเกินจำนวนสต็อกที่มี (${maxLimit} ชิ้น)`);
+        showToast(`⚠️ สินค้าเกินจำนวนสต็อกที่มี (${maxLimit} ชิ้น)`);
         return;
       }
 
@@ -1423,7 +1432,7 @@
 
       updateCartBadge();
       closeModal("detailModal");
-      showPopup(`เพิ่มลงตะกร้าเรียบร้อย (${incomingSaleMode === 'READY' ? 'พร้อมส่ง' : 'พรีออเดอร์'})`);
+      showToast("✓ เพิ่มลงตะกร้าเรียบร้อย");
     }
 
     function updateCartBadge() {
@@ -1485,7 +1494,7 @@
 
       const newQty = item.qty + delta;
       if (newQty > maxLimit) {
-        showPopup(`⚠️ ไม่สามารถเพิ่มสินค้าได้เนื่องจากเกินสต็อกที่มี (${maxLimit} ชิ้น)`);
+        showToast(`⚠️ สินค้าเกินสต็อกที่มี (${maxLimit} ชิ้น)`);
         return;
       }
 
@@ -1503,18 +1512,18 @@
 
     function clearCart() {
       if (cart.length === 0) {
-        showPopup("ตะกร้าสินค้าว่างอยู่แล้ว");
+        showToast("ตะกร้าสินค้าว่างอยู่แล้ว");
         return;
       }
       cart = [];
       updateCartBadge();
       renderCart();
-      showPopup("ล้างตะกร้าสินค้าเรียบร้อยแล้ว");
+      showToast("ล้างตะกร้าสินค้าเรียบร้อยแล้ว");
     }
 
     function openShippingModal() {
       if (cart.length === 0) {
-        showPopup("ไม่มีสินค้าในตะกร้า");
+        showToast("ไม่มีสินค้าในตะกร้า");
         return;
       }
       openModal('shippingModal');
