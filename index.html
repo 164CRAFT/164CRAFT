@@ -536,10 +536,7 @@
 
           <div class="form-group">
             <label>โค้ดส่วนลดราคา:</label>
-            <div style="display:flex; gap: 6px;">
-              <input type="text" id="promoCodeInput" class="form-control" placeholder="กรอกโค้ดส่วนลด..." style="text-transform: uppercase;" onkeydown="if(event.key==='Enter') applyPromoCode()">
-              <button type="button" class="btn-action btn-secondary" style="padding:4px 10px; white-space:nowrap;" onclick="applyPromoCode()">ใช้โค้ด</button>
-            </div>
+            <input type="text" id="promoCodeInput" class="form-control" placeholder="ไม่มีโค้ดส่วนลดส่วนตัว" style="background: #e9e9e6; color: #555; cursor: not-allowed; text-transform: uppercase;" readonly />
             <div id="promoStatusMsg" style="font-size:0.72rem; margin-top:2px; font-weight:bold;"></div>
           </div>
 
@@ -785,24 +782,6 @@
               if (shipPhoneInput) shipPhoneInput.value = data.phone || "";
               if (shipEmailInput) shipEmailInput.value = user.email || "";
               if (shipAddressInput) shipAddressInput.value = data.address || "";
-
-              // ตรวจสอบและดึงโค้ดอัตโนมัติหลายโค้ดที่ Admin กำหนดไว้มาใช้ (รองรับทั้ง assignedCodes และ assignedCode)
-              let codesToApply = [];
-              if (data.assignedCodes && Array.isArray(data.assignedCodes)) {
-                codesToApply = data.assignedCodes;
-              } else if (data.assignedCode) {
-                codesToApply = [data.assignedCode];
-              }
-
-              if (codesToApply.length > 0) {
-                const promoInput = document.getElementById("promoCodeInput");
-                if (promoInput) {
-                  promoInput.value = codesToApply.join(', ');
-                  if (typeof applyPromoCode === 'function' && currentSelectedProduct) {
-                    applyPromoCode();
-                  }
-                }
-              }
             } else {
               if (shipNameInput && !shipNameInput.value) shipNameInput.value = user.displayName || "";
               if (shipEmailInput && !shipEmailInput.value) shipEmailInput.value = user.email || "";
@@ -1031,38 +1010,36 @@
       const dropdownInput = document.getElementById("dropdownVipInput");
       if (dropdownInput) dropdownInput.value = "";
 
-      const statusTag = document.getElementById("secretStatusTag");
+      updateSecretStatusDisplay();
 
+      if (failList.length > 0 && successList.length === 0) {
+        showToast("ไม่พบรหัสนี้ในระบบ");
+      } else if (successList.length > 0) {
+        renderCategories();
+        renderProducts();
+        showToast("ปลดล็อกสำเร็จ");
+      }
+    }
+
+    function updateSecretStatusDisplay() {
+      const statusTag = document.getElementById("secretStatusTag");
       if (activeSecretCodes.length > 0) {
         statusTag.className = "secret-status-tag active";
         let tagHtml = `<div style="font-weight:bold; margin-bottom:2px;">ปลดล็อกสำเร็จ [ACTIVE]:</div>`;
         activeSecretCodes.forEach(c => {
           const masked = c.length > 2 ? c.substring(0, 2) + "•".repeat(c.length - 2) : "••••";
-          tagHtml += `<div>• ${masked}</div>`;
+          tagHtml += `<div>• ${masked} (${c})</div>`;
         });
         statusTag.innerHTML = tagHtml;
-        renderCategories();
-        renderProducts();
-        showToast("ปลดล็อกสำเร็จ");
       } else {
         statusTag.className = "secret-status-tag";
         statusTag.innerHTML = "";
-      }
-
-      if (failList.length > 0 && successList.length === 0) {
-        showToast("ไม่พบรหัสนี้ในระบบ");
       }
     }
 
     function clearHeaderVipCode() {
       activeSecretCodes = [];
-      const headerInput = document.getElementById("headerVipInput");
-      if (headerInput) headerInput.value = "";
-      const dropdownInput = document.getElementById("dropdownVipInput");
-      if (dropdownInput) dropdownInput.value = "";
-
-      document.getElementById("secretStatusTag").className = "secret-status-tag";
-      document.getElementById("secretStatusTag").innerHTML = "";
+      updateSecretStatusDisplay();
       renderCategories();
       renderProducts();
     }
@@ -1361,7 +1338,7 @@
         }
       }
 
-      // ตรวจสอบและดึงข้อมูลโค้ดส่วนลดอัตโนมัติประจำตัวสมาชิกมาใส่ใน Modal ทันที
+      // ดึงโค้ดส่วนลดอัตโนมัติประจำตัวสมาชิกมาใส่ในช่องแบบ Read-only และคำนวณส่วนลดทันที
       const currentUser = auth.currentUser;
       if (currentUser && currentUser.email) {
         db.collection("user_profiles").doc(currentUser.email.toLowerCase()).get().then((doc) => {
@@ -1376,7 +1353,7 @@
 
             if (codesToApply.length > 0) {
               if (promoInput) promoInput.value = codesToApply.join(', ');
-              applyPromoCode();
+              applyAssignedPromoCodes(codesToApply);
             }
           }
         });
@@ -1432,35 +1409,23 @@
       return finalTotal;
     }
 
-    function applyPromoCode() {
+    function applyAssignedPromoCodes(codesArr) {
       if (!currentSelectedProduct) return;
-      const rawInput = (document.getElementById("promoCodeInput").value || "").trim();
       const statusMsg = document.getElementById("promoStatusMsg");
+      const optIdx = parseInt(document.getElementById("detailOptionSelect").value) || 0;
+      const selectedOpt = currentSelectedProduct.options ? currentSelectedProduct.options[optIdx] : null;
 
-      if (!rawInput) {
+      if (!selectedOpt) {
         appliedOptionDiscount = 0;
         statusMsg.innerText = "";
         calculateModalPrice();
         return;
       }
 
-      const enteredCodes = rawInput.split(/[,,\s]+/).map(c => c.trim().toUpperCase()).filter(Boolean);
-      const optIdx = parseInt(document.getElementById("detailOptionSelect").value) || 0;
-      const selectedOpt = currentSelectedProduct.options ? currentSelectedProduct.options[optIdx] : null;
-
-      if (!selectedOpt) {
-        appliedOptionDiscount = 0;
-        statusMsg.style.color = "var(--danger)";
-        statusMsg.innerText = "สินค้านี้ไม่มีตัวเลือกโค้ดส่วนลด";
-        calculateModalPrice();
-        return;
-      }
-
       let cumulativeDiscount = 0;
       let appliedList = [];
-      let invalidList = [];
 
-      enteredCodes.forEach(code => {
+      codesArr.forEach(code => {
         let found = false;
         let disc = 0;
 
@@ -1479,8 +1444,6 @@
         if (found) {
           cumulativeDiscount += disc;
           appliedList.push(`${code} (-฿${disc})`);
-        } else {
-          invalidList.push(code);
         }
       });
 
@@ -1488,21 +1451,14 @@
 
       if (appliedList.length > 0) {
         statusMsg.style.color = "var(--accent-vip)";
-        let msg = `ใช้โค้ดสำเร็จ: ${appliedList.join(', ')}`;
-        if (invalidList.length > 0) {
-          msg += ` | โค้ดที่ไม่ถูกต้อง: ${invalidList.join(', ')}`;
-        }
-        statusMsg.innerText = msg;
-        
+        statusMsg.innerText = `ใช้โค้ดส่วนลดอัตโนมัติ: ${appliedList.join(', ')}`;
         activeSecretCodes = [];
-        document.getElementById("secretStatusTag").className = "secret-status-tag";
-        document.getElementById("secretStatusTag").innerHTML = "";
+        updateSecretStatusDisplay();
       } else {
         appliedOptionDiscount = 0;
-        statusMsg.style.color = "var(--danger)";
-        statusMsg.innerText = `โค้ดส่วนลดไม่ถูกต้อง (${invalidList.join(', ')})`;
+        statusMsg.style.color = "#777";
+        statusMsg.innerText = "โค้ดส่วนลดอัตโนมัติไม่ตรงกับเงื่อนไขของตัวเลือกนี้";
       }
-
       calculateModalPrice();
     }
 
