@@ -196,6 +196,19 @@
       font-size: .78rem; font-weight: 600; border-radius: var(--radius); display: flex; align-items: center; gap: 6px; flex-direction: column; align-items: flex-start; width: 100%;
     }
     .tag-chip .del-btn { color: var(--danger); cursor: pointer; font-weight: bold; padding: 0 4px; float: right; }
+
+    /* Custom Toast Notification Styles */
+    #toastNotification {
+      position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(20px);
+      background: rgba(17, 17, 17, 0.92); color: #fff; padding: 12px 20px;
+      border-radius: 30px; font-size: 0.82rem; font-weight: 700; z-index: 9999;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25); display: flex; align-items: center; gap: 8px;
+      opacity: 0; pointer-events: none; transition: opacity 0.3s ease, transform 0.3s ease;
+      backdrop-filter: blur(8px); white-space: nowrap;
+    }
+    #toastNotification.show {
+      opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto;
+    }
   </style>
 </head>
 <body onload="initAdminPanel()">
@@ -214,49 +227,49 @@
         <span style="font-size: 0.72rem; color: var(--accent-vip); background: var(--accent-vip-bg); padding: 3px 8px; border-radius: 12px; border: 1px solid #a7f3d0; width: fit-content;">● Google Admin Authenticated</span>
       </div>
       <p class="admin-desc">
-        ระบบจัดการสินค้า โคลนสินค้า ตั้งค่าธีมเว็บ และบริหารจัดการสต็อกสินค้า (เปิดขายพร้อมกันทั้งพร้อมส่งและพรีออเดอร์)
+        ระบบจัดการสินค้า โคลนสินค้า ตั้งค่าธีมเว็บ และบริหารจัดการสต็อกสินค้า (เปิดขายพร้อมกันทั้งพร้อมส่งและพรีออเดอร์)[cite: 2]
       </p>
 
       <div class="admin-menu-grid">
         <div class="admin-menu-box">
           <div class="admin-menu-title">📋 หน้ารายการสินค้าทั้งหมด</div>
-          <div class="admin-menu-desc">ค้นหา กรองสินค้า แก้ไข ลบ หรือโคลนสินค้าเดิมมาปรับแก้</div>
+          <div class="admin-menu-desc">ค้นหา กรองสินค้า แก้ไข ลบ หรือโคลนสินค้าเดิมมาปรับแก้[cite: 2]</div>
           <button class="btn-action" style="margin-top: auto;" onclick="openManageProductsModal()">ดูรายการสินค้า</button>
         </div>
 
         <div class="admin-menu-box">
           <div class="admin-menu-title">👥 จัดการสมาชิก & ประวัติการซื้อ</div>
-          <div class="admin-menu-desc">ดูรายชื่อสมาชิกผู้ใช้งาน และตรวจสอบประวัติรายการสั่งซื้อสินค้า</div>
+          <div class="admin-menu-desc">ดูรายชื่อสมาชิกผู้ใช้งาน และตรวจสอบประวัติรายการสั่งซื้อสินค้า[cite: 2]</div>
           <button class="btn-action btn-secondary" style="margin-top: auto;" onclick="openMembersModal()">จัดการสมาชิก</button>
         </div>
 
         <div class="admin-menu-box">
           <div class="admin-menu-title">🎨 ตั้งค่าเว็บ, โลโก้ & สีธีม</div>
-          <div class="admin-menu-desc">แก้ไขชื่อเว็บ อัปโหลดโลโก้ และกำหนดสีธีม (มีผลทั้งหน้าแรกและหลังบ้าน)</div>
+          <div class="admin-menu-desc">แก้ไขชื่อเว็บ อัปโหลดโลโก้ และกำหนดสีธีม (มีผลทั้งหน้าแรกและหลังบ้าน)[cite: 2]</div>
           <button class="btn-action btn-secondary" style="margin-top: auto;" onclick="openWebThemeConfigModal()">ตั้งค่าเว็บไซต์</button>
         </div>
 
         <div class="admin-menu-box">
           <div class="admin-menu-title">🎟️ จัดการรหัส ปลดล็อคสินค้า</div>
-          <div class="admin-menu-desc">สร้างหรือลบรหัสผ่านพร้อมบันทึกโน้ตข้อความสำหรับปลดล็อกเฉพาะกลุ่ม</div>
+          <div class="admin-menu-desc">สร้างหรือลบรหัสผ่านพร้อมบันทึกโน้ตข้อความสำหรับปลดล็อกเฉพาะกลุ่ม[cite: 2]</div>
           <button class="btn-action btn-secondary" style="margin-top: auto;" onclick="openVipCodesModal()">ปลดล็อคสินค้า</button>
         </div>
 
         <div class="admin-menu-box">
           <div class="admin-menu-title">⚙️ ข้อมูลหลัก (Brands & Scales)</div>
-          <div class="admin-menu-desc">จัดการรายชื่อแบรนด์และสเกลสินค้า จัดเรียงอัตโนมัติ</div>
+          <div class="admin-menu-desc">จัดการรายชื่อแบรนด์และสเกลสินค้า จัดเรียงอัตโนมัติ[cite: 2]</div>
           <button class="btn-action btn-secondary" style="margin-top: auto;" onclick="openConfigModal()">จัดการแบรนด์ / สเกล</button>
         </div>
 
         <div class="admin-menu-box">
           <div class="admin-menu-title">🏦 ธนาคาร & ช่องทางชำระเงิน</div>
-          <div class="admin-menu-desc">กำหนดเลขบัญชี และอัปโหลด QR Code พร้อมเพย์</div>
+          <div class="admin-menu-desc">กำหนดเลขบัญชี และอัปโหลด QR Code พร้อมเพย์[cite: 2]</div>
           <button class="btn-action btn-secondary" style="margin-top: auto;" onclick="openBankConfigModal()">ตั้งค่าธนาคาร</button>
         </div>
 
         <div class="admin-menu-box">
           <div class="admin-menu-title">📦 ผู้จัดส่ง & ระบบการจัดส่ง</div>
-          <div class="admin-menu-desc">กำหนดชื่อคลังสินค้า ที่อยู่ผู้ส่ง ชื่อบริการจัดส่ง และค่าบริการ</div>
+          <div class="admin-menu-desc">กำหนดชื่อคลังสินค้า ที่อยู่ผู้ส่ง ชื่อบริการจัดส่ง และค่าบริการ[cite: 2]</div>
           <button class="btn-action btn-secondary" style="margin-top: auto;" onclick="openShippingConfigModal()">ตั้งค่าผู้จัดส่ง</button>
         </div>
       </div>
@@ -632,6 +645,11 @@
     </div>
   </div>
 
+  <!-- TOAST NOTIFICATION -->
+  <div id="toastNotification">
+    <span>✓</span> <span id="toastText">แจ้งเตือน</span>
+  </div>
+
   <!-- Firebase App SDK, Firestore & Auth -->
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
@@ -683,6 +701,18 @@
     let adminFilterBrand = "ALL";
     let adminFilterVip = "ALL";
     let draggedImageIndex = null;
+
+    let toastTimer = null;
+    function showToast(message) {
+      const toast = document.getElementById("toastNotification");
+      document.getElementById("toastText").innerText = message;
+      toast.classList.add("show");
+      
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        toast.classList.remove("show");
+      }, 2000);
+    }
 
     function sortAlphabetically(arr) {
       return arr.sort((a, b) => {
@@ -898,7 +928,7 @@
       systemSettings.themeColor = document.getElementById("cfgThemeColor").value;
       saveDataToFirestore();
       applyAdminTheme();
-      alert("✓ บันทึกการตั้งค่าเว็บไซต์และสีธีมสำเร็จ!");
+      showToast("✓ บันทึกการตั้งค่าเว็บไซต์สำเร็จ");
       closeModal('webThemeConfigModal');
     }
 
@@ -1034,7 +1064,7 @@
 
     function cloneProduct(productId) {
       db.collection("products").doc(productId).get().then((doc) => {
-        if (!doc.exists) return alert("ไม่พบสินค้าต้นฉบับ");
+        if (!doc.exists) return showToast("ไม่พบสินค้าต้นฉบับ");
         const prod = doc.data();
 
         closeModal('manageProductsModal');
@@ -1282,7 +1312,7 @@
 
       const statusEl = document.getElementById("vdoCompressStatus");
       if (file.size > 100 * 1024 * 1024) {
-        alert("⚠️ ไฟล์ใหญ่เกิน 100 MB กรุณาเลือกไฟล์ที่เล็กลง");
+        showToast("⚠️ ไฟล์ใหญ่เกิน 100 MB");
         event.target.value = '';
         return;
       }
@@ -1291,7 +1321,7 @@
       try {
         const result = await compressVideoFile(file);
         if (result.size > 900 * 1024) {
-          alert("⚠️ ไฟล์ผลลัพธ์ใหญ่เกินไป แนะนำให้ใช้วิธีวางลิงก์ตรง (.mp4)");
+          showToast("⚠️ ไฟล์ผลลัพธ์ใหญ่เกินไป แนะนำให้ใช้วิธีวางลิงก์ตรง");
           removeVdo();
           statusEl.innerText = "";
           return;
@@ -1426,7 +1456,10 @@
       const preorderLeadTime = document.getElementById("pPreorderLeadTime").value.trim();
 
       const checkedScales = Array.from(document.querySelectorAll('input[name="productScale"]:checked')).map(cb => cb.value);
-      if (!checkedScales.length) return alert("กรุณาเลือกสเกลอย่างน้อย 1 สเกล");
+      if (!checkedScales.length) {
+        showToast("⚠️ กรุณาเลือกสเกลอย่างน้อย 1 สเกล");
+        return;
+      }
 
       const scalePrices = {};
       document.querySelectorAll(".scale-price-input").forEach(inp => {
@@ -1451,15 +1484,18 @@
       };
 
       db.collection("products").doc(id).set(payload).then(() => {
-        alert("✓ บันทึกสินค้าสำเร็จ!");
+        showToast("✓ บันทึกสินค้าสำเร็จ!");
         closeModal('addProductModal');
         openManageProductsModal();
-      }).catch(err => alert("เกิดข้อผิดพลาด: " + err.message));
+      }).catch(err => showToast("เกิดข้อผิดพลาด: " + err.message));
     }
 
     function editProduct(productId) {
       db.collection("products").doc(productId).get().then((doc) => {
-        if (!doc.exists) return alert("ไม่พบสินค้า");
+        if (!doc.exists) {
+          showToast("ไม่พบสินค้า");
+          return;
+        }
         const prod = doc.data();
 
         closeModal('manageProductsModal');
@@ -1512,7 +1548,7 @@
 
     function deleteProduct(productId) {
       if (!confirm(`ต้องการลบ SKU: ${productId} หรือไม่?`)) return;
-      db.collection("products").doc(productId).delete().then(() => alert("ลบสำเร็จ"));
+      db.collection("products").doc(productId).delete().then(() => showToast("ลบสำเร็จ"));
     }
 
     function openVipCodesModal() { renderVipCodesList(); openModal('vipCodesModal'); }
@@ -1549,7 +1585,7 @@
           document.getElementById("newVipNoteInput").value = "";
           renderVipCodesList();
         } else {
-          alert("รหัสนี้มีอยู่ในระบบแล้ว");
+          showToast("รหัสนี้มีอยู่ในระบบแล้ว");
         }
       }
     }
@@ -1577,7 +1613,10 @@
       if (val && !brands.includes(val)) { brands.push(val); brands = sortAlphabetically(brands); saveDataToFirestore(); document.getElementById("newBrandName").value = ""; renderConfigChips(); }
     }
     function deleteBrand(b) {
-      if (brands.length <= 1) return alert("ต้องมีอย่างน้อย 1 แบรนด์");
+      if (brands.length <= 1) {
+        showToast("ต้องมีอย่างน้อย 1 แบรนด์");
+        return;
+      }
       brands = brands.filter(x => x !== b); saveDataToFirestore(); renderConfigChips();
     }
     function handleAddScale(e) {
@@ -1586,7 +1625,10 @@
       if (val && !scalesList.includes(val)) { scalesList.push(val); scalesList = sortAlphabetically(scalesList); saveDataToFirestore(); document.getElementById("newScaleName").value = ""; renderConfigChips(); }
     }
     function deleteScale(s) {
-      if (scalesList.length <= 1) return alert("ต้องมีอย่างน้อย 1 สเกล");
+      if (scalesList.length <= 1) {
+        showToast("ต้องมีอย่างน้อย 1 สเกล");
+        return;
+      }
       scalesList = scalesList.filter(x => x !== s); saveDataToFirestore(); renderConfigChips();
     }
 
@@ -1615,7 +1657,7 @@
       systemSettings.accountNo = document.getElementById("cfgAccountNo").value.trim();
       systemSettings.accountName = document.getElementById("cfgAccountName").value.trim();
       saveDataToFirestore();
-      alert("บันทึกการตั้งค่าธนาคารสำเร็จ");
+      showToast("✓ บันทึกการตั้งค่าธนาคารสำเร็จ");
       closeModal('bankConfigModal');
     }
 
@@ -1636,7 +1678,7 @@
       systemSettings.shippingName = document.getElementById("cfgShippingName").value.trim();
       systemSettings.shippingFee = parseFloat(document.getElementById("cfgShippingFee").value) || 0;
       saveDataToFirestore();
-      alert("บันทึกข้อมูลผู้จัดส่งและระบบจัดส่งสำเร็จ");
+      showToast("✓ บันทึกข้อมูลการจัดส่งสำเร็จ");
       closeModal('shippingConfigModal');
     }
   </script>
