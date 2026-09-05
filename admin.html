@@ -1190,6 +1190,7 @@
       saveDataToFirestore();
       applyAdminTheme();
       showToast("บันทึกการตั้งค่าเว็บสำเร็จ");
+      closeModal('webThemeConfigModal');
     }
 
     function openVipCodesModal() { renderVipCodesList(); openModal('vipCodesModal'); }
@@ -1310,6 +1311,7 @@
       systemSettings.accountName = document.getElementById("cfgAccountName").value.trim();
       saveDataToFirestore();
       showToast("บันทึกการตั้งค่าธนาคารสำเร็จ");
+      closeModal('bankConfigModal');
     }
 
     function openShippingConfigModal() {
@@ -1330,6 +1332,7 @@
       systemSettings.shippingFee = parseFloat(document.getElementById("cfgShippingFee").value) || 0;
       saveDataToFirestore();
       showToast("บันทึกข้อมูลการจัดส่งสำเร็จ");
+      closeModal('shippingConfigModal');
     }
 
     function renderAdminBrandFilterChips() {
