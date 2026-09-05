@@ -401,7 +401,6 @@
     .shipping-info-box { background: #fafaf8; border: 1px dashed #888; border-radius: var(--radius); padding: 10px; font-size: .82rem; line-height: 1.4; margin-top: 8px; }
     .bank-payment-box { background: #f4f4f1; border: 1px solid var(--border-color); border-radius: var(--radius); padding: 10px; font-size: 0.82rem; margin-top: 8px; text-align: center; }
 
-    /* Custom Toast Notification Styles */
     #toastNotification {
       position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(20px);
       background: rgba(17, 17, 17, 0.92); color: #fff; padding: 12px 20px;
@@ -685,7 +684,6 @@
     </div>
   </div>
 
-  <!-- TOAST NOTIFICATION -->
   <div id="toastNotification">
     <span id="toastText">แจ้งเตือน</span>
   </div>
@@ -782,6 +780,7 @@
       initAuthListener();
       initModalOutsideClick();
       initBrandDrawerOutsideClick();
+      updateCartBadge();
     }
 
     function initAuthListener() {
@@ -1138,12 +1137,22 @@
     function getProductCountByBrand(brand = "ALL") {
       const validActiveCodes = activeSecretCodes.filter(c => vipCodesList.includes(c.toUpperCase()));
       return products.filter(p => {
-        const readyActive = p.readyActive || false;
-        const readyStock = p.readyStock !== undefined ? p.readyStock : 0;
-        const preorderActive = p.preorderActive || false;
-        
-        if (activeSaleMode === 'READY' && (!readyActive || readyStock <= 0)) return false;
-        if (activeSaleMode === 'PREORDER' && !preorderActive) return false;
+        let isModeValid = false;
+        if (p.scalePrices) {
+          Object.keys(p.scalePrices).forEach(sc => {
+            const sp = p.scalePrices[sc];
+            if (activeSaleMode === 'READY' && sp.readyActive && (sp.readyStock || 0) > 0) isModeValid = true;
+            if (activeSaleMode === 'PREORDER' && sp.preorderActive) isModeValid = true;
+          });
+        } else {
+          const readyActive = p.readyActive || false;
+          const readyStock = p.readyStock !== undefined ? p.readyStock : 0;
+          const preorderActive = p.preorderActive || false;
+          if (activeSaleMode === 'READY' && readyActive && readyStock > 0) isModeValid = true;
+          if (activeSaleMode === 'PREORDER' && preorderActive) isModeValid = true;
+        }
+
+        if (!isModeValid) return false;
 
         const prodSecret = (p.secretCode || "").trim().toUpperCase();
         if (validActiveCodes.length > 0) {
@@ -1165,12 +1174,22 @@
       const validActiveCodes = activeSecretCodes.filter(c => vipCodesList.includes(c.toUpperCase()));
 
       const currentFilteredCount = products.filter(p => {
-        const readyActive = p.readyActive || false;
-        const readyStock = p.readyStock !== undefined ? p.readyStock : 0;
-        const preorderActive = p.preorderActive || false;
+        let isModeValid = false;
+        if (p.scalePrices) {
+          Object.keys(p.scalePrices).forEach(sc => {
+            const sp = p.scalePrices[sc];
+            if (activeSaleMode === 'READY' && sp.readyActive && (sp.readyStock || 0) > 0) isModeValid = true;
+            if (activeSaleMode === 'PREORDER' && sp.preorderActive) isModeValid = true;
+          });
+        } else {
+          const readyActive = p.readyActive || false;
+          const readyStock = p.readyStock !== undefined ? p.readyStock : 0;
+          const preorderActive = p.preorderActive || false;
+          if (activeSaleMode === 'READY' && readyActive && readyStock > 0) isModeValid = true;
+          if (activeSaleMode === 'PREORDER' && preorderActive) isModeValid = true;
+        }
 
-        if (activeSaleMode === 'READY' && (!readyActive || readyStock <= 0)) return false;
-        if (activeSaleMode === 'PREORDER' && !preorderActive) return false;
+        if (!isModeValid) return false;
 
         const prodSecret = (p.secretCode || "").trim().toUpperCase();
         if (validActiveCodes.length > 0) {
@@ -1291,12 +1310,37 @@
       const validActiveCodes = activeSecretCodes.filter(c => vipCodesList.includes(c.toUpperCase()));
 
       const filtered = products.filter(p => {
-        const readyActive = p.readyActive || false;
-        const readyStock = p.readyStock !== undefined ? p.readyStock : 0;
-        const preorderActive = p.preorderActive || false;
+        let isModeValid = false;
+        let modeStockSum = 0;
+        if (p.scalePrices) {
+          Object.keys(p.scalePrices).forEach(sc => {
+            const sp = p.scalePrices[sc];
+            if (activeSaleMode === 'READY' && sp.readyActive && (sp.readyStock || 0) > 0) {
+              isModeValid = true;
+              modeStockSum += (sp.readyStock || 0);
+            }
+            if (activeSaleMode === 'PREORDER' && sp.preorderActive) {
+              isModeValid = true;
+              modeStockSum += (sp.preorderUnlimited ? 9999 : (sp.preorderStock || 0));
+            }
+          });
+        } else {
+          const readyActive = p.readyActive || false;
+          const readyStock = p.readyStock !== undefined ? p.readyStock : 0;
+          const preorderActive = p.preorderActive || false;
+          const preorderStock = p.preorderUnlimited ? 9999 : (p.preorderStock || 0);
 
-        if (activeSaleMode === 'READY' && (!readyActive || readyStock <= 0)) return false;
-        if (activeSaleMode === 'PREORDER' && !preorderActive) return false;
+          if (activeSaleMode === 'READY' && readyActive && readyStock > 0) {
+            isModeValid = true;
+            modeStockSum = readyStock;
+          }
+          if (activeSaleMode === 'PREORDER' && preorderActive) {
+            isModeValid = true;
+            modeStockSum = preorderStock;
+          }
+        }
+
+        if (!isModeValid) return false;
 
         const prodSecret = (p.secretCode || "").trim().toUpperCase();
         if (validActiveCodes.length > 0) {
@@ -1335,19 +1379,35 @@
         const countBadge = imgCount > 1 ? `<div class="media-count-badge">📷 ${imgCount} ภาพ</div>` : '';
         const isExclusive = p.secretCode ? `<span class="exclusive-badge">EXCLUSIVE</span>` : '';
         
-        const readyActive = p.readyActive || false;
-        const readyStock = p.readyStock !== undefined ? p.readyStock : 0;
-        const preorderUnlimited = p.preorderUnlimited || false;
-        const preorderStock = p.preorderStock !== undefined ? p.preorderStock : 0;
+        let stockSum = 0;
+        let isUnlimitedPre = false;
+        if (p.scalePrices) {
+          Object.keys(p.scalePrices).forEach(sc => {
+            const sp = p.scalePrices[sc];
+            if (activeSaleMode === "PREORDER" && sp.preorderActive) {
+              if (sp.preorderUnlimited) isUnlimitedPre = true;
+              else stockSum += (sp.preorderStock || 0);
+            } else if (activeSaleMode === "READY" && sp.readyActive) {
+              stockSum += (sp.readyStock || 0);
+            }
+          });
+        } else {
+          if (activeSaleMode === "PREORDER") {
+            isUnlimitedPre = p.preorderUnlimited || false;
+            stockSum = p.preorderStock || 0;
+          } else {
+            stockSum = p.readyStock || 0;
+          }
+        }
 
         let stockBadgeHtml = '';
         if (activeSaleMode === "PREORDER") {
-          stockBadgeHtml = `<div class="stock-badge preorder">⏳ พรีออเดอร์ (${preorderUnlimited ? 'ไม่จำกัด' : preorderStock})</div>`;
+          stockBadgeHtml = `<div class="stock-badge preorder">⏳ พรีออเดอร์ (${isUnlimitedPre ? 'ไม่จำกัด' : stockSum})</div>`;
         } else {
-          if (!readyActive || readyStock <= 0) {
+          if (stockSum <= 0) {
             stockBadgeHtml = `<div class="stock-badge soldout">❌ หมด</div>`;
           } else {
-            stockBadgeHtml = `<div class="stock-badge ready">📦 พร้อมส่ง (${readyStock})</div>`;
+            stockBadgeHtml = `<div class="stock-badge ready">📦 พร้อมส่ง (${stockSum})</div>`;
           }
         }
 
@@ -1417,38 +1477,24 @@
       const qtyInput = document.getElementById("modalQtyInput");
       if (qtyInput) qtyInput.value = "1";
 
-      const detailTitle = document.getElementById("detailTitle");
-      if (detailTitle) detailTitle.innerText = prod.name;
-
-      const detailSku = document.getElementById("detailSku");
-      if (detailSku) detailSku.innerText = prod.id;
-
-      const detailBrand = document.getElementById("detailBrand");
-      if (detailBrand) detailBrand.innerText = prod.brand;
-
-      const detailScales = document.getElementById("detailScales");
-      if (detailScales) detailScales.innerText = (prod.scales || []).join(", ");
+      document.getElementById("detailTitle").innerText = prod.name;
+      document.getElementById("detailSku").innerText = prod.id;
+      document.getElementById("detailBrand").innerText = prod.brand;
+      document.getElementById("detailScales").innerText = (prod.scales || []).join(", ");
       
-      const readyActive = prod.readyActive || false;
-      const readyStock = prod.readyStock !== undefined ? prod.readyStock : 0;
-      const preorderUnlimited = prod.preorderUnlimited || false;
-      const preorderStock = prod.preorderStock !== undefined ? prod.preorderStock : 0;
-      const stockStatusEl = document.getElementById("detailStockStatus");
-
-      if (stockStatusEl) {
-        if (activeSaleMode === "PREORDER") {
-          stockStatusEl.style.color = "#c2410c";
-          stockStatusEl.innerText = `⏳ พรีออเดอร์ (${preorderUnlimited ? 'ไม่จำกัดจำนวน' : 'โควต้า ' + preorderStock + ' ชิ้น'})`;
-        } else {
-          if (!readyActive || readyStock <= 0) {
-            stockStatusEl.style.color = "#dc2626";
-            stockStatusEl.innerText = `❌ สินค้าหมด (Out of Stock)`;
-          } else {
-            stockStatusEl.style.color = "#059669";
-            stockStatusEl.innerText = `📦 พร้อมส่ง (เหลือ ${readyStock} ชิ้น)`;
+      const scaleSelect = document.getElementById("detailScaleSelect");
+      if (scaleSelect) {
+        scaleSelect.innerHTML = (prod.scales || []).map(sc => {
+          let scPrice = prod.basePrice;
+          if (prod.scalePrices && prod.scalePrices[sc] !== undefined) {
+            const sp = prod.scalePrices[sc];
+            scPrice = (typeof sp === 'object' && sp.price !== undefined) ? sp.price : sp;
           }
-        }
+          return `<option value="${sc}">${sc} (฿${scPrice})</option>`;
+        }).join('');
       }
+
+      updateDetailStockStatus();
 
       const allMedia = [];
       if (prod.vdo) allMedia.push({ type: 'video', src: prod.vdo, label: 'วิดีโอ' });
@@ -1469,18 +1515,6 @@
       } else {
         if (mainMedia) mainMedia.innerHTML = `<span style="color:#999;">ไม่มีสื่อ</span>`;
         if (thumbsBox) thumbsBox.innerHTML = '';
-      }
-
-      const scaleSelect = document.getElementById("detailScaleSelect");
-      if (scaleSelect) {
-        scaleSelect.innerHTML = (prod.scales || []).map(sc => {
-          let scPrice = prod.basePrice;
-          if (prod.scalePrices && prod.scalePrices[sc] !== undefined) {
-            const sp = prod.scalePrices[sc];
-            scPrice = (typeof sp === 'object' && sp.price !== undefined) ? sp.price : sp;
-          }
-          return `<option value="${sc}">${sc} (฿${scPrice})</option>`;
-        }).join('');
       }
 
       const optSelect = document.getElementById("detailOptionSelect");
@@ -1514,6 +1548,56 @@
       openModal("detailModal");
     }
 
+    function updateDetailStockStatus() {
+      if (!currentSelectedProduct) return;
+      const scale = document.getElementById("detailScaleSelect").value;
+      const stockStatusEl = document.getElementById("detailStockStatus");
+      if (!stockStatusEl) return;
+
+      let isAct = false;
+      let stockVal = 0;
+      let isUnli = false;
+
+      if (currentSelectedProduct.scalePrices && currentSelectedProduct.scalePrices[scale]) {
+        const sp = currentSelectedProduct.scalePrices[scale];
+        if (activeSaleMode === "PREORDER") {
+          isAct = sp.preorderActive;
+          isUnli = sp.preorderUnlimited;
+          stockVal = isUnli ? 999999 : (sp.preorderStock || 0);
+        } else {
+          isAct = sp.readyActive;
+          stockVal = sp.readyStock || 0;
+        }
+      } else {
+        if (activeSaleMode === "PREORDER") {
+          isAct = currentSelectedProduct.preorderActive;
+          isUnli = currentSelectedProduct.preorderUnlimited;
+          stockVal = isUnli ? 999999 : (currentSelectedProduct.preorderStock || 0);
+        } else {
+          isAct = currentSelectedProduct.readyActive;
+          stockVal = currentSelectedProduct.readyStock || 0;
+        }
+      }
+
+      if (activeSaleMode === "PREORDER") {
+        if (!isAct) {
+          stockStatusEl.style.color = "#dc2626";
+          stockStatusEl.innerText = `❌ ปิดพรีออเดอร์`;
+        } else {
+          stockStatusEl.style.color = "#c2410c";
+          stockStatusEl.innerText = `⏳ พรีออเดอร์ (${isUnli ? 'ไม่จำกัดจำนวน' : 'โควต้า ' + stockVal + ' ชิ้น'})`;
+        }
+      } else {
+        if (!isAct || stockVal <= 0) {
+          stockStatusEl.style.color = "#dc2626";
+          stockStatusEl.innerText = `❌ สินค้าหมด (Out of Stock)`;
+        } else {
+          stockStatusEl.style.color = "#059669";
+          stockStatusEl.innerText = `📦 พร้อมส่ง (เหลือ ${stockVal} ชิ้น)`;
+        }
+      }
+    }
+
     function selectDetailThumb(thumbEl, src, type) {
       document.querySelectorAll(".detail-thumb-item").forEach(t => t.classList.remove("active"));
       thumbEl.classList.add("active");
@@ -1539,9 +1623,7 @@
         let maxLimit = 999999;
         if (currentSelectedProduct.scalePrices && currentSelectedProduct.scalePrices[scale]) {
           const sp = currentSelectedProduct.scalePrices[scale];
-          if (typeof sp === 'object') {
-            maxLimit = activeSaleMode === 'READY' ? (sp.readyStock || 0) : (sp.preorderUnlimited ? 999999 : (sp.preorderStock || 0));
-          }
+          maxLimit = activeSaleMode === 'READY' ? (sp.readyStock || 0) : (sp.preorderUnlimited ? 999999 : (sp.preorderStock || 0));
         } else {
           maxLimit = activeSaleMode === 'READY' ? (currentSelectedProduct.readyStock || 0) : (currentSelectedProduct.preorderUnlimited ? 999999 : (currentSelectedProduct.preorderStock || 0));
         }
@@ -1561,6 +1643,8 @@
       const scale = document.getElementById("detailScaleSelect").value;
       const optIdx = parseInt(document.getElementById("detailOptionSelect").value) || 0;
       
+      updateDetailStockStatus();
+
       let basePrice = currentSelectedProduct.basePrice || 0;
       if (currentSelectedProduct.scalePrices && currentSelectedProduct.scalePrices[scale] !== undefined) {
         const sp = currentSelectedProduct.scalePrices[scale];
@@ -1826,10 +1910,6 @@
       closeModal('clearCartConfirmModal');
       closeModal('cartModal');
       showToast("ล้างตะกร้าสินค้าเรียบร้อยแล้ว");
-    }
-
-    function clearCart() {
-      openClearCartConfirmModal();
     }
 
     function openShippingModal() {
