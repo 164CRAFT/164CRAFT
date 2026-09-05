@@ -417,8 +417,8 @@
     <div class="header-actions" style="position: relative;">
       
       <div class="header-vip-box">
-        <input type="password" id="headerVipInput" class="header-vip-input" placeholder="🗝️ กรอกโค้ด" autocomplete="off" onkeydown="if(event.key==='Enter') applyHeaderVipCode()" />
-        <button type="button" class="btn-action" style="height:30px; padding:0 12px; font-size:0.72rem; background:#111; color:#fff; border:none; border-radius:8px;" onclick="applyHeaderVipCode()">ใช้โค้ด</button>
+        <input type="password" id="headerVipInput" class="header-vip-input" placeholder="🗝️ กรอกรหัส" autocomplete="off" onkeydown="if(event.key==='Enter') applyHeaderVipCode()" />
+        <button type="button" class="btn-action" style="height:30px; padding:0 12px; font-size:0.72rem; background:#111; color:#fff; border:none; border-radius:8px;" onclick="applyHeaderVipCode()">ปลดล็อก</button>
       </div>
 
       <div id="authContainer" style="display: flex; align-items: center; gap: 6px;">
@@ -441,8 +441,8 @@
 
             <div style="padding: 8px 10px; background: #fafafa; border-bottom: 1px solid var(--border-color);">
               <div class="header-vip-box" style="display: flex; width: 100%;">
-                <input type="password" id="dropdownVipInput" class="header-vip-input" placeholder="🗝️ กรอกโค้ด" style="width: 100%; height: 28px; font-size: 0.72rem;" autocomplete="off" onkeydown="if(event.key==='Enter') applyDropdownVipCode()" />
-                <button type="button" class="btn-action" style="height: 28px; padding: 0 10px; font-size: 0.7rem; background:#111; color:#fff; border:none; border-radius:6px;" onclick="applyDropdownVipCode()">ใช้โค้ด</button>
+                <input type="password" id="dropdownVipInput" class="header-vip-input" placeholder="🗝️ กรอกรหัส" style="width: 100%; height: 28px; font-size: 0.72rem;" autocomplete="off" onkeydown="if(event.key==='Enter') applyDropdownVipCode()" />
+                <button type="button" class="btn-action" style="height: 28px; padding: 0 10px; font-size: 0.7rem; background:#111; color:#fff; border:none; border-radius:6px;" onclick="applyDropdownVipCode()">ปลดล็อก</button>
               </div>
             </div>
 
@@ -535,9 +535,9 @@
           <div class="form-group"><label>ตัวเลือกตกแต่ง (Option):</label><select id="detailOptionSelect" class="form-control" onchange="calculateModalPrice()"></select></div>
 
           <div class="form-group">
-            <label>โค้ดส่วนลดประจำตัวเลือก / โค้ดสะสม (รองรับหลายโค้ด):</label>
+            <label>โค้ดส่วนลดประจำตัวเลือก (กรอกได้หลายโค้ด คั่นด้วยเครื่องหมายจุลภาค ,):</label>
             <div style="display:flex; gap: 6px;">
-              <input type="text" id="promoCodeInput" class="form-control" placeholder="กรอกโค้ดส่วนลด..." style="text-transform: uppercase;" onkeydown="if(event.key==='Enter') applyPromoCode()">
+              <input type="text" id="promoCodeInput" class="form-control" placeholder="เช่น CODE1, CODE2" style="text-transform: uppercase;" onkeydown="if(event.key==='Enter') applyPromoCode()">
               <button type="button" class="btn-action btn-secondary" style="padding:4px 10px; white-space:nowrap;" onclick="applyPromoCode()">ใช้โค้ด</button>
             </div>
             <div id="promoStatusMsg" style="font-size:0.72rem; margin-top:2px; font-weight:bold;"></div>
@@ -710,7 +710,7 @@
     let activeSecretCode = "";
     let cart = [];
     let currentSelectedProduct = null;
-    let appliedOptionDiscount = 0;
+    let appliedTotalDiscount = 0;
     let isDropdownLocked = false;
 
     let toastTimer = null;
@@ -1225,7 +1225,7 @@
       const prod = products.find(p => p.id === productId);
       if (!prod) return;
       currentSelectedProduct = prod;
-      appliedOptionDiscount = 0;
+      appliedTotalDiscount = 0;
       
       const promoInput = document.getElementById("promoCodeInput");
       if (promoInput) promoInput.value = "";
@@ -1340,53 +1340,81 @@
       const basePrice = (currentSelectedProduct.scalePrices && currentSelectedProduct.scalePrices[scale] !== undefined) ? currentSelectedProduct.scalePrices[scale] : currentSelectedProduct.basePrice;
       const optExtra = (currentSelectedProduct.options && currentSelectedProduct.options[optIdx]) ? (currentSelectedProduct.options[optIdx].extraPrice || 0) : 0;
 
-      let total = basePrice + optExtra - appliedOptionDiscount;
+      let total = basePrice + optExtra - appliedTotalDiscount;
       if (total < 0) total = 0;
 
-      document.getElementById("modalTotalPrice").innerText = `฿${total} ${appliedOptionDiscount > 0 ? `(-฿${appliedOptionDiscount})` : ''}`;
+      document.getElementById("modalTotalPrice").innerText = `฿${total} ${appliedTotalDiscount > 0 ? `(-฿${appliedTotalDiscount} ส่วนลด)` : ''}`;
       return total;
     }
 
     function applyPromoCode() {
       if (!currentSelectedProduct) return;
-      const code = (document.getElementById("promoCodeInput").value || "").trim().toUpperCase();
-      const optIdx = parseInt(document.getElementById("detailOptionSelect").value) || 0;
-      const selectedOpt = currentSelectedProduct.options ? currentSelectedProduct.options[optIdx] : null;
+      const rawInput = (document.getElementById("promoCodeInput").value || "").trim();
       const statusMsg = document.getElementById("promoStatusMsg");
 
-      if (!code) {
-        appliedOptionDiscount = 0;
+      if (!rawInput) {
+        appliedTotalDiscount = 0;
         statusMsg.innerText = "";
         calculateModalPrice();
         return;
       }
 
-      let foundDiscount = 0;
-      let isValid = false;
+      // รองรับการกรอกหลายโค้ดคั่นด้วยเครื่องหมายจุลภาค (,) หรือเว้นวรรค
+      const enteredCodes = rawInput.split(/[,,\s]+/).map(c => c.trim().toUpperCase()).filter(Boolean);
+      const optIdx = parseInt(document.getElementById("detailOptionSelect").value) || 0;
+      const selectedOpt = currentSelectedProduct.options ? currentSelectedProduct.options[optIdx] : null;
 
-      if (selectedOpt) {
+      if (!selectedOpt) {
+        appliedTotalDiscount = 0;
+        statusMsg.style.color = "var(--danger)";
+        statusMsg.innerText = "สินค้านี้ไม่มีตัวเลือกโค้ดส่วนลด";
+        calculateModalPrice();
+        return;
+      }
+
+      let cumulativeDiscount = 0;
+      let appliedList = [];
+      let invalidList = [];
+
+      enteredCodes.forEach(code => {
+        let found = false;
+        let disc = 0;
+
         if (selectedOpt.codes && Array.isArray(selectedOpt.codes)) {
-          const matchCode = selectedOpt.codes.find(c => (c.code || "").toUpperCase() === code);
-          if (matchCode) {
-            isValid = true;
-            foundDiscount = matchCode.discount || 0;
+          const match = selectedOpt.codes.find(c => (c.code || "").toUpperCase() === code);
+          if (match) {
+            found = true;
+            disc = match.discount || 0;
           }
         }
-        if (!isValid && selectedOpt.vipCode && selectedOpt.vipCode.toUpperCase() === code) {
-          isValid = true;
-          foundDiscount = selectedOpt.vipDiscount || 0;
+        if (!found && selectedOpt.vipCode && selectedOpt.vipCode.toUpperCase() === code) {
+          found = true;
+          disc = selectedOpt.vipDiscount || 0;
         }
+
+        if (found) {
+          cumulativeDiscount += disc;
+          appliedList.push(`${code} (-฿${disc})`);
+        } else {
+          invalidList.push(code);
+        }
+      });
+
+      appliedTotalDiscount = cumulativeDiscount;
+
+      if (appliedList.length > 0) {
+        statusMsg.style.color = "var(--accent-vip)";
+        let msg = `ใช้โค้ดสำเร็จ: ${appliedList.join(', ')}`;
+        if (invalidList.length > 0) {
+          msg += ` | โค้ดที่ไม่ถูกต้อง: ${invalidList.join(', ')}`;
+        }
+        statusMsg.innerText = msg;
+      } else {
+        appliedTotalDiscount = 0;
+        statusMsg.style.color = "var(--danger)";
+        statusMsg.innerText = `โค้ดส่วนลดไม่ถูกต้อง (${invalidList.join(', ')})`;
       }
 
-      if (isValid) {
-        appliedOptionDiscount = foundDiscount;
-        statusMsg.style.color = "var(--accent-vip)";
-        statusMsg.innerText = `ใช้โค้ดสำเร็จ! ได้รับส่วนลด ฿${appliedOptionDiscount}`;
-      } else {
-        appliedOptionDiscount = 0;
-        statusMsg.style.color = "var(--danger)";
-        statusMsg.innerText = "โค้ดส่วนลดไม่ถูกต้องสำหรับตัวเลือกนี้";
-      }
       calculateModalPrice();
     }
 
