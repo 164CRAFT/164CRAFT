@@ -668,7 +668,7 @@
     </div>
   </div>
 
-  <!-- CUSTOM ALERT MODAL (แทนคำสั่ง alert ปกติ เพื่อลบข้อความชื่อเว็บออก) -->
+  <!-- CUSTOM ALERT MODAL -->
   <div id="customAlertModal" class="modal-overlay">
     <div class="custom-alert-box">
       <div class="custom-alert-msg" id="customAlertText">ข้อความแจ้งเตือน</div>
@@ -726,7 +726,6 @@
     let currentSelectedProduct = null;
     let appliedOptionDiscount = 0;
 
-    // ฟังก์ชันสำหรับแสดง Popup แจ้งเตือนแบบ Custom
     function showPopup(message) {
       document.getElementById("customAlertText").innerText = message;
       openModal('customAlertModal');
@@ -872,15 +871,33 @@
       }, (err) => console.log("Error loading products:", err));
     }
 
-    function openModal(id) { document.getElementById(id).style.display = "flex"; }
-    function closeModal(id) {
+    function openModal(id) { 
       const modal = document.getElementById(id);
       if (modal) {
+        modal.style.display = "flex";
+        // ถ้าเปิด Modal รายละเอียดสินค้า ให้เพิ่มสถานะ History state สำหรับรองรับปุ่มย้อนกลับ (Back Button) บนมือถือ
+        if (id === 'detailModal') {
+          history.pushState({ modalOpen: id }, "");
+        }
+      }
+    }
+
+    function closeModal(id) {
+      const modal = document.getElementById(id);
+      if (modal && modal.style.display === "flex") {
         modal.style.display = "none";
         const vdo = modal.querySelector('video');
         if (vdo) vdo.pause();
       }
     }
+
+    // ดักจับการกดปุ่มย้อนกลับ (Back Button) บนมือถือ เพื่อปิด Modal รายละเอียดสินค้าทันทีโดยไม่ออกจากเว็บ
+    window.addEventListener('popstate', (event) => {
+      const detailModal = document.getElementById('detailModal');
+      if (detailModal && detailModal.style.display === 'flex') {
+        closeModal('detailModal');
+      }
+    });
 
     function initModalOutsideClick() {
       document.querySelectorAll('.modal-overlay').forEach(overlay => {
@@ -1166,7 +1183,7 @@
             <div class="product-code">SKU: ${p.id}</div>
             <div class="product-title" onclick="openDetailModal('${p.id}')">${p.name}</div>
             <div class="product-price">฿${p.basePrice}</div>
-            <button class="btn-action" onclick="openDetailModal('${p.id}')">เลือกสเกล / ซื้อสินค้า</button>
+            <button class="btn-action" onclick="openDetailModal('${p.id}')">เลือกซื้อสินค้า</button>
           </div>
         `;
       }).join('');
