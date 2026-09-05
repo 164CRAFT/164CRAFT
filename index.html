@@ -1273,8 +1273,8 @@
 
           if (finalP < minFinal) {
             minFinal = finalP;
-            minOriginal = totalBase;
-            hasDiscount = (totalDisc > 0 || optExtra > 0);
+            minOriginal = base;
+            hasDiscount = (optExtra > 0 || totalDisc > 0);
           }
         });
       });
@@ -1642,14 +1642,13 @@
 
       const optExtra = (currentSelectedProduct.options && currentSelectedProduct.options[optIdx]) ? (currentSelectedProduct.options[optIdx].extraPrice || 0) : 0;
 
-      let originalTotal = basePrice - optExtra;
-      if (originalTotal < 0) originalTotal = 0;
-
-      let finalTotal = originalTotal - appliedOptionDiscount;
+      // สูตรคำนวณ: ราคาสินค้าตั้งต้น - (ตัวเลือก) - (โค้ดที่มีทั้งหมดสะสม)
+      let originalTotal = basePrice;
+      let finalTotal = originalTotal - optExtra - appliedOptionDiscount;
       if (finalTotal < 0) finalTotal = 0;
 
       const priceDisplay = document.getElementById("modalTotalPrice");
-      if (appliedOptionDiscount > 0) {
+      if (optExtra > 0 || appliedOptionDiscount > 0) {
         priceDisplay.innerHTML = `<span style="text-decoration: line-through; color: #888; font-size: 0.85rem; margin-right: 6px;">฿${originalTotal}</span> <span style="color: var(--danger);">฿${finalTotal}</span>`;
       } else {
         priceDisplay.innerHTML = `<span style="color: var(--danger);">฿${finalTotal}</span>`;
