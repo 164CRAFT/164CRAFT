@@ -239,7 +239,7 @@
 
         <div class="admin-menu-box">
           <div class="admin-menu-title">📦 คำสั่งซื้อสินค้าทั้งหมด</div>
-          <div class="admin-menu-desc">ตรวจสอบรายการคำสั่งซื้อ รายละเอียดสินค้า และข้อมูลผู้รับของลูกค้า</div>
+          <div class="admin-menu-desc">ตรวจสอบรายการคำสั่งซื้อ รายละเอียดสินค้า และจัดการลบออเดอร์</div>
           <button class="btn-action btn-secondary" style="margin-top: auto;" onclick="openOrdersModal()">ดูคำสั่งซื้อ</button>
         </div>
 
@@ -339,14 +339,14 @@
     </div>
   </div>
 
-  <!-- ORDERS MODAL (คำสั่งซื้อสินค้าทั้งหมด) -->
+  <!-- ORDERS MODAL (คำสั่งซื้อสินค้าทั้งหมด พร้อมปุ่มดูข้อมูลเพิ่มเติมและลบออเดอร์) -->
   <div id="ordersModal" class="modal-overlay" onclick="checkOutsideModalClick(event, 'ordersModal')">
     <div class="modal-box" style="max-width: 750px;">
       <div class="modal-header">
         <span>📦 คำสั่งซื้อสินค้าทั้งหมดในระบบ</span>
         <button class="modal-close" onclick="closeModal('ordersModal')">✕</button>
       </div>
-      <p style="font-size: 0.8rem; color: var(--text-muted);">รายการออเดอร์ทั้งหมดจากลูกค้า เรียงตามลำดับเวลาล่าสุด</p>
+      <p style="font-size: 0.8rem; color: var(--text-muted);">รายการออเดอร์ทั้งหมดจากลูกค้า สามารถกดดูข้อมูลเพิ่มเติมหรือลบออเดอร์ได้</p>
       
       <div id="adminOrdersListContainer" style="max-height: 55vh; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; margin-top: 6px; padding-right: 4px;"></div>
 
@@ -356,7 +356,21 @@
     </div>
   </div>
 
-  <!-- MEMBERS MODAL (จัดการสมาชิก) -->
+  <!-- ORDER DETAIL MODAL (รายละเอียดออเดอร์แบบเต็ม) -->
+  <div id="orderDetailModal" class="modal-overlay" onclick="checkOutsideModalClick(event, 'orderDetailModal')">
+    <div class="modal-box" style="max-width: 600px;">
+      <div class="modal-header">
+        <span>📄 รายละเอียดคำสั่งซื้อเพิ่มเติม</span>
+        <button class="modal-close" onclick="closeModal('orderDetailModal')">✕</button>
+      </div>
+      <div id="orderDetailContent" style="display: flex; flex-direction: column; gap: 10px; font-size: 0.85rem; max-height: 60vh; overflow-y: auto;"></div>
+      <div style="margin-top: 10px;">
+        <button type="button" class="btn-action btn-secondary" style="width: 100%;" onclick="closeModal('orderDetailModal')">ปิดหน้าต่าง</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MEMBERS MODAL (จัดการสมาชิก พร้อมอัปเดตสิทธิ์ Admin สำหรับ craft.studio164@gmail.com) -->
   <div id="membersModal" class="modal-overlay" onclick="checkOutsideModalClick(event, 'membersModal')">
     <div class="modal-box" style="max-width: 700px;">
       <div class="modal-header">
@@ -769,13 +783,11 @@
         renderAdminProductList();
       });
 
-      // ดึงข้อมูลสมาชิกแบบเรียลไทม์จาก Collection "user_profiles"
       db.collection("user_profiles").onSnapshot((snapshot) => {
         members = [];
         snapshot.forEach((doc) => members.push(doc.data()));
       });
 
-      // ดึงข้อมูลคำสั่งซื้อแบบเรียลไทม์จาก Collection "orders"
       db.collection("orders").onSnapshot((snapshot) => {
         ordersList = [];
         snapshot.forEach((doc) => ordersList.push({ id: doc.id, ...doc.data() }));
@@ -849,7 +861,7 @@
     }
 
     window.addEventListener('popstate', (event) => {
-      const modals = ['manageProductsModal', 'ordersModal', 'membersModal', 'webThemeConfigModal', 'addProductModal', 'vipCodesModal', 'configModal', 'bankConfigModal', 'shippingConfigModal', 'passcodeModal'];
+      const modals = ['manageProductsModal', 'ordersModal', 'orderDetailModal', 'membersModal', 'webThemeConfigModal', 'addProductModal', 'vipCodesModal', 'configModal', 'bankConfigModal', 'shippingConfigModal', 'passcodeModal'];
       modals.forEach(id => {
         const m = document.getElementById(id);
         if (m && m.style.display === 'flex') {
@@ -872,33 +884,22 @@
       openModal('manageProductsModal');
     }
 
-    // ฟังก์ชันเปิดดูคำสั่งซื้อทั้งหมด
+    // ฟังก์ชันจัดการแสดงออเดอร์ พร้อมปุ่มดูข้อมูลเพิ่มเติมและลบออเดอร์
     function openOrdersModal() {
       const cont = document.getElementById("adminOrdersListContainer");
       if (ordersList.length === 0) {
         cont.innerHTML = `<div style="text-align:center; padding:20px; color:#777;">ยังไม่มีรายการคำสั่งซื้อในระบบ</div>`;
       } else {
         cont.innerHTML = ordersList.map(ord => {
-          const itemsHtml = (ord.items || []).map(it => `
-            <div style="font-size:0.75rem; color:#444; border-bottom:1px dashed #eee; padding:3px 0;">
-              • ${it.product.name} [${it.saleMode === 'READY' ? 'พร้อมส่ง' : 'พรีออเดอร์'}] - สเกล: ${it.scale} | ตัวเลือก: ${it.optionName} | จำนวน: ${it.qty} ชิ้น (฿${it.price * it.qty})
-            </div>
-          `).join('');
-
           return `
-            <div style="background:#fafafa; border:1px solid var(--border-color); padding:12px; border-radius:var(--radius);">
-              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; border-bottom:1px solid #e2e8f0; padding-bottom:4px;">
-                <span style="font-weight:bold; font-size:0.85rem;">ผู้รับ: ${ord.customer.name} (${ord.customer.phone})</span>
-                <span style="font-weight:bold; color:var(--accent-vip); font-size:0.85rem;">฿${ord.grandTotal || 0}</span>
+            <div style="background:#fafafa; border:1px solid var(--border-color); padding:12px; border-radius:var(--radius); display:flex; justify-content:space-between; align-items:center; gap:10px;">
+              <div>
+                <div style="font-weight:bold; font-size:0.85rem;">ผู้รับ: ${ord.customer.name} (${ord.customer.phone})</div>
+                <div style="font-size:0.75rem; color:var(--text-muted);">อีเมล: ${ord.customer.email} | ยอดชำระ: <strong style="color:#111;">฿${ord.grandTotal || 0}</strong></div>
               </div>
-              <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:6px;">
-                <div><strong>อีเมล:</strong> ${ord.customer.email}</div>
-                <div><strong>ที่อยู่จัดส่ง:</strong> ${ord.customer.address}</div>
-                ${ord.customer.note ? `<div><strong>หมายเหตุ:</strong> ${ord.customer.note}</div>` : ''}
-              </div>
-              <div style="background:#fff; border:1px solid #e2e8f0; border-radius:6px; padding:8px;">
-                <div style="font-size:0.72rem; font-weight:bold; color:#111; margin-bottom:2px;">รายการสินค้าที่สั่ง:</div>
-                ${itemsHtml}
+              <div style="display:flex; gap:6px;">
+                <button class="btn-action btn-secondary" style="height:32px; padding:0 10px; font-size:0.72rem;" onclick="viewOrderDetail('${ord.id}')">🔍 ดูข้อมูลเพิ่มเติม</button>
+                <button class="btn-action btn-danger" style="height:32px; padding:0 10px; font-size:0.72rem;" onclick="deleteOrder('${ord.id}')">🗑️ ลบ</button>
               </div>
             </div>
           `;
@@ -907,13 +908,62 @@
       openModal('ordersModal');
     }
 
+    function viewOrderDetail(orderId) {
+      const ord = ordersList.find(o => o.id === orderId);
+      if (!ord) return;
+
+      const content = document.getElementById("orderDetailContent");
+      const itemsHtml = (ord.items || []).map(it => `
+        <div style="font-size:0.78rem; color:#333; border-bottom:1px dashed #eee; padding:6px 0; display:flex; justify-content:space-between;">
+          <span>• ${it.product.name} [${it.saleMode === 'READY' ? 'พร้อมส่ง' : 'พรีออเดอร์'}] (${it.scale} / ${it.optionName}) x ${it.qty}</span>
+          <strong style="white-space:nowrap;">฿${it.price * it.qty}</strong>
+        </div>
+      `).join('');
+
+      content.innerHTML = `
+        <div style="background:#f8fafc; padding:10px; border-radius:6px; border:1px solid #cbd5e1;">
+          <strong>ข้อมูลผู้รับ (Receiver):</strong><br>
+          ชื่อ: ${ord.customer.name}<br>
+          เบอร์โทร: ${ord.customer.phone}<br>
+          อีเมล: ${ord.customer.email}<br>
+          ที่อยู่: ${ord.customer.address}<br>
+          ${ord.customer.note ? `หมายเหตุ: <span style="color:#b45309;">${ord.customer.note}</span>` : ''}
+        </div>
+        <div style="background:#fff; padding:10px; border-radius:6px; border:1px solid #cbd5e1; margin-top:4px;">
+          <strong>รายการสินค้า:</strong>
+          ${itemsHtml}
+          <div style="margin-top:8px; text-align:right; font-size:0.85rem;">
+            ค่าสินค้า: ฿${ord.subtotal || 0} | ค่าส่ง (${ord.shippingName || 'EMS'}): ฿${ord.shippingFee || 0}<br>
+            <strong style="font-size:1rem; color:#059669;">ยอดรวมสุทธิ: ฿${ord.grandTotal || 0}</strong>
+          </div>
+        </div>
+      `;
+      openModal('orderDetailModal');
+    }
+
+    function deleteOrder(orderId) {
+      if (!confirm("ต้องการลบคำสั่งซื้อนี้ออกจากระบบหรือไม่?")) return;
+      db.collection("orders").doc(orderId).delete().then(() => {
+        showToast("ลบคำสั่งซื้อสำเร็จ");
+      }).catch(err => {
+        showToast("เกิดข้อผิดพลาดในการลบออเดอร์");
+      });
+    }
+
+    // ฟังก์ชันจัดการสมาชิก ปรับสถานะ craft.studio164@gmail.com ให้แสดงเป็น Admin
     function openMembersModal() {
       const cont = document.getElementById("membersListContainer");
       if (members.length === 0) {
         cont.innerHTML = `<div style="text-align:center; padding:20px; color:#777;">ยังไม่มีข้อมูลสมาชิกในระบบ</div>`;
       } else {
         cont.innerHTML = members.map(m => {
-          const userOrders = ordersList.filter(o => o.customer && o.customer.email && o.customer.email.toLowerCase() === (m.email || "").toLowerCase());
+          const userEmail = (m.email || "").toLowerCase();
+          const isAdmin = userEmail === "craft.studio164@gmail.com";
+          const roleBadge = isAdmin ? 
+            `<div style="font-size:0.7rem; color:#fff; font-weight:bold; background:#111; padding:3px 8px; border-radius:4px; height:fit-content;">Admin</div>` : 
+            `<div style="font-size:0.7rem; color:#059669; font-weight:bold; background:var(--accent-vip-bg); padding:3px 8px; border-radius:4px; height:fit-content;">สมาชิก Active</div>`;
+
+          const userOrders = ordersList.filter(o => o.customer && o.customer.email && o.customer.email.toLowerCase() === userEmail);
           
           let ordersHtml = '';
           if (userOrders.length > 0) {
@@ -934,7 +984,7 @@
                   <div style="font-size:0.72rem; color:var(--text-muted);">อีเมล: ${m.email || '-'} | เบอร์โทร: ${m.phone || '-'}</div>
                   <div style="font-size:0.72rem; color:#555; margin-top:2px;">ที่อยู่เริ่มต้น: ${m.address || '(ยังไม่ได้ตั้งค่าที่อยู่)'}</div>
                 </div>
-                <div style="font-size:0.7rem; color:#059669; font-weight:bold; background:var(--accent-vip-bg); padding:3px 8px; border-radius:4px; height:fit-content;">สมาชิก Active</div>
+                ${roleBadge}
               </div>
               <div style="border-top:1px dashed #cbd5e1; padding-top:6px; margin-top:6px;">
                 <div style="font-size:0.75rem; font-weight:bold; color:#333;">📦 ประวัติการซื้อสินค้า (${userOrders.length} คำสั่งซื้อ):</div>
