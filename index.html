@@ -77,7 +77,6 @@
 
     .header-actions { display: flex; gap: 8px; align-items: center; }
 
-    /* ปรับแต่งกรอบ VIP ให้ปุ่มและช่องกรอกอยู่ภายในกรอบโค้งมนอย่างลงตัว */
     .header-vip-box {
       display: none; background: #fff; border: 1px solid var(--border-color); border-radius: 12px;
       padding: 3px 4px; align-items: center; gap: 4px; box-shadow: var(--shadow-soft);
@@ -373,6 +372,14 @@
     .bank-payment-box { background: #f4f4f1; border: 1px solid var(--border-color); border-radius: var(--radius); padding: 10px; font-size: 0.82rem; margin-top: 8px; text-align: center; }
     .qr-preview-img { max-width: 130px; max-height: 130px; object-fit: contain; margin: 6px auto; display: block; border-radius: 6px; border: 1px solid #ccc; }
 
+    /* Custom Popup Modal Styles */
+    .custom-alert-box {
+      width: min(90vw, 360px); background: #fff; border: 1px solid var(--border-color);
+      border-radius: 14px; padding: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+      display: flex; flex-direction: column; gap: 12px; text-align: center; cursor: default;
+    }
+    .custom-alert-msg { font-size: 0.88rem; font-weight: 750; color: #111; line-height: 1.5; white-space: pre-line; }
+
     .footer {
       background: #111; color: #aaa; border-top: 1px solid #111;
       padding: 28px 16px; text-align: center; letter-spacing: 1.5px; font-size: 0.65rem; text-transform: uppercase; margin-top: auto; width: 100%;
@@ -388,7 +395,6 @@
     </div>
     <div class="header-actions" style="position: relative;">
       
-      <!-- หน้าปกเว็บหลัก: ช่องกรอกรหัสพร้อมปุ่มปลดล็อก (ปรับปรุงตำแหน่ง UI ให้ตรงตามภาพเปรียบเทียบ) -->
       <div class="header-vip-box">
         <input type="password" id="headerVipInput" class="header-vip-input" placeholder="🗝️ กรอกรหัส" autocomplete="off" onkeydown="if(event.key==='Enter') applyHeaderVipCode()" />
         <button type="button" class="btn-action" style="height:30px; padding:0 12px; font-size:0.72rem; background:#111; color:#fff; border:none; border-radius:8px;" onclick="applyHeaderVipCode()">ปลดล็อก</button>
@@ -403,7 +409,6 @@
             <img id="userAvatar" src="" alt="User" />
           </div>
 
-          <!-- เมนูย่อยบัญชี -->
           <div id="accountDropdownMenu" class="account-dropdown-menu" onclick="event.stopPropagation()">
             <div class="dropdown-header-info">
               <div class="dropdown-user-name" id="dropdownUserName">-</div>
@@ -424,7 +429,7 @@
             <div class="dropdown-menu-item" onclick="openModal('accountModal'); toggleAccountDropdown(event);">
               📍 ตั้งค่าที่อยู่จัดส่ง
             </div>
-            <div class="dropdown-menu-item" onclick="alert('ฟีเจอร์ประวัติการสั่งซื้อ จะแสดงรายการสั่งซื้อของคุณที่นี่เร็วๆ นี้'); toggleAccountDropdown(event);">
+            <div class="dropdown-menu-item" onclick="showPopup('ฟีเจอร์ประวัติการสั่งซื้อ จะแสดงรายการสั่งซื้อของคุณที่นี่เร็วๆ นี้'); toggleAccountDropdown(event);">
               📦 ประวัติการสั่งซื้อ
             </div>
             <div class="dropdown-menu-item danger" onclick="logoutGoogle(); toggleAccountDropdown(event);">
@@ -440,7 +445,6 @@
     </div>
   </header>
 
-  <!-- ช่องค้นหาสำหรับมือถือ -->
   <div class="mobile-search-bar">
     <div class="mobile-search-bar-wrap">
       <input type="text" id="mobileSearchInput" placeholder="ค้นหาสินค้า หรือ SKU..." onkeyup="syncSearchAndRender(this)" />
@@ -455,7 +459,6 @@
         <button type="button" class="sale-mode-btn" id="modePreorderBtn" onclick="switchSaleMode('PREORDER')">⏳ พรีออเดอร์</button>
       </div>
 
-      <!-- ช่องค้นหาสำหรับเดสก์ท็อปใน Sidebar -->
       <div>
         <div class="desktop-search-box">
           <div class="desktop-search-wrap">
@@ -665,6 +668,14 @@
     </div>
   </div>
 
+  <!-- CUSTOM ALERT MODAL (แทนคำสั่ง alert ปกติ เพื่อลบข้อความชื่อเว็บออก) -->
+  <div id="customAlertModal" class="modal-overlay">
+    <div class="custom-alert-box">
+      <div class="custom-alert-msg" id="customAlertText">ข้อความแจ้งเตือน</div>
+      <button type="button" class="btn-action" style="width:100%; height:38px; justify-content:center;" onclick="closeModal('customAlertModal')">ตกลง</button>
+    </div>
+  </div>
+
   <!-- Firebase App SDK, Firestore & Auth -->
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
@@ -714,6 +725,12 @@
     let cart = [];
     let currentSelectedProduct = null;
     let appliedOptionDiscount = 0;
+
+    // ฟังก์ชันสำหรับแสดง Popup แจ้งเตือนแบบ Custom
+    function showPopup(message) {
+      document.getElementById("customAlertText").innerText = message;
+      openModal('customAlertModal');
+    }
 
     document.addEventListener('contextmenu', function(e) {
       if (e.target.tagName === 'IMG' || e.target.tagName === 'VIDEO') {
@@ -783,12 +800,12 @@
 
     function loginWithGoogle() {
       auth.signInWithPopup(googleProvider).then((result) => {
-        alert("✓ เข้าสู่ระบบสำเร็จ: " + (result.user.displayName || result.user.email));
-      }).catch((error) => alert("เข้าสู่ระบบไม่สำเร็จ: " + error.message));
+        showPopup("✓ เข้าสู่ระบบสำเร็จ: " + (result.user.displayName || result.user.email));
+      }).catch((error) => showPopup("เข้าสู่ระบบไม่สำเร็จ: " + error.message));
     }
 
     function logoutGoogle() {
-      auth.signOut().then(() => alert("ออกจากระบบเรียบร้อย"));
+      auth.signOut().then(() => showPopup("ออกจากระบบเรียบร้อย"));
     }
 
     function toggleAccountDropdown(event) {
@@ -828,7 +845,7 @@
       document.getElementById("shipPhone").value = phone;
       document.getElementById("shipAddress").value = address;
 
-      alert("✓ บันทึกที่อยู่จัดส่งเรียบร้อยแล้ว!");
+      showPopup("✓ บันทึกที่อยู่จัดส่งเรียบร้อยแล้ว!");
       closeModal('accountModal');
     }
 
@@ -911,7 +928,7 @@
       if (cart.length > 0) {
         const activeType = cart[0].saleMode === 'READY' ? 'สินค้าพร้อมส่ง' : 'สินค้าพรีออเดอร์';
         const targetType = mode === 'READY' ? 'พร้อมส่ง' : 'พรีออเดอร์';
-        alert(`⚠️ ไม่สามารถสลับไปดูโหมด "${targetType}" ได้!\n\nเนื่องจากในตะกร้าของคุณมี "${activeType}" ค้างอยู่ กรุณาเคลียร์ตะกร้าก่อนหากต้องการเปลี่ยนโหมดเลือกซื้อสินค้า`);
+        showPopup(`⚠️ ไม่สามารถสลับไปดูโหมด "${targetType}" ได้!\n\nเนื่องจากในตะกร้าของคุณมี "${activeType}" ค้างอยู่ กรุณาเคลียร์ตะกร้าก่อนหากต้องการเปลี่ยนโหมดเลือกซื้อสินค้า`);
         return;
       }
 
@@ -967,9 +984,9 @@
         statusTag.innerHTML = `<div style="font-weight:bold;">✓ ปลดล็อกสำเร็จ: ${maskedCode} [ACTIVE]</div>`;
         renderCategories();
         renderProducts();
-        alert("✓ ปลดล็อกสำเร็จ!");
+        showPopup("✓ ปลดล็อกสำเร็จ!");
       } else {
-        alert("✕ ไม่พบรหัสนี้ในระบบ");
+        showPopup("✕ ไม่พบรหัสนี้ในระบบ");
       }
     }
 
@@ -1349,7 +1366,7 @@
         if (firstItemSaleMode !== incomingSaleMode) {
           const currentTypeName = firstItemSaleMode === 'READY' ? 'สินค้าพร้อมส่ง' : 'สินค้าพรีออเดอร์';
           const newTypeName = incomingSaleMode === 'READY' ? 'สินค้าพร้อมส่ง' : 'สินค้าพรีออเดอร์';
-          alert(`⚠️ ไม่สามารถสั่งซื้อสินค้าทั้ง 2 ระบบพร้อมกันได้!\n\nในตะกร้าของคุณมี "${currentTypeName}" อยู่ (ยึดตามชิ้นแรกที่เลือก)\nกรุณาเคลียร์ตะกร้าก่อนหากต้องการสั่งซื้อ "${newTypeName}"`);
+          showPopup(`⚠️ ไม่สามารถสั่งซื้อสินค้าทั้ง 2 ระบบพร้อมกันได้!\n\nในตะกร้าของคุณมี "${currentTypeName}" อยู่ (ยึดตามชิ้นแรกที่เลือก)\nกรุณาเคลียร์ตะกร้าก่อนหากต้องการสั่งซื้อ "${newTypeName}"`);
           return;
         }
       }
@@ -1370,7 +1387,7 @@
       const currentInCart = existingIndex > -1 ? cart[existingIndex].qty : 0;
 
       if (currentInCart + 1 > maxLimit) {
-        alert(`⚠️ ไม่สามารถเพิ่มสินค้าได้เนื่องจากเกินจำนวนสต็อกที่มี (${maxLimit} ชิ้น)`);
+        showPopup(`⚠️ ไม่สามารถเพิ่มสินค้าได้เนื่องจากเกินจำนวนสต็อกที่มี (${maxLimit} ชิ้น)`);
         return;
       }
 
@@ -1389,7 +1406,7 @@
 
       updateCartBadge();
       closeModal("detailModal");
-      alert(`เพิ่มลงตะกร้าเรียบร้อย (${incomingSaleMode === 'READY' ? 'พร้อมส่ง' : 'พรีออเดอร์'})`);
+      showPopup(`เพิ่มลงตะกร้าเรียบร้อย (${incomingSaleMode === 'READY' ? 'พร้อมส่ง' : 'พรีออเดอร์'})`);
     }
 
     function updateCartBadge() {
@@ -1451,7 +1468,7 @@
 
       const newQty = item.qty + delta;
       if (newQty > maxLimit) {
-        alert(`⚠️ ไม่สามารถเพิ่มสินค้าได้เนื่องจากเกินสต็อกที่มี (${maxLimit} ชิ้น)`);
+        showPopup(`⚠️ ไม่สามารถเพิ่มสินค้าได้เนื่องจากเกินสต็อกที่มี (${maxLimit} ชิ้น)`);
         return;
       }
 
@@ -1468,16 +1485,21 @@
     }
 
     function clearCart() {
-      if (cart.length === 0) return alert("ตะกร้าสินค้าว่างอยู่แล้ว");
-      if (confirm("คุณต้องการเคลียร์สินค้าทั้งหมดออกจากตะกร้าใช่หรือไม่?")) {
-        cart = [];
-        updateCartBadge();
-        renderCart();
+      if (cart.length === 0) {
+        showPopup("ตะกร้าสินค้าว่างอยู่แล้ว");
+        return;
       }
+      cart = [];
+      updateCartBadge();
+      renderCart();
+      showPopup("ล้างตะกร้าสินค้าเรียบร้อยแล้ว");
     }
 
     function openShippingModal() {
-      if (cart.length === 0) return alert("ไม่มีสินค้าในตะกร้า");
+      if (cart.length === 0) {
+        showPopup("ไม่มีสินค้าในตะกร้า");
+        return;
+      }
       openModal('shippingModal');
     }
 
