@@ -398,12 +398,10 @@
           <input type="text" id="pName" class="form-control" placeholder="เช่น Ducati Panigale V4 S" required />
         </div>
 
-        <!-- ตั้งค่าเปิด-ปิดสต็อกและการขายแยกอิสระทั้ง 2 ระบบ -->
         <div class="form-group" style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: var(--radius); padding: 12px;">
           <label style="font-weight: 800; color: #1e293b; margin-bottom: 8px; display: block;">⚙️ ตั้งค่าสต็อกและการขาย (พร้อมส่ง & พรีออเดอร์)</label>
           
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-            <!-- โหมดพร้อมส่ง -->
             <div style="background: #f0fdf4; border: 1px solid #10b981; padding: 10px; border-radius: 6px;">
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
                 <label style="font-size: 0.75rem; color: #065f46; font-weight: bold;">📦 พร้อมส่ง (In Stock)</label>
@@ -420,7 +418,6 @@
               </div>
             </div>
 
-            <!-- โหมดพรีออเดอร์ -->
             <div style="background: #fff7ed; border: 1px solid #f97316; padding: 10px; border-radius: 6px;">
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
                 <label style="font-size: 0.75rem; color: #c2410c; font-weight: bold;">⏳ พรีออเดอร์ (Pre-order)</label>
@@ -788,9 +785,32 @@
       });
     }
 
-    function openModal(id) { document.getElementById(id).style.display = "flex"; }
-    function closeModal(id) { document.getElementById(id).style.display = "none"; }
-    function openPasscodeModal() { openModal('passcodeModal'); }
+    // ฟังก์ชันเปิด Modal พร้อม pushState เพื่อให้รองรับปุ่มย้อนกลับ (Back Button) บนมือถือ
+    function openModal(id) { 
+      const modal = document.getElementById(id);
+      if (modal) {
+        modal.style.display = "flex";
+        history.pushState({ modalOpen: id }, "");
+      }
+    }
+
+    function closeModal(id) {
+      const modal = document.getElementById(id);
+      if (modal && modal.style.display === "flex") {
+        modal.style.display = "none";
+      }
+    }
+
+    // ดักจับการกดปุ่มย้อนกลับบนมือถือ เพื่อปิด Modal ที่เปิดอยู่ทั้งหมดทันที
+    window.addEventListener('popstate', (event) => {
+      const modals = ['manageProductsModal', 'membersModal', 'webThemeConfigModal', 'addProductModal', 'vipCodesModal', 'configModal', 'bankConfigModal', 'shippingConfigModal', 'passcodeModal'];
+      modals.forEach(id => {
+        const m = document.getElementById(id);
+        if (m && m.style.display === 'flex') {
+          closeModal(id);
+        }
+      });
+    });
 
     function checkOutsideModalClick(event, modalId) {
       if (event.target.id === modalId) {
