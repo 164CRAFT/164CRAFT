@@ -305,6 +305,7 @@
     }
     .stock-badge.ready { background: #ecfdf5; color: #047857; border: 1px solid #10b981; }
     .stock-badge.preorder { background: #fff7ed; color: #c2410c; border: 1px solid #f97316; }
+    .stock-badge.soldout { background: #ffeeec; color: #dc2626; border: 1px solid #f87171; }
 
     .media-count-badge {
       position: absolute; bottom: 6px; right: 6px; background: rgba(0,0,0,0.75); color: #fff;
@@ -425,7 +426,6 @@
         <button id="loginBtn" class="btn-action btn-secondary" onclick="loginWithGoogle()">
           🔑 เข้าสู่ระบบ
         </button>
-        <!-- เปลี่ยนมาใช้ Wrapper ห่อหุ้มปุ่มและเมนู เพื่อให้ตรวจจับการเอาเมาส์เข้า/ออกได้อย่างสมบูรณ์ -->
         <div id="userProfile" style="display: none; position: relative;" onmouseenter="handleProfileMouseEnter()" onmouseleave="handleProfileMouseLeave()">
           <div class="profile-icon-btn" onclick="toggleAccountDropdown(event)" title="เมนูบัญชี">
             <img id="userAvatar" src="" alt="User" />
@@ -743,7 +743,7 @@
     let cart = [];
     let currentSelectedProduct = null;
     let appliedOptionDiscount = 0;
-    let isDropdownLocked = false; // ตัวแปรเช็คสถานะการคลิกเปิดค้างไว้
+    let isDropdownLocked = false;
 
     let toastTimer = null;
     function showToast(message) {
@@ -833,7 +833,6 @@
       auth.signOut().then(() => showToast("ออกจากระบบเรียบร้อย"));
     }
 
-    // ฟังก์ชันจัดการ Hover ชี้เปิด / ออกปิด
     function handleProfileMouseEnter() {
       const menu = document.getElementById("accountDropdownMenu");
       if (menu) menu.style.display = "flex";
@@ -846,7 +845,6 @@
       }
     }
 
-    // ฟังก์ชันจัดการคลิกเปิดค้าง / ปิด
     function toggleAccountDropdown(event) {
       event.stopPropagation();
       const menu = document.getElementById("accountDropdownMenu");
@@ -861,7 +859,6 @@
       }
     }
 
-    // คลิกช่องว่างด้านนอกเพื่อปิดเมนูที่เปิดค้างไว้
     function closeAccountDropdownOutside(event) {
       isDropdownLocked = false;
       const menu = document.getElementById("accountDropdownMenu");
@@ -1071,10 +1068,11 @@
 
     function getProductCountByBrand(brand = "ALL") {
       return products.filter(p => {
+        const readyActive = p.readyActive || false;
         const readyStock = p.readyStock !== undefined ? p.readyStock : 0;
         const preorderActive = p.preorderActive || false;
         
-        if (activeSaleMode === 'READY' && readyStock <= 0) return false;
+        if (activeSaleMode === 'READY' && (!readyActive || readyStock <= 0)) return false;
         if (activeSaleMode === 'PREORDER' && !preorderActive) return false;
 
         const prodSecret = (p.secretCode || "").trim().toUpperCase();
@@ -1096,10 +1094,11 @@
       const labelCount = document.getElementById("currentBrandCount");
 
       const currentFilteredCount = products.filter(p => {
+        const readyActive = p.readyActive || false;
         const readyStock = p.readyStock !== undefined ? p.readyStock : 0;
         const preorderActive = p.preorderActive || false;
 
-        if (activeSaleMode === 'READY' && readyStock <= 0) return false;
+        if (activeSaleMode === 'READY' && (!readyActive || readyStock <= 0)) return false;
         if (activeSaleMode === 'PREORDER' && !preorderActive) return false;
 
         const prodSecret = (p.secretCode || "").trim().toUpperCase();
@@ -1158,10 +1157,11 @@
       const overviewCounter = document.getElementById("filterOverviewCount");
 
       const filtered = products.filter(p => {
+        const readyActive = p.readyActive || false;
         const readyStock = p.readyStock !== undefined ? p.readyStock : 0;
         const preorderActive = p.preorderActive || false;
 
-        if (activeSaleMode === 'READY' && readyStock <= 0) return false;
+        if (activeSaleMode === 'READY' && (!readyActive || readyStock <= 0)) return false;
         if (activeSaleMode === 'PREORDER' && !preorderActive) return false;
 
         const prodSecret = (p.secretCode || "").trim().toUpperCase();
@@ -1201,13 +1201,21 @@
         const countBadge = imgCount > 1 ? `<div class="media-count-badge">📷 ${imgCount} ภาพ</div>` : '';
         const isExclusive = p.secretCode ? `<span class="exclusive-badge">EXCLUSIVE</span>` : '';
         
+        const readyActive = p.readyActive || false;
         const readyStock = p.readyStock !== undefined ? p.readyStock : 0;
         const preorderUnlimited = p.preorderUnlimited || false;
         const preorderStock = p.preorderStock !== undefined ? p.preorderStock : 0;
 
-        const stockBadgeHtml = (activeSaleMode === "PREORDER")
-          ? `<div class="stock-badge preorder">⏳ พรีออเดอร์ (${preorderUnlimited ? 'ไม่จำกัด' : preorderStock})</div>`
-          : `<div class="stock-badge ready">📦 พร้อมส่ง (${readyStock})</div>`;
+        let stockBadgeHtml = '';
+        if (activeSaleMode === "PREORDER") {
+          stockBadgeHtml = `<div class="stock-badge preorder">⏳ พรีออเดอร์ (${preorderUnlimited ? 'ไม่จำกัด' : preorderStock})</div>`;
+        } else {
+          if (!readyActive || readyStock <= 0) {
+            stockBadgeHtml = `<div class="stock-badge soldout">❌ หมด</div>`;
+          } else {
+            stockBadgeHtml = `<div class="stock-badge ready">📦 พร้อมส่ง (${readyStock})</div>`;
+          }
+        }
 
         let mediaHtml = '';
         if (p.vdo) {
@@ -1285,6 +1293,7 @@
       const detailBasePrice = document.getElementById("detailBasePrice");
       if (detailBasePrice) detailBasePrice.innerText = "฿" + prod.basePrice;
       
+      const readyActive = prod.readyActive || false;
       const readyStock = prod.readyStock !== undefined ? prod.readyStock : 0;
       const preorderUnlimited = prod.preorderUnlimited || false;
       const preorderStock = prod.preorderStock !== undefined ? prod.preorderStock : 0;
@@ -1295,8 +1304,13 @@
           stockStatusEl.style.color = "#c2410c";
           stockStatusEl.innerText = `⏳ พรีออเดอร์ (${preorderUnlimited ? 'ไม่จำกัดจำนวน' : 'โควต้า ' + preorderStock + ' ชิ้น'})`;
         } else {
-          stockStatusEl.style.color = "#059669";
-          stockStatusEl.innerText = `📦 พร้อมส่ง (เหลือ ${readyStock} ชิ้น)`;
+          if (!readyActive || readyStock <= 0) {
+            stockStatusEl.style.color = "#dc2626";
+            stockStatusEl.innerText = `❌ สินค้าหมด (Out of Stock)`;
+          } else {
+            stockStatusEl.style.color = "#059669";
+            stockStatusEl.innerText = `📦 พร้อมส่ง (เหลือ ${readyStock} ชิ้น)`;
+          }
         }
       }
 
@@ -1426,12 +1440,18 @@
       if (!currentSelectedProduct) return;
 
       const incomingSaleMode = activeSaleMode;
+      if (incomingSaleMode === 'READY') {
+        const isReadyActive = currentSelectedProduct.readyActive || false;
+        const readyStock = currentSelectedProduct.readyStock || 0;
+        if (!isReadyActive || readyStock <= 0) {
+          showToast("⚠️ สินค้านี้หมดชั่วคราว ไม่สามารถสั่งซื้อได้");
+          return;
+        }
+      }
 
       if (cart.length > 0) {
         const firstItemSaleMode = cart[0].saleMode;
         if (firstItemSaleMode !== incomingSaleMode) {
-          const currentTypeName = firstItemSaleMode === 'READY' ? 'สินค้าพร้อมส่ง' : 'สินค้าพรีออเดอร์';
-          const newTypeName = incomingSaleMode === 'READY' ? 'สินค้าพร้อมส่ง' : 'สินค้าพรีออเดอร์';
           showToast(`⚠️ ไม่สามารถสั่งซื้อทั้ง 2 ระบบพร้อมกันได้`);
           return;
         }
