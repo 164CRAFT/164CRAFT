@@ -205,7 +205,7 @@
     }
     .tag-chip .del-btn { color: var(--danger); cursor: pointer; font-weight: bold; padding: 0 4px; float: right; }
 
-    /* Updated Toast Notification UI Styles */
+    /* Toast Notification */
     #toastNotification {
       position: fixed; top: 24px; left: 50%; transform: translateX(-50%) translateY(-20px);
       background: rgba(17, 17, 17, 0.95); color: #fff; padding: 12px 24px;
@@ -256,7 +256,7 @@
 
         <div class="admin-menu-box">
           <div class="admin-menu-title">👥 จัดการสมาชิกในระบบ</div>
-          <div class="admin-menu-desc">ดูรายชื่อสมาชิกผู้ใช้งาน และข้อมูลที่อยู่จัดส่งเริ่มต้น</div>
+          <div class="admin-menu-desc">ดูรายชื่อสมาชิก และกำหนดโค้ดส่วนลดอัตโนมัติให้สมาชิก</div>
           <button class="btn-action btn-secondary" style="margin-top: auto;" onclick="openMembersModal()">จัดการสมาชิก</button>
         </div>
 
@@ -427,14 +427,14 @@
     </div>
   </div>
 
-  <!-- MEMBERS MODAL -->
+  <!-- MEMBERS MODAL (พร้อมระบบเพิ่มโค้ดส่วนลดอัตโนมัติให้สมาชิก) -->
   <div id="membersModal" class="modal-overlay" onclick="checkOutsideModalClick(event, 'membersModal')">
     <div class="modal-box" style="max-width: 700px;">
       <div class="modal-header">
-        <span>👥 จัดการสมาชิกในระบบ</span>
+        <span>👥 จัดการสมาชิก & กำหนดโค้ดส่วนลดอัตโนมัติ</span>
         <button class="modal-close" onclick="closeModal('membersModal')">✕</button>
       </div>
-      <p style="font-size: 0.8rem; color: var(--text-muted);">รายชื่อสมาชิกที่ลงทะเบียนและที่อยู่จัดส่งในระบบ</p>
+      <p style="font-size: 0.8rem; color: var(--text-muted);">รายชื่อสมาชิก และช่องกำหนดโค้ดส่วนลดที่จะให้ระบบเรียกใช้อัตโนมัติเมื่อสมาชิกเข้าสู่ระบบ</p>
       
       <div id="membersListContainer" style="max-height: 55vh; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; margin-top: 6px; padding-right: 4px;"></div>
 
@@ -842,7 +842,7 @@
 
       db.collection("user_profiles").onSnapshot((snapshot) => {
         members = [];
-        snapshot.forEach((doc) => members.push(doc.data()));
+        snapshot.forEach((doc) => members.push({ emailId: doc.id, ...doc.data() }));
       });
 
       db.collection("orders").onSnapshot((snapshot) => {
@@ -1071,6 +1071,7 @@
       });
     }
 
+    // ฟังก์ชันเปิดจัดการสมาชิก พร้อมช่องใส่โค้ดส่วนลดประจำตัวสมาชิกอัตโนมัติ
     function openMembersModal() {
       const cont = document.getElementById("membersListContainer");
       if (members.length === 0) {
@@ -1083,12 +1084,13 @@
             `<div style="font-size:0.7rem; color:#fff; font-weight:bold; background:#111; padding:3px 8px; border-radius:4px; height:fit-content;">Admin</div>` : 
             `<div style="font-size:0.7rem; color:#059669; font-weight:bold; background:var(--accent-vip-bg); padding:3px 8px; border-radius:4px; height:fit-content;">สมาชิก Active</div>`;
 
+          const assignedCode = m.assignedCode || "";
           const userOrders = ordersList.filter(o => o.customer && o.customer.email && o.customer.email.toLowerCase() === userEmail);
           
           let ordersHtml = '';
           if (userOrders.length > 0) {
             ordersHtml = userOrders.map(ord => `
-              <div style="background:#fff; border:1px solid #e2e8f0; border-radius:6px; padding:8px; margin-top:4px; font-size:0.75rem;">
+              <div style="background:#fff; border:1px solid #e2e8f0; border-radius:6px; padding:6px; margin-top:4px; font-size:0.72rem;">
                 <div><strong>ยอดชำระ:</strong> ฿${ord.grandTotal || 0} (${ord.shippingName || 'EMS'})</div>
               </div>
             `).join('');
@@ -1097,16 +1099,23 @@
           }
 
           return `
-            <div style="background:#fafafa; border:1px solid var(--border-color); padding:12px; border-radius:var(--radius);">
-              <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom: 6px;">
+            <div style="background:#fafafa; border:1px solid var(--border-color); padding:12px; border-radius:var(--radius); display:flex; flex-direction:column; gap:8px;">
+              <div style="display:flex; align-items:center; justify-content:space-between;">
                 <div>
                   <div style="font-weight:bold; font-size:0.88rem;">${m.name || 'ไม่ระบุชื่อ'}</div>
                   <div style="font-size:0.72rem; color:var(--text-muted);">อีเมล: ${m.email || '-'} | เบอร์โทร: ${m.phone || '-'}</div>
-                  <div style="font-size:0.72rem; color:#555; margin-top:2px;">ที่อยู่เริ่มต้น: ${m.address || '(ยังไม่ได้ตั้งค่าที่อยู่)'}</div>
                 </div>
                 ${roleBadge}
               </div>
-              <div style="border-top:1px dashed #cbd5e1; padding-top:6px; margin-top:6px;">
+
+              <!-- ช่องกำหนดโค้ดส่วนลดให้สมาชิกอัตโนมัติ -->
+              <div style="display:flex; gap:6px; align-items:center; background:#fff; padding:8px; border:1px solid #e2e8f0; border-radius:6px;">
+                <label style="font-size:0.72rem; font-weight:bold; white-space:nowrap;">🎟️ โค้ดส่วนลดอัตโนมัติ:</label>
+                <input type="text" id="memberCode_${m.emailId}" class="form-control" style="min-height:30px; font-size:0.78rem; text-transform:uppercase;" placeholder="เช่น PROMO10" value="${assignedCode}" />
+                <button type="button" class="btn-action" style="height:30px; padding:0 10px; font-size:0.72rem;" onclick="saveMemberAssignedCode('${m.emailId}')">บันทึก</button>
+              </div>
+
+              <div style="border-top:1px dashed #cbd5e1; padding-top:6px; margin-top:2px;">
                 <div style="font-size:0.75rem; font-weight:bold; color:#333;">📦 ประวัติการซื้อสินค้า (${userOrders.length} คำสั่งซื้อ):</div>
                 ${ordersHtml}
               </div>
@@ -1115,6 +1124,21 @@
         }).join('');
       }
       openModal('membersModal');
+    }
+
+    function saveMemberAssignedCode(emailId) {
+      const inputEl = document.getElementById(`memberCode_${emailId}`);
+      if (!inputEl) return;
+      const codeVal = inputEl.value.trim().toUpperCase();
+
+      db.collection("user_profiles").doc(emailId).set({
+        assignedCode: codeVal
+      }, { merge: true }).then(() => {
+        showToast("บันทึกโค้ดส่วนลดประจำตัวสมาชิกสำเร็จ");
+      }).catch(err => {
+        showToast("เกิดข้อผิดพลาดในการบันทึก");
+        console.error(err);
+      });
     }
 
     function openWebThemeConfigModal() {
