@@ -705,7 +705,7 @@
     let activeCategory = "ALL";
     let activeSaleMode = "READY";
     let activeSecretCodes = JSON.parse(localStorage.getItem("activeSecretCodes") || "[]");
-    let cart = [];
+    let cart = JSON.parse(localStorage.getItem("cartItems") || "[]");
     let currentSelectedProduct = null;
     let appliedOptionDiscount = 0;
     let isDropdownLocked = false;
@@ -743,6 +743,7 @@
 
     function initStoreFront() {
       updateSecretStatusDisplay();
+      updateCartBadge();
       initAuthListener();
       loadDataFromFirebase();
       initModalOutsideClick();
@@ -1522,6 +1523,7 @@
         });
       }
 
+      localStorage.setItem("cartItems", JSON.stringify(cart));
       updateCartBadge();
       closeModal("detailModal");
       showToast("เพิ่มลงตะกร้าเรียบร้อย");
@@ -1592,12 +1594,14 @@
 
       item.qty = newQty;
       if (item.qty <= 0) cart.splice(idx, 1);
+      localStorage.setItem("cartItems", JSON.stringify(cart));
       updateCartBadge();
       renderCart();
     }
 
     function removeCartItem(idx) {
       cart.splice(idx, 1);
+      localStorage.setItem("cartItems", JSON.stringify(cart));
       updateCartBadge();
       renderCart();
     }
@@ -1608,6 +1612,7 @@
         return;
       }
       cart = [];
+      localStorage.removeItem("cartItems");
       updateCartBadge();
       renderCart();
       showToast("ล้างตะกร้าสินค้าเรียบร้อยแล้ว");
@@ -1693,6 +1698,7 @@
         }).join('');
 
         cart = [];
+        localStorage.removeItem("cartItems");
         updateCartBadge();
         closeModal('shippingModal');
         openModal('orderSummaryModal');
