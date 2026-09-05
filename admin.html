@@ -239,7 +239,7 @@
         <span style="font-size: 0.72rem; color: var(--accent-vip); background: var(--accent-vip-bg); padding: 3px 8px; border-radius: 12px; border: 1px solid #a7f3d0; width: fit-content;">● Google Admin Authenticated</span>
       </div>
       <p class="admin-desc">
-        ระบบจัดการสินค้า โคลนสินค้า ตั้งค่าธีมเว็บ และบริหารจัดการสต็อกสินค้า (เปิดขายพร้อมกันทั้งพร้อมส่งและพรีออเดอร์)[cite: 2]
+        ระบบจัดการสินค้า โคลนสินค้า ตั้งค่าธีมเว็บ และบริหารจัดการสต็อกสินค้า (เปิดขายพร้อมกันทั้งพร้อมส่งและพรีออเดอร์)
       </p>
 
       <div class="admin-menu-grid">
@@ -257,7 +257,7 @@
 
         <div class="admin-menu-box">
           <div class="admin-menu-title">👥 จัดการสมาชิกในระบบ</div>
-          <div class="admin-menu-desc">แสดงรายชื่อสมาชิก และกดปุ่มเพื่อเปิด Popup จัดการโค้ดส่วนลด</div>
+          <div class="admin-menu-desc">แสดงรายชื่อสมาชิก และกดปุ่มข้อมูลเพื่อดูประวัติสั่งซื้อและจัดการโค้ด</div>
           <button class="btn-action btn-secondary" style="margin-top: auto;" onclick="openMembersModal()">จัดการสมาชิก</button>
         </div>
 
@@ -428,14 +428,14 @@
     </div>
   </div>
 
-  <!-- MEMBERS MODAL (แสดงเฉพาะชื่อกับ Email พร้อมปุ่มกด Popup แยกจัดการโค้ด) -->
+  <!-- MEMBERS MODAL (หน้าหลัก แสดงเฉพาะ ชื่อ และ Email พร้อมปุ่มข้อมูล) -->
   <div id="membersModal" class="modal-overlay" onclick="checkOutsideModalClick(event, 'membersModal')">
     <div class="modal-box" style="max-width: 600px;">
       <div class="modal-header">
         <span>👥 จัดการสมาชิกในระบบ</span>
         <button class="modal-close" onclick="closeModal('membersModal')">✕</button>
       </div>
-      <p style="font-size: 0.8rem; color: var(--text-muted);">รายชื่อสมาชิกทั้งหมด คลิกปุ่ม "จัดการโค้ดส่วนลด" เพื่อเปิดหน้าต่างกำหนดโค้ดประจำตัว</p>
+      <p style="font-size: 0.8rem; color: var(--text-muted);">รายชื่อสมาชิกทั้งหมด คลิกปุ่ม "ข้อมูล" เพื่อดูรายละเอียดและประวัติการสั่งซื้อย้อนหลัง</p>
       
       <div id="membersListContainer" style="max-height: 55vh; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin-top: 6px; padding-right: 4px;"></div>
 
@@ -445,33 +445,40 @@
     </div>
   </div>
 
-  <!-- MEMBER DETAIL POPUP MODAL (หน้าต่างแยกจัดการโค้ดส่วนลดของสมาชิกแต่ละคน) -->
+  <!-- MEMBER DETAIL POPUP MODAL (Popup ข้อมูลสมาชิก, จัดการโค้ด และประวัติใบสั่งซื้อย้อนหลัง) -->
   <div id="memberDetailModal" class="modal-overlay" style="z-index: 1100;" onclick="if(event.target===this) closeModal('memberDetailModal')">
-    <div class="modal-box" style="max-width: 500px;">
+    <div class="modal-box" style="max-width: 600px;">
       <div class="modal-header">
-        <span id="popupMemberTitle">⚙️ จัดการโค้ดส่วนลดสมาชิก</span>
+        <span id="popupMemberTitle">👤 ข้อมูลสมาชิก & ประวัติการสั่งซื้อ</span>
         <button class="modal-close" onclick="closeModal('memberDetailModal')">✕</button>
       </div>
       <input type="hidden" id="popupMemberEmail" />
       
-      <div style="background:#fafafa; border:1px solid var(--border-color); padding:12px; border-radius:var(--radius); display:flex; flex-direction:column; gap:10px;">
-        <div>
-          <div style="font-weight:bold; font-size:0.9rem;" id="popupMemberNameDisplay">-</div>
-          <div style="font-size:0.75rem; color:var(--text-muted);" id="popupMemberEmailDisplay">-</div>
+      <div style="display: flex; flex-direction: column; gap: 12px; max-height: 70vh; overflow-y: auto; padding-right: 2px;">
+        <div style="background:#fafafa; border:1px solid var(--border-color); padding:12px; border-radius:var(--radius);">
+          <div style="font-weight:bold; font-size:0.95rem; color:#111;" id="popupMemberNameDisplay">-</div>
+          <div style="font-size:0.78rem; color:var(--text-muted);" id="popupMemberEmailDisplay">-</div>
+          <div style="font-size:0.78rem; color:var(--text-muted); margin-top:2px;">เบอร์โทรศัพท์: <strong id="popupMemberPhoneDisplay">-</strong></div>
+          <div style="font-size:0.78rem; color:var(--text-muted); margin-top:2px;">ที่อยู่จัดส่ง: <span id="popupMemberAddressDisplay">-</span></div>
         </div>
 
-        <div style="background:#fff; padding:10px; border:1px solid #e2e8f0; border-radius:6px; display:flex; flex-direction:column; gap:8px;">
+        <div style="background:#fff; padding:12px; border:1px solid #e2e8f0; border-radius:6px; display:flex; flex-direction:column; gap:8px;">
           <div style="display:flex; justify-content:space-between; align-items:center;">
             <label style="font-size:0.78rem; font-weight:bold; color:var(--accent-vip);">🎟️ โค้ดส่วนลดอัตโนมัติประจำตัว:</label>
             <button type="button" class="btn-action btn-secondary" style="height:28px; padding:0 8px; font-size:0.7rem;" onclick="addPopupMemberCodeRow()">+ เพิ่มช่องโค้ด</button>
           </div>
-          <div id="popupMemberCodesContainer" style="display:flex; flex-direction:column; gap:6px; max-height:200px; overflow-y:auto; padding-right:2px;"></div>
+          <div id="popupMemberCodesContainer" style="display:flex; flex-direction:column; gap:6px; max-height:150px; overflow-y:auto; padding-right:2px;"></div>
+          <button type="button" class="btn-action" style="height:34px; font-size:0.78rem; margin-top:4px;" onclick="savePopupMemberAssignedCodes()">💾 บันทึกโค้ดส่วนลด</button>
         </div>
 
-        <div style="display: flex; gap: 8px; margin-top: 4px;">
-          <button type="button" class="btn-action btn-secondary" style="flex: 1;" onclick="closeModal('memberDetailModal')">ยกเลิก</button>
-          <button type="button" class="btn-action" style="flex: 1.5;" onclick="savePopupMemberAssignedCodes()">💾 บันทึกข้อมูล</button>
+        <div style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:6px; padding:12px;">
+          <div style="font-weight:bold; font-size:0.82rem; color:#1e293b; margin-bottom:8px; border-bottom:1px solid #e2e8f0; padding-bottom:4px;">📦 ประวัติใบสั่งซื้อย้อนหลังของสมาชิกคนนี้:</div>
+          <div id="popupMemberOrdersContainer" style="display:flex; flex-direction:column; gap:8px; max-height:220px; overflow-y:auto;"></div>
         </div>
+      </div>
+
+      <div style="margin-top: 6px;">
+        <button type="button" class="btn-action btn-secondary" style="width: 100%;" onclick="closeModal('memberDetailModal')">ปิดหน้าต่าง</button>
       </div>
     </div>
   </div>
@@ -1110,7 +1117,7 @@
       });
     }
 
-    // หน้าหลักสมาชิก แสดงเฉพาะ ชื่อ และ Email พร้อมปุ่มกด Popup
+    // หน้าหลักสมาชิก แสดงเฉพาะ ชื่อ และ Email พร้อมปุ่มข้อมูล
     function openMembersModal() {
       const cont = document.getElementById("membersListContainer");
       if (members.length === 0) {
@@ -1126,7 +1133,7 @@
                 <div style="font-weight:bold; font-size:0.88rem; color:#111; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${userName}</div>
                 <div style="font-size:0.75rem; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${userEmail}</div>
               </div>
-              <button class="btn-action btn-secondary" style="height:32px; padding:0 10px; font-size:0.72rem; flex-shrink:0;" onclick="openMemberDetailPopup('${userEmail}')">⚙️ จัดการโค้ดส่วนลด</button>
+              <button class="btn-action btn-secondary" style="height:32px; padding:0 10px; font-size:0.72rem; flex-shrink:0;" onclick="openMemberDetailPopup('${userEmail}')">📂 ข้อมูล</button>
             </div>
           `;
         }).join('');
@@ -1134,7 +1141,7 @@
       openModal('membersModal');
     }
 
-    // เปิด Popup แยกข้อมูลจัดการโค้ดส่วนลดของสมาชิก
+    // เปิด Popup ข้อมูลสมาชิก, จัดการโค้ด และดูประวัติใบสั่งซื้อย้อนหลัง
     function openMemberDetailPopup(emailStr) {
       const member = members.find(m => (m.email || m.emailId || "").toLowerCase() === emailStr.toLowerCase());
       if (!member) return;
@@ -1142,6 +1149,8 @@
       document.getElementById("popupMemberEmail").value = emailStr;
       document.getElementById("popupMemberNameDisplay").innerText = member.name || 'ไม่ระบุชื่อ';
       document.getElementById("popupMemberEmailDisplay").innerText = emailStr;
+      document.getElementById("popupMemberPhoneDisplay").innerText = member.phone || '-';
+      document.getElementById("popupMemberAddressDisplay").innerText = member.address || '-';
 
       let assignedCodes = member.assignedCodes || [];
       if (!assignedCodes.length && member.assignedCode) assignedCodes = [member.assignedCode];
@@ -1155,6 +1164,26 @@
         });
       } else {
         appendPopupMemberCodeRow("");
+      }
+
+      // โหลดประวัติใบสั่งซื้อย้อนหลังของสมาชิกคนนี้
+      const ordersCont = document.getElementById("popupMemberOrdersContainer");
+      const userOrders = ordersList.filter(o => o.customer && o.customer.email && o.customer.email.toLowerCase() === emailStr.toLowerCase());
+
+      if (userOrders.length === 0) {
+        ordersCont.innerHTML = `<div style="font-size:0.75rem; color:#777; padding:10px; text-align:center;">ยังไม่มีประวัติคำสั่งซื้อสินค้าในระบบ</div>`;
+      } else {
+        ordersCont.innerHTML = userOrders.map(ord => {
+          return `
+            <div style="background:#fff; border:1px solid #e2e8f0; border-radius:6px; padding:10px; display:flex; justify-content:space-between; align-items:center; gap:8px;">
+              <div>
+                <div style="font-weight:bold; font-size:0.8rem; color:#111;">ยอดชำระ: ฿${ord.grandTotal || 0}</div>
+                <div style="font-size:0.7rem; color:var(--text-muted);">จัดส่งผ่าน: ${ord.shippingName || 'EMS'}</div>
+              </div>
+              <button class="btn-action" style="height:30px; padding:0 8px; font-size:0.7rem; background:#059669; border-color:#059669;" onclick="viewOrderDetail('${ord.id}')">📄 ดูใบสั่งซื้อ</button>
+            </div>
+          `;
+        }).join('');
       }
 
       openModal('memberDetailModal');
