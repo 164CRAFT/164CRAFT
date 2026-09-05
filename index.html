@@ -723,7 +723,8 @@
       senderPhone: "0812345678",
       senderAddress: "99/1 ถ.พหลโยธิน แขวงลาดยาว เขตจตุจักร กรุงเทพฯ 10900",
       logoUrl: "",
-      themeColor: "#111111"
+      themeColor: "#111111",
+      showHeaderVip: true
     };
     let products = [];
 
@@ -932,7 +933,10 @@
               }
             });
           }
-          if (data.settings) systemSettings = data.settings;
+          if (data.settings) {
+            systemSettings = data.settings;
+            if (systemSettings.showHeaderVip === undefined) systemSettings.showHeaderVip = true;
+          }
         }
 
         activeSecretCodes = activeSecretCodes.filter(c => vipCodesList.includes(c.toUpperCase()));
@@ -969,7 +973,7 @@
         updateSecretStatusDisplay();
         const headerVipContainer = document.getElementById("headerVipContainer");
         const dropdownVipWrapper = document.getElementById("dropdownVipWrapper");
-        if (headerVipContainer && window.innerWidth >= 850) headerVipContainer.style.display = "flex";
+        if (headerVipContainer && window.innerWidth >= 850 && systemSettings.showHeaderVip !== false) headerVipContainer.style.display = "flex";
         if (dropdownVipWrapper) dropdownVipWrapper.style.display = "block";
       }
     }
@@ -1011,6 +1015,11 @@
 
       if (systemSettings.themeColor) {
         document.documentElement.style.setProperty('--accent', systemSettings.themeColor);
+      }
+
+      const headerVipBox = document.getElementById("headerVipContainer");
+      if (headerVipBox) {
+        headerVipBox.style.display = (systemSettings.showHeaderVip !== false) ? "flex" : "none";
       }
 
       document.getElementById("cartShippingDisplay").innerText = `การจัดส่ง: ${systemSettings.shippingName} (฿${systemSettings.shippingFee})`;
