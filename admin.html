@@ -455,36 +455,44 @@
     </div>
   </div>
 
-  <!-- MEMBER DETAIL POPUP MODAL -->
+  <!-- MEMBER DETAIL POPUP MODAL (แยกส่วนข้อมูลส่วนตัว, โค้ดส่วนลด และประวัติการสั่งซื้อออกจากกันอย่างชัดเจน) -->
   <div id="memberDetailModal" class="modal-overlay" onclick="if(event.target===this) closeModal('memberDetailModal')">
-    <div class="modal-box" style="max-width: 600px;">
+    <div class="modal-box" style="max-width: 640px;">
       <div class="modal-header">
         <span id="popupMemberTitle">👤 ข้อมูลสมาชิก & ประวัติการสั่งซื้อ</span>
         <button class="modal-close" onclick="closeModal('memberDetailModal')">✕</button>
       </div>
       <input type="hidden" id="popupMemberEmail" />
       
-      <div style="display: flex; flex-direction: column; gap: 12px; max-height: 70vh; overflow-y: auto; padding-right: 2px;">
-        <div style="background:#fafafa; border:1px solid var(--border-color); padding:12px; border-radius:var(--radius);">
-          <div style="font-weight:bold; font-size:0.95rem; color:#111;" id="popupMemberNameDisplay">-</div>
-          <div style="font-size:0.78rem; color:var(--text-muted);" id="popupMemberEmailDisplay">-</div>
-          <div style="font-size:0.78rem; color:var(--text-muted); margin-top:2px;">เบอร์โทรศัพท์: <strong id="popupMemberPhoneDisplay">-</strong></div>
-          <div style="font-size:0.78rem; color:var(--text-muted); margin-top:2px;">ที่อยู่จัดส่ง: <span id="popupMemberAddressDisplay">-</span></div>
-        </div>
-
-        <div style="background:#fff; padding:12px; border:1px solid #e2e8f0; border-radius:6px; display:flex; flex-direction:column; gap:8px;">
-          <div style="display:flex; justify-content:space-between; align-items:center;">
-            <label style="font-size:0.78rem; font-weight:bold; color:var(--accent-vip);">🎟️ โค้ดส่วนลดอัตโนมัติประจำตัว:</label>
-            <button type="button" class="btn-action btn-secondary" style="height:28px; padding:0 8px; font-size:0.7rem;" onclick="addPopupMemberCodeRow()">+ เพิ่มช่องโค้ด</button>
+      <div style="display: flex; flex-direction: column; gap: 14px; max-height: 72vh; overflow-y: auto; padding-right: 4px;">
+        
+        <!-- ส่วนที่ 1: ข้อมูลส่วนตัวสมาชิก -->
+        <div style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:8px; padding:14px;">
+          <div style="font-weight:800; font-size:0.85rem; color:#1e293b; margin-bottom:8px; border-bottom:1px solid #e2e8f0; padding-bottom:4px;">📌 ข้อมูลส่วนตัวสมาชิก</div>
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; font-size:0.8rem;">
+            <div><strong>ชื่อ-นามสกุล:</strong> <span id="popupMemberNameDisplay" style="color:#111;">-</span></div>
+            <div><strong>อีเมล:</strong> <span id="popupMemberEmailDisplay" style="color:#111;">-</span></div>
+            <div><strong>เบอร์โทรศัพท์:</strong> <span id="popupMemberPhoneDisplay" style="color:#111;">-</span></div>
+            <div style="grid-column: 1/-1;"><strong>ที่อยู่จัดส่ง:</strong> <span id="popupMemberAddressDisplay" style="color:#111;">-</span></div>
           </div>
-          <div id="popupMemberCodesContainer" style="display:flex; flex-direction:column; gap:6px; max-height:150px; overflow-y:auto; padding-right:2px;"></div>
-          <button type="button" class="btn-action" style="height:34px; font-size:0.78rem; margin-top:4px;" onclick="savePopupMemberAssignedCodes()">💾 บันทึกโค้ดส่วนลด</button>
         </div>
 
-        <div style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:6px; padding:12px;">
-          <div style="font-weight:bold; font-size:0.82rem; color:#1e293b; margin-bottom:8px; border-bottom:1px solid #e2e8f0; padding-bottom:4px;">📦 ประวัติใบสั่งซื้อย้อนหลังของสมาชิกคนนี้:</div>
-          <div id="popupMemberOrdersContainer" style="display:flex; flex-direction:column; gap:8px; max-height:220px; overflow-y:auto;"></div>
+        <!-- ส่วนที่ 2: โค้ดส่วนลดอัตโนมัติประจำตัว -->
+        <div style="background:#f0fdf4; border:1px solid #a7f3d0; border-radius:8px; padding:14px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; border-bottom:1px solid #a7f3d0; padding-bottom:4px;">
+            <span style="font-weight:800; font-size:0.85rem; color:#065f46;">🎟️ โค้ดส่วนลดอัตโนมัติประจำตัว</span>
+            <button type="button" class="btn-action btn-secondary" style="height:28px; padding:0 8px; font-size:0.7rem; background:#fff; border-color:#10b981; color:#065f46;" onclick="addPopupMemberCodeRow()">+ เพิ่มช่องโค้ด</button>
+          </div>
+          <div id="popupMemberCodesContainer" style="display:flex; flex-direction:column; gap:6px; max-height:140px; overflow-y:auto; padding-right:2px;"></div>
+          <button type="button" class="btn-action" style="width:100%; height:36px; font-size:0.78rem; margin-top:8px; background:#059669; border-color:#059669;" onclick="savePopupMemberAssignedCodes()">💾 บันทึกโค้ดส่วนลดประจำตัว</button>
         </div>
+
+        <!-- ส่วนที่ 3: ประวัติใบสั่งซื้อย้อนหลัง -->
+        <div style="background:#fefce8; border:1px solid #fde047; border-radius:8px; padding:14px;">
+          <div style="font-weight:800; font-size:0.85rem; color:#713f12; margin-bottom:8px; border-bottom:1px solid #fef08a; padding-bottom:4px;">📦 ประวัติใบสั่งซื้อย้อนหลัง</div>
+          <div id="popupMemberOrdersContainer" style="display:flex; flex-direction:column; gap:8px; max-height:200px; overflow-y:auto;"></div>
+        </div>
+
       </div>
 
       <div style="margin-top: 6px;">
@@ -493,7 +501,7 @@
     </div>
   </div>
 
-  <!-- WEB THEME CONFIG MODAL (เพิ่มสวิตซ์เปิด-ปิดช่องใส่โค้ด) -->
+  <!-- WEB THEME CONFIG MODAL -->
   <div id="webThemeConfigModal" class="modal-overlay" onclick="checkOutsideModalClick(event, 'webThemeConfigModal')">
     <div class="modal-box" style="max-width: 480px;">
       <div class="modal-header">
@@ -830,6 +838,7 @@
     let brands = ["Ducati", "Honda", "Isuzu", "Kawasaki", "Toyota", "Yamaha"];
     let scalesList = ["1/12", "1/32", "1/43", "1/64"];
     let vipCodesList = [];
+    let vipCodesMap = {};
 
     let systemSettings = {
       storeName: "164CRAFT",
@@ -844,18 +853,18 @@
       senderAddress: "99/1 ถ.พหลโยธิน แขวงลาดยาว เขตจตุจักร กรุงเทพฯ 10900",
       logoUrl: "",
       themeColor: "#111111",
-      showHeaderVip: true // เพิ่มค่าเริ่มต้นให้แสดงช่องใส่โค้ดที่ Header หน้าเว็บ
+      showHeaderVip: true
     };
-
     let products = [];
-    let members = [];
-    let ordersList = [];
-    let tempProductImages = [];
-    let tempProductVdo = "";
-    let adminFilterBrand = "ALL";
-    let adminFilterVip = "ALL";
-    let draggedImageIndex = null;
-    let customConfirmCallback = null;
+
+    let activeCategory = "ALL";
+    let activeSaleMode = localStorage.getItem("activeSaleMode") || "READY";
+    let activeSecretCodes = JSON.parse(localStorage.getItem("activeSecretCodes") || "[]");
+    let cart = JSON.parse(localStorage.getItem("cartItems") || "[]");
+    let currentSelectedProduct = null;
+    let appliedOptionDiscount = 0;
+    let userAssignedCodes = [];
+    let isDropdownLocked = false;
 
     let toastTimer = null;
     function showToast(message) {
@@ -866,25 +875,19 @@
       clearTimeout(toastTimer);
       toastTimer = setTimeout(() => {
         toast.classList.remove("show");
-      }, 2200);
+      }, 2000);
     }
 
-    function showCustomConfirm(message, onConfirm) {
-      document.getElementById("customConfirmText").innerText = message;
-      customConfirmCallback = onConfirm;
-      openModal("customConfirmModal");
-      document.getElementById("customConfirmOkBtn").onclick = function() {
-        closeModal("customConfirmModal");
-        if (customConfirmCallback) customConfirmCallback(true);
-      };
-    }
-
-    function closeCustomConfirm(result) {
-      closeModal("customConfirmModal");
-      if (!result && customConfirmCallback) {
-        customConfirmCallback(false);
+    document.addEventListener('contextmenu', function(e) {
+      if (e.target.tagName === 'IMG' || e.target.tagName === 'VIDEO') {
+        e.preventDefault();
       }
-    }
+    });
+    document.addEventListener('dragstart', function(e) {
+      if (e.target.tagName === 'IMG' || e.target.tagName === 'VIDEO') {
+        e.preventDefault();
+      }
+    });
 
     function sortAlphabetically(arr) {
       return arr.sort((a, b) => {
@@ -894,32 +897,169 @@
       });
     }
 
-    function saveDataToFirestore() {
-      db.collection("store_data").doc("settings").set({
-        brands,
-        scales: scalesList,
-        vipCodes: vipCodesList,
-        settings: systemSettings
-      }).catch(err => console.error("Error saving settings: ", err));
+    function initStoreFront() {
+      document.getElementById("modeReadyBtn").className = `sale-mode-btn ${activeSaleMode === 'READY' ? 'active' : ''}`;
+      document.getElementById("modePreorderBtn").className = `sale-mode-btn ${activeSaleMode === 'PREORDER' ? 'active' : ''}`;
+
+      loadDataFromFirebase();
+      initAuthListener();
+      initModalOutsideClick();
+      initBrandDrawerOutsideClick();
+      updateCartBadge();
     }
 
-    function initAdminPanel() {
-      db.collection("store_data").doc("settings").get().then((doc) => {
+    function initAuthListener() {
+      auth.onAuthStateChanged((user) => {
+        const loginBtn = document.getElementById("loginBtn");
+        const userProfile = document.getElementById("userProfile");
+        const userAvatar = document.getElementById("userAvatar");
+        const roleStatusContainer = document.getElementById("dropdownRoleStatusContainer");
+
+        if (user) {
+          loginBtn.style.display = "none";
+          userProfile.style.display = "block";
+          userAvatar.src = user.photoURL || "https://via.placeholder.com/32";
+
+          document.getElementById("dropdownUserName").innerText = user.displayName || "สมาชิก 164CRAFT";
+          document.getElementById("dropdownUserEmail").innerText = user.email;
+
+          const userEmail = (user.email || "").toLowerCase();
+          if (ALLOWED_ADMIN_EMAILS.includes(userEmail)) {
+            roleStatusContainer.innerHTML = `<a href="admin.html" class="admin-badge-icon" title="คลิกเพื่อเข้าสู่ระบบหลังบ้าน">🛠️ ADMIN</a>`;
+          } else {
+            roleStatusContainer.innerHTML = `<span class="user-badge-status">USER</span>`;
+          }
+
+          db.collection("user_profiles").doc(userEmail).get().then((doc) => {
+            const shipNameInput = document.getElementById("shipName");
+            const shipPhoneInput = document.getElementById("shipPhone");
+            const shipEmailInput = document.getElementById("shipEmail");
+            const shipAddressInput = document.getElementById("shipAddress");
+
+            if (doc.exists) {
+              const data = doc.data();
+              if (shipNameInput) shipNameInput.value = data.name || user.displayName || "";
+              if (shipPhoneInput) shipPhoneInput.value = data.phone || "";
+              if (shipEmailInput) shipEmailInput.value = user.email || "";
+              if (shipAddressInput) shipAddressInput.value = data.address || "";
+
+              let autoCodes = [];
+              if (data.assignedCodes && Array.isArray(data.assignedCodes)) {
+                autoCodes = data.assignedCodes;
+              } else if (data.assignedCode) {
+                autoCodes = [data.assignedCode];
+              }
+
+              userAssignedCodes = autoCodes;
+
+              if (autoCodes.length > 0) {
+                autoCodes.forEach(code => {
+                  const upperCode = code.toUpperCase();
+                  if (vipCodesList.includes(upperCode) && !activeSecretCodes.includes(upperCode)) {
+                    activeSecretCodes.push(upperCode);
+                  }
+                });
+                localStorage.setItem("activeSecretCodes", JSON.stringify(activeSecretCodes));
+                updateSecretStatusDisplay();
+                renderCategories();
+                renderProducts();
+              }
+            } else {
+              if (shipNameInput && !shipNameInput.value) shipNameInput.value = user.displayName || "";
+              if (shipEmailInput && !shipEmailInput.value) shipEmailInput.value = user.email || "";
+            }
+          });
+
+        } else {
+          loginBtn.style.display = "inline-flex";
+          userProfile.style.display = "none";
+          userAssignedCodes = [];
+        }
+      });
+    }
+
+    function loginWithGoogle() {
+      auth.signInWithPopup(googleProvider).then((result) => {
+        showToast("เข้าสู่ระบบสำเร็จ");
+      }).catch((error) => showToast("เข้าสู่ระบบไม่สำเร็จ: " + error.message));
+    }
+
+    function logoutGoogle() {
+      auth.signOut().then(() => {
+        localStorage.removeItem("activeSecretCodes");
+        userAssignedCodes = [];
+        clearHeaderVipCode();
+        showToast("ออกจากระบบเรียบร้อย");
+      });
+    }
+
+    function handleProfileMouseEnter() {
+      const menu = document.getElementById("accountDropdownMenu");
+      if (menu) menu.style.display = "flex";
+    }
+
+    function handleProfileMouseLeave() {
+      if (!isDropdownLocked) {
+        const menu = document.getElementById("accountDropdownMenu");
+        if (menu) menu.style.display = "none";
+      }
+    }
+
+    function toggleAccountDropdown(event) {
+      event.stopPropagation();
+      const menu = document.getElementById("accountDropdownMenu");
+      if (!menu) return;
+
+      if (isDropdownLocked) {
+        isDropdownLocked = false;
+        menu.style.display = "none";
+      } else {
+        isDropdownLocked = true;
+        menu.style.display = "flex";
+      }
+    }
+
+    function closeAccountDropdownOutside(event) {
+      isDropdownLocked = false;
+      const menu = document.getElementById("accountDropdownMenu");
+      if (menu && menu.style.display === "flex") menu.style.display = "none";
+    }
+
+    function toggleBrandDrawer(event) {
+      event.stopPropagation();
+      const dropdown = document.getElementById("brandDrawerDropdown");
+      dropdown.classList.toggle("show");
+    }
+
+    function initBrandDrawerOutsideClick() {
+      document.addEventListener('click', function(e) {
+        const container = document.getElementById("brandDrawerContainer");
+        const dropdown = document.getElementById("brandDrawerDropdown");
+        if (container && !container.contains(e.target)) {
+          dropdown.classList.remove("show");
+        }
+      });
+    }
+
+    function loadDataFromFirebase() {
+      db.collection("store_data").doc("settings").onSnapshot((doc) => {
         if (doc.exists) {
           const data = doc.data();
           if (data.brands) brands = sortAlphabetically(data.brands);
           if (data.scales) scalesList = sortAlphabetically(data.scales);
           if (data.vipCodes) {
-            vipCodesList = data.vipCodes.map(item => {
-              if (typeof item === 'string') {
-                return { code: item, note: '', type: 'ACCESS', discount: 0 };
+            vipCodesList = [];
+            vipCodesMap = {};
+            data.vipCodes.forEach(item => {
+              const c = typeof item === 'object' ? (item.code || "").toUpperCase() : (item || "").toUpperCase();
+              const n = typeof item === 'object' ? (item.note || "") : "";
+              const t = typeof item === 'object' ? (item.type || "ACCESS") : "ACCESS";
+              const d = typeof item === 'object' ? (parseFloat(item.discount) || 0) : 0;
+
+              if (c) {
+                vipCodesList.push(c);
+                vipCodesMap[c] = { note: n, type: t, discount: d };
               }
-              return {
-                code: item.code || '',
-                note: item.note || '',
-                type: item.type || 'ACCESS',
-                discount: parseFloat(item.discount) || 0
-              };
             });
           }
           if (data.settings) {
@@ -927,76 +1067,21 @@
             if (systemSettings.showHeaderVip === undefined) systemSettings.showHeaderVip = true;
           }
         }
-        applyAdminTheme();
-      }).catch(err => console.log("Error loading settings:", err));
+
+        activeSecretCodes = activeSecretCodes.filter(c => vipCodesList.includes(c.toUpperCase()));
+        localStorage.setItem("activeSecretCodes", JSON.stringify(activeSecretCodes));
+
+        applyShopSettings();
+        updateSecretStatusDisplay();
+        renderCategories();
+      }, (err) => console.log("Error loading settings:", err));
 
       db.collection("products").onSnapshot((snapshot) => {
         products = [];
         snapshot.forEach((doc) => products.push(doc.data()));
-        renderAdminBrandFilterChips();
-        renderAdminProductList();
-      });
-
-      db.collection("user_profiles").onSnapshot((snapshot) => {
-        members = [];
-        snapshot.forEach((doc) => members.push({ emailId: doc.id, ...doc.data() }));
-      });
-
-      db.collection("orders").onSnapshot((snapshot) => {
-        ordersList = [];
-        snapshot.forEach((doc) => ordersList.push({ id: doc.id, ...doc.data() }));
-      });
-
-      auth.onAuthStateChanged((user) => {
-        const statusMsg = document.getElementById("adminAuthStatus");
-        if (user) {
-          const userEmail = (user.email || "").toLowerCase();
-          if (ALLOWED_ADMIN_EMAILS.includes(userEmail)) {
-            statusMsg.style.color = "#059669";
-            statusMsg.innerText = `ยินดีต้อนรับ Admin: ${user.email}`;
-            setTimeout(() => closeModal('passcodeModal'), 400);
-
-            db.collection("user_profiles").doc(user.email.toLowerCase()).set({
-              uid: user.uid,
-              name: user.displayName || "Admin",
-              email: user.email.toLowerCase(),
-              lastLogin: firebase.firestore.FieldValue.serverTimestamp()
-            }, { merge: true });
-
-          } else {
-            statusMsg.style.color = "var(--danger)";
-            statusMsg.innerText = `บัญชี (${user.email}) ไม่มีสิทธิ์เข้าถึงระบบหลังบ้านนี้`;
-            auth.signOut();
-          }
-        } else {
-          openPasscodeModal();
-        }
-      });
-    }
-
-    function applyAdminTheme() {
-      document.getElementById("adminHeaderTitle").innerText = systemSettings.storeName;
-      const logoBox = document.getElementById("adminHeaderLogo");
-      if (systemSettings.logoUrl) {
-        logoBox.innerHTML = `<img src="${systemSettings.logoUrl}" alt="Logo" />`;
-      } else {
-        logoBox.innerHTML = "164";
-      }
-      if (systemSettings.themeColor) {
-        document.documentElement.style.setProperty('--accent', systemSettings.themeColor);
-      }
-    }
-
-    function loginAdminWithGoogle() {
-      const statusMsg = document.getElementById("adminAuthStatus");
-      statusMsg.style.color = "#666";
-      statusMsg.innerText = "กำลังตรวจสอบสิทธิ์กับ Google...";
-
-      auth.signInWithPopup(googleProvider).catch((error) => {
-        console.error("Admin login error:", error);
-        statusMsg.style.color = "var(--danger)";
-        statusMsg.innerText = "เข้าสู่ระบบไม่สำเร็จ: " + error.message;
-      });
+        renderCategories();
+        renderProducts();
+      }, (err) => console.log("Error loading products:", err));
     }
 
     function openModal(id) { 
@@ -1011,11 +1096,19 @@
       const modal = document.getElementById(id);
       if (modal && modal.style.display === "flex") {
         modal.style.display = "none";
+        const vdo = modal.querySelector('video');
+        if (vdo) vdo.pause();
+
+        updateSecretStatusDisplay();
+        const headerVipContainer = document.getElementById("headerVipContainer");
+        const dropdownVipWrapper = document.getElementById("dropdownVipWrapper");
+        if (headerVipContainer && window.innerWidth >= 850 && systemSettings.showHeaderVip !== false) headerVipContainer.style.display = "flex";
+        if (dropdownVipWrapper) dropdownVipWrapper.style.display = (systemSettings.showHeaderVip !== false) ? "block" : "none";
       }
     }
 
     window.addEventListener('popstate', (event) => {
-      const modals = ['manageProductsModal', 'ordersModal', 'shippingLabelModal', 'orderDetailModal', 'membersModal', 'memberDetailModal', 'webThemeConfigModal', 'addProductModal', 'vipCodesModal', 'configModal', 'bankConfigModal', 'shippingConfigModal', 'editCodeModal', 'customConfirmModal', 'passcodeModal'];
+      const modals = ['detailModal', 'cartModal', 'shippingModal', 'orderSummaryModal', 'clearCartConfirmModal'];
       modals.forEach(id => {
         const m = document.getElementById(id);
         if (m && m.style.display === 'flex') {
@@ -1024,1218 +1117,1029 @@
       });
     });
 
-    function checkOutsideModalClick(event, modalId) {
-      if (event.target.id === modalId) {
-        closeModal(modalId);
-      }
+    function initModalOutsideClick() {
+      document.querySelectorAll('.modal-overlay').forEach(overlay => {
+        overlay.addEventListener('click', function(e) {
+          if (e.target === this) closeModal(this.id);
+        });
+      });
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          document.querySelectorAll('.modal-overlay').forEach(modal => {
+            if (modal.style.display === 'flex') closeModal(modal.id);
+          });
+        }
+      });
     }
 
-    function openManageProductsModal() {
-      adminFilterBrand = "ALL";
-      adminFilterVip = "ALL";
-      renderAdminBrandFilterChips();
-      renderAdminProductList();
-      openModal('manageProductsModal');
-    }
-
-    function openOrdersModal() {
-      const cont = document.getElementById("adminOrdersListContainer");
-      if (ordersList.length === 0) {
-        cont.innerHTML = `<div style="text-align:center; padding:20px; color:#777;">ยังไม่มีรายการคำสั่งซื้อในระบบ</div>`;
+    function applyShopSettings() {
+      document.getElementById("siteTitleText").innerText = systemSettings.storeName || "";
+      
+      const logoBox = document.getElementById("siteLogoText");
+      if (systemSettings.logoUrl) {
+        logoBox.innerHTML = `<img src="${systemSettings.logoUrl}" alt="Logo" />`;
       } else {
-        cont.innerHTML = ordersList.map(ord => {
-          return `
-            <div style="background:#fafafa; border:1px solid var(--border-color); padding:12px; border-radius:var(--radius); display:flex; justify-content:space-between; align-items:center; gap:10px;">
-              <div>
-                <div style="font-weight:bold; font-size:0.85rem;">ผู้รับ: ${ord.customer.name} (${ord.customer.phone})</div>
-                <div style="font-size:0.75rem; color:var(--text-muted);">อีเมล: ${ord.customer.email} | ยอดชำระ: <strong style="color:#111;">฿${ord.grandTotal || 0}</strong></div>
-              </div>
-              <div style="display:flex; gap:6px; flex-wrap:wrap; justify-content:flex-end;">
-                <button class="btn-action" style="height:32px; padding:0 8px; font-size:0.7rem; background:#059669; border-color:#059669;" onclick="openShippingLabel('${ord.id}')">🖨️ ปริ้นใบปะหน้า</button>
-                <button class="btn-action btn-secondary" style="height:32px; padding:0 8px; font-size:0.7rem;" onclick="viewOrderDetail('${ord.id}')">🔍 ดูข้อมูล</button>
-                <button class="btn-action btn-danger" style="height:32px; padding:0 8px; font-size:0.7rem;" onclick="deleteOrder('${ord.id}')">🗑️ ลบ</button>
-              </div>
-            </div>
-          `;
-        }).join('');
+        logoBox.innerHTML = "";
       }
-      openModal('ordersModal');
+
+      if (systemSettings.themeColor) {
+        document.documentElement.style.setProperty('--accent', systemSettings.themeColor);
+      }
+
+      const headerVipBox = document.getElementById("headerVipContainer");
+      if (headerVipBox) {
+        headerVipBox.style.display = (systemSettings.showHeaderVip !== false) ? "flex" : "none";
+      }
+
+      const dropdownVipWrapper = document.getElementById("dropdownVipWrapper");
+      if (dropdownVipWrapper) {
+        dropdownVipWrapper.style.display = (systemSettings.showHeaderVip !== false) ? "block" : "none";
+      }
+
+      document.getElementById("cartShippingDisplay").innerText = `การจัดส่ง: ${systemSettings.shippingName} (฿${systemSettings.shippingFee})`;
+      document.getElementById("payBankName").innerText = systemSettings.bankName;
+      document.getElementById("payAccountNo").innerText = systemSettings.accountNo;
+      document.getElementById("payAccountName").innerText = systemSettings.accountName;
     }
 
-    function openShippingLabel(orderId) {
-      const ord = ordersList.find(o => o.id === orderId);
-      if (!ord) return;
+    function switchSaleMode(mode) {
+      if (cart.length > 0) {
+        const activeType = cart[0].saleMode === 'READY' ? 'สินค้าพร้อมส่ง' : 'สินค้าพรีออเดอร์';
+        showToast(`มี "${activeType}" ค้างอยู่ในตะกร้า`);
+        return;
+      }
 
-      document.getElementById("labelShippingName").innerText = ord.shippingName || systemSettings.shippingName;
-      document.getElementById("labelSenderName").innerText = systemSettings.senderName;
-      document.getElementById("labelSenderPhone").innerText = systemSettings.senderPhone;
-      document.getElementById("labelSenderAddress").innerText = systemSettings.senderAddress;
+      activeSaleMode = mode;
+      localStorage.setItem("activeSaleMode", mode);
+      document.getElementById("modeReadyBtn").className = `sale-mode-btn ${mode === 'READY' ? 'active' : ''}`;
+      document.getElementById("modePreorderBtn").className = `sale-mode-btn ${mode === 'PREORDER' ? 'active' : ''}`;
+      activeCategory = "ALL";
+      renderCategories();
+      renderProducts();
+    }
 
-      document.getElementById("labelReceiverName").innerText = ord.customer.name;
-      document.getElementById("labelReceiverPhone").innerText = ord.customer.phone;
-      document.getElementById("labelReceiverAddress").innerText = ord.customer.address;
+    function syncSearchAndRender(el) {
+      document.getElementById("mobileSearchInput").value = el.value;
+      const sidebarInput = document.getElementById("sidebarSearchInput");
+      if (sidebarInput) sidebarInput.value = el.value;
+      renderProducts();
+    }
 
-      const noteBox = document.getElementById("labelNoteContainer");
-      if (ord.customer.note) {
-        document.getElementById("labelReceiverNote").innerText = ord.customer.note;
-        noteBox.style.display = "block";
+    function syncSidebarSearch(el) {
+      const mobileInput = document.getElementById("mobileSearchInput");
+      if (mobileInput) mobileInput.value = el.value;
+      renderProducts();
+    }
+
+    function applyHeaderVipCode() {
+      const input = document.getElementById("headerVipInput");
+      processVipCode(input.value);
+    }
+
+    function applyDropdownVipCode() {
+      const input = document.getElementById("dropdownVipInput");
+      processVipCode(input.value);
+      isDropdownLocked = false;
+      const menu = document.getElementById("accountDropdownMenu");
+      if (menu) menu.style.display = "none";
+    }
+
+    function processVipCode(rawInput) {
+      const cleanInput = (rawInput || "").trim();
+      if (!cleanInput) return;
+
+      const codes = cleanInput.split(/[,,\s]+/).map(c => c.trim().toUpperCase()).filter(Boolean);
+      let successList = [];
+      let failList = [];
+
+      codes.forEach(code => {
+        if (vipCodesList.includes(code)) {
+          if (!activeSecretCodes.includes(code)) {
+            activeSecretCodes.push(code);
+          }
+          successList.push(code);
+        } else {
+          failList.push(code);
+        }
+      });
+
+      const headerInput = document.getElementById("headerVipInput");
+      if (headerInput) headerInput.value = "";
+      const dropdownInput = document.getElementById("dropdownVipInput");
+      if (dropdownInput) dropdownInput.value = "";
+
+      localStorage.setItem("activeSecretCodes", JSON.stringify(activeSecretCodes));
+      updateSecretStatusDisplay();
+
+      if (failList.length > 0 && successList.length === 0) {
+        showToast("ไม่พบรหัสนี้ในระบบจัดการรหัส");
+      } else if (successList.length > 0) {
+        renderCategories();
+        renderProducts();
+        if (currentSelectedProduct) {
+          applyAllCumulativePromoCodes();
+        }
+        showToast("ปลดล็อกสำเร็จ");
+      }
+    }
+
+    function updateSecretStatusDisplay() {
+      const statusTag = document.getElementById("secretStatusTag");
+      const validActiveCodes = activeSecretCodes.filter(c => vipCodesList.includes(c.toUpperCase()));
+
+      if (validActiveCodes.length > 0) {
+        statusTag.className = "secret-status-tag active";
+        let tagHtml = `<div style="font-weight:bold; margin-bottom:2px;">ปลดล็อกสำเร็จ [ACTIVE]:</div>`;
+        validActiveCodes.forEach(c => {
+          const masked = c.length > 2 ? c.substring(0, 2) + "•".repeat(c.length - 2) : "••••";
+          const info = vipCodesMap[c] || {};
+          const noteText = info.note ? ` (${info.note})` : ` (${c})`;
+          tagHtml += `<div>• ${masked}${noteText}</div>`;
+        });
+        statusTag.innerHTML = tagHtml;
       } else {
-        noteBox.style.display = "none";
+        statusTag.className = "secret-status-tag";
+        statusTag.innerHTML = "";
+      }
+    }
+
+    function clearHeaderVipCode() {
+      activeSecretCodes = [];
+      localStorage.removeItem("activeSecretCodes");
+      updateSecretStatusDisplay();
+      renderCategories();
+      renderProducts();
+    }
+
+    function getProductCountByBrand(brand = "ALL") {
+      const validActiveCodes = activeSecretCodes.filter(c => vipCodesList.includes(c.toUpperCase()));
+      return products.filter(p => {
+        let isModeValid = false;
+        if (p.scalePrices) {
+          Object.keys(p.scalePrices).forEach(sc => {
+            const sp = p.scalePrices[sc];
+            if (activeSaleMode === 'READY' && sp.readyActive && (sp.readyStock || 0) > 0) isModeValid = true;
+            if (activeSaleMode === 'PREORDER' && sp.preorderActive) isModeValid = true;
+          });
+        } else {
+          const readyActive = p.readyActive || false;
+          const readyStock = p.readyStock !== undefined ? p.readyStock : 0;
+          const preorderActive = p.preorderActive || false;
+          if (activeSaleMode === 'READY' && readyActive && readyStock > 0) isModeValid = true;
+          if (activeSaleMode === 'PREORDER' && preorderActive) isModeValid = true;
+        }
+
+        if (!isModeValid) return false;
+
+        const prodSecret = (p.secretCode || "").trim().toUpperCase();
+        if (prodSecret !== "") {
+          if (!validActiveCodes.includes(prodSecret)) return false;
+        }
+        if (brand === "ALL") return true;
+        return p.brand && p.brand.toUpperCase() === brand.toUpperCase();
+      }).length;
+    }
+
+    function renderCategories() {
+      const cont = document.getElementById("brandDrawerDropdown");
+      const labelName = document.getElementById("currentBrandName");
+      const labelCount = document.getElementById("currentBrandCount");
+      const validActiveCodes = activeSecretCodes.filter(c => vipCodesList.includes(c.toUpperCase()));
+
+      const currentFilteredCount = products.filter(p => {
+        let isModeValid = false;
+        if (p.scalePrices) {
+          Object.keys(p.scalePrices).forEach(sc => {
+            const sp = p.scalePrices[sc];
+            if (activeSaleMode === 'READY' && sp.readyActive && (sp.readyStock || 0) > 0) isModeValid = true;
+            if (activeSaleMode === 'PREORDER' && sp.preorderActive) isModeValid = true;
+          });
+        } else {
+          const readyActive = p.readyActive || false;
+          const readyStock = p.readyStock !== undefined ? p.readyStock : 0;
+          const preorderActive = p.preorderActive || false;
+          if (activeSaleMode === 'READY' && readyActive && readyStock > 0) isModeValid = true;
+          if (activeSaleMode === 'PREORDER' && preorderActive) isModeValid = true;
+        }
+
+        if (!isModeValid) return false;
+
+        const prodSecret = (p.secretCode || "").trim().toUpperCase();
+        if (prodSecret !== "") {
+          if (!validActiveCodes.includes(prodSecret)) return false;
+        }
+
+        const matchesCat = (activeCategory === "ALL" || (p.brand && p.brand.toUpperCase() === activeCategory.toUpperCase()));
+        return matchesCat;
+      }).length;
+
+      if (activeCategory === "ALL") {
+        labelName.innerText = "ALL MODELS";
+        labelCount.innerText = `(${currentFilteredCount})`;
+      } else {
+        labelName.innerText = activeCategory.toUpperCase();
+        labelCount.innerText = `(${currentFilteredCount})`;
       }
 
-      openModal('shippingLabelModal');
-    }
+      const totalAll = getProductCountByBrand("ALL");
+      let html = `
+        <div class="brand-drawer-item ${activeCategory === 'ALL' ? 'active' : ''}" onclick="selectCategory('ALL')">
+          <span>ALL MODELS</span>
+          <span>(${totalAll})</span>
+        </div>
+      `;
 
-    function printShippingLabel() {
-      const printContents = document.getElementById("printableLabelArea").innerHTML;
-      const originalContents = document.body.innerHTML;
-      document.body.innerHTML = `<div style="max-width:500px; margin:20px auto; font-family:sans-serif;">${printContents}</div>`;
-      window.print();
-      document.body.innerHTML = originalContents;
-      window.location.reload();
-    }
-
-    function viewOrderDetail(orderId) {
-      const ord = ordersList.find(o => o.id === orderId);
-      if (!ord) return;
-
-      const content = document.getElementById("orderDetailContent");
-      const itemsHtml = (ord.items || []).map(it => {
-        const thumb = (it.product.images && it.product.images.length > 0) ? it.product.images[0] : '';
-        const lineTotal = it.price * it.qty;
-        const modeLabel = it.saleMode === 'READY' ? '[พร้อมส่ง]' : '[พรีออเดอร์]';
-        return `
-          <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid #eee; padding:6px 0; gap:8px;">
-            <div style="display:flex; gap:8px; align-items:center; overflow:hidden;">
-              <img src="${thumb}" style="width:36px; height:36px; object-fit:cover; border-radius:6px; border:1px solid #111; flex-shrink:0;" />
-              <div style="overflow:hidden;">
-                <div style="font-weight:bold; font-size:0.78rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${it.product.name} ${modeLabel}</div>
-                <div style="font-size:0.65rem; color:#666;">SKU: ${it.product.id} | สเกล: ${it.scale} | ${it.optionName}</div>
-              </div>
-            </div>
-            <div style="text-align:right; flex-shrink:0; font-size:0.78rem;">
-              <div>${it.qty} ชิ้น x ฿${it.price}</div>
-              <strong style="color:#111;">฿${lineTotal}</strong>
-            </div>
+      brands.forEach(b => {
+        const count = getProductCountByBrand(b);
+        html += `
+          <div class="brand-drawer-item ${activeCategory === b ? 'active' : ''}" onclick="selectCategory('${b}')">
+            <span>${b}</span>
+            <span>(${count})</span>
           </div>
         `;
-      }).join('');
-
-      let dateStr = "-";
-      if (ord.createdAt && ord.createdAt.toDate) {
-        dateStr = ord.createdAt.toDate().toLocaleString('th-TH', { dateStyle: 'medium', timeStyle: 'short' });
-      }
-
-      content.innerHTML = `
-        <div style="font-size:0.78rem; color:var(--text-muted); margin-bottom:4px;"><strong>วันที่สั่งซื้อ:</strong> ${dateStr}</div>
-        <div class="shipping-info-box" style="margin-top:0; background: #fff;">
-          <div style="font-weight: bold; margin-bottom: 4px; border-bottom: 1px solid #ddd; padding-bottom: 4px;">🏬 ข้อมูลผู้จัดส่ง (Sender):</div>
-          <div><strong>ผู้ส่ง:</strong> ${systemSettings.senderName}</div>
-          <div><strong>เบอร์โทร:</strong> ${systemSettings.senderPhone}</div>
-          <div><strong>ที่อยู่:</strong> ${systemSettings.senderAddress}</div>
-        </div>
-
-        <div style="font-weight: bold; font-size: 0.88rem; margin-top: 4px;">📦 รายการสินค้าที่สั่งซื้อ:</div>
-        <div style="max-height: 180px; overflow-y: auto; border: 1px solid var(--border-color); border-radius: var(--radius); padding: 6px; background: #fff; margin-top: 2px;">
-          ${itemsHtml}
-        </div>
-
-        <div class="shipping-info-box" style="margin-top: 4px;">
-          <div style="font-weight: bold; margin-bottom: 4px; border-bottom: 1px solid #ddd; padding-bottom: 4px;">🚚 ข้อมูลผู้รับ (Receiver):</div>
-          <div><strong>ชื่อผู้รับ:</strong> ${ord.customer.name}</div>
-          <div><strong>เบอร์โทร:</strong> ${ord.customer.phone}</div>
-          <div><strong>อีเมล:</strong> ${ord.customer.email}</div>
-          <div><strong>ที่อยู่:</strong> ${ord.customer.address}</div>
-          ${ord.customer.note ? `<div style="margin-top: 4px; color: #b45309;"><strong>Note:</strong> ${ord.customer.note}</div>` : ''}
-        </div>
-
-        <div class="bank-payment-box" style="margin-top: 4px; background: #f4f4f1; border: 1px solid var(--border-color); border-radius: var(--radius); padding: 10px;">
-          <div style="font-weight: bold; font-size: 0.82rem; margin-bottom: 4px; border-bottom: 1px solid #ddd; padding-bottom: 4px;">💳 ข้อมูลการชำระเงิน:</div>
-          <div><strong>ธนาคาร:</strong> ${systemSettings.bankName}</div>
-          <div><strong>เลขที่บัญชี:</strong> <span style="font-weight: bold; color: #000;">${systemSettings.accountNo}</span></div>
-          <div><strong>ชื่อบัญชี:</strong> ${systemSettings.accountName}</div>
-        </div>
-
-        <div style="border-top: 2px solid var(--border-dark); padding-top: 6px; margin-top: 4px;">
-          <div style="display: flex; justify-content: space-between; font-size: 0.82rem; color: var(--text-muted);"><span>ค่าสินค้า:</span><span>฿${ord.subtotal || 0}</span></div>
-          <div style="display: flex; justify-content: space-between; font-size: 0.82rem; color: var(--text-muted);"><span>ค่าจัดส่ง (${ord.shippingName || systemSettings.shippingName}):</span><span>฿${ord.shippingFee || systemSettings.shippingFee}</span></div>
-          <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 1.1rem; color: #000; margin-top: 2px;"><span>ยอดรวมสุทธิ:</span><span>฿${ord.grandTotal || 0}</span></div>
-        </div>
-      `;
-      openModal('orderDetailModal');
-    }
-
-    function deleteOrder(orderId) {
-      showCustomConfirm("ต้องการลบคำสั่งซื้อนี้ออกจากระบบหรือไม่?", (confirmed) => {
-        if (confirmed) {
-          db.collection("orders").doc(orderId).delete().then(() => {
-            showToast("ลบคำสั่งซื้อสำเร็จ");
-          }).catch(err => {
-            showToast("เกิดข้อผิดพลาดในการลบออเดอร์");
-          });
-        }
-      });
-    }
-
-    function deleteProduct(productId) {
-      showCustomConfirm(`ต้องการลบ SKU: ${productId} หรือไม่?`, (confirmed) => {
-        if (confirmed) {
-          db.collection("products").doc(productId).delete().then(() => {
-            showToast("ลบสำเร็จ");
-          }).catch(err => {
-            showToast("เกิดข้อผิดพลาดในการลบสินค้า");
-          });
-        }
-      });
-    }
-
-    function openMembersModal() {
-      const cont = document.getElementById("membersListContainer");
-      if (members.length === 0) {
-        cont.innerHTML = `<div style="text-align:center; padding:20px; color:#777;">ยังไม่มีข้อมูลสมาชิกในระบบ</div>`;
-      } else {
-        cont.innerHTML = members.map(m => {
-          const userEmail = (m.email || m.emailId || "").toLowerCase();
-          const userName = m.name || 'ไม่ระบุชื่อ';
-
-          return `
-            <div style="background:#fafafa; border:1px solid var(--border-color); padding:10px 14px; border-radius:var(--radius); display:flex; justify-content:space-between; align-items:center; gap:10px;">
-              <div style="overflow:hidden;">
-                <div style="font-weight:bold; font-size:0.88rem; color:#111; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${userName}</div>
-                <div style="font-size:0.75rem; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${userEmail}</div>
-              </div>
-              <button class="btn-action btn-secondary" style="height:32px; padding:0 10px; font-size:0.72rem; flex-shrink:0;" onclick="openMemberDetailPopup('${userEmail}')">📂 ข้อมูล</button>
-            </div>
-          `;
-        }).join('');
-      }
-      openModal('membersModal');
-    }
-
-    function openMemberDetailPopup(emailStr) {
-      const member = members.find(m => (m.email || m.emailId || "").toLowerCase() === emailStr.toLowerCase());
-      if (!member) return;
-
-      document.getElementById("popupMemberEmail").value = emailStr;
-      document.getElementById("popupMemberNameDisplay").innerText = member.name || 'ไม่ระบุชื่อ';
-      document.getElementById("popupMemberEmailDisplay").innerText = emailStr;
-      document.getElementById("popupMemberPhoneDisplay").innerText = member.phone || '-';
-      document.getElementById("popupMemberAddressDisplay").innerText = member.address || '-';
-
-      let assignedCodes = member.assignedCodes || [];
-      if (!assignedCodes.length && member.assignedCode) assignedCodes = [member.assignedCode];
-
-      const container = document.getElementById("popupMemberCodesContainer");
-      container.innerHTML = "";
-
-      if (assignedCodes.length > 0) {
-        assignedCodes.forEach(codeVal => {
-          appendPopupMemberCodeRow(codeVal);
-        });
-      } else {
-        appendPopupMemberCodeRow("");
-      }
-
-      const ordersCont = document.getElementById("popupMemberOrdersContainer");
-      const userOrders = ordersList.filter(o => o.customer && o.customer.email && o.customer.email.toLowerCase() === emailStr.toLowerCase());
-
-      if (userOrders.length === 0) {
-        ordersCont.innerHTML = `<div style="font-size:0.75rem; color:#777; padding:10px; text-align:center;">ยังไม่มีประวัติคำสั่งซื้อสินค้าในระบบ</div>`;
-      } else {
-        ordersCont.innerHTML = userOrders.map(ord => {
-          let dateStr = "-";
-          if (ord.createdAt && ord.createdAt.toDate) {
-            dateStr = ord.createdAt.toDate().toLocaleString('th-TH', { dateStyle: 'medium', timeStyle: 'short' });
-          }
-          return `
-            <div style="background:#fff; border:1px solid #e2e8f0; border-radius:6px; padding:10px; display:flex; justify-content:space-between; align-items:center; gap:8px;">
-              <div>
-                <div style="font-weight:bold; font-size:0.8rem; color:#111;">ยอดชำระ: ฿${ord.grandTotal || 0}</div>
-                <div style="font-size:0.7rem; color:var(--text-muted);">วันที่สั่งซื้อ: ${dateStr}</div>
-              </div>
-              <button class="btn-action" style="height:30px; padding:0 8px; font-size:0.7rem; background:#059669; border-color:#059669;" onclick="viewOrderDetail('${ord.id}')">📄 ดูใบสั่งซื้อ</button>
-            </div>
-          `;
-        }).join('');
-      }
-
-      openModal('memberDetailModal');
-    }
-
-    function appendPopupMemberCodeRow(selectedCode = "") {
-      const container = document.getElementById("popupMemberCodesContainer");
-      const rowId = 'popupCodeRow_' + Date.now() + Math.random().toString(36).substr(2, 5);
-      
-      const allCreatedCodes = vipCodesList.map(item => item.code);
-      const optionsHtml = allCreatedCodes.map(c => `<option value="${c}" ${c === selectedCode ? 'selected' : ''}>${c}</option>`).join('');
-
-      const div = document.createElement('div');
-      div.id = rowId;
-      div.style.cssText = "display:flex; gap:6px; align-items:center;";
-      div.innerHTML = `
-        <select class="form-control popup-member-code-select" style="min-height:32px; font-size:0.78rem;">
-          <option value="">-- เลือกโค้ดในระบบ --</option>
-          ${optionsHtml}
-        </select>
-        <button type="button" class="btn-action btn-danger" style="height:32px; padding:0 8px; font-size:0.7rem;" onclick="document.getElementById('${rowId}').remove()">✕ ลบ</button>
-      `;
-      container.appendChild(div);
-    }
-
-    function addPopupMemberCodeRow() {
-      appendPopupMemberCodeRow("");
-    }
-
-    function savePopupMemberAssignedCodes() {
-      const emailStr = document.getElementById("popupMemberEmail").value;
-      const selects = document.querySelectorAll(".popup-member-code-select");
-      const codes = [];
-      selects.forEach(sel => {
-        const val = sel.value.trim().toUpperCase();
-        if (val && !codes.includes(val)) codes.push(val);
-      });
-
-      db.collection("user_profiles").doc(emailStr.toLowerCase()).set({
-        email: emailStr.toLowerCase(),
-        assignedCodes: codes,
-        assignedCode: codes.length > 0 ? codes[0] : ""
-      }, { merge: true }).then(() => {
-        showToast("บันทึกโค้ดส่วนลดอัตโนมัติสำเร็จ");
-        closeModal('memberDetailModal');
-      }).catch(err => {
-        showToast("เกิดข้อผิดพลาด: " + err.message);
-      });
-    }
-
-    function openWebThemeConfigModal() {
-      document.getElementById("cfgStoreName").value = systemSettings.storeName || "164CRAFT";
-      document.getElementById("cfgThemeColor").value = systemSettings.themeColor || "#111111";
-      document.getElementById("cfgThemeColorText").value = systemSettings.themeColor || "#111111";
-      document.getElementById("cfgShowHeaderVip").checked = systemSettings.showHeaderVip !== false;
-      
-      const logoArea = document.getElementById("logoPreviewArea");
-      logoArea.innerHTML = systemSettings.logoUrl ? `<img src="${systemSettings.logoUrl}" style="max-height:50px; border-radius:4px; border:1px solid #ccc;" />` : '<span style="font-size:0.72rem; color:#666;">(ยังไม่ได้อัปโหลดโลโก้)</span>';
-      
-      document.getElementById("cfgThemeColor").oninput = function(e) {
-        document.getElementById("cfgThemeColorText").value = e.target.value;
-      };
-
-      openModal('webThemeConfigModal');
-    }
-
-    function handleLogoUpload(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = (ev) => {
-        systemSettings.logoUrl = ev.target.result;
-        document.getElementById("logoPreviewArea").innerHTML = `<img src="${ev.target.result}" style="max-height:50px; border-radius:4px; border:1px solid #ccc;" />`;
-      };
-      reader.readAsDataURL(file);
-    }
-
-    function saveWebThemeConfig(e) {
-      e.preventDefault();
-      systemSettings.storeName = document.getElementById("cfgStoreName").value.trim();
-      systemSettings.themeColor = document.getElementById("cfgThemeColor").value;
-      systemSettings.showHeaderVip = document.getElementById("cfgShowHeaderVip").checked;
-      saveDataToFirestore();
-      applyAdminTheme();
-      showToast("บันทึกการตั้งค่าเว็บสำเร็จ");
-    }
-
-    function renderAdminBrandFilterChips() {
-      const cont = document.getElementById("adminBrandFilterChips");
-      let html = `<button type="button" class="admin-filter-btn ${adminFilterBrand === 'ALL' ? 'active' : ''}" onclick="setAdminBrandFilter('ALL')">ทั้งหมด (${products.length})</button>`;
-      
-      brands.forEach(b => {
-        const count = products.filter(p => p.brand && p.brand.toUpperCase() === b.toUpperCase()).length;
-        html += `<button type="button" class="admin-filter-btn ${adminFilterBrand === b ? 'active' : ''}" onclick="setAdminBrandFilter('${b}')">${b} (${count})</button>`;
       });
       cont.innerHTML = html;
     }
 
-    function setAdminBrandFilter(brand) {
-      adminFilterBrand = brand;
-      renderAdminBrandFilterChips();
-      renderAdminProductList();
+    function selectCategory(cat) {
+      activeCategory = cat;
+      renderCategories();
+      renderProducts();
+      document.getElementById("brandDrawerDropdown").classList.remove("show");
     }
 
-    function setAdminVipFilter(type) {
-      adminFilterVip = type;
-      document.getElementById("filterVipAllBtn").className = `admin-filter-btn ${type === 'ALL' ? 'active' : ''}`;
-      document.getElementById("filterVipNormalBtn").className = `admin-filter-btn ${type === 'NORMAL' ? 'active' : ''}`;
-      document.getElementById("filterVipOnlyBtn").className = `admin-filter-btn ${type === 'VIP' ? 'active' : ''}`;
-      renderAdminProductList();
-    }
-
-    function renderAdminProductList() {
-      const cont = document.getElementById("adminProductList");
-      const q = (document.getElementById("adminSearchInput").value || "").trim().toLowerCase();
-      
-      const filtered = products.filter(p => {
-        if (adminFilterBrand !== "ALL" && (!p.brand || p.brand.toUpperCase() !== adminFilterBrand.toUpperCase())) {
-          return false;
-        }
-
-        const hasVip = (p.secretCode && p.secretCode.trim() !== "");
-        if (adminFilterVip === "NORMAL" && hasVip) return false;
-        if (adminFilterVip === "VIP" && !hasVip) return false;
-
-        const matchName = p.name && p.name.toLowerCase().includes(q);
-        const matchId = p.id && p.id.toLowerCase().includes(q);
-        return matchName || matchId;
+    function getCardLowestDiscountedPrice(p) {
+      let scalesArr = (p.scales && p.scales.length > 0) ? p.scales : ['Standard'];
+      let codesToCheck = [...userAssignedCodes].filter(c => vipCodesList.includes(c.toUpperCase()));
+      activeSecretCodes.forEach(c => {
+        const uc = c.toUpperCase();
+        if (vipCodesList.includes(uc) && !codesToCheck.includes(uc)) codesToCheck.push(uc);
       });
 
-      document.getElementById("adminFilteredCount").innerText = `แสดงอยู่ ${filtered.length} จากทั้งหมด ${products.length} ชิ้น`;
+      let minOriginal = Infinity;
+      let minFinal = Infinity;
+      let hasDiscount = false;
 
-      if (filtered.length === 0) {
-        cont.innerHTML = `<div style="text-align:center; padding:25px; color:#888; background:#fff; border:1px dashed #ccc; border-radius:8px;">ไม่พบสินค้าที่ตรงกับตัวกรอง</div>`;
-        return;
+      scalesArr.forEach(sc => {
+        let base = p.basePrice || 0;
+        if (p.scalePrices && p.scalePrices[sc] !== undefined) {
+          const sp = p.scalePrices[sc];
+          base = (typeof sp === 'object' && sp.price !== undefined) ? sp.price : sp;
+        }
+
+        let optionsArr = (p.options && p.options.length > 0) ? p.options : [{ name: 'Standard', extraPrice: 0, codes: [] }];
+
+        optionsArr.forEach(opt => {
+          let optExtra = opt.extraPrice || 0;
+          let totalBase = base - optExtra;
+          if (totalBase < 0) totalBase = 0;
+
+          let totalDisc = 0;
+          codesToCheck.forEach(code => {
+            const info = vipCodesMap[code];
+            if (info && info.type === 'DISCOUNT') {
+              totalDisc += info.discount;
+            }
+
+            let foundDisc = 0;
+            if (opt.codes && Array.isArray(opt.codes)) {
+              const m = opt.codes.find(c => (c.code || "").toUpperCase() === code.toUpperCase());
+              if (m) foundDisc = m.discount || 0;
+            }
+            if (!foundDisc && opt.vipCode && opt.vipCode.toUpperCase() === code.toUpperCase()) {
+              foundDisc = opt.vipDiscount || 0;
+            }
+            totalDisc += foundDisc;
+          });
+
+          let finalP = totalBase - totalDisc;
+          if (finalP < 0) finalP = 0;
+
+          if (finalP < minFinal) {
+            minFinal = finalP;
+            minOriginal = base;
+            hasDiscount = (optExtra > 0 || totalDisc > 0);
+          }
+        });
+      });
+
+      if (minFinal === Infinity) {
+        minFinal = p.basePrice || 0;
+        minOriginal = minFinal;
+        hasDiscount = false;
       }
 
-      cont.innerHTML = filtered.map(p => {
-        const thumb = (p.images && p.images.length > 0) ? p.images[0] : '';
-        const secretNotice = p.secretCode ? `<span style="color:var(--accent-vip); font-weight:bold;">[เปิดสินค้า: ${p.secretCode}]</span> ` : '';
-        
-        let activeReadyCount = 0;
-        let activePreorderCount = 0;
+      if (hasDiscount && minOriginal > minFinal) {
+        return `<span style="text-decoration: line-through; color: #888; font-size: 0.85rem; margin-right: 4px;">฿${minOriginal}</span> <span style="color: var(--danger);">฿${minFinal}</span>`;
+      }
+      return `<span style="color: var(--danger);">฿${minFinal}</span>`;
+    }
+
+    function renderProducts() {
+      const grid = document.getElementById("productGridContainer");
+      const mobileSearch = (document.getElementById("mobileSearchInput")?.value || "").trim().toLowerCase();
+      const sidebarSearch = (document.getElementById("sidebarSearchInput")?.value || "").trim().toLowerCase();
+      const search = mobileSearch || sidebarSearch;
+      const overviewCounter = document.getElementById("filterOverviewCount");
+      const validActiveCodes = activeSecretCodes.filter(c => vipCodesList.includes(c.toUpperCase()));
+
+      const filtered = products.filter(p => {
+        let isModeValid = false;
+        let modeStockSum = 0;
         if (p.scalePrices) {
           Object.keys(p.scalePrices).forEach(sc => {
             const sp = p.scalePrices[sc];
-            if (sp.readyActive && (sp.readyStock || 0) > 0) activeReadyCount += (sp.readyStock || 0);
-            if (sp.preorderActive) activePreorderCount += (sp.preorderUnlimited ? 9999 : (sp.preorderStock || 0));
+            if (activeSaleMode === 'READY' && sp.readyActive && (sp.readyStock || 0) > 0) {
+              isModeValid = true;
+              modeStockSum += (sp.readyStock || 0);
+            }
+            if (activeSaleMode === 'PREORDER' && sp.preorderActive) {
+              isModeValid = true;
+              modeStockSum += (sp.preorderUnlimited ? 9999 : (sp.preorderStock || 0));
+            }
           });
         } else {
-          if (p.readyActive) activeReadyCount = p.readyStock || 0;
-          if (p.preorderActive) activePreorderCount = p.preorderUnlimited ? 9999 : (p.preorderStock || 0);
+          const readyActive = p.readyActive || false;
+          const readyStock = p.readyStock !== undefined ? p.readyStock : 0;
+          const preorderActive = p.preorderActive || false;
+          const preorderStock = p.preorderUnlimited ? 9999 : (p.preorderStock || 0);
+
+          if (activeSaleMode === 'READY' && readyActive && readyStock > 0) {
+            isModeValid = true;
+            modeStockSum = readyStock;
+          }
+          if (activeSaleMode === 'PREORDER' && preorderActive) {
+            isModeValid = true;
+            modeStockSum = preorderStock;
+          }
         }
 
-        const stockInfo = `<span style="color:#0284c7; font-weight:bold;">[พร้อมส่ง: ${activeReadyCount} | พรี: ${activePreorderCount === 9999 ? 'ไม่จำกัด' : activePreorderCount}]</span> `;
+        if (!isModeValid) return false;
 
-        return `
-          <div class="admin-prod-item">
-            <div style="display:flex; gap:10px; align-items:center; overflow:hidden;">
-              <img src="${thumb}" style="width:42px; height:42px; object-fit:cover; border-radius:4px; border:1px solid #ddd; flex-shrink:0;" />
-              <div style="overflow:hidden;">
-                <div style="font-weight:bold; font-size:0.82rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${p.name}</div>
-                <div style="font-size:0.72rem; color:#666;">SKU: ${p.id} | ${p.brand} | ${stockInfo}${secretNotice}</div>
-              </div>
-            </div>
-            <div style="display:flex; gap:4px; flex-shrink:0;">
-              <button class="btn-action btn-secondary" style="height:32px; padding:0 8px; font-size:0.7rem;" onclick="cloneProduct('${p.id}')" title="โคลนสินค้า">🧬 โคลน</button>
-              <button class="btn-action btn-secondary" style="height:32px; padding:0 8px; font-size:0.7rem;" onclick="editProduct('${p.id}')">แก้ไข</button>
-              <button class="btn-action btn-danger" style="height:32px; padding:0 8px; font-size:0.7rem;" onclick="deleteProduct('${p.id}')">ลบ</button>
-            </div>
+        const prodSecret = (p.secretCode || "").trim().toUpperCase();
+        if (prodSecret !== "") {
+          if (!validActiveCodes.includes(prodSecret)) return false;
+        }
+
+        const matchesCat = (activeCategory === "ALL" || (p.brand && p.brand.toUpperCase() === activeCategory.toUpperCase()));
+        const matchesSearch = (p.name && p.name.toLowerCase().includes(search)) || 
+                              (p.id && p.id.toLowerCase().includes(search)) || 
+                              (p.brand && p.brand.toLowerCase().includes(search));
+
+        return matchesCat && matchesSearch;
+      });
+
+      if (overviewCounter) overviewCounter.innerText = `(แสดงอยู่ ${filtered.length} รายการ)`;
+
+      renderCategories();
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `
+          <div style="grid-column: 1/-1; text-align:center; padding:50px 20px; color:#888; background:#fff; border:1px dashed #ccc; border-radius:12px; width: 100%;">
+            <div style="font-size:1.6rem; margin-bottom:8px;">📦</div>
+            <div style="font-weight:bold; font-size:0.95rem; color:#111;">ไม่พบสินค้าในหมวด ${activeSaleMode === 'READY' ? 'พร้อมส่ง' : 'พรีออเดอร์'} ที่ตรงกับเงื่อนไข</div>
           </div>
         `;
-      }).join('');
-    }
-
-    function openAddProductModal() {
-      closeModal('manageProductsModal');
-      document.getElementById("productModalTitle").innerText = "📦 เพิ่มรายการสินค้าใหม่";
-      document.getElementById("editingProductId").value = "";
-      document.getElementById("addProductForm").reset();
-      document.getElementById("pPreorderLeadTime").value = "";
-
-      tempProductImages = [];
-      removeVdo();
-
-      const bSelect = document.getElementById("pBrandSelect");
-      bSelect.innerHTML = brands.map(b => `<option value="${b}">${b}</option>`).join('');
-
-      renderVipSelectOptions("");
-      renderAdminScalesInputs();
-      document.getElementById("dynamicOptionsList").innerHTML = "";
-
-      openModal('addProductModal');
-    }
-
-    function cloneProduct(productId) {
-      db.collection("products").doc(productId).get().then((doc) => {
-        if (!doc.exists) {
-          showToast("ไม่พบสินค้าต้นฉบับ");
-          return;
-        }
-        const prod = doc.data();
-
-        closeModal('manageProductsModal');
-        document.getElementById("productModalTitle").innerText = "🧬 โคลนสินค้าใหม่จาก SKU: " + prod.id;
-        document.getElementById("editingProductId").value = "";
-        document.getElementById("pId").value = prod.id + "-COPY";
-        document.getElementById("pName").value = prod.name + " (สำเนา)";
-        document.getElementById("pPreorderLeadTime").value = prod.preorderLeadTime || "";
-
-        const bSelect = document.getElementById("pBrandSelect");
-        bSelect.innerHTML = brands.map(b => `<option value="${b}" ${b === prod.brand ? 'selected' : ''}>${b}</option>`).join('');
-
-        renderVipSelectOptions(prod.secretCode || "");
-
-        tempProductImages = prod.images ? [...prod.images] : [];
-        renderAdminImagePreview();
-
-        if (prod.vdo) {
-          tempProductVdo = prod.vdo;
-          displayVdoPreview(prod.vdo, prod.vdo);
-        } else {
-          removeVdo();
-        }
-
-        renderAdminScalesInputs(prod.scales, prod.scalePrices);
-
-        const optCont = document.getElementById("dynamicOptionsList");
-        optCont.innerHTML = "";
-        if (prod.options && prod.options.length > 0) {
-          prod.options.forEach(o => addDynamicOptionRow(o));
-        }
-
-        openModal('addProductModal');
-      });
-    }
-
-    function renderVipSelectOptions(selectedVal = "") {
-      const select = document.getElementById("pSecretCodeSelect");
-      let html = `<option value="">-- เป็นสินค้าทั่วไป (ไม่ต้องใช้โค้ดเปิดสินค้า) --</option>`;
-      vipCodesList.forEach(item => {
-        if (item.type === 'ACCESS') {
-          html += `<option value="${item.code}" ${item.code === selectedVal ? 'selected' : ''}>🔓 โค้ดเปิดสินค้า: ${item.code} ${item.note ? '(' + item.note + ')' : ''}</option>`;
-        }
-      });
-      select.innerHTML = html;
-    }
-
-    function renderAdminScalesInputs(selectedScales = ["1/64"], scalePrices = {}) {
-      const cont = document.getElementById("scalesContainer");
-      cont.innerHTML = scalesList.map(sc => `
-        <label class="scale-check">
-          <input type="checkbox" name="productScale" value="${sc}" ${selectedScales.includes(sc) ? 'checked' : ''} onchange="updateScaleSettingsCards()" />
-          ${sc}
-        </label>
-      `).join('');
-      updateScaleSettingsCards(scalePrices);
-    }
-
-    function updateScaleSettingsCards(existingPrices = {}) {
-      const container = document.getElementById("scaleSettingsCardsContainer");
-      const checkedScales = Array.from(document.querySelectorAll('input[name="productScale"]:checked')).map(cb => cb.value);
-
-      if (checkedScales.length === 0) {
-        container.innerHTML = `<div style="font-size:0.75rem; color:#888; padding:8px;">(กรุณาเลือกสเกลที่รองรับด้านบนอย่างน้อย 1 สเกล)</div>`;
         return;
       }
 
-      container.innerHTML = checkedScales.map(sc => {
-        const sp = (existingPrices && existingPrices[sc]) || {
-          price: 0,
-          readyActive: false,
-          readyStock: 0,
-          preorderActive: false,
-          preorderStock: 0,
-          preorderUnlimited: false
-        };
-
-        const safeKey = sc.replace(/[^a-zA-Z0-9]/g, '_');
-
-        return `
-          <div class="scale-setting-card" data-scale="${sc}">
-            <div class="scale-setting-header">📐 สเกล: ${sc}</div>
-            
-            <div style="display: flex; flex-direction: column; gap: 4px; margin-bottom: 4px;">
-              <label style="font-size:0.75rem; font-weight:bold; color:#333;">ราคาขายสำหรับสเกล ${sc} (บาท)</label>
-              <input type="text" inputmode="numeric" class="form-control scale-price-val-${safeKey}" value="${sp.price || 0}" onfocus="this.select()" placeholder="0" required style="background:#fff;" />
-            </div>
-
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-              <div style="background: #f0fdf4; border: 1px solid #10b981; padding: 10px; border-radius: 6px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                  <label style="font-size: 0.75rem; color: #065f46; font-weight: bold;">📦 พร้อมส่ง (In Stock)</label>
-                  <label style="font-size: 0.7rem; display: flex; align-items: center; gap: 3px; cursor: pointer;">
-                    <input type="checkbox" class="scale-ready-active-${safeKey}" ${sp.readyActive ? 'checked' : ''} onchange="toggleScaleReadyInput(this, '${safeKey}')" /> เปิดขาย
-                  </label>
-                </div>
-                <div class="scale-ready-group-${safeKey}" style="display: ${sp.readyActive ? 'flex' : 'none'}; flex-direction: column; gap: 4px; margin-top: 4px;">
-                  <div style="display: flex; align-items: center; gap: 6px;">
-                    <input type="text" inputmode="numeric" class="form-control scale-ready-stock-${safeKey}" value="${sp.readyStock || 0}" onfocus="this.select()" style="background:#fff;" placeholder="จำนวนสต็อก" />
-                    <span style="font-size: 0.7rem; color: #065f46; white-space: nowrap;">ชิ้น</span>
-                  </div>
-                </div>
-              </div>
-
-              <div style="background: #fff7ed; border: 1px solid #f97316; padding: 10px; border-radius: 6px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                  <label style="font-size: 0.75rem; color: #c2410c; font-weight: bold;">⏳ พรีออเดอร์ (Pre-order)</label>
-                  <label style="font-size: 0.7rem; display: flex; align-items: center; gap: 3px; cursor: pointer;">
-                    <input type="checkbox" class="scale-pre-active-${safeKey}" ${sp.preorderActive ? 'checked' : ''} onchange="toggleScalePreInput(this, '${safeKey}')" /> เปิดขาย
-                  </label>
-                </div>
-                <div class="scale-pre-group-${safeKey}" style="display: ${sp.preorderActive ? 'flex' : 'none'}; flex-direction: column; gap: 4px; margin-top: 4px;">
-                  <div style="display: flex; align-items: center; gap: 6px;">
-                    <input type="text" inputmode="numeric" class="form-control scale-pre-stock-${safeKey}" value="${sp.preorderUnlimited ? 999999 : (sp.preorderStock || 0)}" ${sp.preorderUnlimited ? 'disabled' : ''} onfocus="this.select()" style="background:#fff;" placeholder="จำนวนโควต้า" />
-                    <span style="font-size: 0.7rem; color: #c2410c; white-space: nowrap;">ชิ้น</span>
-                  </div>
-                  <label style="font-size: 0.68rem; color: #9a3412; display: flex; align-items: center; gap: 4px; cursor: pointer; margin-top: 2px;">
-                    <input type="checkbox" class="scale-pre-unlimited-${safeKey}" ${sp.preorderUnlimited ? 'checked' : ''} onchange="toggleScaleUnlimited(this, '${safeKey}')" /> สั่งได้ไม่จำกัด (Unlimited)
-                  </label>
-                </div>
-              </div>
-            </div>
-          </div>
-        `;
-      }).join('');
-    }
-
-    function toggleScaleReadyInput(chk, safeKey) {
-      const grp = document.querySelector(`.scale-ready-group-${safeKey}`);
-      if (grp) grp.style.display = chk.checked ? "flex" : "none";
-    }
-
-    function toggleScalePreInput(chk, safeKey) {
-      const grp = document.querySelector(`.scale-pre-group-${safeKey}`);
-      if (grp) grp.style.display = chk.checked ? "flex" : "none";
-    }
-
-    function toggleScaleUnlimited(chk, safeKey) {
-      const stockInp = document.querySelector(`.scale-pre-stock-${safeKey}`);
-      if (stockInp) {
-        stockInp.disabled = chk.checked;
-        if (chk.checked) stockInp.value = "999999";
-      }
-    }
-
-    function compressImageFile(file, maxWidth = 1000, quality = 0.8) {
-      return new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = (event) => {
-          const img = new Image();
-          img.src = event.target.result;
-          img.onload = () => {
-            let width = img.width;
-            let height = img.height;
-            if (width > maxWidth) {
-              height = Math.round((height * maxWidth) / width);
-              width = maxWidth;
+      grid.innerHTML = filtered.map(p => {
+        const mainImage = (p.images && p.images.length > 0) ? p.images[0] : 'https://via.placeholder.com/400?text=No+Image';
+        const imgCount = p.images ? p.images.length : 0;
+        const countBadge = imgCount > 1 ? `<div class="media-count-badge">📷 ${imgCount} ภาพ</div>` : '';
+        const isExclusive = p.secretCode ? `<span class="exclusive-badge">EXCLUSIVE</span>` : '';
+        
+        let stockSum = 0;
+        let isUnlimitedPre = false;
+        if (p.scalePrices) {
+          Object.keys(p.scalePrices).forEach(sc => {
+            const sp = p.scalePrices[sc];
+            if (activeSaleMode === "PREORDER" && sp.preorderActive) {
+              if (sp.preorderUnlimited) isUnlimitedPre = true;
+              else stockSum += (sp.preorderStock || 0);
+            } else if (activeSaleMode === "READY" && sp.readyActive) {
+              stockSum += (sp.readyStock || 0);
             }
-            const canvas = document.createElement('canvas');
-            canvas.width = width;
-            canvas.height = height;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0, width, height);
-            resolve(canvas.toDataURL('image/jpeg', quality));
-          };
-        };
-      });
-    }
-
-    async function handleImageUpload(event) {
-      const files = event.target.files;
-      if (!files || files.length === 0) return;
-
-      const statusEl = document.getElementById("imgCompressStatus");
-      statusEl.innerText = "กำลังประมวลผลรูปภาพ...";
-
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        if (file.type.startsWith('image/')) {
-          const compressedBase64 = await compressImageFile(file);
-          tempProductImages.push(compressedBase64);
+          });
+        } else {
+          if (activeSaleMode === "PREORDER") {
+            isUnlimitedPre = p.preorderUnlimited || false;
+            stockSum = p.preorderStock || 0;
+          } else {
+            stockSum = p.readyStock || 0;
+          }
         }
+
+        let stockBadgeHtml = '';
+        if (activeSaleMode === "PREORDER") {
+          stockBadgeHtml = `<div class="stock-badge preorder">⏳ พรีออเดอร์ (${isUnlimitedPre ? 'ไม่จำกัด' : stockSum})</div>`;
+        } else {
+          if (stockSum <= 0) {
+            stockBadgeHtml = `<div class="stock-badge soldout">❌ หมด</div>`;
+          } else {
+            stockBadgeHtml = `<div class="stock-badge ready">📦 พร้อมส่ง (${stockSum})</div>`;
+          }
+        }
+
+        let mediaHtml = '';
+        if (p.vdo) {
+          mediaHtml = `
+            <img src="${mainImage}" alt="${p.name}" class="prod-img" style="display:block;" />
+            <video src="${p.vdo}" muted loop playsinline class="prod-vdo" style="display:none; width:100%; height:100%; object-fit:contain; padding:10px;"></video>
+            <div class="badge" style="left:8px; right:auto;">VDO</div>
+          `;
+        } else {
+          mediaHtml = `<img src="${mainImage}" alt="${p.name}" />`;
+        }
+
+        const priceHtml = getCardLowestDiscountedPrice(p);
+
+        return `
+          <div class="product-card" ${p.vdo ? `onmouseenter="playCardVdo(this)" onmouseleave="stopCardVdo(this)"` : ''}>
+            <div class="media-preview-container product-media-clickable" title="คลิกเพื่อดูรายละเอียดสินค้า" onclick="openDetailModal('${p.id}')">
+              <span class="badge">${p.brand}</span>
+              ${isExclusive}
+              ${mediaHtml}
+              ${stockBadgeHtml}
+              ${countBadge}
+            </div>
+            <div class="product-code">SKU: ${p.id}</div>
+            <div class="product-title" onclick="openDetailModal('${p.id}')">${p.name}</div>
+            <div class="product-price-row">${priceHtml}</div>
+            <button class="btn-action" onclick="openDetailModal('${p.id}')">เลือกสินค้า</button>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function playCardVdo(cardEl) {
+      const img = cardEl.querySelector('.prod-img');
+      const vdo = cardEl.querySelector('.prod-vdo');
+      if (img && vdo) {
+        img.style.display = 'none';
+        vdo.style.display = 'block';
+        vdo.play().catch(err => console.log("VDO autoplay prevented:", err));
       }
-
-      statusEl.innerText = "ประมวลผลรูปภาพสำเร็จ";
-      setTimeout(() => statusEl.innerText = "", 2500);
-      renderAdminImagePreview();
-      event.target.value = '';
     }
 
-    function removeAdminImage(index) {
-      tempProductImages.splice(index, 1);
-      renderAdminImagePreview();
-    }
-
-    function renderAdminImagePreview() {
-      const cont = document.getElementById("adminImagesPreviewList");
-      if (tempProductImages.length === 0) {
-        cont.style.display = "none";
-        cont.innerHTML = "";
-        return;
+    function stopCardVdo(cardEl) {
+      const img = cardEl.querySelector('.prod-img');
+      const vdo = cardEl.querySelector('.prod-vdo');
+      if (img && vdo) {
+        vdo.pause();
+        vdo.currentTime = 0;
+        vdo.style.display = 'none';
+        img.style.display = 'block';
       }
-      cont.style.display = "grid";
-      cont.innerHTML = tempProductImages.map((imgSrc, idx) => `
-        <div class="preview-thumb-card" draggable="true" 
-             ondragstart="handleDragStart(event, ${idx})" 
-             ondragover="handleDragOver(event)" 
-             ondrop="handleDrop(event, ${idx})"
-             ondragend="handleDragEnd(event)">
-          <img src="${imgSrc}" alt="thumb-${idx}" />
-          ${idx === 0 ? '<span class="main-tag">หน้าปก</span>' : ''}
-          <button type="button" class="remove-img-btn" onclick="removeAdminImage(${idx})">✕</button>
-        </div>
-      `).join('');
     }
 
-    function handleDragStart(e, index) {
-      draggedImageIndex = index;
-      e.target.classList.add('dragging');
-    }
-
-    function handleDragOver(e) {
-      e.preventDefault();
-    }
-
-    function handleDrop(e, targetIndex) {
-      e.preventDefault();
-      if (draggedImageIndex === null || draggedImageIndex === targetIndex) return;
+    function openDetailModal(productId) {
+      const prod = products.find(p => p.id === productId);
+      if (!prod) return;
+      currentSelectedProduct = prod;
+      appliedOptionDiscount = 0;
       
-      const movedItem = tempProductImages.splice(draggedImageIndex, 1)[0];
-      tempProductImages.splice(targetIndex, 0, movedItem);
-      renderAdminImagePreview();
-    }
+      const promoInput = document.getElementById("promoCodeInput");
+      if (promoInput) promoInput.value = "";
+      const promoMsg = document.getElementById("promoStatusMsg");
+      if (promoMsg) promoMsg.innerText = "";
+      
+      const qtyInput = document.getElementById("modalQtyInput");
+      if (qtyInput) qtyInput.value = "1";
 
-    function handleDragEnd(e) {
-      draggedImageIndex = null;
-      document.querySelectorAll('.preview-thumb-card').forEach(card => card.classList.remove('dragging'));
-    }
-
-    function compressVideoFile(file, targetWidth = 1280, targetBitrate = 2000000) {
-      return new Promise((resolve, reject) => {
-        const video = document.createElement('video');
-        video.src = URL.createObjectURL(file);
-        video.muted = true;
-        video.playsInline = true;
-
-        video.onloadedmetadata = () => {
-          let width = targetWidth;
-          let height = Math.round((video.videoHeight * targetWidth) / video.videoWidth);
-          if (height % 2 !== 0) height++;
-
-          const canvas = document.createElement('canvas');
-          canvas.width = width;
-          canvas.height = height;
-          const ctx = canvas.getContext('2d');
-
-          const stream = canvas.captureStream(30);
-          let mimeType = 'video/webm;codecs=vp9';
-          if (!MediaRecorder.isTypeSupported(mimeType)) {
-            mimeType = 'video/webm;codecs=vp8';
-            if (!MediaRecorder.isTypeSupported(mimeType)) mimeType = 'video/webm';
+      document.getElementById("detailTitle").innerText = prod.name;
+      document.getElementById("detailSku").innerText = prod.id;
+      document.getElementById("detailBrand").innerText = prod.brand;
+      document.getElementById("detailScales").innerText = (prod.scales || []).join(", ");
+      
+      const scaleSelect = document.getElementById("detailScaleSelect");
+      if (scaleSelect) {
+        scaleSelect.innerHTML = (prod.scales || []).map(sc => {
+          let scPrice = prod.basePrice;
+          if (prod.scalePrices && prod.scalePrices[sc] !== undefined) {
+            const sp = prod.scalePrices[sc];
+            scPrice = (typeof sp === 'object' && sp.price !== undefined) ? sp.price : sp;
           }
-
-          const recorder = new MediaRecorder(stream, { mimeType: mimeType, videoBitsPerSecond: targetBitrate });
-          const chunks = [];
-          recorder.ondataavailable = (e) => { if (e.data.size > 0) chunks.push(e.data); };
-          recorder.onstop = () => {
-            const blob = new Blob(chunks, { type: mimeType });
-            const reader = new FileReader();
-            reader.readAsDataURL(blob);
-            reader.onloadend = () => {
-              URL.revokeObjectURL(video.src);
-              resolve({ dataUrl: reader.result, size: blob.size, originalSize: file.size });
-            };
-          };
-
-          video.play();
-          recorder.start();
-
-          function drawFrame() {
-            if (!video.paused && !video.ended) {
-              ctx.drawImage(video, 0, 0, width, height);
-              requestAnimationFrame(drawFrame);
-            }
-          }
-          drawFrame();
-          video.onended = () => recorder.stop();
-        };
-        video.onerror = (err) => { URL.revokeObjectURL(video.src); reject(err); };
-      });
-    }
-
-    async function handleAutoCompressVdo(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-
-      const statusEl = document.getElementById("vdoCompressStatus");
-      if (file.size > 100 * 1024 * 1024) {
-        showToast("ไฟล์ใหญ่เกิน 100 MB");
-        event.target.value = '';
-        return;
+          return `<option value="${sc}">${sc} (฿${scPrice})</option>`;
+        }).join('');
       }
 
-      statusEl.innerText = "กำลังประมวลผล VDO ระดับ HD...";
-      try {
-        const result = await compressVideoFile(file);
-        if (result.size > 900 * 1024) {
-          showToast("ไฟล์ผลลัพธ์ใหญ่เกินไป แนะนำให้ใช้วิธีวางลิงก์ตรง");
-          removeVdo();
-          statusEl.innerText = "";
+      updateDetailStockStatus();
+
+      const allMedia = [];
+      if (prod.vdo) allMedia.push({ type: 'video', src: prod.vdo, label: 'วิดีโอ' });
+      if (prod.images) prod.images.forEach((img, i) => allMedia.push({ type: 'image', src: img, label: `รูป ${i+1}` }));
+
+      const mainMedia = document.getElementById("detailMainMedia");
+      const thumbsBox = document.getElementById("detailMediaThumbs");
+
+      if (allMedia.length > 0) {
+        switchDetailMedia(allMedia[0].src, allMedia[0].type);
+        if (thumbsBox) {
+          thumbsBox.innerHTML = allMedia.map((m, idx) => `
+            <div class="detail-thumb-item ${idx === 0 ? 'active' : ''}" onclick="selectDetailThumb(this, '${m.src}', '${m.type}')">
+              ${m.type === 'video' ? `<video src="${m.src}"></video><span>VDO</span>` : `<img src="${m.src}" alt="" />`}
+            </div>
+          `).join('');
+        }
+      } else {
+        if (mainMedia) mainMedia.innerHTML = `<span style="color:#999;">ไม่มีสื่อ</span>`;
+        if (thumbsBox) thumbsBox.innerHTML = '';
+      }
+
+      const optSelect = document.getElementById("detailOptionSelect");
+      if (optSelect) {
+        if (prod.options && prod.options.length > 0) {
+          optSelect.innerHTML = prod.options.map((opt, idx) => `
+            <option value="${idx}">${opt.name} (ลด -฿${opt.extraPrice || 0})</option>
+          `).join('');
+        } else {
+          optSelect.innerHTML = `<option value="0">ตัวเลือกมาตรฐาน (-฿0)</option>`;
+        }
+      }
+
+      applyAllCumulativePromoCodes();
+      openModal("detailModal");
+    }
+
+    function updateDetailStockStatus() {
+      if (!currentSelectedProduct) return;
+      const scale = document.getElementById("detailScaleSelect").value;
+      const stockStatusEl = document.getElementById("detailStockStatus");
+      const qtyInput = document.getElementById("modalQtyInput");
+      if (!stockStatusEl) return;
+
+      let isAct = false;
+      let stockVal = 0;
+      let isUnli = false;
+
+      if (currentSelectedProduct.scalePrices && currentSelectedProduct.scalePrices[scale]) {
+        const sp = currentSelectedProduct.scalePrices[scale];
+        if (activeSaleMode === "PREORDER") {
+          isAct = sp.preorderActive;
+          isUnli = sp.preorderUnlimited;
+          stockVal = isUnli ? 999999 : (sp.preorderStock || 0);
+        } else {
+          isAct = sp.readyActive;
+          stockVal = sp.readyStock || 0;
+        }
+      } else {
+        if (activeSaleMode === "PREORDER") {
+          isAct = currentSelectedProduct.preorderActive;
+          isUnli = currentSelectedProduct.preorderUnlimited;
+          stockVal = isUnli ? 999999 : (currentSelectedProduct.preorderStock || 0);
+        } else {
+          isAct = currentSelectedProduct.readyActive;
+          stockVal = currentSelectedProduct.readyStock || 0;
+        }
+      }
+
+      if (activeSaleMode === "PREORDER") {
+        if (!isAct) {
+          stockStatusEl.style.color = "#dc2626";
+          stockStatusEl.innerText = `❌ ปิดพรีออเดอร์`;
+          if (qtyInput) qtyInput.value = 0;
+        } else {
+          stockStatusEl.style.color = "#c2410c";
+          stockStatusEl.innerText = `⏳ พรีออเดอร์ (${isUnli ? 'ไม่จำกัดจำนวน' : 'โควต้า ' + stockVal + ' ชิ้น'})`;
+          if (qtyInput && parseInt(qtyInput.value) === 0) qtyInput.value = 1;
+        }
+      } else {
+        if (!isAct || stockVal <= 0) {
+          stockStatusEl.style.color = "#dc2626";
+          stockStatusEl.innerText = `❌ สินค้าหมด (Out of Stock)`;
+          if (qtyInput) qtyInput.value = 0;
+        } else {
+          stockStatusEl.style.color = "#059669";
+          stockStatusEl.innerText = `📦 พร้อมส่ง (เหลือ ${stockVal} ชิ้น)`;
+          if (qtyInput && parseInt(qtyInput.value) === 0) qtyInput.value = 1;
+        }
+      }
+    }
+
+    function selectDetailThumb(thumbEl, src, type) {
+      document.querySelectorAll(".detail-thumb-item").forEach(t => t.classList.remove("active"));
+      thumbEl.classList.add("active");
+      switchDetailMedia(src, type);
+    }
+
+    function switchDetailMedia(src, type) {
+      const container = document.getElementById("detailMainMedia");
+      if (type === 'video') {
+        container.innerHTML = `<video src="${src}" controls autoplay loop style="width:100%; height:100%; object-fit:contain;"></video>`;
+      } else {
+        container.innerHTML = `<img src="${src}" style="width:100%; height:100%; object-fit:contain;" />`;
+      }
+    }
+
+    function adjustModalQty(delta) {
+      const input = document.getElementById("modalQtyInput");
+      let val = parseInt(input.value) || 1;
+      
+      if (currentSelectedProduct) {
+        const scale = document.getElementById("detailScaleSelect").value;
+        let maxLimit = 0;
+        
+        if (currentSelectedProduct.scalePrices && currentSelectedProduct.scalePrices[scale]) {
+          const sp = currentSelectedProduct.scalePrices[scale];
+          if (typeof sp === 'object') {
+            maxLimit = activeSaleMode === 'READY' ? (sp.readyStock || 0) : (sp.preorderUnlimited ? 999999 : (sp.preorderStock || 0));
+          }
+        } else {
+          maxLimit = activeSaleMode === 'READY' ? (currentSelectedProduct.readyStock || 0) : (currentSelectedProduct.preorderUnlimited ? 999999 : (currentSelectedProduct.preorderStock || 0));
+        }
+
+        if (maxLimit <= 0) {
+          input.value = 0;
           return;
         }
-        tempProductVdo = result.dataUrl;
-        document.getElementById("pVdoUrlInput").value = "";
-        statusEl.innerText = `สำเร็จ! (${(result.size / 1024).toFixed(0)} KB)`;
-        displayVdoPreview(tempProductVdo, `HD VDO: ${(result.size / 1024).toFixed(0)} KB`);
-      } catch (err) {
-        statusEl.innerText = "เกิดข้อผิดพลาดในการประมวลผล VDO";
-        removeVdo();
+
+        val += delta;
+        if (val > maxLimit) {
+          val = maxLimit;
+          showToast(`จำกัดจำนวนสูงสุดไม่เกินสต็อก (${maxLimit} ชิ้น)`);
+        }
+      } else {
+        val += delta;
       }
+
+      if (val < 1) val = 1;
+      input.value = val;
     }
 
-    function handleVdoUrlInput(url) {
-      const trimmed = (url || "").trim();
-      if (!trimmed) { if (!document.getElementById("pVdoInput").files.length) removeVdo(); return; }
-      tempProductVdo = trimmed;
-      document.getElementById("pVdoInput").value = '';
-      document.getElementById("vdoCompressStatus").innerText = "";
-      displayVdoPreview(tempProductVdo, trimmed);
+    function calculateModalPrice() {
+      if (!currentSelectedProduct) return 0;
+      const scale = document.getElementById("detailScaleSelect").value;
+      const optIdx = parseInt(document.getElementById("detailOptionSelect").value) || 0;
+      
+      updateDetailStockStatus();
+
+      let basePrice = currentSelectedProduct.basePrice || 0;
+      if (currentSelectedProduct.scalePrices && currentSelectedProduct.scalePrices[scale] !== undefined) {
+        const sp = currentSelectedProduct.scalePrices[scale];
+        basePrice = (typeof sp === 'object' && sp.price !== undefined) ? sp.price : sp;
+      }
+
+      const optExtra = (currentSelectedProduct.options && currentSelectedProduct.options[optIdx]) ? (currentSelectedProduct.options[optIdx].extraPrice || 0) : 0;
+
+      let originalTotal = basePrice;
+      let finalTotal = originalTotal - optExtra - appliedOptionDiscount;
+      if (finalTotal < 0) finalTotal = 0;
+
+      const priceDisplay = document.getElementById("modalTotalPrice");
+      if (optExtra > 0 || appliedOptionDiscount > 0) {
+        priceDisplay.innerHTML = `<span style="text-decoration: line-through; color: #888; font-size: 0.85rem; margin-right: 6px;">฿${originalTotal}</span> <span style="color: var(--danger);">฿${finalTotal}</span>`;
+      } else {
+        priceDisplay.innerHTML = `<span style="color: var(--danger);">฿${finalTotal}</span>`;
+      }
+
+      return finalTotal;
     }
 
-    function displayVdoPreview(src, detailText) {
-      document.getElementById("adminVdoContainer").style.display = "flex";
-      document.getElementById("adminVdoPlayer").src = src;
-      document.getElementById("adminVdoDetails").innerText = detailText;
-    }
+    function applyAllCumulativePromoCodes() {
+      if (!currentSelectedProduct) return;
+      const promoInput = document.getElementById("promoCodeInput");
+      const statusMsg = document.getElementById("promoStatusMsg");
+      const optIdx = parseInt(document.getElementById("detailOptionSelect").value) || 0;
+      const selectedOpt = currentSelectedProduct.options ? currentSelectedProduct.options[optIdx] : null;
 
-    function removeVdo() {
-      tempProductVdo = "";
-      document.getElementById("pVdoInput").value = "";
-      document.getElementById("pVdoUrlInput").value = "";
-      document.getElementById("vdoCompressStatus").innerText = "";
-      const player = document.getElementById("adminVdoPlayer");
-      player.pause(); player.removeAttribute('src'); player.load();
-      document.getElementById("adminVdoContainer").style.display = "none";
-    }
+      let availableCodes = vipCodesList;
+      let codesToCheck = [];
 
-    function createCodeRowHtml(code = '') {
-      const discountCodes = vipCodesList.filter(item => item.type === 'DISCOUNT').map(item => item.code);
-      const optionsHtml = discountCodes.map(c => `<option value="${c}" ${c === code ? 'selected' : ''}>${c}</option>`).join('');
-
-      return `
-        <div class="opt-code-single-row">
-          <select class="form-control opt-single-code" style="min-height:34px; font-size:0.8rem; text-transform:uppercase;">
-            <option value="">-- เลือกโค้ดส่วนลดในระบบ --</option>
-            ${optionsHtml}
-          </select>
-          <button type="button" class="btn-action btn-danger" style="height:34px; padding:0 8px; font-size:0.7rem;" onclick="this.closest('.opt-code-single-row').remove()">✕</button>
-        </div>
-      `;
-    }
-
-    function addDynamicOptionRow(opt = { name: '', extraPrice: 0, codes: [] }) {
-      const cont = document.getElementById("dynamicOptionsList");
-      const row = document.createElement("div");
-      row.className = "opt-card-row";
-
-      let codesList = opt.codes || [];
-      if (!codesList.length && opt.vipCode) codesList.push({ code: opt.vipCode, discount: opt.vipDiscount || 0 });
-
-      let codesHtml = codesList.map(c => createCodeRowHtml(c.code)).join('');
-
-      row.innerHTML = `
-        <div class="opt-main-inputs">
-          <div style="display:flex; flex-direction:column; gap:2px;">
-            <label style="font-size:0.72rem; color:#444; font-weight:bold;">ชื่อตัวเลือก</label>
-            <input type="text" class="form-control opt-name" placeholder="เช่น ล้อ TE37" value="${opt.name || ''}" required style="min-height:36px;" />
-          </div>
-          <div style="display:flex; flex-direction:column; gap:2px;">
-            <label style="font-size:0.72rem; color:#444; font-weight:bold;">ลดราคา (฿)</label>
-            <input type="text" inputmode="numeric" class="form-control opt-extra" placeholder="0" value="${opt.extraPrice || 0}" onfocus="this.select()" style="min-height:36px;" />
-          </div>
-          <button type="button" class="btn-action btn-danger" style="height:36px; padding:0 10px;" onclick="this.closest('.opt-card-row').remove()">✕ ลบ</button>
-        </div>
-        <div class="opt-codes-section">
-          <div style="display:flex; justify-content:space-between; align-items:center;">
-            <span style="font-size:0.72rem; font-weight:bold; color:var(--accent-vip);">🎟️ โค้ดส่วนลด (ดึงมูลค่าจากระบบอัตโนมัติ)</span>
-            <button type="button" class="btn-action btn-secondary" style="height:26px; padding:0 8px; font-size:0.68rem;" onclick="addCodeToOption(this)">+ เพิ่มโค้ด</button>
-          </div>
-          <div class="opt-codes-container">${codesHtml}</div>
-        </div>
-      `;
-      cont.appendChild(row);
-    }
-
-    function addCodeToOption(btn) {
-      const container = btn.closest('.opt-codes-section').querySelector('.opt-codes-container');
-      const temp = document.createElement('div');
-      temp.innerHTML = createCodeRowHtml('');
-      container.appendChild(temp.firstElementChild);
-    }
-
-    function getOptionsPayload() {
-      const options = [];
-      document.querySelectorAll("#dynamicOptionsList .opt-card-row").forEach(card => {
-        const nameInput = card.querySelector(".opt-name");
-        const extraInput = card.querySelector(".opt-extra");
-        if (nameInput && nameInput.value.trim() !== '') {
-          const codes = [];
-          card.querySelectorAll(".opt-code-single-row").forEach(codeRow => {
-            const cSelect = codeRow.querySelector(".opt-single-code");
-            const codeVal = (cSelect.value || "").trim().toUpperCase();
-            if (codeVal) {
-              const foundMaster = vipCodesList.find(item => item.code === codeVal);
-              const autoDisc = foundMaster ? foundMaster.discount : 0;
-              codes.push({ code: codeVal, discount: autoDisc });
-            }
-          });
-          options.push({
-            name: nameInput.value.trim(),
-            extraPrice: parseFloat(extraInput.value) || 0,
-            codes: codes,
-            vipCode: codes.length ? codes[0].code : '',
-            vipDiscount: codes.length ? codes[0].discount : 0
-          });
+      let userCodes = [...userAssignedCodes, ...activeSecretCodes];
+      userCodes.forEach(code => {
+        const uc = code.toUpperCase();
+        if (availableCodes.includes(uc) && !codesToCheck.includes(uc)) {
+          codesToCheck.push(uc);
         }
       });
-      return options;
-    }
 
-    function handleProductSubmit(e) {
-      e.preventDefault();
-      const id = document.getElementById("pId").value.trim();
-      const brand = document.getElementById("pBrandSelect").value;
-      const name = document.getElementById("pName").value.trim();
-      const secretCode = (document.getElementById("pSecretCodeSelect").value || "").trim().toUpperCase();
-      const preorderLeadTime = document.getElementById("pPreorderLeadTime").value.trim();
-
-      const checkedScales = Array.from(document.querySelectorAll('input[name="productScale"]:checked')).map(cb => cb.value);
-      if (!checkedScales.length) {
-        showToast("กรุณาเลือกสเกลอย่างน้อย 1 สเกล");
+      if (!selectedOpt || codesToCheck.length === 0) {
+        appliedOptionDiscount = 0;
+        if (promoInput) promoInput.value = "";
+        if (statusMsg) statusMsg.innerText = "";
+        calculateModalPrice();
         return;
       }
 
-      const scalePrices = {};
-      let firstPrice = 0;
-      let totalReadyActive = false;
-      let totalReadyStock = 0;
-      let totalPreorderActive = false;
-      let totalPreorderStock = 0;
+      let cumulativeDiscount = 0;
+      let appliedList = [];
 
-      checkedScales.forEach(sc => {
-        const safeKey = sc.replace(/[^a-zA-Z0-9]/g, '_');
-        const priceInp = document.querySelector(`.scale-price-val-${safeKey}`);
-        const readyChk = document.querySelector(`.scale-ready-active-${safeKey}`);
-        const readyStockInp = document.querySelector(`.scale-ready-stock-${safeKey}`);
-        const preChk = document.querySelector(`.scale-pre-active-${safeKey}`);
-        const preStockInp = document.querySelector(`.scale-pre-stock-${safeKey}`);
-        const preUnlimitedChk = document.querySelector(`.scale-pre-unlimited-${safeKey}`);
+      codesToCheck.forEach(code => {
+        const info = vipCodesMap[code];
+        if (info && info.type === 'DISCOUNT') {
+          cumulativeDiscount += info.discount;
+          const masked = code.length > 2 ? code.substring(0, 2) + "•".repeat(code.length - 2) : "••••";
+          appliedList.push(`${masked} (-฿${info.discount})`);
+        }
 
-        const price = parseFloat(priceInp ? priceInp.value : 0) || 0;
-        if (firstPrice === 0) firstPrice = price;
+        let foundOptDisc = 0;
+        if (selectedOpt.codes && Array.isArray(selectedOpt.codes)) {
+          const matchCode = selectedOpt.codes.find(c => (c.code || "").toUpperCase() === code.toUpperCase());
+          if (matchCode) foundOptDisc = matchCode.discount || 0;
+        }
+        if (!foundOptDisc && selectedOpt.vipCode && selectedOpt.vipCode.toUpperCase() === code.toUpperCase()) {
+          foundOptDisc = selectedOpt.vipDiscount || 0;
+        }
 
-        const readyActive = readyChk ? readyChk.checked : false;
-        const readyStock = parseInt(readyStockInp ? readyStockInp.value : 0) || 0;
-        const preorderActive = preChk ? preChk.checked : false;
-        const preorderUnlimited = preUnlimitedChk ? preUnlimitedChk.checked : false;
-        const preorderStock = preorderUnlimited ? 999999 : (parseInt(preStockInp ? preStockInp.value : 0) || 0);
-
-        if (readyActive) totalReadyActive = true;
-        totalReadyStock += readyStock;
-
-        if (preorderActive) totalPreorderActive = true;
-        totalPreorderStock += preorderStock;
-
-        scalePrices[sc] = {
-          price,
-          readyActive,
-          readyStock,
-          preorderActive,
-          preorderStock,
-          preorderUnlimited
-        };
+        if (foundOptDisc > 0 && (!info || info.type !== 'DISCOUNT')) {
+          cumulativeDiscount += foundOptDisc;
+          const masked = code.length > 2 ? code.substring(0, 2) + "•".repeat(code.length - 2) : "••••";
+          appliedList.push(`${masked} (ตัวเลือก -฿${foundOptDisc})`);
+        }
       });
 
-      if (!tempProductImages.length) tempProductImages.push('https://via.placeholder.com/400?text=164CRAFT');
+      appliedOptionDiscount = cumulativeDiscount;
 
-      const payload = {
-        id, name, brand,
-        basePrice: firstPrice,
-        secretCode,
-        readyActive: totalReadyActive,
-        readyStock: totalReadyStock,
-        preorderActive: totalPreorderActive,
-        preorderStock: totalPreorderStock,
-        preorderUnlimited: totalPreorderStock >= 999999,
-        preorderLeadTime,
-        images: [...tempProductImages],
-        vdo: tempProductVdo || "",
-        scales: checkedScales,
-        scalePrices,
-        options: getOptionsPayload()
+      if (promoInput) {
+        promoInput.value = codesToCheck.map(c => c.length > 2 ? c.substring(0, 2) + "•".repeat(c.length - 2) : "••••").join(', ');
+      }
+
+      if (appliedList.length > 0) {
+        statusMsg.style.color = "var(--accent-vip)";
+        statusMsg.innerText = `ใช้โค้ดส่วนลดสะสมทั้งหมด: ${appliedList.join(', ')} (ลดรวม -฿${cumulativeDiscount})`;
+        updateSecretStatusDisplay();
+      } else {
+        appliedOptionDiscount = 0;
+        statusMsg.style.color = "#777";
+        statusMsg.innerText = "โค้ดส่วนลดในระบบไม่ตรงกับเงื่อนไขส่วนลดของตัวเลือกนี้";
+      }
+      calculateModalPrice();
+    }
+
+    function addToCartFromModal() {
+      if (!currentSelectedProduct) return;
+
+      const incomingSaleMode = activeSaleMode;
+      const scale = document.getElementById("detailScaleSelect").value;
+      
+      let maxLimit = 999999;
+      let isReadyAct = currentSelectedProduct.readyActive || false;
+      let isPreAct = currentSelectedProduct.preorderActive || false;
+
+      if (currentSelectedProduct.scalePrices && currentSelectedProduct.scalePrices[scale]) {
+        const sp = currentSelectedProduct.scalePrices[scale];
+        if (typeof sp === 'object') {
+          isReadyAct = sp.readyActive;
+          isPreAct = sp.preorderActive;
+          maxLimit = incomingSaleMode === 'READY' ? (sp.readyStock || 0) : (sp.preorderUnlimited ? 999999 : (sp.preorderStock || 0));
+        }
+      } else {
+        maxLimit = incomingSaleMode === 'READY' ? (currentSelectedProduct.readyStock || 0) : (currentSelectedProduct.preorderUnlimited ? 999999 : (currentSelectedProduct.preorderStock || 0));
+      }
+
+      if (incomingSaleMode === 'READY' && (!isReadyAct || maxLimit <= 0)) {
+        showToast("สินค้านี้หมดชั่วคราว หรือปิดการขายพร้อมส่ง");
+        return;
+      }
+      if (incomingSaleMode === 'PREORDER' && !isPreAct) {
+        showToast("สินค้านี้ปิดการขายพรีออเดอร์");
+        return;
+      }
+
+      const qtyInput = document.getElementById("modalQtyInput");
+      const addQty = parseInt(qtyInput ? qtyInput.value : 1) || 1;
+
+      if (addQty <= 0) {
+        showToast("ไม่สามารถเพิ่มสินค้าหมดลงในตะกร้าได้");
+        return;
+      }
+
+      if (cart.length > 0) {
+        const firstItemSaleMode = cart[0].saleMode;
+        if (firstItemSaleMode !== incomingSaleMode) {
+          showToast("ไม่สามารถสั่งซื้อทั้ง 2 ระบบพร้อมกันได้");
+          return;
+        }
+      }
+
+      const optIdx = parseInt(document.getElementById("detailOptionSelect").value) || 0;
+      const selectedOpt = (currentSelectedProduct.options && currentSelectedProduct.options[optIdx]) ? currentSelectedProduct.options[optIdx] : { name: 'Standard', extraPrice: 0 };
+      const finalPrice = calculateModalPrice();
+
+      const existingIndex = cart.findIndex(item => 
+        item.product.id === currentSelectedProduct.id && 
+        item.scale === scale && 
+        item.optionName === selectedOpt.name &&
+        item.saleMode === incomingSaleMode
+      );
+
+      const currentInCart = existingIndex > -1 ? cart[existingIndex].qty : 0;
+
+      if (currentInCart + addQty > maxLimit) {
+        showToast(`สินค้าเกินจำนวนสต็อกที่มี (${maxLimit} ชิ้น)`);
+        return;
+      }
+
+      if (existingIndex > -1) {
+        cart[existingIndex].qty += addQty;
+      } else {
+        cart.push({
+          product: currentSelectedProduct,
+          scale: scale,
+          optionName: selectedOpt.name,
+          saleMode: incomingSaleMode,
+          price: finalPrice,
+          qty: addQty
+        });
+      }
+
+      localStorage.setItem("cartItems", JSON.stringify(cart));
+      updateCartBadge();
+      closeModal("detailModal");
+      showToast(`เพิ่มลงตะกร้า ${addQty} ชิ้นเรียบร้อย`);
+    }
+
+    function updateCartBadge() {
+      const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
+      document.getElementById("cartCount").innerText = totalQty;
+    }
+
+    function renderCart() {
+      const list = document.getElementById("cartItemList");
+      if (cart.length === 0) {
+        list.innerHTML = `<div style="text-align:center; color:#777; padding:20px;">- ไม่มีรายการสินค้าในตะกร้า -</div>`;
+        document.getElementById("netTotalDisplay").innerText = "ราคารวมทั้งสิ้น: ฿0";
+        return;
+      }
+
+      let subtotal = 0;
+      const firstSaleMode = cart[0].saleMode;
+      const cartTypeBadge = firstSaleMode === "READY" ? "📦 พร้อมส่ง (In Stock)" : "⏳ พรีออเดอร์ (Pre-order)";
+
+      list.innerHTML = `
+        <div style="font-size:0.88rem; font-weight:800; color:#065f46; background:#ecfdf5; border:1px solid #10b981; padding:8px 12px; border-radius:6px; margin-bottom:10px; text-align:center;">
+          ประเภทคำสั่งซื้อในตะกร้า: ${cartTypeBadge} <br><span style="font-size:0.72rem; font-weight:normal; color:#047857;">(ระบบยึดตามสินค้าชิ้นแรกในตะกร้า)</span>
+        </div>
+      ` + cart.map((item, idx) => {
+        subtotal += (item.price * item.qty);
+        const thumb = (item.product.images && item.product.images.length > 0) ? item.product.images[0] : '';
+        return `
+          <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #ddd; padding:8px 0; gap:8px;">
+            <div style="display:flex; gap:8px; align-items:center; overflow:hidden;">
+              <img src="${thumb}" style="width:38px; height:38px; object-fit:cover; border-radius:6px; border:1px solid #111; flex-shrink:0;" />
+              <div style="overflow:hidden;">
+                <div style="font-weight:bold; font-size:0.8rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${item.product.name}</div>
+                <div style="font-size:0.68rem; color:#666;">สเกล: ${item.scale} | ${item.optionName}</div>
+              </div>
+            </div>
+            <div style="display:flex; align-items:center; gap:8px; flex-shrink:0;">
+              <div style="display:flex; align-items:center; border:1px solid var(--border-color); border-radius:4px; background:#fff;">
+                <button type="button" style="width:24px; height:24px; border:none; background:transparent; font-weight:bold; cursor:pointer;" onclick="changeCartQty(${idx}, -1)">-</button>
+                <span style="width:24px; text-align:center; font-size:0.75rem; font-weight:bold;">${item.qty}</span>
+                <button type="button" style="width:24px; height:24px; border:none; background:transparent; font-weight:bold; cursor:pointer;" onclick="changeCartQty(${idx}, 1)">+</button>
+              </div>
+              <div style="text-align:right; min-width:50px;">
+                <div style="font-weight:bold; font-size:0.82rem; color:var(--danger);">฿${item.price * item.qty}</div>
+                <span style="color:var(--danger); cursor:pointer; font-size:0.68rem;" onclick="removeCartItem(${idx})">ลบ</span>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      const grandTotal = subtotal + systemSettings.shippingFee;
+      document.getElementById("netTotalDisplay").innerText = `ราคารวมทั้งสิ้น: ฿${grandTotal} (รวมค่าส่ง ฿${systemSettings.shippingFee})`;
+    }
+
+    function changeCartQty(idx, delta) {
+      const item = cart[idx];
+      const prod = item.product;
+      let maxLimit = 999999;
+      if (prod.scalePrices && prod.scalePrices[item.scale]) {
+        const sp = prod.scalePrices[item.scale];
+        maxLimit = item.saleMode === 'READY' ? (sp.readyStock || 0) : (sp.preorderUnlimited ? 999999 : (sp.preorderStock || 0));
+      } else {
+        maxLimit = item.saleMode === 'READY' ? (prod.readyStock || 0) : (prod.preorderUnlimited ? 999999 : (prod.preorderStock || 0));
+      }
+
+      const newQty = item.qty + delta;
+      if (newQty > maxLimit) {
+        showToast(`สินค้าเกินสต็อกที่มี (${maxLimit} ชิ้น)`);
+        return;
+      }
+
+      item.qty = newQty;
+      if (item.qty <= 0) cart.splice(idx, 1);
+      localStorage.setItem("cartItems", JSON.stringify(cart));
+      updateCartBadge();
+      renderCart();
+    }
+
+    function removeCartItem(idx) {
+      cart.splice(idx, 1);
+      localStorage.setItem("cartItems", JSON.stringify(cart));
+      updateCartBadge();
+      renderCart();
+    }
+
+    function openClearCartConfirmModal() {
+      if (cart.length === 0) {
+        showToast("ตะกร้าสินค้าว่างอยู่แล้ว");
+        return;
+      }
+      openModal('clearCartConfirmModal');
+    }
+
+    function executeClearCart() {
+      cart = [];
+      localStorage.removeItem("cartItems");
+      updateCartBadge();
+      renderCart();
+      
+      closeModal('clearCartConfirmModal');
+      closeModal('cartModal');
+      showToast("ล้างตะกร้าสินค้าเรียบร้อยแล้ว");
+    }
+
+    function openShippingModal() {
+      if (cart.length === 0) {
+        showToast("ไม่มีสินค้าในตะกร้า");
+        return;
+      }
+      openModal('shippingModal');
+    }
+
+    function confirmOrder(e) {
+      e.preventDefault();
+      const customer = {
+        name: document.getElementById("shipName").value,
+        phone: document.getElementById("shipPhone").value,
+        email: document.getElementById("shipEmail").value,
+        address: document.getElementById("shipAddress").value,
+        note: document.getElementById("shipNote").value.trim()
       };
 
-      db.collection("products").doc(id).set(payload).then(() => {
-        showToast("บันทึกสินค้าสำเร็จ");
-        document.getElementById("editingProductId").value = id;
-        document.getElementById("productModalTitle").innerText = "✏️ แก้ไขสินค้า: " + id;
-      }).catch(err => showToast("เกิดข้อผิดพลาด: " + err.message));
-    }
+      let subtotal = 0;
+      cart.filter(Boolean).forEach(it => subtotal += (it.price * it.qty));
+      const grandTotal = subtotal + systemSettings.shippingFee;
 
-    function editProduct(productId) {
-      db.collection("products").doc(productId).get().then((doc) => {
-        if (!doc.exists) {
-          showToast("ไม่พบสินค้า");
-          return;
-        }
-        const prod = doc.data();
+      const orderData = {
+        customer: customer,
+        items: cart,
+        subtotal: subtotal,
+        shippingFee: systemSettings.shippingFee,
+        shippingName: systemSettings.shippingName,
+        grandTotal: grandTotal,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      };
 
-        closeModal('manageProductsModal');
-        document.getElementById("productModalTitle").innerText = "✏️ แก้ไขสินค้า: " + prod.id;
-        document.getElementById("editingProductId").value = prod.id;
-        document.getElementById("pId").value = prod.id;
-        document.getElementById("pName").value = prod.name;
-        document.getElementById("pPreorderLeadTime").value = prod.preorderLeadTime || "";
+      db.collection("orders").add(orderData).then(() => {
+        document.getElementById("summarySenderName").innerText = systemSettings.senderName;
+        document.getElementById("summarySenderPhone").innerText = systemSettings.senderPhone;
+        document.getElementById("summarySenderAddress").innerText = systemSettings.senderAddress;
 
-        document.getElementById("pBrandSelect").innerHTML = brands.map(b => `<option value="${b}" ${b === prod.brand ? 'selected' : ''}>${b}</option>`).join('');
-        renderVipSelectOptions(prod.secretCode || "");
+        document.getElementById("summaryCustomerName").innerText = customer.name;
+        document.getElementById("summaryCustomerPhone").innerText = customer.phone;
+        document.getElementById("summaryCustomerEmail").innerText = customer.email;
+        document.getElementById("summaryCustomerAddress").innerText = customer.address;
 
-        tempProductImages = prod.images ? [...prod.images] : [];
-        renderAdminImagePreview();
-
-        if (prod.vdo) {
-          tempProductVdo = prod.vdo;
-          displayVdoPreview(prod.vdo, prod.vdo);
+        const noteContainer = document.getElementById("summaryNoteContainer");
+        if (customer.note) {
+          document.getElementById("summaryCustomerNote").innerText = customer.note;
+          noteContainer.style.display = "block";
         } else {
-          removeVdo();
+          noteContainer.style.display = "none";
         }
 
-        renderAdminScalesInputs(prod.scales || ["1/64"], prod.scalePrices || {});
+        document.getElementById("summaryBankName").innerText = systemSettings.bankName;
+        document.getElementById("summaryAccountNo").innerText = systemSettings.accountNo;
+        document.getElementById("summaryAccountName").innerText = systemSettings.accountName;
 
-        const optCont = document.getElementById("dynamicOptionsList");
-        optCont.innerHTML = "";
-        if (prod.options && prod.options.length) {
-          prod.options.forEach(o => addDynamicOptionRow(o));
-        }
+        document.getElementById("summarySubtotal").innerText = "฿" + subtotal;
+        document.getElementById("summaryShippingFee").innerText = "฿" + systemSettings.shippingFee;
+        document.getElementById("summaryGrandTotal").innerText = "฿" + grandTotal;
 
-        openModal('addProductModal');
-      });
-    }
-
-    function openVipCodesModal() { renderVipCodesList(); openModal('vipCodesModal'); }
-
-    function toggleAdminDiscountInput(type) {
-      const discInp = document.getElementById("newVipDiscountValue");
-      if (discInp) {
-        discInp.style.display = type === 'DISCOUNT' ? 'block' : 'none';
-      }
-    }
-
-    function renderVipCodesList() {
-      const cashContainer = document.getElementById("cashCodesListContainer");
-      const accessContainer = document.getElementById("accessCodesListContainer");
-
-      let cashHtml = "";
-      let accessHtml = "";
-
-      vipCodesList.forEach((item, idx) => {
-        const code = item.code || '';
-        const note = item.note || '';
-        const type = item.type || 'ACCESS';
-        const disc = item.discount || 0;
-
-        if (type === 'DISCOUNT') {
-          cashHtml += `
-            <div class="tag-chip">
-              <div>
-                <strong style="color:var(--accent-vip);">${code}</strong> 
-                <span style="font-size:0.75rem; color:#065f46;">(มูลค่าส่วนลด ฿${disc})</span>
-                <div style="font-size:0.7rem; color:#555; font-weight:normal;">${note || 'ไม่มีโน้ต'}</div>
+        document.getElementById("summaryItemsList").innerHTML = cart.map(it => {
+          const thumb = (it.product.images && it.product.images.length > 0) ? it.product.images[0] : '';
+          const lineTotal = it.price * it.qty;
+          const modeLabel = it.saleMode === 'READY' ? '[พร้อมส่ง]' : '[พรีออเดอร์]';
+          return `
+            <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid #eee; padding:6px 0; gap:8px;">
+              <div style="display:flex; gap:8px; align-items:center; overflow:hidden;">
+                <img src="${thumb}" style="width:36px; height:36px; object-fit:cover; border-radius:6px; border:1px solid #111; flex-shrink:0;" />
+                <div style="overflow:hidden;">
+                  <div style="font-weight:bold; font-size:0.78rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${it.product.name} ${modeLabel}</div>
+                  <div style="font-size:0.65rem; color:#666;">SKU: ${it.product.id} | สเกล: ${it.scale} | ${it.optionName}</div>
+                </div>
               </div>
-              <div style="display:flex; gap:4px;">
-                <span class="edit-btn" onclick="openEditCodeModal(${idx})">✏️ แก้ไข</span>
-                <span class="del-btn" onclick="deleteVipCode(${idx})">✕ ลบ</span>
+              <div style="text-align:right; flex-shrink:0; font-size:0.78rem;">
+                <div>${it.qty} ชิ้น x ฿${it.price}</div>
+                <strong style="color:var(--danger);">฿${lineTotal}</strong>
               </div>
             </div>
           `;
-        } else {
-          accessHtml += `
-            <div class="tag-chip">
-              <div>
-                <strong style="color:#0369a1;">${code}</strong>
-                <div style="font-size:0.7rem; color:#555; font-weight:normal;">${note || 'ไม่มีโน้ต'}</div>
-              </div>
-              <div style="display:flex; gap:4px;">
-                <span class="edit-btn" onclick="openEditCodeModal(${idx})">✏️ แก้ไข</span>
-                <span class="del-btn" onclick="deleteVipCode(${idx})">✕ ลบ</span>
-              </div>
-            </div>
-          `;
-        }
+        }).join('');
+
+        cart = [];
+        localStorage.removeItem("cartItems");
+        updateCartBadge();
+        closeModal('shippingModal');
+        openModal('orderSummaryModal');
+      }).catch(err => {
+        showToast("เกิดข้อผิดพลาดในการบันทึกคำสั่งซื้อ");
+        console.error(err);
       });
-
-      cashContainer.innerHTML = cashHtml || '<div style="font-size:0.75rem; color:#666;">- ยังไม่มีโค้ดเงินสดส่วนลด -</div>';
-      accessContainer.innerHTML = accessHtml || '<div style="font-size:0.75rem; color:#666;">- ยังไม่มีโค้ดเปิดสินค้า -</div>';
-    }
-
-    function openEditCodeModal(idx) {
-      const item = vipCodesList[idx];
-      if (!item) return;
-
-      document.getElementById("editCodeIndex").value = idx;
-      document.getElementById("editCodeText").value = item.code;
-      document.getElementById("editCodeNoteText").value = item.note || "";
-      
-      const discGroup = document.getElementById("editCodeDiscGroup");
-      const discText = document.getElementById("editCodeDiscText");
-
-      if (item.type === 'DISCOUNT') {
-        discGroup.style.display = "block";
-        discText.value = item.discount || 0;
-      } else {
-        discGroup.style.display = "none";
-        discText.value = "0";
-      }
-
-      openModal('editCodeModal');
-    }
-
-    function saveEditedCodeNote(e) {
-      e.preventDefault();
-      const idx = parseInt(document.getElementById("editCodeIndex").value);
-      const newNote = document.getElementById("editCodeNoteText").value.trim();
-      const newDisc = parseFloat(document.getElementById("editCodeDiscText").value) || 0;
-
-      if (vipCodesList[idx]) {
-        vipCodesList[idx].note = newNote;
-        if (vipCodesList[idx].type === 'DISCOUNT') {
-          vipCodesList[idx].discount = newDisc;
-        }
-        saveDataToFirestore();
-        renderVipCodesList();
-        closeModal('editCodeModal');
-        showToast("แก้ไขโน้ตสำเร็จ");
-      }
-    }
-
-    function handleAddVipCode(e) {
-      e.preventDefault();
-      const codeVal = document.getElementById("newVipCodeInput").value.trim().toUpperCase();
-      const typeVal = document.getElementById("newVipCodeType").value;
-      const noteVal = document.getElementById("newVipNoteInput").value.trim();
-      const discVal = parseFloat(document.getElementById("newVipDiscountValue").value) || 0;
-
-      if (codeVal) {
-        const exists = vipCodesList.some(item => item.code === codeVal);
-        if (!exists) {
-          vipCodesList.push({ 
-            code: codeVal, 
-            note: noteVal, 
-            type: typeVal, 
-            discount: typeVal === 'DISCOUNT' ? discVal : 0 
-          });
-          vipCodesList = sortAlphabetically(vipCodesList);
-          saveDataToFirestore();
-          
-          document.getElementById("newVipCodeInput").value = "";
-          document.getElementById("newVipNoteInput").value = "";
-          document.getElementById("newVipDiscountValue").value = "";
-          document.getElementById("newVipCodeType").value = "ACCESS";
-          toggleAdminDiscountInput("ACCESS");
-
-          renderVipCodesList();
-          showToast("เพิ่มรหัสสำเร็จ");
-        } else {
-          showToast("รหัสนี้มีอยู่ในระบบแล้ว");
-        }
-      }
-    }
-
-    function deleteVipCode(idx) { 
-      vipCodesList.splice(idx, 1); 
-      saveDataToFirestore(); 
-      renderVipCodesList(); 
-      showToast("ลบสำเร็จ");
-    }
-
-    function openConfigModal() { renderConfigChips(); openModal('configModal'); }
-    function renderConfigChips() {
-      brands = sortAlphabetically(brands);
-      scalesList = sortAlphabetically(scalesList);
-      document.getElementById("brandChipsList").innerHTML = brands.map(b => `
-        <div class="tag-chip"><span>${b}</span><span class="del-btn" onclick="deleteBrand('${b}')">✕</span></div>
-      `).join('');
-      document.getElementById("scaleChipsList").innerHTML = scalesList.map(s => `
-        <div class="tag-chip"><span>${s}</span><span class="del-btn" onclick="deleteScale('${s}')">✕</span></div>
-      `).join('');
-    }
-    function handleAddBrand(e) {
-      e.preventDefault();
-      const val = document.getElementById("newBrandName").value.trim();
-      if (val && !brands.includes(val)) { 
-        brands.push(val); 
-        brands = sortAlphabetically(brands); 
-        saveDataToFirestore(); 
-        document.getElementById("newBrandName").value = ""; 
-        renderConfigChips(); 
-        showToast("เพิ่มแบรนด์สำเร็จ");
-      }
-    }
-    function deleteBrand(b) {
-      if (brands.length <= 1) {
-        showToast("ต้องมีอย่างน้อย 1 แบรนด์");
-        return;
-      }
-      brands = brands.filter(x => x !== b); 
-      saveDataToFirestore(); 
-      renderConfigChips();
-      showToast("ลบสำเร็จ");
-    }
-    function handleAddScale(e) {
-      e.preventDefault();
-      const val = document.getElementById("newScaleName").value.trim();
-      if (val && !scalesList.includes(val)) { 
-        scalesList.push(val); 
-        scalesList = sortAlphabetically(scalesList); 
-        saveDataToFirestore(); 
-        document.getElementById("newScaleName").value = ""; 
-        renderConfigChips(); 
-        showToast("เพิ่มสเกลสำเร็จ");
-      }
-    }
-    function deleteScale(s) {
-      if (scalesList.length <= 1) {
-        showToast("ต้องมีอย่างน้อย 1 สเกล");
-        return;
-      }
-      scalesList = scalesList.filter(x => x !== s); 
-      saveDataToFirestore(); 
-      renderConfigChips();
-      showToast("ลบสำเร็จ");
-    }
-
-    function openBankConfigModal() {
-      document.getElementById("cfgBankName").value = systemSettings.bankName;
-      document.getElementById("cfgAccountNo").value = systemSettings.accountNo;
-      document.getElementById("cfgAccountName").value = systemSettings.accountName;
-      openModal('bankConfigModal');
-    }
-
-    function saveBankConfig(e) {
-      e.preventDefault();
-      systemSettings.bankName = document.getElementById("cfgBankName").value.trim();
-      systemSettings.accountNo = document.getElementById("cfgAccountNo").value.trim();
-      systemSettings.accountName = document.getElementById("cfgAccountName").value.trim();
-      saveDataToFirestore();
-      showToast("บันทึกการตั้งค่าธนาคารสำเร็จ");
-    }
-
-    function openShippingConfigModal() {
-      document.getElementById("cfgSenderName").value = systemSettings.senderName;
-      document.getElementById("cfgSenderPhone").value = systemSettings.senderPhone;
-      document.getElementById("cfgSenderAddress").value = systemSettings.senderAddress;
-      document.getElementById("cfgShippingName").value = systemSettings.shippingName;
-      document.getElementById("cfgShippingFee").value = systemSettings.shippingFee;
-      openModal('shippingConfigModal');
-    }
-
-    function saveShippingConfig(e) {
-      e.preventDefault();
-      systemSettings.senderName = document.getElementById("cfgSenderName").value.trim();
-      systemSettings.senderPhone = document.getElementById("cfgSenderPhone").value.trim();
-      systemSettings.senderAddress = document.getElementById("cfgSenderAddress").value.trim();
-      systemSettings.shippingName = document.getElementById("cfgShippingName").value.trim();
-      systemSettings.shippingFee = parseFloat(document.getElementById("cfgShippingFee").value) || 0;
-      saveDataToFirestore();
-      showToast("บันทึกข้อมูลการจัดส่งสำเร็จ");
     }
   </script>
 </body>
