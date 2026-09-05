@@ -197,7 +197,6 @@
     }
     .tag-chip .del-btn { color: var(--danger); cursor: pointer; font-weight: bold; padding: 0 4px; float: right; }
 
-    /* Custom Toast Notification Styles */
     #toastNotification {
       position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(20px);
       background: rgba(17, 17, 17, 0.92); color: #fff; padding: 12px 20px;
@@ -1663,7 +1662,7 @@
       
       const qrArea = document.getElementById("qrPreviewArea");
       if (systemSettings.qrCodeUrl) {
-        qrArea.innerHTML = `<img src="${systemSettings.qrCodeUrl}" style="max-width:110px; border-radius:4px; border:1px solid #ccc;" />`;
+        qrArea.innerHTML = `<img src="${systemSettings.qrCodeUrl}" style="max-width:130px; max-height:130px; object-fit:contain; border-radius:6px; border:1px solid #ccc; margin: 4px auto; display:block;" />`;
       } else {
         qrArea.innerHTML = "";
       }
@@ -1676,7 +1675,7 @@
       const reader = new FileReader();
       reader.onload = (ev) => {
         systemSettings.qrCodeUrl = ev.target.result;
-        document.getElementById("qrPreviewArea").innerHTML = `<img src="${ev.target.result}" style="max-width:110px; border-radius:4px; border:1px solid #ccc;" />`;
+        document.getElementById("qrPreviewArea").innerHTML = `<img src="${ev.target.result}" style="max-width:130px; max-height:130px; object-fit:contain; border-radius:6px; border:1px solid #ccc; margin: 4px auto; display:block;" />`;
       };
       reader.readAsDataURL(file);
     }
@@ -1714,3 +1713,4 @@
   </script>
 </body>
 </html>
+```[cite: 2]
