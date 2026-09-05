@@ -211,44 +211,50 @@
         <span style="font-size: 0.72rem; color: var(--accent-vip); background: var(--accent-vip-bg); padding: 3px 8px; border-radius: 12px; border: 1px solid #a7f3d0; width: fit-content;">● Google Admin Authenticated</span>
       </div>
       <p class="admin-desc">
-        ระบบจัดการสินค้า โคลนสินค้า ตั้งค่าธีมเว็บ และบริหารจัดการสต็อกสินค้า (เปิดขายพร้อมกันทั้งพร้อมส่งและพรีออเดอร์)
+        ระบบจัดการสินค้า โคลนสินค้า ตั้งค่าธีมเว็บ และบริหารจัดการสต็อกสินค้า (เปิดขายพร้อมกันทั้งพร้อมส่งและพรีออเดอร์)[cite: 2]
       </p>
 
       <div class="admin-menu-grid">
         <div class="admin-menu-box">
           <div class="admin-menu-title">📋 หน้ารายการสินค้าทั้งหมด</div>
-          <div class="admin-menu-desc">ค้นหา กรองสินค้า แก้ไข ลบ หรือโคลนสินค้าเดิมมาปรับแก้</div>
+          <div class="admin-menu-desc">ค้นหา กรองสินค้า แก้ไข ลบ หรือโคลนสินค้าเดิมมาปรับแก้[cite: 2]</div>
           <button class="btn-action" style="margin-top: auto;" onclick="openManageProductsModal()">ดูรายการสินค้า</button>
         </div>
 
         <div class="admin-menu-box">
           <div class="admin-menu-title">👥 จัดการสมาชิก & ประวัติการซื้อ</div>
-          <div class="admin-menu-desc">ดูรายชื่อสมาชิกผู้ใช้งาน และตรวจสอบประวัติรายการสั่งซื้อสินค้า</div>
+          <div class="admin-menu-desc">ดูรายชื่อสมาชิกผู้ใช้งาน และตรวจสอบประวัติรายการสั่งซื้อสินค้า[cite: 2]</div>
           <button class="btn-action btn-secondary" style="margin-top: auto;" onclick="openMembersModal()">จัดการสมาชิก</button>
         </div>
 
         <div class="admin-menu-box">
           <div class="admin-menu-title">🎨 ตั้งค่าเว็บ, โลโก้ & สีธีม</div>
-          <div class="admin-menu-desc">แก้ไขชื่อเว็บ อัปโหลดโลโก้ และกำหนดสีธีม (มีผลทั้งหน้าแรกและหลังบ้าน)</div>
+          <div class="admin-menu-desc">แก้ไขชื่อเว็บ อัปโหลดโลโก้ และกำหนดสีธีม (มีผลทั้งหน้าแรกและหลังบ้าน)[cite: 2]</div>
           <button class="btn-action btn-secondary" style="margin-top: auto;" onclick="openWebThemeConfigModal()">ตั้งค่าเว็บไซต์</button>
         </div>
 
         <div class="admin-menu-box">
           <div class="admin-menu-title">🎟️ จัดการรหัส ปลดล็อคสินค้า</div>
-          <div class="admin-menu-desc">สร้างหรือลบรหัสผ่านพร้อมบันทึกโน้ตข้อความสำหรับปลดล็อกเฉพาะกลุ่ม</div>
+          <div class="admin-menu-desc">สร้างหรือลบรหัสผ่านพร้อมบันทึกโน้ตข้อความสำหรับปลดล็อกเฉพาะกลุ่ม[cite: 2]</div>
           <button class="btn-action btn-secondary" style="margin-top: auto;" onclick="openVipCodesModal()">ปลดล็อคสินค้า</button>
         </div>
 
         <div class="admin-menu-box">
           <div class="admin-menu-title">⚙️ ข้อมูลหลัก (Brands & Scales)</div>
-          <div class="admin-menu-desc">จัดการรายชื่อแบรนด์และสเกลสินค้า จัดเรียงอัตโนมัติ</div>
+          <div class="admin-menu-desc">จัดการรายชื่อแบรนด์และสเกลสินค้า จัดเรียงอัตโนมัติ[cite: 2]</div>
           <button class="btn-action btn-secondary" style="margin-top: auto;" onclick="openConfigModal()">จัดการแบรนด์ / สเกล</button>
         </div>
 
         <div class="admin-menu-box">
-          <div class="admin-menu-title">🏦 ธนาคาร, QR Code & ผู้จัดส่ง</div>
-          <div class="admin-menu-desc">กำหนดเลขบัญชี พร้อมเพย์ และที่อยู่คลังสินค้าสำหรับออกบิล</div>
-          <button class="btn-action btn-secondary" style="margin-top: auto;" onclick="openBankConfigModal()">ตั้งค่าการชำระเงิน</button>
+          <div class="admin-menu-title">🏦 ธนาคาร & ช่องทางชำระเงิน</div>
+          <div class="admin-menu-desc">กำหนดเลขบัญชี และอัปโหลด QR Code พร้อมเพย์[cite: 2]</div>
+          <button class="btn-action btn-secondary" style="margin-top: auto;" onclick="openBankConfigModal()">ตั้งค่าธนาคาร</button>
+        </div>
+
+        <div class="admin-menu-box">
+          <div class="admin-menu-title">📦 ผู้จัดส่ง & ระบบการจัดส่ง</div>
+          <div class="admin-menu-desc">กำหนดชื่อคลังสินค้า ที่อยู่ผู้ส่ง ชื่อบริการจัดส่ง และค่าบริการ[cite: 2]</div>
+          <button class="btn-action btn-secondary" style="margin-top: auto;" onclick="openShippingConfigModal()">ตั้งค่าผู้จัดส่ง</button>
         </div>
       </div>
     </div>
@@ -504,7 +510,7 @@
   <div id="vipCodesModal" class="modal-overlay" onclick="checkOutsideModalClick(event, 'vipCodesModal')">
     <div class="modal-box" style="max-width: 500px;">
       <div class="modal-header">
-        <span>🎟️ จัดการรหัส  & โน้ตข้อความ</span>
+        <span>🎟️ จัดการรหัส & โน้ตข้อความ</span>
         <button class="modal-close" onclick="closeModal('vipCodesModal')">✕</button>
       </div>
       
@@ -561,16 +567,15 @@
     </div>
   </div>
 
-  <!-- BANK CONFIG MODAL -->
+  <!-- BANK CONFIG MODAL (หัวข้อธนาคารแยกเดี่ยว) -->
   <div id="bankConfigModal" class="modal-overlay" onclick="checkOutsideModalClick(event, 'bankConfigModal')">
-    <div class="modal-box" style="max-width: 500px;">
+    <div class="modal-box" style="max-width: 480px;">
       <div class="modal-header">
-        <span>🏦 ตั้งค่าการชำระเงินและผู้จัดส่ง</span>
+        <span>🏦 ตั้งค่าช่องทางชำระเงิน (ธนาคาร)</span>
         <button class="modal-close" onclick="closeModal('bankConfigModal')">✕</button>
       </div>
       
-      <form onsubmit="saveBankAndSenderConfig(event)">
-        <div style="font-weight: bold; font-size: 0.82rem; color: #111; margin-bottom: 6px;">💳 ข้อมูลการรับชำระเงิน</div>
+      <form onsubmit="saveBankConfig(event)">
         <div class="form-group"><label>ธนาคาร</label><input type="text" id="cfgBankName" class="form-control" required /></div>
         <div class="form-group"><label>เลขที่บัญชี</label><input type="text" id="cfgAccountNo" class="form-control" required /></div>
         <div class="form-group"><label>ชื่อบัญชี</label><input type="text" id="cfgAccountName" class="form-control" required /></div>
@@ -580,16 +585,37 @@
           <div id="qrPreviewArea" style="text-align: center; margin-top: 5px;"></div>
         </div>
 
-        <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 12px 0;" />
+        <div style="display: flex; gap: 8px; margin-top: 14px;">
+          <button type="button" class="btn-action btn-secondary" style="flex: 1;" onclick="closeModal('bankConfigModal')">ปิดหน้าต่าง</button>
+          <button type="submit" class="btn-action" style="flex: 2;">💾 บันทึกการตั้งค่าธนาคาร</button>
+        </div>
+      </form>
+    </div>
+  </div>
 
-        <div style="font-weight: bold; font-size: 0.82rem; color: #111; margin-bottom: 6px;">📦 ข้อมูลผู้จัดส่ง (Sender)</div>
+  <!-- SHIPPING CONFIG MODAL (หัวข้อผู้จัดส่งและระบบจัดส่งแยกเดี่ยว) -->
+  <div id="shippingConfigModal" class="modal-overlay" onclick="checkOutsideModalClick(event, 'shippingConfigModal')">
+    <div class="modal-box" style="max-width: 480px;">
+      <div class="modal-header">
+        <span>📦 ตั้งค่าผู้จัดส่ง & ระบบการจัดส่ง</span>
+        <button class="modal-close" onclick="closeModal('shippingConfigModal')">✕</button>
+      </div>
+      
+      <form onsubmit="saveShippingConfig(event)">
+        <div style="font-weight: bold; font-size: 0.82rem; color: #111; margin-bottom: 6px;">🏬 ข้อมูลผู้จัดส่ง (Sender)</div>
         <div class="form-group"><label>ชื่อผู้ส่ง / ร้านค้า</label><input type="text" id="cfgSenderName" class="form-control" required /></div>
         <div class="form-group"><label>เบอร์โทรศัพท์</label><input type="tel" id="cfgSenderPhone" class="form-control" maxlength="10" required /></div>
         <div class="form-group"><label>ที่อยู่ผู้จัดส่ง</label><textarea id="cfgSenderAddress" class="form-control" rows="3" required></textarea></div>
 
+        <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 12px 0;" />
+
+        <div style="font-weight: bold; font-size: 0.82rem; color: #111; margin-bottom: 6px;">🚚 ข้อมูลระบบการจัดส่ง</div>
+        <div class="form-group"><label>ชื่อบริการจัดส่ง (เช่น EMS, Flash Express)</label><input type="text" id="cfgShippingName" class="form-control" required /></div>
+        <div class="form-group"><label>ค่าบริการจัดส่ง (บาท)</label><input type="text" inputmode="numeric" id="cfgShippingFee" class="form-control" required /></div>
+
         <div style="display: flex; gap: 8px; margin-top: 14px;">
-          <button type="button" class="btn-action btn-secondary" style="flex: 1;" onclick="closeModal('bankConfigModal')">ปิดหน้าต่าง</button>
-          <button type="submit" class="btn-action" style="flex: 2;">💾 บันทึกการตั้งค่า</button>
+          <button type="button" class="btn-action btn-secondary" style="flex: 1;" onclick="closeModal('shippingConfigModal')">ปิดหน้าต่าง</button>
+          <button type="submit" class="btn-action" style="flex: 2;">💾 บันทึกข้อมูลการจัดส่ง</button>
         </div>
       </form>
     </div>
@@ -1484,16 +1510,15 @@
       scalesList = scalesList.filter(x => x !== s); saveDataToFirestore(); renderConfigChips();
     }
 
+    // ฟังก์ชันเปิด Modal ตั้งค่าธนาคาร
     function openBankConfigModal() {
       document.getElementById("cfgBankName").value = systemSettings.bankName;
       document.getElementById("cfgAccountNo").value = systemSettings.accountNo;
       document.getElementById("cfgAccountName").value = systemSettings.accountName;
-      document.getElementById("cfgSenderName").value = systemSettings.senderName;
-      document.getElementById("cfgSenderPhone").value = systemSettings.senderPhone;
-      document.getElementById("cfgSenderAddress").value = systemSettings.senderAddress;
       document.getElementById("qrPreviewArea").innerHTML = systemSettings.qrCodeUrl ? `<img src="${systemSettings.qrCodeUrl}" style="max-width:110px; border-radius:4px; border:1px solid #ccc;" />` : '';
       openModal('bankConfigModal');
     }
+
     function handleQrUpload(e) {
       const file = e.target.files[0];
       if (!file) return;
@@ -1504,17 +1529,37 @@
       };
       reader.readAsDataURL(file);
     }
-    function saveBankAndSenderConfig(e) {
+
+    function saveBankConfig(e) {
       e.preventDefault();
       systemSettings.bankName = document.getElementById("cfgBankName").value.trim();
       systemSettings.accountNo = document.getElementById("cfgAccountNo").value.trim();
       systemSettings.accountName = document.getElementById("cfgAccountName").value.trim();
+      saveDataToFirestore();
+      alert("บันทึกการตั้งค่าธนาคารสำเร็จ");
+      closeModal('bankConfigModal');
+    }
+
+    // ฟังก์ชันเปิด Modal ตั้งค่าผู้จัดส่งและระบบจัดส่ง
+    function openShippingConfigModal() {
+      document.getElementById("cfgSenderName").value = systemSettings.senderName;
+      document.getElementById("cfgSenderPhone").value = systemSettings.senderPhone;
+      document.getElementById("cfgSenderAddress").value = systemSettings.senderAddress;
+      document.getElementById("cfgShippingName").value = systemSettings.shippingName;
+      document.getElementById("cfgShippingFee").value = systemSettings.shippingFee;
+      openModal('shippingConfigModal');
+    }
+
+    function saveShippingConfig(e) {
+      e.preventDefault();
       systemSettings.senderName = document.getElementById("cfgSenderName").value.trim();
       systemSettings.senderPhone = document.getElementById("cfgSenderPhone").value.trim();
       systemSettings.senderAddress = document.getElementById("cfgSenderAddress").value.trim();
+      systemSettings.shippingName = document.getElementById("cfgShippingName").value.trim();
+      systemSettings.shippingFee = parseFloat(document.getElementById("cfgShippingFee").value) || 0;
       saveDataToFirestore();
-      alert("บันทึกการตั้งค่าสำเร็จ");
-      closeModal('bankConfigModal');
+      alert("บันทึกข้อมูลผู้จัดส่งและระบบจัดส่งสำเร็จ");
+      closeModal('shippingConfigModal');
     }
   </script>
 </body>
