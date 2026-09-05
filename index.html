@@ -315,14 +315,30 @@
     .product-code { padding: 10px 10px 0; font-size: .58rem; letter-spacing: .1em; color: #777; font-weight: 700; text-transform: uppercase; }
     .product-title { padding: 3px 10px 0; min-height: 38px; font-size: .8rem; line-height: 1.25; font-weight: 850; color: #111; cursor: pointer; }
     @media(min-width: 640px) { .product-title { font-size: .88rem; padding: 4px 12px 0; } }
-    .product-price { padding: 6px 10px 10px; font-size: .95rem; font-weight: 900; color: #111; }
-    @media(min-width: 640px) { .product-price { padding: 8px 12px 12px; font-size: 1rem; } }
-    
-    .product-card > .btn-action { 
-      width: calc(100% - 20px); margin: 0 10px 10px; min-height: 34px; font-size: 0.72rem; border-radius: calc(var(--radius) - 2px);
-      margin-top: auto;
+    .product-price { padding: 4px 10px 6px; font-size: .95rem; font-weight: 900; color: #111; }
+    @media(min-width: 640px) { .product-price { padding: 6px 12px 8px; font-size: 1rem; } }
+
+    /* Card Quantity & Add Button Row */
+    .card-action-row {
+      display: flex; gap: 6px; padding: 0 10px 10px; align-items: center; margin-top: auto; width: 100%;
     }
-    @media(min-width: 640px) { .product-card > .btn-action { width: calc(100% - 24px); margin: 0 12px 12px; min-height: 38px; font-size: 0.78rem; } }
+    @media(min-width: 640px) { .card-action-row { padding: 0 12px 12px; gap: 8px; } }
+    .card-qty-box {
+      display: flex; align-items: center; border: 1px solid var(--border-color); border-radius: calc(var(--radius) - 2px);
+      background: #fafafa; height: 34px; width: 75px; flex-shrink: 0; overflow: hidden;
+    }
+    @media(min-width: 640px) { .card-qty-box { height: 38px; width: 85px; } }
+    .card-qty-btn {
+      flex: 1; height: 100%; border: none; background: transparent; font-weight: bold; font-size: 0.85rem; cursor: pointer; color: #333;
+    }
+    .card-qty-btn:hover { background: #eee; }
+    .card-qty-input {
+      width: 26px; text-align: center; border: none; background: transparent; font-size: 0.75rem; font-weight: 800; outline: none;
+    }
+    .card-add-btn {
+      flex: 1; height: 34px; font-size: 0.72rem; border-radius: calc(var(--radius) - 2px); margin: 0;
+    }
+    @media(min-width: 640px) { .card-add-btn { height: 38px; font-size: 0.78rem; } }
 
     .modal-overlay {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -367,13 +383,13 @@
     .detail-thumb-item span { position: absolute; right: 2px; bottom: 2px; background: #111; color: #fff; font-size: .48rem; padding: 1px 2px; font-weight: bold; }
 
     .detail-info-action-col { display: flex; flex-direction: column; gap: 6px; }
-    .compact-specs-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; background: #fcfcf9; border: 1px solid var(--border-color); border-radius: var(--radius); padding: 6px 8px; }
+    .compact-specs-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; background: #fcfcf9; border: 1px solid var(--border-color); border-radius: var(--radius); padding: 8px 10px; }
     .compact-spec-item { display: flex; flex-direction: column; }
-    .compact-spec-label { font-size: 0.55rem; letter-spacing: 0.05em; text-transform: uppercase; color: #777; font-weight: 800; }
-    .compact-spec-val { font-size: 0.75rem; font-weight: 850; color: #111; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .compact-spec-label { font-size: 0.58rem; letter-spacing: 0.05em; text-transform: uppercase; color: #777; font-weight: 800; }
+    .compact-spec-val { font-size: 0.8rem; font-weight: 850; color: #111; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .compact-price-bar { display: flex; justify-content: space-between; align-items: center; background: #f4f4f0; border: 1px solid var(--border-color); border-radius: var(--radius); padding: 8px 10px; margin-top: 2px; }
     .compact-price-label { font-size: 0.72rem; font-weight: 800; color: #444; }
-    .compact-price-val { font-size: 1.1rem; font-weight: 950; color: #111; }
+    .compact-price-val { font-size: 1.1rem; font-weight: 950; color: var(--danger); } /* สีแดงสำหรับราคา */
 
     .form-group { display: flex; flex-direction: column; gap: 4px; margin-bottom: 6px; }
     .form-group label { font-size: .72rem; letter-spacing: .04em; color: #333; font-weight: 800; }
@@ -525,10 +541,8 @@
           <div class="compact-specs-grid">
             <div class="compact-spec-item"><span class="compact-spec-label">SKU</span><span class="compact-spec-val" id="detailSku">-</span></div>
             <div class="compact-spec-item"><span class="compact-spec-label">Brand</span><span class="compact-spec-val" id="detailBrand">-</span></div>
-            <div class="compact-spec-item"><span class="compact-spec-label">Base Price</span><span class="compact-spec-val" id="detailBasePrice">-</span></div>
             <div class="compact-spec-item"><span class="compact-spec-label">Scale List</span><span class="compact-spec-val" id="detailScales">-</span></div>
             <div class="compact-spec-item"><span class="compact-spec-label">Stock Status</span><span class="compact-spec-val" id="detailStockStatus" style="color:#059669;">-</span></div>
-            <div class="compact-spec-item"><span class="compact-spec-label">Options</span><span class="compact-spec-val" id="detailOptionCount">-</span></div>
           </div>
 
           <div class="form-group" style="margin-top:2px;"><label>สเกล (Scale):</label><select id="detailScaleSelect" class="form-control" onchange="calculateModalPrice()"></select></div>
@@ -703,7 +717,7 @@
     let products = [];
 
     let activeCategory = "ALL";
-    let activeSaleMode = "READY";
+    let activeSaleMode = localStorage.getItem("activeSaleMode") || "READY";
     let activeSecretCodes = JSON.parse(localStorage.getItem("activeSecretCodes") || "[]");
     let cart = JSON.parse(localStorage.getItem("cartItems") || "[]");
     let currentSelectedProduct = null;
@@ -742,6 +756,9 @@
     }
 
     function initStoreFront() {
+      document.getElementById("modeReadyBtn").className = `sale-mode-btn ${activeSaleMode === 'READY' ? 'active' : ''}`;
+      document.getElementById("modePreorderBtn").className = `sale-mode-btn ${activeSaleMode === 'PREORDER' ? 'active' : ''}`;
+
       updateSecretStatusDisplay();
       updateCartBadge();
       initAuthListener();
@@ -917,7 +934,6 @@
         const vdo = modal.querySelector('video');
         if (vdo) vdo.pause();
 
-        // เมื่อปิด Modal ให้บังคับอัปเดตและแสดงกล่องสถานะ Active กลับมาเสมอ
         updateSecretStatusDisplay();
         const headerVipContainer = document.getElementById("headerVipContainer");
         const dropdownVipWrapper = document.getElementById("dropdownVipWrapper");
@@ -979,6 +995,7 @@
       }
 
       activeSaleMode = mode;
+      localStorage.setItem("activeSaleMode", mode);
       document.getElementById("modeReadyBtn").className = `sale-mode-btn ${mode === 'READY' ? 'active' : ''}`;
       document.getElementById("modePreorderBtn").className = `sale-mode-btn ${mode === 'PREORDER' ? 'active' : ''}`;
       activeCategory = "ALL";
@@ -1254,10 +1271,91 @@
             <div class="product-code">SKU: ${p.id}</div>
             <div class="product-title" onclick="openDetailModal('${p.id}')">${p.name}</div>
             <div class="product-price">฿${p.basePrice}</div>
-            <button class="btn-action" onclick="openDetailModal('${p.id}')">เลือกซื้อสินค้า</button>
+            
+            <div class="card-action-row" onclick="event.stopPropagation()">
+              <div class="card-qty-box">
+                <button type="button" class="card-qty-btn" onclick="adjustCardQty(this, -1)">-</button>
+                <input type="text" inputmode="numeric" class="card-qty-input" value="1" id="cardQty_${p.id}" />
+                <button type="button" class="card-qty-btn" onclick="adjustCardQty(this, 1)">+</button>
+              </div>
+              <button class="btn-action card-add-btn" onclick="addDirectToCart('${p.id}')">+ เพิ่ม</button>
+            </div>
           </div>
         `;
       }).join('');
+    }
+
+    function adjustCardQty(btn, delta) {
+      const box = btn.parentElement;
+      const input = box.querySelector('.card-qty-input');
+      let val = parseInt(input.value) || 1;
+      val += delta;
+      if (val < 1) val = 1;
+      input.value = val;
+    }
+
+    function addDirectToCart(productId) {
+      const prod = products.find(p => p.id === productId);
+      if (!prod) return;
+
+      const incomingSaleMode = activeSaleMode;
+      if (incomingSaleMode === 'READY') {
+        const isReadyActive = prod.readyActive || false;
+        const readyStock = prod.readyStock || 0;
+        if (!isReadyActive || readyStock <= 0) {
+          showToast("สินค้านี้หมดชั่วคราว ไม่สามารถสั่งซื้อได้");
+          return;
+        }
+      }
+
+      if (cart.length > 0) {
+        const firstItemSaleMode = cart[0].saleMode;
+        if (firstItemSaleMode !== incomingSaleMode) {
+          showToast("ไม่สามารถสั่งซื้อทั้ง 2 ระบบพร้อมกันได้");
+          return;
+        }
+      }
+
+      const qtyInput = document.getElementById(`cardQty_${productId}`);
+      const addQty = parseInt(qtyInput ? qtyInput.value : 1) || 1;
+
+      const scale = (prod.scales && prod.scales.length > 0) ? prod.scales[0] : 'Standard';
+      const basePrice = (prod.scalePrices && prod.scalePrices[scale] !== undefined) ? prod.scalePrices[scale] : prod.basePrice;
+      const optionName = (prod.options && prod.options.length > 0) ? prod.options[0].name : 'Standard';
+      const optionExtra = (prod.options && prod.options.length > 0) ? (prod.options[0].extraPrice || 0) : 0;
+      const finalPrice = basePrice + optionExtra;
+
+      const existingIndex = cart.findIndex(item => 
+        item.product.id === prod.id && 
+        item.scale === scale && 
+        item.optionName === optionName &&
+        item.saleMode === incomingSaleMode
+      );
+
+      const maxLimit = incomingSaleMode === 'READY' ? (prod.readyStock || 0) : (prod.preorderUnlimited ? 999999 : (prod.preorderStock || 0));
+      const currentInCart = existingIndex > -1 ? cart[existingIndex].qty : 0;
+
+      if (currentInCart + addQty > maxLimit) {
+        showToast(`สินค้าเกินจำนวนสต็อกที่มี (${maxLimit} ชิ้น)`);
+        return;
+      }
+
+      if (existingIndex > -1) {
+        cart[existingIndex].qty += addQty;
+      } else {
+        cart.push({
+          product: prod,
+          scale: scale,
+          optionName: optionName,
+          saleMode: incomingSaleMode,
+          price: finalPrice,
+          qty: addQty
+        });
+      }
+
+      localStorage.setItem("cartItems", JSON.stringify(cart));
+      updateCartBadge();
+      showToast(`เพิ่มลงตะกร้า ${addQty} ชิ้นเรียบร้อย`);
     }
 
     function playCardVdo(cardEl) {
@@ -1303,9 +1401,6 @@
 
       const detailScales = document.getElementById("detailScales");
       if (detailScales) detailScales.innerText = (prod.scales || []).join(", ");
-
-      const detailBasePrice = document.getElementById("detailBasePrice");
-      if (detailBasePrice) detailBasePrice.innerText = "฿" + prod.basePrice;
       
       const readyActive = prod.readyActive || false;
       const readyStock = prod.readyStock !== undefined ? prod.readyStock : 0;
@@ -1331,12 +1426,6 @@
       const allMedia = [];
       if (prod.vdo) allMedia.push({ type: 'video', src: prod.vdo, label: 'วิดีโอ' });
       if (prod.images) prod.images.forEach((img, i) => allMedia.push({ type: 'image', src: img, label: `รูป ${i+1}` }));
-
-      const detailMediaCount = document.getElementById("detailMediaCount");
-      if (detailMediaCount) detailMediaCount.innerText = `${allMedia.length} รายการ`;
-
-      const detailOptionCount = document.getElementById("detailOptionCount");
-      if (detailOptionCount) detailOptionCount.innerText = `${(prod.options || []).length} ตัวเลือก`;
 
       const mainMedia = document.getElementById("detailMainMedia");
       const thumbsBox = document.getElementById("detailMediaThumbs");
@@ -1387,7 +1476,13 @@
             }
 
             if (codesToApply.length > 0) {
-              if (promoInput) promoInput.value = codesToApply.join(', ');
+              // ปิดบังโค้ดไม่ให้เห็นหมด (Masked Code) แสดงเฉพาะตัวอักษรแรก/ท้าย หรือดอกจัน
+              const maskedCodesStr = codesToApply.map(c => {
+                if (c.length > 2) return c.substring(0, 2) + "•".repeat(c.length - 2);
+                return "••••";
+              }).join(', ');
+
+              if (promoInput) promoInput.value = maskedCodesStr;
               applyAssignedPromoCodes(codesToApply);
             }
           }
@@ -1426,9 +1521,9 @@
 
       const priceDisplay = document.getElementById("modalTotalPrice");
       if (appliedOptionDiscount > 0) {
-        priceDisplay.innerHTML = `<span style="text-decoration: line-through; color: #888; font-size: 0.85rem; margin-right: 6px;">฿${originalTotal}</span> <span style="color: var(--accent-vip);">฿${finalTotal}</span>`;
+        priceDisplay.innerHTML = `<span style="text-decoration: line-through; color: #888; font-size: 0.85rem; margin-right: 6px;">฿${originalTotal}</span> <span style="color: var(--danger);">฿${finalTotal}</span>`;
       } else {
-        priceDisplay.innerText = `฿${finalTotal}`;
+        priceDisplay.innerHTML = `<span style="color: var(--danger);">฿${finalTotal}</span>`;
       }
 
       const headerVipContainer = document.getElementById("headerVipContainer");
@@ -1478,7 +1573,8 @@
 
         if (found) {
           cumulativeDiscount += disc;
-          appliedList.push(`${code} (-฿${disc})`);
+          const masked = code.length > 2 ? code.substring(0, 2) + "•".repeat(code.length - 2) : "••••";
+          appliedList.push(`${masked} (-฿${disc})`);
         }
       });
 
@@ -1596,7 +1692,7 @@
                 <button type="button" style="width:24px; height:24px; border:none; background:transparent; font-weight:bold; cursor:pointer;" onclick="changeCartQty(${idx}, 1)">+</button>
               </div>
               <div style="text-align:right; min-width:50px;">
-                <div style="font-weight:bold; font-size:0.82rem;">฿${item.price * item.qty}</div>
+                <div style="font-weight:bold; font-size:0.82rem; color:var(--danger);">฿${item.price * item.qty}</div>
                 <span style="color:var(--danger); cursor:pointer; font-size:0.68rem;" onclick="removeCartItem(${idx})">ลบ</span>
               </div>
             </div>
@@ -1718,7 +1814,7 @@
               </div>
               <div style="text-align:right; flex-shrink:0; font-size:0.78rem;">
                 <div>${it.qty} ชิ้น x ฿${it.price}</div>
-                <strong style="color:#111;">฿${lineTotal}</strong>
+                <strong style="color:var(--danger);">฿${lineTotal}</strong>
               </div>
             </div>
           `;
