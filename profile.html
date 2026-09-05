@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>164CRAFT - User Profile & Orders</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    :root {
+      --bg-main: #f8f8f6;
+      --bg-card: #ffffff;
+      --text-main: #111111;
+      --text-muted: #666666;
+      --border-color: #e5e5df;
+      --border-dark: #111111;
+      --accent: #111111;
+      --accent-hover: #333333;
+      --accent-vip: #059669;
+      --accent-vip-bg: #ecfdf5;
+      --danger: #dc2626;
+      --radius: 10px;
+      --shadow-soft: 0 4px 20px -2px rgba(0, 0, 0, 0.04), 0 2px 6px -2px rgba(0, 0, 0, 0.02);
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg-main);
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .header {
+      background: rgba(255, 255, 255, 0.95);
+      border-bottom: 1px solid var(--border-color);
+      padding: 0 20px;
+      height: 64px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(8px);
+    }
+    
+    .brand-info { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+    .brand-name { font-size: 0.95rem; font-weight: 850; letter-spacing: 1px; color: var(--accent); }
+
+    .profile-wrapper { max-width: 800px; width: 100%; margin: 24px auto; padding: 0 16px; flex: 1; display: flex; flex-direction: column; gap: 20px; }
+    
+    .card-container {
+      background: var(--bg-card); border: 1px solid var(--border-color);
+      border-radius: calc(var(--radius) * 1.5); padding: 24px; box-shadow: var(--shadow-soft);
+    }
+    .section-title {
+      font-size: 1rem; font-weight: 850; border-bottom: 2px solid var(--border-dark);
+      padding-bottom: 8px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center;
+    }
+
+    .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+    .form-group label { font-size: 0.8rem; font-weight: 750; color: #333; }
+    .form-control {
+      background-color: #fafafa; border: 1px solid var(--border-color); color: var(--text-main);
+      padding: 10px 14px; font-size: 16px; outline: none; width: 100%; border-radius: var(--radius);
+    }
+    .form-control:focus { background: #fff; border-color: var(--border-dark); }
+    textarea.form-control { min-height: 90px; resize: vertical; }
+
+    .btn-action {
+      height: 40px; border-radius: var(--radius); border: 1px solid var(--border-dark);
+      padding: 0 16px; font-size: 0.82rem; font-weight: 750; background: var(--accent); color: #fff;
+      cursor: pointer; transition: background 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    }
+    .btn-action:hover { background: var(--accent-hover); }
+    .btn-secondary { background: #fff; color: var(--text-main); border-color: var(--border-color); }
+    .btn-secondary:hover { background: #f0f0ed; }
+
+    .order-item-card {
+      background: #fafafa; border: 1px solid var(--border-color); border-radius: var(--radius);
+      padding: 14px; margin-bottom: 10px; display: flex; flex-direction: column; gap: 8px;
+    }
+
+    #toastNotification {
+      position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(20px);
+      background: rgba(17, 17, 17, 0.92); color: #fff; padding: 12px 20px;
+      border-radius: 30px; font-size: 0.82rem; font-weight: 700; z-index: 9999;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25); opacity: 0; pointer-events: none;
+      transition: opacity 0.3s ease, transform 0.3s ease; backdrop-filter: blur(8px); white-space: nowrap;
+    }
+    #toastNotification.show { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
+  </style>
+</head>
+<body onload="initProfilePage()">
+
+  <header class="header">
+    <div class="brand-info" onclick="window.location.href='index.html'">
+      <div class="brand-name">164CRAFT - บัญชีของฉัน</div>
+    </div>
+    <button class="btn-action btn-secondary" onclick="window.location.href='index.html'">⬅️ กลับหน้าร้านค้า</button>
+  </header>
+
+  <div class="profile-wrapper">
+    
+    <!-- ข้อมูลส่วนตัว & ที่อยู่ -->
+    <div class="card-container">
+      <div class="section-title">
+        <span>📍 ข้อมูลส่วนตัว & ที่อยู่จัดส่งเริ่มต้น</span>
+      </div>
+      
+      <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px; background: #fafafa; padding: 12px; border-radius: var(--radius); border: 1px solid var(--border-color);">
+        <img id="userAvatar" src="https://via.placeholder.com/50" style="width: 50px; height: 50px; border-radius: 50%; border: 2px solid #111;" alt="Avatar" />
+        <div style="overflow: hidden;">
+          <div id="userName" style="font-weight: 850; font-size: 0.95rem;">-</div>
+          <div id="userEmail" style="font-size: 0.75rem; color: var(--text-muted);">-</div>
+        </div>
+      </div>
+
+      <form onsubmit="saveUserProfile(event)">
+        <div class="form-group"><label>ชื่อ-นามสกุล ผู้รับหลัก</label><input type="text" id="profileName" class="form-control" required /></div>
+        <div class="form-group"><label>เบอร์โทรศัพท์ติดต่อ</label><input type="tel" id="profilePhone" class="form-control" placeholder="0812345678" maxlength="10" required /></div>
+        <div class="form-group"><label>ที่อยู่จัดส่ง</label><textarea id="profileAddress" class="form-control" rows="3" placeholder="บ้านเลขที่, ถนน, ตำบล, อำเภอ, จังหวัด, รหัสไปรษณีย์" required></textarea></div>
+        <button type="submit" class="btn-action" style="width: 100%; margin-top: 6px;">💾 บันทึกข้อมูลที่อยู่</button>
+      </form>
+    </div>
+
+    <!-- ประวัติการสั่งซื้อ -->
+    <div class="card-container">
+      <div class="section-title">
+        <span>📦 ประวัติรายการสั่งซื้อสินค้า</span>
+      </div>
+      <div id="userOrdersList" style="max-height: 400px; overflow-y: auto;">
+        <div style="text-align: center; color: #777; padding: 20px;">กำลังโหลดประวัติการสั่งซื้อ...</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div id="toastNotification"><span id="toastText">แจ้งเตือน</span></div>
+
+  <!-- Firebase App SDK, Firestore & Auth -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBqtlTy3dmasVPe1HfssaWrvsfJl1nTINc",
+      authDomain: "craft-2cc07.firebaseapp.com",
+      projectId: "craft-2cc07",
+      storageBucket: "craft-2cc07.firebasestorage.app",
+      messagingSenderId: "371408751439",
+      appId: "1:371408751439:web:b39039944fcdd104b2533a",
+      measurementId: "G-58S5EEG536"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const auth = firebase.auth();
+
+    let toastTimer = null;
+    function showToast(message) {
+      const toast = document.getElementById("toastNotification");
+      document.getElementById("toastText").innerText = message;
+      toast.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => { toast.classList.remove("show"); }, 2000);
+    }
+
+    function initProfilePage() {
+      auth.onAuthStateChanged((user) => {
+        if (user) {
+          document.getElementById("userAvatar").src = user.photoURL || "https://via.placeholder.com/50";
+          document.getElementById("userName").innerText = user.displayName || "สมาชิก 164CRAFT";
+          document.getElementById("userEmail").innerText = user.email;
+
+          // โหลดข้อมูลที่อยู่จัดส่งของ User
+          db.collection("user_profiles").doc(user.email.toLowerCase()).get().then((doc) => {
+            if (doc.exists) {
+              const data = doc.data();
+              document.getElementById("profileName").value = data.name || user.displayName || "";
+              document.getElementById("profilePhone").value = data.phone || "";
+              document.getElementById("profileAddress").value = data.address || "";
+            } else {
+              document.getElementById("profileName").value = user.displayName || "";
+            }
+          });
+
+          // โหลดประวัติคำสั่งซื้อของ User คนนี้
+          loadUserOrders(user.email);
+
+        } else {
+          showToast("กรุณาเข้าสู่ระบบก่อนใช้งาน");
+          setTimeout(() => { window.location.href = "index.html"; }, 1000);
+        }
+      });
+    }
+
+    function saveUserProfile(e) {
+      e.preventDefault();
+      const user = auth.currentUser;
+      if (!user) return;
+
+      const name = document.getElementById("profileName").value.trim();
+      const phone = document.getElementById("profilePhone").value.trim();
+      const address = document.getElementById("profileAddress").value.trim();
+
+      const profileData = {
+        uid: user.uid,
+        email: user.email.toLowerCase(),
+        name: name,
+        phone: phone,
+        address: address,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      };
+
+      db.collection("user_profiles").doc(user.email.toLowerCase()).set(profileData, { merge: true })
+        .then(() => {
+          showToast("บันทึกข้อมูลเรียบร้อยแล้ว");
+        })
+        .catch((err) => {
+          showToast("เกิดข้อผิดพลาดในการบันทึก");
+          console.error(err);
+        });
+    }
+
+    function loadUserOrders(email) {
+      db.collection("orders").where("customer.email", "==", email.toLowerCase()).onSnapshot((snapshot) => {
+        const cont = document.getElementById("userOrdersList");
+        const orders = [];
+        snapshot.forEach(doc => orders.push(doc.data()));
+
+        if (orders.length === 0) {
+          cont.innerHTML = `<div style="text-align:center; color:#777; padding:20px;">ยังไม่มีประวัติคำสั่งซื้อสินค้า</div>`;
+          return;
+        }
+
+        cont.innerHTML = orders.map(ord => `
+          <div class="order-item-card">
+            <div style="display:flex; justify-content:space-between; font-weight:bold; font-size:0.85rem;">
+              <span>ยอดชำระ: ฿${ord.grandTotal || 0}</span>
+              <span style="color:var(--accent-vip);">จัดส่งผ่าน ${ord.shippingName || 'EMS'}</span>
+            </div>
+            <div style="font-size:0.75rem; color:var(--text-muted);">
+              ผู้รับ: ${ord.customer.name} (${ord.customer.phone}) <br>
+              ที่อยู่: ${ord.customer.address}
+            </div>
+          </div>
+        `).join('');
+      });
+    }
+  </script>
+</body>
+</html>
