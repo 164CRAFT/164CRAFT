@@ -82,7 +82,7 @@
       padding: 10px 14px; font-size: 16px; outline: none; width: 100%; border-radius: var(--radius);
     }
     @media(min-width: 640px) { .form-control { font-size: 0.88rem; } }
-    .form-control:focus { background: #fff; border-color: var(--border-dark); box-shadow: 0 0 0 3px rgba(0,0,0,0.05); }
+    .form-control:focus { background: #fff; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0,0,0,0.05); }
     textarea.form-control { min-height: 90px; resize: vertical; }
 
     .admin-menu-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
@@ -91,13 +91,13 @@
       background: #fafaf9; border: 1px solid var(--border-color); border-radius: var(--radius);
       padding: 20px; display: flex; flex-direction: column; gap: 10px; transition: all 0.2s ease;
     }
-    .admin-menu-box:hover { border-color: var(--border-dark); transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.04); }
+    .admin-menu-box:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.04); }
     .admin-menu-title { font-weight: 800; font-size: 0.95rem; color: #111; }
     .admin-menu-desc { font-size: 0.8rem; color: var(--text-muted); line-height: 1.4; margin-bottom: 4px; }
 
     .btn-action {
       height: 38px; border-radius: var(--radius);
-      border: 1px solid var(--border-dark); padding: 0 12px; font-size: 0.78rem;
+      border: 1px solid var(--accent); padding: 0 12px; font-size: 0.78rem;
       font-weight: 700; background: var(--accent); color: #fff;
       cursor: pointer; transition: all 0.2s ease;
       display: inline-flex; align-items: center; justify-content: center; gap: 6px;
@@ -105,7 +105,7 @@
     }
     .btn-action:hover { background: var(--accent-hover); }
     .btn-secondary { background: #fff; color: var(--text-main); border-color: var(--border-color); }
-    .btn-secondary:hover { background: #f0f0ed; border-color: var(--border-dark); }
+    .btn-secondary:hover { background: #f0f0ed; border-color: var(--accent); }
     .btn-danger { background: var(--danger); color: #fff; border-color: var(--danger); }
 
     .modal-overlay {
@@ -137,7 +137,7 @@
       border: 2px solid #111; border-radius: 8px; padding: 16px; background: #fff; font-size: 0.9rem; display: flex; flex-direction: column; gap: 12px;
     }
     .label-section { border: 1px solid #111; border-radius: 6px; padding: 12px; position: relative; }
-    .label-title { font-size: 0.75rem; font-weight: 800; text-transform: uppercase; background: #111; color: #fff; padding: 2px 8px; position: absolute; top: -10px; left: 12px; border-radius: 4px; }
+    .label-title { font-size: 0.75rem; font-weight: 800; text-transform: uppercase; background: var(--accent); color: #fff; padding: 2px 8px; position: absolute; top: -10px; left: 12px; border-radius: 4px; }
 
     .image-preview-grid {
       display: grid; grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); gap: 8px;
@@ -145,7 +145,7 @@
       padding: 8px; background: #fafaf8; border-radius: var(--radius);
     }
     .preview-thumb-card {
-      position: relative; aspect-ratio: 1/1; border: 1px solid var(--border-dark);
+      position: relative; aspect-ratio: 1/1; border: 1px solid var(--accent);
       background: #fff; overflow: hidden; display: flex; align-items: center; justify-content: center; border-radius: var(--radius);
       cursor: grab; user-select: none;
     }
@@ -1645,9 +1645,15 @@
     }
 
     function createCodeRowHtml(code = '', discount = 0) {
+      const allCreatedCodes = vipCodesList.map(item => typeof item === 'object' ? item.code : item);
+      const optionsHtml = allCreatedCodes.map(c => `<option value="${c}" ${c === code ? 'selected' : ''}>${c}</option>`).join('');
+
       return `
         <div class="opt-code-single-row">
-          <input type="text" class="form-control opt-single-code" placeholder="โค้ด (เช่น VIP10)" value="${code}" style="text-transform:uppercase; min-height:34px; font-size:0.8rem;" />
+          <select class="form-control opt-single-code" style="min-height:34px; font-size:0.8rem; text-transform:uppercase;">
+            <option value="">-- เลือกโค้ดจากระบบ --</option>
+            ${optionsHtml}
+          </select>
           <div style="display:flex; align-items:center; gap:4px;">
             <span style="font-size:0.75rem; color:var(--danger); font-weight:bold;">-฿</span>
             <input type="text" inputmode="numeric" class="form-control opt-single-discount" placeholder="0" value="${discount}" onfocus="this.select()" style="min-height:34px; font-size:0.8rem;" />
@@ -1681,7 +1687,7 @@
         </div>
         <div class="opt-codes-section">
           <div style="display:flex; justify-content:space-between; align-items:center;">
-            <span style="font-size:0.72rem; font-weight:bold; color:var(--accent-vip);">🎟️ โค้ดส่วนลด</span>
+            <span style="font-size:0.72rem; font-weight:bold; color:var(--accent-vip);">🎟️ โค้ดส่วนลด (เลือกจากรหัสที่สร้างไว้)</span>
             <button type="button" class="btn-action btn-secondary" style="height:26px; padding:0 8px; font-size:0.68rem;" onclick="addCodeToOption(this)">+ เพิ่มโค้ด</button>
           </div>
           <div class="opt-codes-container">${codesHtml}</div>
