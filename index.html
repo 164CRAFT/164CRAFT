@@ -785,7 +785,6 @@
               if (shipEmailInput) shipEmailInput.value = user.email || "";
               if (shipAddressInput) shipAddressInput.value = data.address || "";
 
-              // ดึงรหัสปลดล็อกสินค้า / โค้ดส่วนลดที่ผู้ดูแลระบบกำหนดไว้ให้สมาชิกคนนี้มาเปิดใช้งานอัตโนมัติ
               let autoCodes = [];
               if (data.assignedCodes && Array.isArray(data.assignedCodes)) {
                 autoCodes = data.assignedCodes;
@@ -917,6 +916,12 @@
         modal.style.display = "none";
         const vdo = modal.querySelector('video');
         if (vdo) vdo.pause();
+
+        // เมื่อปิด Modal รายละเอียดสินค้า ให้รีเซ็ตการแสดงผลช่องกรอกโค้ดใบการ์ดที่ Header กลับมาปกติ
+        const headerVipContainer = document.getElementById("headerVipContainer");
+        const dropdownVipWrapper = document.getElementById("dropdownVipWrapper");
+        if (headerVipContainer && window.innerWidth >= 850) headerVipContainer.style.display = "flex";
+        if (dropdownVipWrapper) dropdownVipWrapper.style.display = "block";
       }
     }
 
@@ -1016,7 +1021,7 @@
 
     function processVipCode(rawInput) {
       const cleanInput = (rawInput || "").trim();
-      if (!cleanInput) return; // หากเว้นว่างไว้ จะไม่ทำลายหรือลบโค้ดเดิมที่ใช้งานอยู่
+      if (!cleanInput) return;
 
       const codes = cleanInput.split(/[,,\s]+/).map(c => c.trim().toUpperCase()).filter(Boolean);
       let successList = [];
