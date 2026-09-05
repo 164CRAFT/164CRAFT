@@ -1190,7 +1190,6 @@
       document.getElementById("brandDrawerDropdown").classList.remove("show");
     }
 
-    // คำนวณส่วนลดสูงสุดสำหรับแสดงบนการ์ดสินค้าหน้าแรก
     function getCardDiscountedPrice(p) {
       let base = p.basePrice || 0;
       if (p.scalePrices && p.scales && p.scales.length > 0) {
@@ -1435,31 +1434,17 @@
         }
       }
 
-      const currentUser = auth.currentUser;
-      if (currentUser && currentUser.email) {
-        db.collection("user_profiles").doc(currentUser.email.toLowerCase()).get().then((doc) => {
-          if (doc.exists) {
-            const data = doc.data();
-            let codesToApply = [];
-            if (data.assignedCodes && Array.isArray(data.assignedCodes)) {
-              codesToApply = data.assignedCodes;
-            } else if (data.assignedCode) {
-              codesToApply = [data.assignedCode];
-            }
+      let codesToCheck = [...userAssignedCodes];
+      activeSecretCodes.forEach(c => { if (!codesToCheck.includes(c)) codesToCheck.push(c); });
 
-            userAssignedCodes = codesToApply;
+      if (codesToCheck.length > 0) {
+        const maskedCodesStr = codesToCheck.map(c => {
+          if (c.length > 2) return c.substring(0, 2) + "•".repeat(c.length - 2);
+          return "••••";
+        }).join(', ');
 
-            if (codesToApply.length > 0) {
-              const maskedCodesStr = codesToApply.map(c => {
-                if (c.length > 2) return c.substring(0, 2) + "•".repeat(c.length - 2);
-                return "••••";
-              }).join(', ');
-
-              if (promoInput) promoInput.value = maskedCodesStr;
-              applyAssignedPromoCodes(codesToApply);
-            }
-          }
-        });
+        if (promoInput) promoInput.value = maskedCodesStr;
+        applyAssignedPromoCodes(codesToCheck);
       }
 
       calculateModalPrice();
