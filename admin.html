@@ -928,8 +928,9 @@
       systemSettings.themeColor = document.getElementById("cfgThemeColor").value;
       saveDataToFirestore();
       applyAdminTheme();
-      showToast("✓ บันทึกการตั้งค่าเว็บไซต์สำเร็จ");
+      showToast("✓ บันทึกการตั้งค่าเว็บสำเร็จ");
       closeModal('webThemeConfigModal');
+      openModal('webThemeConfigModal'); // คงให้อยู่หน้าตั้งค่าเดิม
     }
 
     function renderAdminBrandFilterChips() {
@@ -1064,7 +1065,10 @@
 
     function cloneProduct(productId) {
       db.collection("products").doc(productId).get().then((doc) => {
-        if (!doc.exists) return showToast("ไม่พบสินค้าต้นฉบับ");
+        if (!doc.exists) {
+          showToast("ไม่พบสินค้าต้นฉบับ");
+          return;
+        }
         const prod = doc.data();
 
         closeModal('manageProductsModal');
@@ -1485,8 +1489,9 @@
 
       db.collection("products").doc(id).set(payload).then(() => {
         showToast("✓ บันทึกสินค้าสำเร็จ!");
-        closeModal('addProductModal');
-        openManageProductsModal();
+        // เปลี่ยนสถานะให้ปุ่มเป็นโหมดแก้ไข และไม่ปิด Modal เพื่อให้อยู่หน้าเดิมต่อได้ทันที
+        document.getElementById("editingProductId").value = id;
+        document.getElementById("productModalTitle").innerText = "✏️ แก้ไขสินค้า: " + id;
       }).catch(err => showToast("เกิดข้อผิดพลาด: " + err.message));
     }
 
@@ -1584,6 +1589,7 @@
           document.getElementById("newVipCodeInput").value = "";
           document.getElementById("newVipNoteInput").value = "";
           renderVipCodesList();
+          showToast("✓ เพิ่มรหัสสำเร็จ");
         } else {
           showToast("รหัสนี้มีอยู่ในระบบแล้ว");
         }
@@ -1594,6 +1600,7 @@
       vipCodesList.splice(idx, 1); 
       saveDataToFirestore(); 
       renderVipCodesList(); 
+      showToast("ลบสำเร็จ");
     }
 
     function openConfigModal() { renderConfigChips(); openModal('configModal'); }
@@ -1610,26 +1617,46 @@
     function handleAddBrand(e) {
       e.preventDefault();
       const val = document.getElementById("newBrandName").value.trim();
-      if (val && !brands.includes(val)) { brands.push(val); brands = sortAlphabetically(brands); saveDataToFirestore(); document.getElementById("newBrandName").value = ""; renderConfigChips(); }
+      if (val && !brands.includes(val)) { 
+        brands.push(val); 
+        brands = sortAlphabetically(brands); 
+        saveDataToFirestore(); 
+        document.getElementById("newBrandName").value = ""; 
+        renderConfigChips(); 
+        showToast("✓ เพิ่มแบรนด์สำเร็จ");
+      }
     }
     function deleteBrand(b) {
       if (brands.length <= 1) {
         showToast("ต้องมีอย่างน้อย 1 แบรนด์");
         return;
       }
-      brands = brands.filter(x => x !== b); saveDataToFirestore(); renderConfigChips();
+      brands = brands.filter(x => x !== b); 
+      saveDataToFirestore(); 
+      renderConfigChips();
+      showToast("ลบสำเร็จ");
     }
     function handleAddScale(e) {
       e.preventDefault();
       const val = document.getElementById("newScaleName").value.trim();
-      if (val && !scalesList.includes(val)) { scalesList.push(val); scalesList = sortAlphabetically(scalesList); saveDataToFirestore(); document.getElementById("newScaleName").value = ""; renderConfigChips(); }
+      if (val && !scalesList.includes(val)) { 
+        scalesList.push(val); 
+        scalesList = sortAlphabetically(scalesList); 
+        saveDataToFirestore(); 
+        document.getElementById("newScaleName").value = ""; 
+        renderConfigChips(); 
+        showToast("✓ เพิ่มสเกลสำเร็จ");
+      }
     }
     function deleteScale(s) {
       if (scalesList.length <= 1) {
         showToast("ต้องมีอย่างน้อย 1 สเกล");
         return;
       }
-      scalesList = scalesList.filter(x => x !== s); saveDataToFirestore(); renderConfigChips();
+      scalesList = scalesList.filter(x => x !== s); 
+      saveDataToFirestore(); 
+      renderConfigChips();
+      showToast("ลบสำเร็จ");
     }
 
     function openBankConfigModal() {
@@ -1658,7 +1685,7 @@
       systemSettings.accountName = document.getElementById("cfgAccountName").value.trim();
       saveDataToFirestore();
       showToast("✓ บันทึกการตั้งค่าธนาคารสำเร็จ");
-      closeModal('bankConfigModal');
+      // ไม่ปิด Modal ให้ค้างอยู่ที่หน้าเดิม
     }
 
     function openShippingConfigModal() {
@@ -1679,7 +1706,7 @@
       systemSettings.shippingFee = parseFloat(document.getElementById("cfgShippingFee").value) || 0;
       saveDataToFirestore();
       showToast("✓ บันทึกข้อมูลการจัดส่งสำเร็จ");
-      closeModal('shippingConfigModal');
+      // ไม่ปิด Modal ให้ค้างอยู่ที่หน้าเดิม
     }
   </script>
 </body>
