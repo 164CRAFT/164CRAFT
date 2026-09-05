@@ -257,7 +257,7 @@
 
         <div class="admin-menu-box">
           <div class="admin-menu-title">👥 จัดการสมาชิกในระบบ</div>
-          <div class="admin-menu-desc">เพิ่ม, แก้ไข หรือลบโค้ดส่วนลดอัตโนมัติให้สมาชิกแต่ละคน (ดึงจากรายการรหัส)</div>
+          <div class="admin-menu-desc">แสดงรายชื่อสมาชิก และกดปุ่มเพื่อเปิด Popup จัดการโค้ดส่วนลด</div>
           <button class="btn-action btn-secondary" style="margin-top: auto;" onclick="openMembersModal()">จัดการสมาชิก</button>
         </div>
 
@@ -428,19 +428,50 @@
     </div>
   </div>
 
-  <!-- MEMBERS MODAL -->
+  <!-- MEMBERS MODAL (แสดงเฉพาะชื่อกับ Email พร้อมปุ่มกด Popup แยกจัดการโค้ด) -->
   <div id="membersModal" class="modal-overlay" onclick="checkOutsideModalClick(event, 'membersModal')">
-    <div class="modal-box" style="max-width: 720px;">
+    <div class="modal-box" style="max-width: 600px;">
       <div class="modal-header">
-        <span>👥 จัดการสมาชิก & กำหนดโค้ดส่วนลดอัตโนมัติ</span>
+        <span>👥 จัดการสมาชิกในระบบ</span>
         <button class="modal-close" onclick="closeModal('membersModal')">✕</button>
       </div>
-      <p style="font-size: 0.8rem; color: var(--text-muted);">รายชื่อสมาชิก คุณสามารถเลือกโค้ดส่วนลดที่สร้างไว้ในระบบ หรือเพิ่มหลายโค้ดให้สมาชิกแต่ละคนได้</p>
+      <p style="font-size: 0.8rem; color: var(--text-muted);">รายชื่อสมาชิกทั้งหมด คลิกปุ่ม "จัดการโค้ดส่วนลด" เพื่อเปิดหน้าต่างกำหนดโค้ดประจำตัว</p>
       
-      <div id="membersListContainer" style="max-height: 55vh; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; margin-top: 6px; padding-right: 4px;"></div>
+      <div id="membersListContainer" style="max-height: 55vh; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; margin-top: 6px; padding-right: 4px;"></div>
 
       <div style="margin-top: 14px;">
         <button type="button" class="btn-action btn-secondary" style="width: 100%;" onclick="closeModal('membersModal')">ปิดหน้าต่าง</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MEMBER DETAIL POPUP MODAL (หน้าต่างแยกจัดการโค้ดส่วนลดของสมาชิกแต่ละคน) -->
+  <div id="memberDetailModal" class="modal-overlay" style="z-index: 1100;" onclick="if(event.target===this) closeModal('memberDetailModal')">
+    <div class="modal-box" style="max-width: 500px;">
+      <div class="modal-header">
+        <span id="popupMemberTitle">⚙️ จัดการโค้ดส่วนลดสมาชิก</span>
+        <button class="modal-close" onclick="closeModal('memberDetailModal')">✕</button>
+      </div>
+      <input type="hidden" id="popupMemberEmail" />
+      
+      <div style="background:#fafafa; border:1px solid var(--border-color); padding:12px; border-radius:var(--radius); display:flex; flex-direction:column; gap:10px;">
+        <div>
+          <div style="font-weight:bold; font-size:0.9rem;" id="popupMemberNameDisplay">-</div>
+          <div style="font-size:0.75rem; color:var(--text-muted);" id="popupMemberEmailDisplay">-</div>
+        </div>
+
+        <div style="background:#fff; padding:10px; border:1px solid #e2e8f0; border-radius:6px; display:flex; flex-direction:column; gap:8px;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <label style="font-size:0.78rem; font-weight:bold; color:var(--accent-vip);">🎟️ โค้ดส่วนลดอัตโนมัติประจำตัว:</label>
+            <button type="button" class="btn-action btn-secondary" style="height:28px; padding:0 8px; font-size:0.7rem;" onclick="addPopupMemberCodeRow()">+ เพิ่มช่องโค้ด</button>
+          </div>
+          <div id="popupMemberCodesContainer" style="display:flex; flex-direction:column; gap:6px; max-height:200px; overflow-y:auto; padding-right:2px;"></div>
+        </div>
+
+        <div style="display: flex; gap: 8px; margin-top: 4px;">
+          <button type="button" class="btn-action btn-secondary" style="flex: 1;" onclick="closeModal('memberDetailModal')">ยกเลิก</button>
+          <button type="button" class="btn-action" style="flex: 1.5;" onclick="savePopupMemberAssignedCodes()">💾 บันทึกข้อมูล</button>
+        </div>
       </div>
     </div>
   </div>
@@ -479,7 +510,7 @@
     </div>
   </div>
 
-  <!-- VIP CODES MODAL (จัดการรหัส & โน้ตข้อความ - แยกประเภท และแก้ไขโน้ตได้) -->
+  <!-- VIP CODES MODAL (จัดการรหัส & โน้ตข้อความ - แยกประเภทชัดเจน) -->
   <div id="vipCodesModal" class="modal-overlay" onclick="checkOutsideModalClick(event, 'vipCodesModal')">
     <div class="modal-box" style="max-width: 680px;">
       <div class="modal-header">
@@ -523,7 +554,7 @@
   </div>
 
   <!-- EDIT CODE NOTE MODAL -->
-  <div id="editCodeModal" class="modal-overlay" style="z-index: 1100;" onclick="if(event.target===this) closeModal('editCodeModal')">
+  <div id="editCodeModal" class="modal-overlay" style="z-index: 1200;" onclick="if(event.target===this) closeModal('editCodeModal')">
     <div class="modal-box" style="max-width: 400px;">
       <div class="modal-header">
         <span>✏️ แก้ไขโน้ตข้อความ</span>
@@ -926,7 +957,7 @@
     }
 
     window.addEventListener('popstate', (event) => {
-      const modals = ['manageProductsModal', 'ordersModal', 'shippingLabelModal', 'orderDetailModal', 'membersModal', 'webThemeConfigModal', 'addProductModal', 'vipCodesModal', 'configModal', 'bankConfigModal', 'shippingConfigModal', 'editCodeModal', 'passcodeModal'];
+      const modals = ['manageProductsModal', 'ordersModal', 'shippingLabelModal', 'orderDetailModal', 'membersModal', 'memberDetailModal', 'webThemeConfigModal', 'addProductModal', 'vipCodesModal', 'configModal', 'bankConfigModal', 'shippingConfigModal', 'editCodeModal', 'passcodeModal'];
       modals.forEach(id => {
         const m = document.getElementById(id);
         if (m && m.style.display === 'flex') {
@@ -1079,6 +1110,7 @@
       });
     }
 
+    // หน้าหลักสมาชิก แสดงเฉพาะ ชื่อ และ Email พร้อมปุ่มกด Popup
     function openMembersModal() {
       const cont = document.getElementById("membersListContainer");
       if (members.length === 0) {
@@ -1086,53 +1118,15 @@
       } else {
         cont.innerHTML = members.map(m => {
           const userEmail = (m.email || m.emailId || "").toLowerCase();
-          const isAdmin = userEmail === "craft.studio164@gmail.com";
-          const roleBadge = isAdmin ? 
-            `<div style="font-size:0.7rem; color:#fff; font-weight:bold; background:var(--accent); padding:3px 8px; border-radius:4px; height:fit-content;">Admin</div>` : 
-            `<div style="font-size:0.7rem; color:#059669; font-weight:bold; background:var(--accent-vip-bg); padding:3px 8px; border-radius:4px; height:fit-content;">สมาชิก Active</div>`;
-
-          let assignedCodes = m.assignedCodes || [];
-          if (!assignedCodes.length && m.assignedCode) assignedCodes = [m.assignedCode];
-
-          const allCreatedCodes = vipCodesList.map(item => item.code);
-
-          let codesHtml = assignedCodes.map((codeVal, cIdx) => {
-            const rowId = `codeRow_${userEmail.replace(/[^a-z0-9]/g, '_')}_${cIdx}_${Date.now()}`;
-            const optionsHtml = allCreatedCodes.map(c => `<option value="${c}" ${c === codeVal ? 'selected' : ''}>${c}</option>`).join('');
-
-            return `
-              <div style="display:flex; gap:6px; align-items:center;" id="${rowId}">
-                <select class="form-control member-code-select-${userEmail.replace(/[^a-z0-9]/g, '_')}" style="min-height:30px; font-size:0.78rem;">
-                  <option value="">-- เลือกโค้ดในระบบ --</option>
-                  ${optionsHtml}
-                </select>
-                <button type="button" class="btn-action btn-danger" style="height:30px; padding:0 8px; font-size:0.7rem;" onclick="document.getElementById('${rowId}').remove()">✕ ลบ</button>
-              </div>
-            `;
-          }).join('');
-
-          const safeId = userEmail.replace(/[^a-z0-9]/g, '_');
+          const userName = m.name || 'ไม่ระบุชื่อ';
 
           return `
-            <div style="background:#fafafa; border:1px solid var(--border-color); padding:12px; border-radius:var(--radius); display:flex; flex-direction:column; gap:8px;">
-              <div style="display:flex; align-items:center; justify-content:space-between;">
-                <div>
-                  <div style="font-weight:bold; font-size:0.88rem;">${m.name || 'ไม่ระบุชื่อ'}</div>
-                  <div style="font-size:0.72rem; color:var(--text-muted);">อีเมล: ${userEmail} | เบอร์โทร: ${m.phone || '-'}</div>
-                </div>
-                ${roleBadge}
+            <div style="background:#fafafa; border:1px solid var(--border-color); padding:10px 14px; border-radius:var(--radius); display:flex; justify-content:space-between; align-items:center; gap:10px;">
+              <div style="overflow:hidden;">
+                <div style="font-weight:bold; font-size:0.88rem; color:#111; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${userName}</div>
+                <div style="font-size:0.75rem; color:var(--text-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${userEmail}</div>
               </div>
-
-              <div style="background:#fff; padding:10px; border:1px solid #e2e8f0; border-radius:6px; display:flex; flex-direction:column; gap:6px;">
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                  <label style="font-size:0.75rem; font-weight:bold; color:var(--accent-vip);">🎟️ โค้ดส่วนลดอัตโนมัติประจำตัว:</label>
-                  <button type="button" class="btn-action btn-secondary" style="height:26px; padding:0 8px; font-size:0.68rem;" onclick="addMemberCodeRow('${safeId}')">+ เพิ่มช่องโค้ด</button>
-                </div>
-                <div id="memberCodesContainer_${safeId}" style="display:flex; flex-direction:column; gap:6px;">
-                  ${codesHtml}
-                </div>
-                <button type="button" class="btn-action" style="height:32px; font-size:0.75rem; margin-top:4px;" onclick="saveMemberAssignedCodes('${userEmail}')">💾 บันทึกโค้ดอัตโนมัติ</button>
-              </div>
+              <button class="btn-action btn-secondary" style="height:32px; padding:0 10px; font-size:0.72rem; flex-shrink:0;" onclick="openMemberDetailPopup('${userEmail}')">⚙️ จัดการโค้ดส่วนลด</button>
             </div>
           `;
         }).join('');
@@ -1140,29 +1134,59 @@
       openModal('membersModal');
     }
 
-    function addMemberCodeRow(safeId) {
-      const container = document.getElementById(`memberCodesContainer_${safeId}`);
-      if (!container) return;
-      const rowId = 'codeRow_' + Date.now();
+    // เปิด Popup แยกข้อมูลจัดการโค้ดส่วนลดของสมาชิก
+    function openMemberDetailPopup(emailStr) {
+      const member = members.find(m => (m.email || m.emailId || "").toLowerCase() === emailStr.toLowerCase());
+      if (!member) return;
+
+      document.getElementById("popupMemberEmail").value = emailStr;
+      document.getElementById("popupMemberNameDisplay").innerText = member.name || 'ไม่ระบุชื่อ';
+      document.getElementById("popupMemberEmailDisplay").innerText = emailStr;
+
+      let assignedCodes = member.assignedCodes || [];
+      if (!assignedCodes.length && member.assignedCode) assignedCodes = [member.assignedCode];
+
+      const container = document.getElementById("popupMemberCodesContainer");
+      container.innerHTML = "";
+
+      if (assignedCodes.length > 0) {
+        assignedCodes.forEach(codeVal => {
+          appendPopupMemberCodeRow(codeVal);
+        });
+      } else {
+        appendPopupMemberCodeRow("");
+      }
+
+      openModal('memberDetailModal');
+    }
+
+    function appendPopupMemberCodeRow(selectedCode = "") {
+      const container = document.getElementById("popupMemberCodesContainer");
+      const rowId = 'popupCodeRow_' + Date.now() + Math.random().toString(36).substr(2, 5);
+      
       const allCreatedCodes = vipCodesList.map(item => item.code);
-      const optionsHtml = allCreatedCodes.map(c => `<option value="${c}">${c}</option>`).join('');
+      const optionsHtml = allCreatedCodes.map(c => `<option value="${c}" ${c === selectedCode ? 'selected' : ''}>${c}</option>`).join('');
 
       const div = document.createElement('div');
       div.id = rowId;
       div.style.cssText = "display:flex; gap:6px; align-items:center;";
       div.innerHTML = `
-        <select class="form-control member-code-select-${safeId}" style="min-height:30px; font-size:0.78rem;">
+        <select class="form-control popup-member-code-select" style="min-height:32px; font-size:0.78rem;">
           <option value="">-- เลือกโค้ดในระบบ --</option>
           ${optionsHtml}
         </select>
-        <button type="button" class="btn-action btn-danger" style="height:30px; padding:0 8px; font-size:0.7rem;" onclick="document.getElementById('${rowId}').remove()">✕ ลบ</button>
+        <button type="button" class="btn-action btn-danger" style="height:32px; padding:0 8px; font-size:0.7rem;" onclick="document.getElementById('${rowId}').remove()">✕ ลบ</button>
       `;
       container.appendChild(div);
     }
 
-    function saveMemberAssignedCodes(emailStr) {
-      const safeId = emailStr.replace(/[^a-z0-9]/g, '_');
-      const selects = document.querySelectorAll(`.member-code-select-${safeId}`);
+    function addPopupMemberCodeRow() {
+      appendPopupMemberCodeRow("");
+    }
+
+    function savePopupMemberAssignedCodes() {
+      const emailStr = document.getElementById("popupMemberEmail").value;
+      const selects = document.querySelectorAll(".popup-member-code-select");
       const codes = [];
       selects.forEach(sel => {
         const val = sel.value.trim().toUpperCase();
@@ -1175,6 +1199,7 @@
         assignedCode: codes.length > 0 ? codes[0] : ""
       }, { merge: true }).then(() => {
         showToast("บันทึกโค้ดส่วนลดอัตโนมัติสำเร็จ");
+        closeModal('memberDetailModal');
       }).catch(err => {
         showToast("เกิดข้อผิดพลาด: " + err.message);
       });
@@ -1678,7 +1703,6 @@
     }
 
     function createCodeRowHtml(code = '') {
-      // กรองเฉพาะโค้ดประเภทส่วนลด (DISCOUNT) มาให้เลือกในตัวเลือกสินค้า
       const discountCodes = vipCodesList.filter(item => item.type === 'DISCOUNT').map(item => item.code);
       const optionsHtml = discountCodes.map(c => `<option value="${c}" ${c === code ? 'selected' : ''}>${c}</option>`).join('');
 
@@ -1744,7 +1768,6 @@
             const cSelect = codeRow.querySelector(".opt-single-code");
             const codeVal = (cSelect.value || "").trim().toUpperCase();
             if (codeVal) {
-              // ค้นหามูลค่าส่วนลดจาก vipCodesList อัตโนมัติ ไม่ต้องกรอกค่าเงินเอง
               const foundMaster = vipCodesList.find(item => item.code === codeVal);
               const autoDisc = foundMaster ? foundMaster.discount : 0;
               codes.push({ code: codeVal, discount: autoDisc });
