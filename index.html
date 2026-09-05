@@ -575,7 +575,7 @@
       <div class="modal-header">
         <span>🛒 ตะกร้าสินค้าของคุณ</span>
         <div style="display: flex; align-items: center; gap: 6px;">
-          <button type="button" class="btn-action btn-danger" style="height: 28px; padding: 0 8px; font-size: 0.68rem;" onclick="clearCart()">🗑️ เคลียร์ตะกร้า</button>
+          <button type="button" class="btn-action btn-danger" style="height: 28px; padding: 0 8px; font-size: 0.68rem;" onclick="openClearCartConfirmModal()">🗑️ เคลียร์ตะกร้า</button>
           <button class="modal-close" onclick="closeModal('cartModal')">✕</button>
         </div>
       </div>
@@ -589,6 +589,18 @@
       <div style="display: flex; gap: 8px; margin-top: 6px;">
         <button class="btn-action btn-secondary" style="flex: 1; height: 40px;" onclick="closeModal('cartModal')">🔍 ดูสินค้าเพิ่มเติม</button>
         <button class="btn-action" style="flex: 1.2; height: 40px;" onclick="closeModal('cartModal'); openShippingModal();">ดำเนินการชำระเงิน</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CLEAR CART CONFIRM MODAL -->
+  <div id="clearCartConfirmModal" class="modal-overlay" style="z-index: 1100;">
+    <div class="modal-box" style="max-width: 380px; text-align: center;">
+      <div class="modal-header" style="justify-content: center; border-bottom: none; padding-bottom: 0;">⚠️ ยืนยันการเคลียร์ตะกร้า</div>
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin: 12px 0;">คุณต้องการลบสินค้าทั้งหมดออกจากตะกร้าใช่หรือไม่?</p>
+      <div style="display: flex; gap: 8px; margin-top: 8px;">
+        <button type="button" class="btn-action btn-secondary" style="flex: 1; height: 38px;" onclick="closeModal('clearCartConfirmModal')">ยกเลิก</button>
+        <button type="button" class="btn-action btn-danger" style="flex: 1; height: 38px;" onclick="executeClearCart()">ยืนยันเคลียร์</button>
       </div>
     </div>
   </div>
@@ -966,7 +978,7 @@
     }
 
     window.addEventListener('popstate', (event) => {
-      const modals = ['detailModal', 'cartModal', 'shippingModal', 'orderSummaryModal'];
+      const modals = ['detailModal', 'cartModal', 'shippingModal', 'orderSummaryModal', 'clearCartConfirmModal'];
       modals.forEach(id => {
         const m = document.getElementById(id);
         if (m && m.style.display === 'flex') {
@@ -1732,16 +1744,28 @@
       renderCart();
     }
 
-    function clearCart() {
+    function openClearCartConfirmModal() {
       if (cart.length === 0) {
         showToast("ตะกร้าสินค้าว่างอยู่แล้ว");
         return;
       }
+      openModal('clearCartConfirmModal');
+    }
+
+    function executeClearCart() {
       cart = [];
       localStorage.removeItem("cartItems");
       updateCartBadge();
       renderCart();
+      
+      // ปิดหน้าต่าง Popup ยืนยัน และปิดหน้าต่างตะกร้าสินค้าทั้งหมดทันทีตามเงื่อนไข
+      closeModal('clearCartConfirmModal');
+      closeModal('cartModal');
       showToast("ล้างตะกร้าสินค้าเรียบร้อยแล้ว");
+    }
+
+    function clearCart() {
+      openClearCartConfirmModal();
     }
 
     function openShippingModal() {
@@ -1816,7 +1840,7 @@
                 </div>
               </div>
               <div style="text-align:right; flex-shrink:0; font-size:0.78rem;">
-                <div>${it.qty} ชิ้น x ฿${it.price}</div>
+                <div>${it.qty} سين x ฿${it.price}</div>
                 <strong style="color:var(--danger);">฿${lineTotal}</strong>
               </div>
             </div>
