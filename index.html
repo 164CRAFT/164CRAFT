@@ -918,7 +918,6 @@
       }, (err) => console.log("Error loading products:", err));
     }
 
-    // ฟังก์ชันเปิด Modal พร้อมผลัก History State เพื่อรองรับปุ่มย้อนกลับบนมือถือ
     function openModal(id) { 
       const modal = document.getElementById(id);
       if (modal) {
@@ -936,7 +935,6 @@
       }
     }
 
-    // ดักจับการกดปุ่มย้อนกลับ (Back Button) เพื่อปิด Modal ที่เปิดอยู่ทั้งหมดทันที
     window.addEventListener('popstate', (event) => {
       const modals = ['detailModal', 'cartModal', 'shippingModal', 'accountModal', 'orderSummaryModal'];
       modals.forEach(id => {
@@ -982,10 +980,16 @@
       document.getElementById("payAccountName").innerText = systemSettings.accountName;
       
       const qrBox = document.getElementById("payQrDisplay");
+      const summaryQrBox = document.getElementById("summaryQrDisplay");
+
       if (systemSettings.qrCodeUrl) {
-        qrBox.innerHTML = `<img src="${systemSettings.qrCodeUrl}" class="qr-preview-img" />`;
+        const qrHtml = `<img src="${systemSettings.qrCodeUrl}" class="qr-preview-img" />`;
+        if (qrBox) qrBox.innerHTML = qrHtml;
+        if (summaryQrBox) summaryQrBox.innerHTML = qrHtml;
       } else {
-        qrBox.innerHTML = `<p style="font-size:0.7rem; color:#666;">(ไม่ได้อัปโหลด QR Code)</p>`;
+        const noQrHtml = `<p style="font-size:0.7rem; color:#666;">(ไม่ได้อัปโหลด QR Code)</p>`;
+        if (qrBox) qrBox.innerHTML = noQrHtml;
+        if (summaryQrBox) summaryQrBox.innerHTML = noQrHtml;
       }
     }
 
