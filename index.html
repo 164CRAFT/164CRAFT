@@ -1046,19 +1046,11 @@
     }
 
     function applyHeaderVipCode() {
-      if (appliedOptionDiscount > 0) {
-        showToast("ไม่สามารถใช้โค้ดใบการ์ดได้ เนื่องจากมีการใช้โค้ดส่วนลดราคาในสินค้านี้แล้ว");
-        return;
-      }
       const input = document.getElementById("headerVipInput");
       processVipCode(input.value);
     }
 
     function applyDropdownVipCode() {
-      if (appliedOptionDiscount > 0) {
-        showToast("ไม่สามารถใช้โค้ดใบการ์ดได้ เนื่องจากมีการใช้โค้ดส่วนลดราคาในสินค้านี้แล้ว");
-        return;
-      }
       const input = document.getElementById("dropdownVipInput");
       processVipCode(input.value);
       isDropdownLocked = false;
@@ -1098,6 +1090,9 @@
       } else if (successList.length > 0) {
         renderCategories();
         renderProducts();
+        if (currentSelectedProduct) {
+          applyAllCumulativePromoCodes();
+        }
         showToast("ปลดล็อกสำเร็จ");
       }
     }
@@ -1260,7 +1255,7 @@
           let totalBase = base - optExtra;
           if (totalBase < 0) totalBase = 0;
 
-          let maxDisc = 0;
+          let totalDisc = 0;
           codesToCheck.forEach(code => {
             let foundDisc = 0;
             if (opt.codes && Array.isArray(opt.codes)) {
@@ -1270,16 +1265,16 @@
             if (!foundDisc && opt.vipCode && opt.vipCode.toUpperCase() === code.toUpperCase()) {
               foundDisc = opt.vipDiscount || 0;
             }
-            if (foundDisc > maxDisc) maxDisc = foundDisc;
+            totalDisc += foundDisc;
           });
 
-          let finalP = totalBase - maxDisc;
+          let finalP = totalBase - totalDisc;
           if (finalP < 0) finalP = 0;
 
           if (finalP < minFinal) {
             minFinal = finalP;
             minOriginal = totalBase;
-            hasDiscount = (maxDisc > 0 || optExtra > 0);
+            hasDiscount = (totalDisc > 0 || optExtra > 0);
           }
         });
       });
@@ -1516,30 +1511,14 @@
       if (optSelect) {
         if (prod.options && prod.options.length > 0) {
           optSelect.innerHTML = prod.options.map((opt, idx) => `
-            <option value="${idx}">${opt.name} (-฿${opt.extraPrice || 0})</option>
+            <option value="${idx}">${opt.name} (ลด -฿${opt.extraPrice || 0})</option>
           `).join('');
         } else {
           optSelect.innerHTML = `<option value="0">ตัวเลือกมาตรฐาน (-฿0)</option>`;
         }
       }
 
-      let codesToCheck = [...userAssignedCodes].filter(c => vipCodesList.includes(c.toUpperCase()));
-      activeSecretCodes.forEach(c => {
-        const uc = c.toUpperCase();
-        if (vipCodesList.includes(uc) && !codesToCheck.includes(uc)) codesToCheck.push(uc);
-      });
-
-      if (codesToCheck.length > 0) {
-        const maskedCodesStr = codesToCheck.map(c => {
-          if (c.length > 2) return c.substring(0, 2) + "•".repeat(c.length - 2);
-          return "••••";
-        }).join(', ');
-
-        if (promoInput) promoInput.value = maskedCodesStr;
-        applyAssignedPromoCodes(codesToCheck);
-      }
-
-      calculateModalPrice();
+      applyAllCumulativePromoCodes();
       openModal("detailModal");
     }
 
@@ -1676,28 +1655,26 @@
         priceDisplay.innerHTML = `<span style="color: var(--danger);">฿${finalTotal}</span>`;
       }
 
-      const headerVipContainer = document.getElementById("headerVipContainer");
-      const dropdownVipWrapper = document.getElementById("dropdownVipWrapper");
-      if (appliedOptionDiscount > 0) {
-        if (headerVipContainer) headerVipContainer.style.display = "none";
-        if (dropdownVipWrapper) dropdownVipWrapper.style.display = "none";
-      } else {
-        if (headerVipContainer && window.innerWidth >= 850) headerVipContainer.style.display = "flex";
-        if (dropdownVipWrapper) dropdownVipWrapper.style.display = "block";
-      }
-
       return finalTotal;
     }
 
-    function applyAssignedPromoCodes(codesArr) {
+    function applyAllCumulativePromoCodes() {
       if (!currentSelectedProduct) return;
+      const promoInput = document.getElementById("promoCodeInput");
       const statusMsg = document.getElementById("promoStatusMsg");
       const optIdx = parseInt(document.getElementById("detailOptionSelect").value) || 0;
       const selectedOpt = currentSelectedProduct.options ? currentSelectedProduct.options[optIdx] : null;
 
-      if (!selectedOpt) {
+      let codesToCheck = [...userAssignedCodes].filter(c => vipCodesList.includes(c.toUpperCase()));
+      activeSecretCodes.forEach(c => {
+        const uc = c.toUpperCase();
+        if (vipCodesList.includes(uc) && !codesToCheck.includes(uc)) codesToCheck.push(uc);
+      });
+
+      if (!selectedOpt || codesToCheck.length === 0) {
         appliedOptionDiscount = 0;
-        statusMsg.innerText = "";
+        if (promoInput) promoInput.value = "";
+        if (statusMsg) statusMsg.innerText = "";
         calculateModalPrice();
         return;
       }
@@ -1705,7 +1682,7 @@
       let cumulativeDiscount = 0;
       let appliedList = [];
 
-      codesArr.forEach(code => {
+      codesToCheck.forEach(code => {
         let found = false;
         let disc = 0;
 
@@ -1721,7 +1698,7 @@
           disc = selectedOpt.vipDiscount || 0;
         }
 
-        if (found) {
+        if (found && disc > 0) {
           cumulativeDiscount += disc;
           const masked = code.length > 2 ? code.substring(0, 2) + "•".repeat(code.length - 2) : "••••";
           appliedList.push(`${masked} (-฿${disc})`);
@@ -1730,14 +1707,18 @@
 
       appliedOptionDiscount = cumulativeDiscount;
 
+      if (promoInput) {
+        promoInput.value = codesToCheck.map(c => c.length > 2 ? c.substring(0, 2) + "•".repeat(c.length - 2) : "••••").join(', ');
+      }
+
       if (appliedList.length > 0) {
         statusMsg.style.color = "var(--accent-vip)";
-        statusMsg.innerText = `ใช้โค้ดส่วนลดอัตโนมัติ: ${appliedList.join(', ')}`;
+        statusMsg.innerText = `ใช้โค้ดส่วนลดสะสมทั้งหมด: ${appliedList.join(', ')} (ลดรวม -฿${cumulativeDiscount})`;
         updateSecretStatusDisplay();
       } else {
         appliedOptionDiscount = 0;
         statusMsg.style.color = "#777";
-        statusMsg.innerText = "โค้ดส่วนลดอัตโนมัติไม่ตรงกับเงื่อนไขของตัวเลือกนี้";
+        statusMsg.innerText = "โค้ดส่วนลดที่มีสิทธิ์ไม่ตรงกับเงื่อนไขของตัวเลือกนี้";
       }
       calculateModalPrice();
     }
