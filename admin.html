@@ -133,7 +133,6 @@
 
     .shipping-info-box { background: #fafaf8; border: 1px dashed #888; border-radius: var(--radius); padding: 10px; font-size: .82rem; line-height: 1.4; margin-top: 8px; }
     
-    /* สไตล์สำหรับใบปะหน้าพัสดุ */
     .shipping-label-card {
       border: 2px solid #111; border-radius: 8px; padding: 16px; background: #fff; font-size: 0.9rem; display: flex; flex-direction: column; gap: 12px;
     }
@@ -206,17 +205,20 @@
     }
     .tag-chip .del-btn { color: var(--danger); cursor: pointer; font-weight: bold; padding: 0 4px; float: right; }
 
-    /* Custom Toast Notification Styles */
+    /* Updated Toast Notification UI Styles */
     #toastNotification {
-      position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(20px);
-      background: rgba(17, 17, 17, 0.92); color: #fff; padding: 12px 20px;
-      border-radius: 30px; font-size: 0.82rem; font-weight: 700; z-index: 9999;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.25); display: flex; align-items: center; gap: 8px;
-      opacity: 0; pointer-events: none; transition: opacity 0.3s ease, transform 0.3s ease;
-      backdrop-filter: blur(8px); white-space: nowrap;
+      position: fixed; top: 24px; left: 50%; transform: translateX(-50%) translateY(-20px);
+      background: rgba(17, 17, 17, 0.95); color: #fff; padding: 12px 24px;
+      border-radius: 50px; font-size: 0.85rem; font-weight: 700; z-index: 9999;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2); display: flex; align-items: center; gap: 10px;
+      opacity: 0; pointer-events: none; transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1), transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); white-space: nowrap;
     }
     #toastNotification.show {
       opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto;
+    }
+    #toastNotification::before {
+      content: "✦"; color: #10b981; font-size: 0.9rem;
     }
   </style>
 </head>
@@ -348,7 +350,7 @@
     </div>
   </div>
 
-  <!-- ORDERS MODAL (คำสั่งซื้อสินค้าทั้งหมด พร้อมปุ่มปริ้นใบปะหน้าและดูข้อมูล) -->
+  <!-- ORDERS MODAL -->
   <div id="ordersModal" class="modal-overlay" onclick="checkOutsideModalClick(event, 'ordersModal')">
     <div class="modal-box" style="max-width: 750px;">
       <div class="modal-header">
@@ -365,7 +367,7 @@
     </div>
   </div>
 
-  <!-- SHIPPING LABEL MODAL (ใบปะหน้าพัสดุ ผู้รับ/ผู้ส่ง) -->
+  <!-- SHIPPING LABEL MODAL -->
   <div id="shippingLabelModal" class="modal-overlay" onclick="checkOutsideModalClick(event, 'shippingLabelModal')">
     <div class="modal-box" style="max-width: 580px;">
       <div class="modal-header">
@@ -380,7 +382,6 @@
           <span style="font-size: 0.8rem; font-weight: bold; background: #111; color: #fff; padding: 2px 8px; border-radius: 4px;" id="labelShippingName">EMS</span>
         </div>
 
-        <!-- ผู้ส่ง -->
         <div class="label-section">
           <div class="label-title">ผู้ส่ง (Sender)</div>
           <div style="font-size: 0.85rem; line-height: 1.4;">
@@ -390,7 +391,6 @@
           </div>
         </div>
 
-        <!-- ผู้รับ -->
         <div class="label-section" style="border: 2px solid #111; background: #fafafa;">
           <div class="label-title" style="background: #059669;">ผู้รับ (Receiver)</div>
           <div style="font-size: 0.95rem; line-height: 1.5;">
@@ -799,7 +799,7 @@
       clearTimeout(toastTimer);
       toastTimer = setTimeout(() => {
         toast.classList.remove("show");
-      }, 2000);
+      }, 2200);
     }
 
     function sortAlphabetically(arr) {
