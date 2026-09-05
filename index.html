@@ -315,30 +315,14 @@
     .product-code { padding: 10px 10px 0; font-size: .58rem; letter-spacing: .1em; color: #777; font-weight: 700; text-transform: uppercase; }
     .product-title { padding: 3px 10px 0; min-height: 38px; font-size: .8rem; line-height: 1.25; font-weight: 850; color: #111; cursor: pointer; }
     @media(min-width: 640px) { .product-title { font-size: .88rem; padding: 4px 12px 0; } }
-    .product-price { padding: 4px 10px 6px; font-size: .95rem; font-weight: 900; color: #111; }
-    @media(min-width: 640px) { .product-price { padding: 6px 12px 8px; font-size: 1rem; } }
-
-    /* Card Quantity & Add Button Row */
-    .card-action-row {
-      display: flex; gap: 6px; padding: 0 10px 10px; align-items: center; margin-top: auto; width: 100%;
+    .product-price-row { padding: 4px 10px 10px; display: flex; align-items: center; gap: 6px; font-size: .95rem; font-weight: 900; }
+    @media(min-width: 640px) { .product-price-row { padding: 6px 12px 12px; font-size: 1rem; } }
+    
+    .product-card > .btn-action { 
+      width: calc(100% - 20px); margin: 0 10px 10px; min-height: 34px; font-size: 0.72rem; border-radius: calc(var(--radius) - 2px);
+      margin-top: auto;
     }
-    @media(min-width: 640px) { .card-action-row { padding: 0 12px 12px; gap: 8px; } }
-    .card-qty-box {
-      display: flex; align-items: center; border: 1px solid var(--border-color); border-radius: calc(var(--radius) - 2px);
-      background: #fafafa; height: 34px; width: 75px; flex-shrink: 0; overflow: hidden;
-    }
-    @media(min-width: 640px) { .card-qty-box { height: 38px; width: 85px; } }
-    .card-qty-btn {
-      flex: 1; height: 100%; border: none; background: transparent; font-weight: bold; font-size: 0.85rem; cursor: pointer; color: #333;
-    }
-    .card-qty-btn:hover { background: #eee; }
-    .card-qty-input {
-      width: 26px; text-align: center; border: none; background: transparent; font-size: 0.75rem; font-weight: 800; outline: none;
-    }
-    .card-add-btn {
-      flex: 1; height: 34px; font-size: 0.72rem; border-radius: calc(var(--radius) - 2px); margin: 0;
-    }
-    @media(min-width: 640px) { .card-add-btn { height: 38px; font-size: 0.78rem; } }
+    @media(min-width: 640px) { .product-card > .btn-action { width: calc(100% - 24px); margin: 0 12px 12px; min-height: 38px; font-size: 0.78rem; } }
 
     .modal-overlay {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -389,7 +373,7 @@
     .compact-spec-val { font-size: 0.8rem; font-weight: 850; color: #111; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .compact-price-bar { display: flex; justify-content: space-between; align-items: center; background: #f4f4f0; border: 1px solid var(--border-color); border-radius: var(--radius); padding: 8px 10px; margin-top: 2px; }
     .compact-price-label { font-size: 0.72rem; font-weight: 800; color: #444; }
-    .compact-price-val { font-size: 1.1rem; font-weight: 950; color: var(--danger); } /* สีแดงสำหรับราคา */
+    .compact-price-val { font-size: 1.1rem; font-weight: 950; color: var(--danger); }
 
     .form-group { display: flex; flex-direction: column; gap: 4px; margin-bottom: 6px; }
     .form-group label { font-size: .72rem; letter-spacing: .04em; color: #333; font-weight: 800; }
@@ -400,6 +384,20 @@
     @media(min-width: 640px) { .form-control { font-size: 0.84rem; min-height: 36px; } }
     .form-control:focus { background: #fff; border-color: var(--border-dark); box-shadow: 0 0 0 3px rgba(0,0,0,0.04); }
     textarea.form-control { min-height: 70px; }
+
+    /* Quantity Box for Detail Modal */
+    .modal-qty-container { display: flex; align-items: center; gap: 10px; margin-top: 2px; }
+    .modal-qty-box {
+      display: flex; align-items: center; border: 1px solid var(--border-color); border-radius: var(--radius);
+      background: #fafafa; height: 38px; width: 110px; overflow: hidden; flex-shrink: 0;
+    }
+    .modal-qty-btn {
+      flex: 1; height: 100%; border: none; background: transparent; font-weight: bold; font-size: 1rem; cursor: pointer; color: #333;
+    }
+    .modal-qty-btn:hover { background: #eee; }
+    .modal-qty-input {
+      width: 40px; text-align: center; border: none; background: transparent; font-size: 0.85rem; font-weight: 800; outline: none;
+    }
 
     .shipping-info-box { background: #fafaf8; border: 1px dashed #888; border-radius: var(--radius); padding: 10px; font-size: .82rem; line-height: 1.4; margin-top: 8px; }
     .bank-payment-box { background: #f4f4f1; border: 1px solid var(--border-color); border-radius: var(--radius); padding: 10px; font-size: 0.82rem; margin-top: 8px; text-align: center; }
@@ -559,7 +557,14 @@
             <span class="compact-price-val" id="modalTotalPrice">฿0</span>
           </div>
 
-          <button class="btn-action" style="width:100%; margin-top:4px; height: 40px;" onclick="addToCartFromModal()">+ เพิ่มลงในตะกร้า</button>
+          <div class="modal-qty-container">
+            <div class="modal-qty-box">
+              <button type="button" class="modal-qty-btn" onclick="adjustModalQty(-1)">-</button>
+              <input type="text" inputmode="numeric" class="modal-qty-input" value="1" id="modalQtyInput" />
+              <button type="button" class="modal-qty-btn" onclick="adjustModalQty(1)">+</button>
+            </div>
+            <button class="btn-action" style="flex: 1; height: 38px;" onclick="addToCartFromModal()">+ เพิ่มลงในตะกร้า</button>
+          </div>
         </div>
       </div>
     </div>
@@ -722,6 +727,7 @@
     let cart = JSON.parse(localStorage.getItem("cartItems") || "[]");
     let currentSelectedProduct = null;
     let appliedOptionDiscount = 0;
+    let userAssignedCodes = [];
     let isDropdownLocked = false;
 
     let toastTimer = null;
@@ -809,6 +815,8 @@
                 autoCodes = [data.assignedCode];
               }
 
+              userAssignedCodes = autoCodes;
+
               if (autoCodes.length > 0) {
                 autoCodes.forEach(code => {
                   const upperCode = code.toUpperCase();
@@ -830,6 +838,7 @@
         } else {
           loginBtn.style.display = "inline-flex";
           userProfile.style.display = "none";
+          userAssignedCodes = [];
         }
       });
     }
@@ -843,6 +852,7 @@
     function logoutGoogle() {
       auth.signOut().then(() => {
         localStorage.removeItem("activeSecretCodes");
+        userAssignedCodes = [];
         clearHeaderVipCode();
         showToast("ออกจากระบบเรียบร้อย");
       });
@@ -1180,6 +1190,44 @@
       document.getElementById("brandDrawerDropdown").classList.remove("show");
     }
 
+    // คำนวณส่วนลดสูงสุดสำหรับแสดงบนการ์ดสินค้าหน้าแรก
+    function getCardDiscountedPrice(p) {
+      let base = p.basePrice || 0;
+      if (p.scalePrices && p.scales && p.scales.length > 0) {
+        base = p.scalePrices[p.scales[0]] !== undefined ? p.scalePrices[p.scales[0]] : base;
+      }
+      
+      let maxDisc = 0;
+      let codesToCheck = [...userAssignedCodes];
+      activeSecretCodes.forEach(c => { if (!codesToCheck.includes(c)) codesToCheck.push(c); });
+
+      if (p.options && p.options.length > 0) {
+        const opt = p.options[0];
+        let optExtra = opt.extraPrice || 0;
+        let totalBase = base + optExtra;
+
+        codesToCheck.forEach(code => {
+          let foundDisc = 0;
+          if (opt.codes && Array.isArray(opt.codes)) {
+            const m = opt.codes.find(c => (c.code || "").toUpperCase() === code.toUpperCase());
+            if (m) foundDisc = m.discount || 0;
+          }
+          if (!foundDisc && opt.vipCode && opt.vipCode.toUpperCase() === code.toUpperCase()) {
+            foundDisc = opt.vipDiscount || 0;
+          }
+          if (foundDisc > maxDisc) maxDisc = foundDisc;
+        });
+
+        let finalP = totalBase - maxDisc;
+        if (finalP < 0) finalP = 0;
+
+        if (maxDisc > 0) {
+          return `<span style="text-decoration: line-through; color: #888; font-size: 0.85rem; margin-right: 4px;">฿${totalBase}</span> <span style="color: var(--danger);">฿${finalP}</span>`;
+        }
+      }
+      return `<span>฿${base}</span>`;
+    }
+
     function renderProducts() {
       const grid = document.getElementById("productGridContainer");
       const mobileSearch = (document.getElementById("mobileSearchInput")?.value || "").trim().toLowerCase();
@@ -1259,6 +1307,8 @@
           mediaHtml = `<img src="${mainImage}" alt="${p.name}" />`;
         }
 
+        const priceHtml = getCardDiscountedPrice(p);
+
         return `
           <div class="product-card" ${p.vdo ? `onmouseenter="playCardVdo(this)" onmouseleave="stopCardVdo(this)"` : ''}>
             <div class="media-preview-container product-media-clickable" title="คลิกเพื่อดูรายละเอียดสินค้า" onclick="openDetailModal('${p.id}')">
@@ -1270,92 +1320,11 @@
             </div>
             <div class="product-code">SKU: ${p.id}</div>
             <div class="product-title" onclick="openDetailModal('${p.id}')">${p.name}</div>
-            <div class="product-price">฿${p.basePrice}</div>
-            
-            <div class="card-action-row" onclick="event.stopPropagation()">
-              <div class="card-qty-box">
-                <button type="button" class="card-qty-btn" onclick="adjustCardQty(this, -1)">-</button>
-                <input type="text" inputmode="numeric" class="card-qty-input" value="1" id="cardQty_${p.id}" />
-                <button type="button" class="card-qty-btn" onclick="adjustCardQty(this, 1)">+</button>
-              </div>
-              <button class="btn-action card-add-btn" onclick="addDirectToCart('${p.id}')">+ เพิ่ม</button>
-            </div>
+            <div class="product-price-row">${priceHtml}</div>
+            <button class="btn-action" onclick="openDetailModal('${p.id}')">เลือกสินค้า</button>
           </div>
         `;
       }).join('');
-    }
-
-    function adjustCardQty(btn, delta) {
-      const box = btn.parentElement;
-      const input = box.querySelector('.card-qty-input');
-      let val = parseInt(input.value) || 1;
-      val += delta;
-      if (val < 1) val = 1;
-      input.value = val;
-    }
-
-    function addDirectToCart(productId) {
-      const prod = products.find(p => p.id === productId);
-      if (!prod) return;
-
-      const incomingSaleMode = activeSaleMode;
-      if (incomingSaleMode === 'READY') {
-        const isReadyActive = prod.readyActive || false;
-        const readyStock = prod.readyStock || 0;
-        if (!isReadyActive || readyStock <= 0) {
-          showToast("สินค้านี้หมดชั่วคราว ไม่สามารถสั่งซื้อได้");
-          return;
-        }
-      }
-
-      if (cart.length > 0) {
-        const firstItemSaleMode = cart[0].saleMode;
-        if (firstItemSaleMode !== incomingSaleMode) {
-          showToast("ไม่สามารถสั่งซื้อทั้ง 2 ระบบพร้อมกันได้");
-          return;
-        }
-      }
-
-      const qtyInput = document.getElementById(`cardQty_${productId}`);
-      const addQty = parseInt(qtyInput ? qtyInput.value : 1) || 1;
-
-      const scale = (prod.scales && prod.scales.length > 0) ? prod.scales[0] : 'Standard';
-      const basePrice = (prod.scalePrices && prod.scalePrices[scale] !== undefined) ? prod.scalePrices[scale] : prod.basePrice;
-      const optionName = (prod.options && prod.options.length > 0) ? prod.options[0].name : 'Standard';
-      const optionExtra = (prod.options && prod.options.length > 0) ? (prod.options[0].extraPrice || 0) : 0;
-      const finalPrice = basePrice + optionExtra;
-
-      const existingIndex = cart.findIndex(item => 
-        item.product.id === prod.id && 
-        item.scale === scale && 
-        item.optionName === optionName &&
-        item.saleMode === incomingSaleMode
-      );
-
-      const maxLimit = incomingSaleMode === 'READY' ? (prod.readyStock || 0) : (prod.preorderUnlimited ? 999999 : (prod.preorderStock || 0));
-      const currentInCart = existingIndex > -1 ? cart[existingIndex].qty : 0;
-
-      if (currentInCart + addQty > maxLimit) {
-        showToast(`สินค้าเกินจำนวนสต็อกที่มี (${maxLimit} ชิ้น)`);
-        return;
-      }
-
-      if (existingIndex > -1) {
-        cart[existingIndex].qty += addQty;
-      } else {
-        cart.push({
-          product: prod,
-          scale: scale,
-          optionName: optionName,
-          saleMode: incomingSaleMode,
-          price: finalPrice,
-          qty: addQty
-        });
-      }
-
-      localStorage.setItem("cartItems", JSON.stringify(cart));
-      updateCartBadge();
-      showToast(`เพิ่มลงตะกร้า ${addQty} ชิ้นเรียบร้อย`);
     }
 
     function playCardVdo(cardEl) {
@@ -1389,6 +1358,9 @@
       if (promoInput) promoInput.value = "";
       const promoMsg = document.getElementById("promoStatusMsg");
       if (promoMsg) promoMsg.innerText = "";
+      
+      const qtyInput = document.getElementById("modalQtyInput");
+      if (qtyInput) qtyInput.value = "1";
 
       const detailTitle = document.getElementById("detailTitle");
       if (detailTitle) detailTitle.innerText = prod.name;
@@ -1475,8 +1447,9 @@
               codesToApply = [data.assignedCode];
             }
 
+            userAssignedCodes = codesToApply;
+
             if (codesToApply.length > 0) {
-              // ปิดบังโค้ดไม่ให้เห็นหมด (Masked Code) แสดงเฉพาะตัวอักษรแรก/ท้าย หรือดอกจัน
               const maskedCodesStr = codesToApply.map(c => {
                 if (c.length > 2) return c.substring(0, 2) + "•".repeat(c.length - 2);
                 return "••••";
@@ -1506,6 +1479,23 @@
       } else {
         container.innerHTML = `<img src="${src}" style="width:100%; height:100%; object-fit:contain;" />`;
       }
+    }
+
+    function adjustModalQty(delta) {
+      const input = document.getElementById("modalQtyInput");
+      let val = parseInt(input.value) || 1;
+      val += delta;
+
+      if (currentSelectedProduct) {
+        const maxLimit = activeSaleMode === 'READY' ? (currentSelectedProduct.readyStock || 0) : (currentSelectedProduct.preorderUnlimited ? 999999 : (currentSelectedProduct.preorderStock || 0));
+        if (val > maxLimit) {
+          val = maxLimit;
+          showToast(`จำกัดจำนวนสูงสุดไม่เกินสต็อก (${maxLimit} ชิ้น)`);
+        }
+      }
+
+      if (val < 1) val = 1;
+      input.value = val;
     }
 
     function calculateModalPrice() {
@@ -1560,13 +1550,13 @@
         let disc = 0;
 
         if (selectedOpt.codes && Array.isArray(selectedOpt.codes)) {
-          const matchCode = selectedOpt.codes.find(c => (c.code || "").toUpperCase() === code);
+          const matchCode = selectedOpt.codes.find(c => (c.code || "").toUpperCase() === code.toUpperCase());
           if (matchCode) {
             found = true;
             disc = matchCode.discount || 0;
           }
         }
-        if (!found && selectedOpt.vipCode && selectedOpt.vipCode.toUpperCase() === code) {
+        if (!found && selectedOpt.vipCode && selectedOpt.vipCode.toUpperCase() === code.toUpperCase()) {
           found = true;
           disc = selectedOpt.vipDiscount || 0;
         }
@@ -1613,6 +1603,9 @@
         }
       }
 
+      const qtyInput = document.getElementById("modalQtyInput");
+      const addQty = parseInt(qtyInput ? qtyInput.value : 1) || 1;
+
       const scale = document.getElementById("detailScaleSelect").value;
       const optIdx = parseInt(document.getElementById("detailOptionSelect").value) || 0;
       const selectedOpt = (currentSelectedProduct.options && currentSelectedProduct.options[optIdx]) ? currentSelectedProduct.options[optIdx] : { name: 'Standard', extraPrice: 0 };
@@ -1628,13 +1621,13 @@
       const maxLimit = incomingSaleMode === 'READY' ? (currentSelectedProduct.readyStock || 0) : (currentSelectedProduct.preorderUnlimited ? 999999 : (currentSelectedProduct.preorderStock || 0));
       const currentInCart = existingIndex > -1 ? cart[existingIndex].qty : 0;
 
-      if (currentInCart + 1 > maxLimit) {
+      if (currentInCart + addQty > maxLimit) {
         showToast(`สินค้าเกินจำนวนสต็อกที่มี (${maxLimit} ชิ้น)`);
         return;
       }
 
       if (existingIndex > -1) {
-        cart[existingIndex].qty += 1;
+        cart[existingIndex].qty += addQty;
       } else {
         cart.push({
           product: currentSelectedProduct,
@@ -1642,14 +1635,14 @@
           optionName: selectedOpt.name,
           saleMode: incomingSaleMode,
           price: finalPrice,
-          qty: 1
+          qty: addQty
         });
       }
 
       localStorage.setItem("cartItems", JSON.stringify(cart));
       updateCartBadge();
       closeModal("detailModal");
-      showToast("เพิ่มลงตะกร้าเรียบร้อย");
+      showToast(`เพิ่มลงตะกร้า ${addQty} ชิ้นเรียบร้อย`);
     }
 
     function updateCartBadge() {
