@@ -202,9 +202,10 @@
     .tags-container { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 0.5rem; }
     .tag-chip {
       background: #f0f0ec; border: 1px solid var(--border-color); padding: 8px 12px;
-      font-size: .8rem; font-weight: 600; border-radius: var(--radius); display: flex; align-items: center; justify-content: space-between; width: 100%;
+      font-size: .8rem; font-weight: 600; border-radius: var(--radius); display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 8px;
     }
-    .tag-chip .del-btn { color: var(--danger); cursor: pointer; font-weight: bold; padding: 2px 6px; background: #fee2e2; border-radius: 4px; font-size: 0.72rem; }
+    .tag-chip .del-btn { color: var(--danger); cursor: pointer; font-weight: bold; padding: 4px 8px; background: #fee2e2; border-radius: 4px; font-size: 0.72rem; }
+    .tag-chip .edit-btn { color: #0369a1; cursor: pointer; font-weight: bold; padding: 4px 8px; background: #e0f2fe; border-radius: 4px; font-size: 0.72rem; }
 
     #toastNotification {
       position: fixed; top: 24px; left: 50%; transform: translateX(-50%) translateY(-20px);
@@ -268,7 +269,7 @@
 
         <div class="admin-menu-box">
           <div class="admin-menu-title">🎟️ จัดการรหัส & โน้ตข้อความ</div>
-          <div class="admin-menu-desc">แยกจัดการ "โค้ดเปิดสินค้า" และ "โค้ดเงินสด/ส่วนลด" พร้อมบันทึกโน้ต</div>
+          <div class="admin-menu-desc">แยกจัดการ "โค้ดเปิดสินค้า" และ "โค้ดเงินสด/ส่วนลด" พร้อมแก้ไขโน้ต</div>
           <button class="btn-action btn-secondary" style="margin-top: auto;" onclick="openVipCodesModal()">จัดการรหัส & โน้ต</button>
         </div>
 
@@ -478,14 +479,14 @@
     </div>
   </div>
 
-  <!-- VIP CODES MODAL (จัดการรหัส & โน้ตข้อความ - แยกประเภทชัดเจน) -->
+  <!-- VIP CODES MODAL (จัดการรหัส & โน้ตข้อความ - แยกประเภท และแก้ไขโน้ตได้) -->
   <div id="vipCodesModal" class="modal-overlay" onclick="checkOutsideModalClick(event, 'vipCodesModal')">
-    <div class="modal-box" style="max-width: 650px;">
+    <div class="modal-box" style="max-width: 680px;">
       <div class="modal-header">
         <span>🎟️ จัดการรหัส & โน้ตข้อความ</span>
         <button class="modal-close" onclick="closeModal('vipCodesModal')">✕</button>
       </div>
-      <p style="font-size:0.78rem; color:var(--text-muted);">เพิ่มและบริหารจัดการรหัสผ่าน โดยแบ่งเป็น 2 ระบบชัดเจนระหว่าง "โค้ดเปิดสินค้า" และ "โค้ดเงินสดส่วนลด"</p>
+      <p style="font-size:0.78rem; color:var(--text-muted);">จัดการรหัสผ่านแยกประเภท และสามารถคลิกแก้ไขโน้ตข้อความได้ทันที</p>
       
       <form onsubmit="handleAddVipCode(event)" style="background:#fafafa; border:1px solid var(--border-color); border-radius:var(--radius); padding:12px; display:flex; flex-direction:column; gap:8px; margin-top: 4px;">
         <div style="font-weight:bold; font-size:0.8rem; color:#111;">➕ เพิ่มรหัสใหม่เข้าสู่ระบบ:</div>
@@ -518,6 +519,35 @@
       <div style="margin-top: 10px;">
         <button type="button" class="btn-action btn-secondary" style="width: 100%;" onclick="closeModal('vipCodesModal')">ปิดหน้าต่าง</button>
       </div>
+    </div>
+  </div>
+
+  <!-- EDIT CODE NOTE MODAL -->
+  <div id="editCodeModal" class="modal-overlay" style="z-index: 1100;" onclick="if(event.target===this) closeModal('editCodeModal')">
+    <div class="modal-box" style="max-width: 400px;">
+      <div class="modal-header">
+        <span>✏️ แก้ไขโน้ตข้อความ</span>
+        <button class="modal-close" onclick="closeModal('editCodeModal')">✕</button>
+      </div>
+      <form onsubmit="saveEditedCodeNote(event)">
+        <input type="hidden" id="editCodeIndex" />
+        <div class="form-group">
+          <label>รหัส (Code)</label>
+          <input type="text" id="editCodeText" class="form-control" style="background:#eee; font-weight:bold;" readonly />
+        </div>
+        <div class="form-group">
+          <label>โน้ตข้อความใหม่</label>
+          <input type="text" id="editCodeNoteText" class="form-control" placeholder="ระบุโน้ตข้อความ..." required />
+        </div>
+        <div class="form-group" id="editCodeDiscGroup" style="display:none;">
+          <label>มูลค่าส่วนลด (บาท)</label>
+          <input type="text" inputmode="numeric" id="editCodeDiscText" class="form-control" placeholder="0" />
+        </div>
+        <div style="display: flex; gap: 8px; margin-top: 10px;">
+          <button type="button" class="btn-action btn-secondary" style="flex: 1;" onclick="closeModal('editCodeModal')">ยกเลิก</button>
+          <button type="submit" class="btn-action" style="flex: 1.5;">💾 บันทึกการแก้ไข</button>
+        </div>
+      </form>
     </div>
   </div>
 
@@ -896,7 +926,7 @@
     }
 
     window.addEventListener('popstate', (event) => {
-      const modals = ['manageProductsModal', 'ordersModal', 'shippingLabelModal', 'orderDetailModal', 'membersModal', 'webThemeConfigModal', 'addProductModal', 'vipCodesModal', 'configModal', 'bankConfigModal', 'shippingConfigModal', 'passcodeModal'];
+      const modals = ['manageProductsModal', 'ordersModal', 'shippingLabelModal', 'orderDetailModal', 'membersModal', 'webThemeConfigModal', 'addProductModal', 'vipCodesModal', 'configModal', 'bankConfigModal', 'shippingConfigModal', 'editCodeModal', 'passcodeModal'];
       modals.forEach(id => {
         const m = document.getElementById(id);
         if (m && m.style.display === 'flex') {
@@ -1887,7 +1917,10 @@
                 <span style="font-size:0.75rem; color:#065f46;">(ลด ฿${disc})</span>
                 <div style="font-size:0.7rem; color:#555; font-weight:normal;">${note || 'ไม่มีโน้ต'}</div>
               </div>
-              <span class="del-btn" onclick="deleteVipCode(${idx})">✕ ลบ</span>
+              <div style="display:flex; gap:4px;">
+                <span class="edit-btn" onclick="openEditCodeModal(${idx})">✏️ แก้ไข</span>
+                <span class="del-btn" onclick="deleteVipCode(${idx})">✕ ลบ</span>
+              </div>
             </div>
           `;
         } else {
@@ -1897,7 +1930,10 @@
                 <strong style="color:#0369a1;">${code}</strong>
                 <div style="font-size:0.7rem; color:#555; font-weight:normal;">${note || 'ไม่มีโน้ต'}</div>
               </div>
-              <span class="del-btn" onclick="deleteVipCode(${idx})">✕ ลบ</span>
+              <div style="display:flex; gap:4px;">
+                <span class="edit-btn" onclick="openEditCodeModal(${idx})">✏️ แก้ไข</span>
+                <span class="del-btn" onclick="deleteVipCode(${idx})">✕ ลบ</span>
+              </div>
             </div>
           `;
         }
@@ -1905,6 +1941,46 @@
 
       cashContainer.innerHTML = cashHtml || '<div style="font-size:0.75rem; color:#666;">- ยังไม่มีโค้ดเงินสดส่วนลด -</div>';
       accessContainer.innerHTML = accessHtml || '<div style="font-size:0.75rem; color:#666;">- ยังไม่มีโค้ดเปิดสินค้า -</div>';
+    }
+
+    function openEditCodeModal(idx) {
+      const item = vipCodesList[idx];
+      if (!item) return;
+
+      document.getElementById("editCodeIndex").value = idx;
+      document.getElementById("editCodeText").value = item.code;
+      document.getElementById("editCodeNoteText").value = item.note || "";
+      
+      const discGroup = document.getElementById("editCodeDiscGroup");
+      const discText = document.getElementById("editCodeDiscText");
+
+      if (item.type === 'DISCOUNT') {
+        discGroup.style.display = "block";
+        discText.value = item.discount || 0;
+      } else {
+        discGroup.style.display = "none";
+        discText.value = "0";
+      }
+
+      openModal('editCodeModal');
+    }
+
+    function saveEditedCodeNote(e) {
+      e.preventDefault();
+      const idx = parseInt(document.getElementById("editCodeIndex").value);
+      const newNote = document.getElementById("editCodeNoteText").value.trim();
+      const newDisc = parseFloat(document.getElementById("editCodeDiscText").value) || 0;
+
+      if (vipCodesList[idx]) {
+        vipCodesList[idx].note = newNote;
+        if (vipCodesList[idx].type === 'DISCOUNT') {
+          vipCodesList[idx].discount = newDisc;
+        }
+        saveDataToFirestore();
+        renderVipCodesList();
+        closeModal('editCodeModal');
+        showToast("แก้ไขโน้ตสำเร็จ");
+      }
     }
 
     function handleAddVipCode(e) {
