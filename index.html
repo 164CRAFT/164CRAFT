@@ -389,7 +389,6 @@
     .bank-payment-box { background: #f4f4f1; border: 1px solid var(--border-color); border-radius: var(--radius); padding: 10px; font-size: 0.82rem; margin-top: 8px; text-align: center; }
     .qr-preview-img { max-width: 130px; max-height: 130px; object-fit: contain; margin: 6px auto; display: block; border-radius: 6px; border: 1px solid #ccc; }
 
-    /* Custom Toast Notification Styles */
     #toastNotification {
       position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(20px);
       background: rgba(17, 17, 17, 0.92); color: #fff; padding: 12px 20px;
@@ -988,20 +987,20 @@
 
       document.getElementById("cartShippingDisplay").innerText = `การจัดส่ง: ${systemSettings.shippingName} (฿${systemSettings.shippingFee})`;
       
-      document.getElementById("cartPayBankName").innerText = systemSettings.bankName;
-      document.getElementById("cartPayAccountNo").innerText = systemSettings.accountNo;
-      document.getElementById("cartPayAccountName").innerText = systemSettings.accountName;
+      document.getElementById("cartPayBankName").innerText = systemSettings.bankName || "-";
+      document.getElementById("cartPayAccountNo").innerText = systemSettings.accountNo || "-";
+      document.getElementById("cartPayAccountName").innerText = systemSettings.accountName || "-";
 
-      document.getElementById("payBankName").innerText = systemSettings.bankName;
-      document.getElementById("payAccountNo").innerText = systemSettings.accountNo;
-      document.getElementById("payAccountName").innerText = systemSettings.accountName;
+      document.getElementById("payBankName").innerText = systemSettings.bankName || "-";
+      document.getElementById("payAccountNo").innerText = systemSettings.accountNo || "-";
+      document.getElementById("payAccountName").innerText = systemSettings.accountName || "-";
       
       const cartQrBox = document.getElementById("cartPayQrDisplay");
       const qrBox = document.getElementById("payQrDisplay");
       const summaryQrBox = document.getElementById("summaryQrDisplay");
 
       if (systemSettings.qrCodeUrl) {
-        const qrHtml = `<img src="${systemSettings.qrCodeUrl}" class="qr-preview-img" />`;
+        const qrHtml = `<img src="${systemSettings.qrCodeUrl}" class="qr-preview-img" alt="QR Code" />`;
         if (cartQrBox) cartQrBox.innerHTML = qrHtml;
         if (qrBox) qrBox.innerHTML = qrHtml;
         if (summaryQrBox) summaryQrBox.innerHTML = qrHtml;
@@ -1649,7 +1648,7 @@
       document.getElementById("summaryBankName").innerText = systemSettings.bankName;
       document.getElementById("summaryAccountNo").innerText = systemSettings.accountNo;
       document.getElementById("summaryAccountName").innerText = systemSettings.accountName;
-      document.getElementById("summaryQrDisplay").innerHTML = systemSettings.qrCodeUrl ? `<img src="${systemSettings.qrCodeUrl}" class="qr-preview-img" />` : '';
+      document.getElementById("summaryQrDisplay").innerHTML = systemSettings.qrCodeUrl ? `<img src="${systemSettings.qrCodeUrl}" class="qr-preview-img" alt="QR Code" />` : '';
 
       document.getElementById("summarySubtotal").innerText = "฿" + subtotal;
       document.getElementById("summaryShippingFee").innerText = "฿" + systemSettings.shippingFee;
