@@ -417,8 +417,8 @@
     <div class="header-actions" style="position: relative;">
       
       <div class="header-vip-box">
-        <input type="password" id="headerVipInput" class="header-vip-input" placeholder="🗝️ กรอกรหัส" autocomplete="off" onkeydown="if(event.key==='Enter') applyHeaderVipCode()" />
-        <button type="button" class="btn-action" style="height:30px; padding:0 12px; font-size:0.72rem; background:#111; color:#fff; border:none; border-radius:8px;" onclick="applyHeaderVipCode()">ปลดล็อก</button>
+        <input type="password" id="headerVipInput" class="header-vip-input" placeholder="🗝️ กรอกโค้ด" autocomplete="off" onkeydown="if(event.key==='Enter') applyHeaderVipCode()" />
+        <button type="button" class="btn-action" style="height:30px; padding:0 12px; font-size:0.72rem; background:#111; color:#fff; border:none; border-radius:8px;" onclick="applyHeaderVipCode()">ใช้โค้ด</button>
       </div>
 
       <div id="authContainer" style="display: flex; align-items: center; gap: 6px;">
@@ -441,8 +441,8 @@
 
             <div style="padding: 8px 10px; background: #fafafa; border-bottom: 1px solid var(--border-color);">
               <div class="header-vip-box" style="display: flex; width: 100%;">
-                <input type="password" id="dropdownVipInput" class="header-vip-input" placeholder="🗝️ กรอกรหัส" style="width: 100%; height: 28px; font-size: 0.72rem;" autocomplete="off" onkeydown="if(event.key==='Enter') applyDropdownVipCode()" />
-                <button type="button" class="btn-action" style="height: 28px; padding: 0 10px; font-size: 0.7rem; background:#111; color:#fff; border:none; border-radius:6px;" onclick="applyDropdownVipCode()">ปลดล็อก</button>
+                <input type="password" id="dropdownVipInput" class="header-vip-input" placeholder="🗝️ กรอกโค้ด" style="width: 100%; height: 28px; font-size: 0.72rem;" autocomplete="off" onkeydown="if(event.key==='Enter') applyDropdownVipCode()" />
+                <button type="button" class="btn-action" style="height: 28px; padding: 0 10px; font-size: 0.7rem; background:#111; color:#fff; border:none; border-radius:6px;" onclick="applyDropdownVipCode()">ใช้โค้ด</button>
               </div>
             </div>
 
@@ -535,9 +535,9 @@
           <div class="form-group"><label>ตัวเลือกตกแต่ง (Option):</label><select id="detailOptionSelect" class="form-control" onchange="calculateModalPrice()"></select></div>
 
           <div class="form-group">
-            <label>โค้ดส่วนลดประจำตัวเลือก (ถ้ามี):</label>
+            <label>โค้ดส่วนลดประจำตัวเลือก / โค้ดสะสม (รองรับหลายโค้ด):</label>
             <div style="display:flex; gap: 6px;">
-              <input type="text" id="promoCodeInput" class="form-control" placeholder="กรอกโค้ด..." style="text-transform: uppercase;" onkeydown="if(event.key==='Enter') applyPromoCode()">
+              <input type="text" id="promoCodeInput" class="form-control" placeholder="กรอกโค้ดส่วนลด..." style="text-transform: uppercase;" onkeydown="if(event.key==='Enter') applyPromoCode()">
               <button type="button" class="btn-action btn-secondary" style="padding:4px 10px; white-space:nowrap;" onclick="applyPromoCode()">ใช้โค้ด</button>
             </div>
             <div id="promoStatusMsg" style="font-size:0.72rem; margin-top:2px; font-weight:bold;"></div>
@@ -773,7 +773,6 @@
             roleStatusContainer.innerHTML = `<span class="user-badge-status">USER</span>`;
           }
 
-          // โหลดข้อมูลที่อยู่จัดส่งอัตโนมัติมาใส่ฟอร์มชำระเงินตาม Email ของผู้ใช้
           db.collection("user_profiles").doc(userEmail).get().then((doc) => {
             const shipNameInput = document.getElementById("shipName");
             const shipPhoneInput = document.getElementById("shipPhone");
@@ -1558,7 +1557,6 @@
       cart.filter(Boolean).forEach(it => subtotal += (it.price * it.qty));
       const grandTotal = subtotal + systemSettings.shippingFee;
 
-      // บันทึกคำสั่งซื้อลงใน Firestore Collection "orders" เพื่อให้หน้า profile.html และ admin.html ดึงไปแสดงผล
       const orderData = {
         customer: customer,
         items: cart,
