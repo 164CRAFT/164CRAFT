@@ -267,9 +267,9 @@
         </div>
 
         <div class="admin-menu-box">
-          <div class="admin-menu-title">🎟️ จัดการรหัส ปลดล็อคสินค้า</div>
-          <div class="admin-menu-desc">สร้างหรือลบรหัสผ่านพร้อมบันทึกโน้ตข้อความสำหรับปลดล็อกเฉพาะกลุ่ม</div>
-          <button class="btn-action btn-secondary" style="margin-top: auto;" onclick="openVipCodesModal()">ปลดล็อคสินค้า</button>
+          <div class="admin-menu-title">🎟️ จัดการรหัส & โน้ตข้อความ</div>
+          <div class="admin-menu-desc">สร้างหรือลบรหัส (แยกประเภทโค้ดเปิดสินค้า หรือ โค้ดตั๋วเงินส่วนลด) พร้อมบันทึกโน้ต</div>
+          <button class="btn-action btn-secondary" style="margin-top: auto;" onclick="openVipCodesModal()">จัดการรหัส & โน้ต</button>
         </div>
 
         <div class="admin-menu-box">
@@ -478,6 +478,40 @@
     </div>
   </div>
 
+  <!-- VIP CODES MODAL (จัดการรหัส & โน้ตข้อความ - แยกประเภท) -->
+  <div id="vipCodesModal" class="modal-overlay" onclick="checkOutsideModalClick(event, 'vipCodesModal')">
+    <div class="modal-box" style="max-width: 520px;">
+      <div class="modal-header">
+        <span>🎟️ จัดการรหัส & โน้ตข้อความ</span>
+        <button class="modal-close" onclick="closeModal('vipCodesModal')">✕</button>
+      </div>
+      
+      <form onsubmit="handleAddVipCode(event)" style="display:flex; flex-direction:column; gap:8px; margin-top: 4px;">
+        <div style="display: flex; gap: 6px;">
+          <input type="text" id="newVipCodeInput" class="form-control" placeholder="รหัสใหม่ (เช่น VIP164)..." style="text-transform:uppercase; flex: 1.2;" required />
+          <select id="newVipCodeType" class="form-control" style="flex: 1; font-size: 0.78rem;" onchange="toggleDiscountInputType(this.value)">
+            <option value="ACCESS">🔓 โค้ดเปิดสินค้า</option>
+            <option value="DISCOUNT">💵 โค้ดตั๋วเงิน (ส่วนลด)</option>
+          </select>
+        </div>
+        <div style="display: flex; gap: 6px;">
+          <input type="text" id="newVipNoteInput" class="form-control" placeholder="โน้ตข้อความ..." style="flex: 2;" />
+          <input type="text" inputmode="numeric" id="newVipDiscountValue" class="form-control" placeholder="ส่วนลด (บาท)" style="flex: 1; display: none;" />
+          <button type="submit" class="btn-action" style="padding: 0 16px;">+ เพิ่ม</button>
+        </div>
+      </form>
+
+      <div style="margin-top: 8px;">
+        <label style="font-size:0.75rem; font-weight:bold; color:#444;">รายการรหัสทั้งหมดในระบบ:</label>
+        <div id="vipCodeChipsList" class="tags-container" style="margin-top: 4px; display:flex; flex-direction:column; gap:6px;"></div>
+      </div>
+
+      <div style="margin-top: 14px;">
+        <button type="button" class="btn-action btn-secondary" style="width: 100%;" onclick="closeModal('vipCodesModal')">ปิดหน้าต่าง</button>
+      </div>
+    </div>
+  </div>
+
   <!-- ADD / EDIT / CLONE PRODUCT MODAL -->
   <div id="addProductModal" class="modal-overlay" onclick="checkOutsideModalClick(event, 'addProductModal')">
     <div class="modal-box">
@@ -574,33 +608,6 @@
           <button type="submit" id="saveProductBtn" class="btn-action" style="flex: 2;">+ บันทึกสินค้า</button>
         </div>
       </form>
-    </div>
-  </div>
-
-  <!-- VIP CODES MODAL -->
-  <div id="vipCodesModal" class="modal-overlay" onclick="checkOutsideModalClick(event, 'vipCodesModal')">
-    <div class="modal-box" style="max-width: 500px;">
-      <div class="modal-header">
-        <span>🎟️ จัดการรหัส & โน้ตข้อความ</span>
-        <button class="modal-close" onclick="closeModal('vipCodesModal')">✕</button>
-      </div>
-      
-      <form onsubmit="handleAddVipCode(event)" style="display:flex; flex-direction:column; gap:8px; margin-top: 4px;">
-        <div style="display: flex; gap: 6px;">
-          <input type="text" id="newVipCodeInput" class="form-control" placeholder="รหัสใหม่ (เช่น VIP164)..." style="text-transform:uppercase; flex: 1;" required />
-          <input type="text" id="newVipNoteInput" class="form-control" placeholder="โน้ตข้อความ..." style="flex: 1.5;" />
-          <button type="submit" class="btn-action" style="padding: 0 16px;">+ เพิ่ม</button>
-        </div>
-      </form>
-
-      <div style="margin-top: 8px;">
-        <label style="font-size:0.75rem; font-weight:bold; color:#444;">รายการรหัสทั้งหมดในระบบ:</label>
-        <div id="vipCodeChipsList" class="tags-container" style="margin-top: 4px; display:flex; flex-direction:column; gap:6px;"></div>
-      </div>
-
-      <div style="margin-top: 14px;">
-        <button type="button" class="btn-action btn-secondary" style="width: 100%;" onclick="closeModal('vipCodesModal')">ปิดหน้าต่าง</button>
-      </div>
     </div>
   </div>
 
@@ -716,7 +723,7 @@
 
     let brands = ["Ducati", "Honda", "Isuzu", "Kawasaki", "Toyota", "Yamaha"];
     let scalesList = ["1/12", "1/32", "1/43", "1/64"];
-    let vipCodesList = [{ code: "MEMBER99", note: "สมาชิกทั่วไป" }, { code: "VIP164", note: "วีไอพีพิเศษ" }];
+    let vipCodesList = [];
 
     let systemSettings = {
       storeName: "164CRAFT",
@@ -778,7 +785,17 @@
           if (data.brands) brands = sortAlphabetically(data.brands);
           if (data.scales) scalesList = sortAlphabetically(data.scales);
           if (data.vipCodes) {
-            vipCodesList = data.vipCodes.map(item => typeof item === 'string' ? { code: item, note: '' } : item);
+            vipCodesList = data.vipCodes.map(item => {
+              if (typeof item === 'string') {
+                return { code: item, note: '', type: 'ACCESS', discount: 0 };
+              }
+              return {
+                code: item.code || '',
+                note: item.note || '',
+                type: item.type || 'ACCESS',
+                discount: parseFloat(item.discount) || 0
+              };
+            });
           }
           if (data.settings) systemSettings = data.settings;
         }
@@ -1038,7 +1055,7 @@
           let assignedCodes = m.assignedCodes || [];
           if (!assignedCodes.length && m.assignedCode) assignedCodes = [m.assignedCode];
 
-          const allCreatedCodes = vipCodesList.map(item => typeof item === 'object' ? item.code : item);
+          const allCreatedCodes = vipCodesList.map(item => item.code);
 
           let codesHtml = assignedCodes.map((codeVal, cIdx) => {
             const rowId = `codeRow_${userEmail.replace(/[^a-z0-9]/g, '_')}_${cIdx}_${Date.now()}`;
@@ -1047,7 +1064,7 @@
             return `
               <div style="display:flex; gap:6px; align-items:center;" id="${rowId}">
                 <select class="form-control member-code-select-${userEmail.replace(/[^a-z0-9]/g, '_')}" style="min-height:30px; font-size:0.78rem;">
-                  <option value="">-- เลือกโค้ดส่วนลด --</option>
+                  <option value="">-- เลือกโค้ดในระบบ --</option>
                   ${optionsHtml}
                 </select>
                 <button type="button" class="btn-action btn-danger" style="height:30px; padding:0 8px; font-size:0.7rem;" onclick="document.getElementById('${rowId}').remove()">✕ ลบ</button>
@@ -1056,18 +1073,6 @@
           }).join('');
 
           const userOrders = ordersList.filter(o => o.customer && o.customer.email && o.customer.email.toLowerCase() === userEmail);
-          
-          let ordersHtml = '';
-          if (userOrders.length > 0) {
-            ordersHtml = userOrders.map(ord => `
-              <div style="background:#fff; border:1px solid #e2e8f0; border-radius:6px; padding:6px; margin-top:4px; font-size:0.72rem;">
-                <div><strong>ยอดชำระ:</strong> ฿${ord.grandTotal || 0} (${ord.shippingName || 'EMS'})</div>
-              </div>
-            `).join('');
-          } else {
-            ordersHtml = `<div style="font-size:0.72rem; color:#888; margin-top:2px;">ยังไม่มีประวัติการสั่งซื้อสินค้า</div>`;
-          }
-
           const safeId = userEmail.replace(/[^a-z0-9]/g, '_');
 
           return `
@@ -1082,18 +1087,13 @@
 
               <div style="background:#fff; padding:10px; border:1px solid #e2e8f0; border-radius:6px; display:flex; flex-direction:column; gap:6px;">
                 <div style="display:flex; justify-content:space-between; align-items:center;">
-                  <label style="font-size:0.75rem; font-weight:bold; color:var(--accent-vip);">🎟️ โค้ดส่วนลดอัตโนมัติ (ดึงจากรายการรหัส):</label>
+                  <label style="font-size:0.75rem; font-weight:bold; color:var(--accent-vip);">🎟️ โค้ดส่วนลดอัตโนมัติประจำตัว:</label>
                   <button type="button" class="btn-action btn-secondary" style="height:26px; padding:0 8px; font-size:0.68rem;" onclick="addMemberCodeRow('${safeId}')">+ เพิ่มช่องโค้ด</button>
                 </div>
                 <div id="memberCodesContainer_${safeId}" style="display:flex; flex-direction:column; gap:6px;">
                   ${codesHtml}
                 </div>
-                <button type="button" class="btn-action" style="height:32px; font-size:0.75rem; margin-top:4px;" onclick="saveMemberAssignedCodes('${userEmail}')">💾 บันทึกโค้ดส่วนลดอัตโนมัติ</button>
-              </div>
-
-              <div style="border-top:1px dashed #cbd5e1; padding-top:6px; margin-top:2px;">
-                <div style="font-size:0.75rem; font-weight:bold; color:#333;">📦 ประวัติการซื้อสินค้า (${userOrders.length} คำสั่งซื้อ):</div>
-                ${ordersHtml}
+                <button type="button" class="btn-action" style="height:32px; font-size:0.75rem; margin-top:4px;" onclick="saveMemberAssignedCodes('${userEmail}')">💾 บันทึกโค้ดอัตโนมัติ</button>
               </div>
             </div>
           `;
@@ -1106,7 +1106,7 @@
       const container = document.getElementById(`memberCodesContainer_${safeId}`);
       if (!container) return;
       const rowId = 'codeRow_' + Date.now();
-      const allCreatedCodes = vipCodesList.map(item => typeof item === 'object' ? item.code : item);
+      const allCreatedCodes = vipCodesList.map(item => item.code);
       const optionsHtml = allCreatedCodes.map(c => `<option value="${c}">${c}</option>`).join('');
 
       const div = document.createElement('div');
@@ -1114,7 +1114,7 @@
       div.style.cssText = "display:flex; gap:6px; align-items:center;";
       div.innerHTML = `
         <select class="form-control member-code-select-${safeId}" style="min-height:30px; font-size:0.78rem;">
-          <option value="">-- เลือกโค้ดส่วนลด --</option>
+          <option value="">-- เลือกโค้ดในระบบ --</option>
           ${optionsHtml}
         </select>
         <button type="button" class="btn-action btn-danger" style="height:30px; padding:0 8px; font-size:0.7rem;" onclick="document.getElementById('${rowId}').remove()">✕ ลบ</button>
@@ -1131,17 +1131,14 @@
         if (val && !codes.includes(val)) codes.push(val);
       });
 
-      const docId = emailStr.toLowerCase();
-
-      db.collection("user_profiles").doc(docId).set({
-        email: docId,
+      db.collection("user_profiles").doc(emailStr.toLowerCase()).set({
+        email: emailStr.toLowerCase(),
         assignedCodes: codes,
         assignedCode: codes.length > 0 ? codes[0] : ""
       }, { merge: true }).then(() => {
         showToast("บันทึกโค้ดส่วนลดอัตโนมัติสำเร็จ");
       }).catch(err => {
-        showToast("เกิดข้อผิดพลาดในการบันทึก: " + err.message);
-        console.error(err);
+        showToast("เกิดข้อผิดพลาด: " + err.message);
       });
     }
 
@@ -1232,7 +1229,7 @@
 
       cont.innerHTML = filtered.map(p => {
         const thumb = (p.images && p.images.length > 0) ? p.images[0] : '';
-        const secretNotice = p.secretCode ? `<span style="color:var(--accent-vip); font-weight:bold;">[ปลดล็อค: ${p.secretCode}]</span> ` : '';
+        const secretNotice = p.secretCode ? `<span style="color:var(--accent-vip); font-weight:bold;">[เปิดสินค้า: ${p.secretCode}]</span> ` : '';
         
         let activeReadyCount = 0;
         let activePreorderCount = 0;
@@ -1247,7 +1244,7 @@
           if (p.preorderActive) activePreorderCount = p.preorderUnlimited ? 9999 : (p.preorderStock || 0);
         }
 
-        const stockInfo = `<span style="color:#0284c7; font-weight:bold;">[พร้อมส่งรวม: ${activeReadyCount} | พรีรวม: ${activePreorderCount === 9999 ? 'ไม่จำกัด' : activePreorderCount}]</span> `;
+        const stockInfo = `<span style="color:#0284c7; font-weight:bold;">[พร้อมส่ง: ${activeReadyCount} | พรี: ${activePreorderCount === 9999 ? 'ไม่จำกัด' : activePreorderCount}]</span> `;
 
         return `
           <div class="admin-prod-item">
@@ -1273,7 +1270,6 @@
       document.getElementById("productModalTitle").innerText = "📦 เพิ่มรายการสินค้าใหม่";
       document.getElementById("editingProductId").value = "";
       document.getElementById("addProductForm").reset();
-
       document.getElementById("pPreorderLeadTime").value = "";
 
       tempProductImages = [];
@@ -1302,7 +1298,6 @@
         document.getElementById("editingProductId").value = "";
         document.getElementById("pId").value = prod.id + "-COPY";
         document.getElementById("pName").value = prod.name + " (สำเนา)";
-
         document.getElementById("pPreorderLeadTime").value = prod.preorderLeadTime || "";
 
         const bSelect = document.getElementById("pBrandSelect");
@@ -1334,11 +1329,11 @@
 
     function renderVipSelectOptions(selectedVal = "") {
       const select = document.getElementById("pSecretCodeSelect");
-      let html = `<option value="">-- เป็นสินค้าทั่วไป (ไม่ต้องใช้รหัส) --</option>`;
+      let html = `<option value="">-- เป็นสินค้าทั่วไป (ไม่ต้องใช้โค้ดเปิดสินค้า) --</option>`;
       vipCodesList.forEach(item => {
-        const code = typeof item === 'object' ? item.code : item;
-        const note = typeof item === 'object' && item.note ? ` (${item.note})` : '';
-        html += `<option value="${code}" ${code === selectedVal ? 'selected' : ''}>🔒 โค้ดปลดล็อค: ${code}${note}</option>`;
+        if (item.type === 'ACCESS') {
+          html += `<option value="${item.code}" ${item.code === selectedVal ? 'selected' : ''}>🔓 โค้ดเปิดสินค้า: ${item.code} ${item.note ? '(' + item.note + ')' : ''}</option>`;
+        }
       });
       select.innerHTML = html;
     }
@@ -1645,13 +1640,13 @@
     }
 
     function createCodeRowHtml(code = '', discount = 0) {
-      const allCreatedCodes = vipCodesList.map(item => typeof item === 'object' ? item.code : item);
+      const allCreatedCodes = vipCodesList.map(item => item.code);
       const optionsHtml = allCreatedCodes.map(c => `<option value="${c}" ${c === code ? 'selected' : ''}>${c}</option>`).join('');
 
       return `
         <div class="opt-code-single-row">
           <select class="form-control opt-single-code" style="min-height:34px; font-size:0.8rem; text-transform:uppercase;">
-            <option value="">-- เลือกโค้ดจากระบบ --</option>
+            <option value="">-- เลือกโค้ดในระบบ --</option>
             ${optionsHtml}
           </select>
           <div style="display:flex; align-items:center; gap:4px;">
@@ -1855,16 +1850,32 @@
     }
 
     function openVipCodesModal() { renderVipCodesList(); openModal('vipCodesModal'); }
+    
+    function toggleDiscountInputType(type) {
+      const discInp = document.getElementById("newVipDiscountValue");
+      if (discInp) {
+        discInp.style.display = type === 'DISCOUNT' ? 'block' : 'none';
+      }
+    }
+
     function renderVipCodesList() {
       document.getElementById("vipCodeChipsList").innerHTML = vipCodesList.map((item, idx) => {
-        const code = typeof item === 'object' ? item.code : item;
-        const note = typeof item === 'object' && item.note ? item.note : '';
+        const code = item.code || '';
+        const note = item.note || '';
+        const type = item.type || 'ACCESS';
+        const disc = item.discount || 0;
+
+        const badgeHtml = type === 'DISCOUNT' ? 
+          `<span style="background:var(--accent-vip-bg); color:var(--accent-vip); border:1px solid #10b981; padding:1px 6px; border-radius:4px; font-size:0.68rem; font-weight:bold;">💵 ส่วนลด ฿${disc}</span>` : 
+          `<span style="background:#e0f2fe; color:#0369a1; border:1px solid #7dd3fc; padding:1px 6px; border-radius:4px; font-size:0.68rem; font-weight:bold;">🔓 เปิดสินค้า</span>`;
+
         return `
           <div class="tag-chip" style="width: 100%;">
             <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
-              <div>
-                <span style="font-weight:bold; color:var(--accent-vip); font-size:0.85rem;">${code}</span>
-                <span style="font-size:0.75rem; color:#666; margin-left:8px;">${note ? 'โน้ต: ' + note : '(ไม่มีโน้ต)'}</span>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <span style="font-weight:bold; color:var(--accent); font-size:0.85rem;">${code}</span>
+                ${badgeHtml}
+                <span style="font-size:0.72rem; color:#666;">${note ? '(' + note + ')' : ''}</span>
               </div>
               <span class="del-btn" onclick="deleteVipCode(${idx})">✕ ลบ</span>
             </div>
@@ -1876,16 +1887,28 @@
     function handleAddVipCode(e) {
       e.preventDefault();
       const codeVal = document.getElementById("newVipCodeInput").value.trim().toUpperCase();
+      const typeVal = document.getElementById("newVipCodeType").value;
       const noteVal = document.getElementById("newVipNoteInput").value.trim();
+      const discVal = parseFloat(document.getElementById("newVipDiscountValue").value) || 0;
 
       if (codeVal) {
-        const exists = vipCodesList.some(item => (typeof item === 'object' ? item.code : item) === codeVal);
+        const exists = vipCodesList.some(item => item.code === codeVal);
         if (!exists) {
-          vipCodesList.push({ code: codeVal, note: noteVal });
+          vipCodesList.push({ 
+            code: codeVal, 
+            note: noteVal, 
+            type: typeVal, 
+            discount: typeVal === 'DISCOUNT' ? discVal : 0 
+          });
           vipCodesList = sortAlphabetically(vipCodesList);
           saveDataToFirestore();
+          
           document.getElementById("newVipCodeInput").value = "";
           document.getElementById("newVipNoteInput").value = "";
+          document.getElementById("newVipDiscountValue").value = "";
+          document.getElementById("newVipCodeType").value = "ACCESS";
+          toggleDiscountInputType("ACCESS");
+
           renderVipCodesList();
           showToast("เพิ่มรหัสสำเร็จ");
         } else {
