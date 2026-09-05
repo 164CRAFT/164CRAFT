@@ -917,7 +917,8 @@
         const vdo = modal.querySelector('video');
         if (vdo) vdo.pause();
 
-        // เมื่อปิด Modal รายละเอียดสินค้า ให้รีเซ็ตการแสดงผลช่องกรอกโค้ดใบการ์ดที่ Header กลับมาปกติ
+        // เมื่อปิด Modal ให้บังคับอัปเดตและแสดงกล่องสถานะ Active กลับมาเสมอ
+        updateSecretStatusDisplay();
         const headerVipContainer = document.getElementById("headerVipContainer");
         const dropdownVipWrapper = document.getElementById("dropdownVipWrapper");
         if (headerVipContainer && window.innerWidth >= 850) headerVipContainer.style.display = "flex";
@@ -1486,7 +1487,6 @@
       if (appliedList.length > 0) {
         statusMsg.style.color = "var(--accent-vip)";
         statusMsg.innerText = `ใช้โค้ดส่วนลดอัตโนมัติ: ${appliedList.join(', ')}`;
-        activeSecretCodes = [];
         updateSecretStatusDisplay();
       } else {
         appliedOptionDiscount = 0;
