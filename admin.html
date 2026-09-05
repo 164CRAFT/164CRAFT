@@ -139,16 +139,19 @@
     .preview-thumb-card {
       position: relative; aspect-ratio: 1/1; border: 1px solid var(--border-dark);
       background: #fff; overflow: hidden; display: flex; align-items: center; justify-content: center; border-radius: var(--radius);
+      cursor: grab; user-select: none;
     }
-    .preview-thumb-card img { width: 100%; height: 100%; object-fit: cover; }
+    .preview-thumb-card:active { cursor: grabbing; }
+    .preview-thumb-card.dragging { opacity: 0.4; border: 2px dashed #000; }
+    .preview-thumb-card img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
     .preview-thumb-card .remove-img-btn {
       position: absolute; top: 2px; right: 2px; background: rgba(0, 0, 0, 0.85); color: #fff;
       border: none; width: 22px; height: 22px; font-size: 11px; border-radius: 50%; cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
+      display: flex; align-items: center; justify-content: center; z-index: 2;
     }
     .preview-thumb-card .main-tag {
       position: absolute; bottom: 2px; left: 2px; background: #111; color: #fff;
-      font-size: 7px; padding: 2px 4px; font-weight: 800; text-transform: uppercase;
+      font-size: 7px; padding: 2px 4px; font-weight: 800; text-transform: uppercase; z-index: 2;
     }
 
     .scale-price-row {
@@ -214,6 +217,7 @@
         ระบบจัดการสินค้า โคลนสินค้า ตั้งค่าธีมเว็บ และบริหารจัดการสต็อกสินค้า (เปิดขายพร้อมกันทั้งพร้อมส่งและพรีออเดอร์)[cite: 2]
       </p>
 
+      <!-- จัดเรียงสลับหัวข้อใหม่ให้เหมาะสมและใช้งานง่าย -->
       <div class="admin-menu-grid">
         <div class="admin-menu-box">
           <div class="admin-menu-title">📋 หน้ารายการสินค้าทั้งหมด</div>
@@ -446,7 +450,7 @@
 
         <div class="form-group">
           <div style="display:flex; justify-content:space-between; align-items:center;">
-            <label>📸 อัปโหลดรูปภาพสินค้า (ระบบบีบอัดให้อัตโนมัติ)</label>
+            <label>📸 อัปโหลดรูปภาพสินค้า (ลากสลับตำแหน่งได้ • รูปแรกคือหน้าปก)</label>
             <span id="imgCompressStatus" style="font-size:0.7rem; color:#059669; font-weight:bold;"></span>
           </div>
           <input type="file" id="pImageInput" class="form-control" accept="image/*" multiple onchange="handleImageUpload(event)" />
@@ -567,7 +571,7 @@
     </div>
   </div>
 
-  <!-- BANK CONFIG MODAL (หัวข้อธนาคารแยกเดี่ยว) -->
+  <!-- BANK CONFIG MODAL -->
   <div id="bankConfigModal" class="modal-overlay" onclick="checkOutsideModalClick(event, 'bankConfigModal')">
     <div class="modal-box" style="max-width: 480px;">
       <div class="modal-header">
@@ -593,7 +597,7 @@
     </div>
   </div>
 
-  <!-- SHIPPING CONFIG MODAL (หัวข้อผู้จัดส่งและระบบจัดส่งแยกเดี่ยว) -->
+  <!-- SHIPPING CONFIG MODAL -->
   <div id="shippingConfigModal" class="modal-overlay" onclick="checkOutsideModalClick(event, 'shippingConfigModal')">
     <div class="modal-box" style="max-width: 480px;">
       <div class="modal-header">
@@ -671,6 +675,7 @@
     let tempProductVdo = "";
     let adminFilterBrand = "ALL";
     let adminFilterVip = "ALL";
+    let draggedImageIndex = null; // ตัวแปรสำหรับระบบลากสลับรูปภาพ
 
     function sortAlphabetically(arr) {
       return arr.sort((a, b) => {
@@ -1132,6 +1137,7 @@
       renderAdminImagePreview();
     }
 
+    // ฟังก์ชันสร้างตัวอย่างรูปภาพสินค้า พร้อมระบบลากสลับตำแหน่ง (Drag & Drop Reordering)
     function renderAdminImagePreview() {
       const cont = document.getElementById("adminImagesPreviewList");
       if (tempProductImages.length === 0) {
@@ -1141,12 +1147,39 @@
       }
       cont.style.display = "grid";
       cont.innerHTML = tempProductImages.map((imgSrc, idx) => `
-        <div class="preview-thumb-card">
+        <div class="preview-thumb-card" draggable="true" 
+             ondragstart="handleDragStart(event, ${idx})" 
+             ondragover="handleDragOver(event)" 
+             ondrop="handleDrop(event, ${idx})"
+             ondragend="handleDragEnd(event)">
           <img src="${imgSrc}" alt="thumb-${idx}" />
           ${idx === 0 ? '<span class="main-tag">หน้าปก</span>' : ''}
           <button type="button" class="remove-img-btn" onclick="removeAdminImage(${idx})">✕</button>
         </div>
       `).join('');
+    }
+
+    function handleDragStart(e, index) {
+      draggedImageIndex = index;
+      e.target.classList.add('dragging');
+    }
+
+    function handleDragOver(e) {
+      e.preventDefault();
+    }
+
+    function handleDrop(e, targetIndex) {
+      e.preventDefault();
+      if (draggedImageIndex === null || draggedImageIndex === targetIndex) return;
+      
+      const movedItem = tempProductImages.splice(draggedImageIndex, 1)[0];
+      tempProductImages.splice(targetIndex, 0, movedItem);
+      renderAdminImagePreview();
+    }
+
+    function handleDragEnd(e) {
+      draggedImageIndex = null;
+      document.querySelectorAll('.preview-thumb-card').forEach(card => card.classList.remove('dragging'));
     }
 
     function compressVideoFile(file, targetWidth = 1280, targetBitrate = 2000000) {
@@ -1510,7 +1543,6 @@
       scalesList = scalesList.filter(x => x !== s); saveDataToFirestore(); renderConfigChips();
     }
 
-    // ฟังก์ชันเปิด Modal ตั้งค่าธนาคาร
     function openBankConfigModal() {
       document.getElementById("cfgBankName").value = systemSettings.bankName;
       document.getElementById("cfgAccountNo").value = systemSettings.accountNo;
@@ -1540,7 +1572,6 @@
       closeModal('bankConfigModal');
     }
 
-    // ฟังก์ชันเปิด Modal ตั้งค่าผู้จัดส่งและระบบจัดส่ง
     function openShippingConfigModal() {
       document.getElementById("cfgSenderName").value = systemSettings.senderName;
       document.getElementById("cfgSenderPhone").value = systemSettings.senderPhone;
