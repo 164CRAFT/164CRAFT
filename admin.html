@@ -256,7 +256,7 @@
 
         <div class="admin-menu-box">
           <div class="admin-menu-title">👥 จัดการสมาชิกในระบบ</div>
-          <div class="admin-menu-desc">ดูรายชื่อสมาชิก และกำหนดโค้ดส่วนลดอัตโนมัติให้สมาชิก</div>
+          <div class="admin-menu-desc">เพิ่ม, แก้ไข หรือลบโค้ดส่วนลดอัตโนมัติให้สมาชิกแต่ละคน</div>
           <button class="btn-action btn-secondary" style="margin-top: auto;" onclick="openMembersModal()">จัดการสมาชิก</button>
         </div>
 
@@ -427,14 +427,14 @@
     </div>
   </div>
 
-  <!-- MEMBERS MODAL (พร้อมระบบเพิ่มโค้ดส่วนลดอัตโนมัติให้สมาชิก) -->
+  <!-- MEMBERS MODAL (เพิ่ม, แก้ไข, ลบ โค้ดส่วนลดอัตโนมัติสำหรับสมาชิก) -->
   <div id="membersModal" class="modal-overlay" onclick="checkOutsideModalClick(event, 'membersModal')">
     <div class="modal-box" style="max-width: 700px;">
       <div class="modal-header">
         <span>👥 จัดการสมาชิก & กำหนดโค้ดส่วนลดอัตโนมัติ</span>
         <button class="modal-close" onclick="closeModal('membersModal')">✕</button>
       </div>
-      <p style="font-size: 0.8rem; color: var(--text-muted);">รายชื่อสมาชิก และช่องกำหนดโค้ดส่วนลดที่จะให้ระบบเรียกใช้อัตโนมัติเมื่อสมาชิกเข้าสู่ระบบ</p>
+      <p style="font-size: 0.8rem; color: var(--text-muted);">รายชื่อสมาชิก คุณสามารถเพิ่ม แก้ไข หรือลบโค้ดส่วนลดอัตโนมัติของสมาชิกแต่ละคนได้ที่นี่</p>
       
       <div id="membersListContainer" style="max-height: 55vh; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; margin-top: 6px; padding-right: 4px;"></div>
 
@@ -1071,7 +1071,7 @@
       });
     }
 
-    // ฟังก์ชันเปิดจัดการสมาชิก พร้อมช่องใส่โค้ดส่วนลดประจำตัวสมาชิกอัตโนมัติ
+    // ฟังก์ชันจัดการสมาชิก เพิ่ม, แก้ไข, ลบ โค้ดส่วนลดอัตโนมัติ
     function openMembersModal() {
       const cont = document.getElementById("membersListContainer");
       if (members.length === 0) {
@@ -1108,11 +1108,12 @@
                 ${roleBadge}
               </div>
 
-              <!-- ช่องกำหนดโค้ดส่วนลดให้สมาชิกอัตโนมัติ -->
+              <!-- ช่องจัดการโค้ดส่วนลดอัตโนมัติ (เพิ่ม/แก้ไข/ลบ) -->
               <div style="display:flex; gap:6px; align-items:center; background:#fff; padding:8px; border:1px solid #e2e8f0; border-radius:6px;">
-                <label style="font-size:0.72rem; font-weight:bold; white-space:nowrap;">🎟️ โค้ดส่วนลดอัตโนมัติ:</label>
-                <input type="text" id="memberCode_${m.emailId}" class="form-control" style="min-height:30px; font-size:0.78rem; text-transform:uppercase;" placeholder="เช่น PROMO10" value="${assignedCode}" />
+                <label style="font-size:0.72rem; font-weight:bold; white-space:nowrap;">🎟️ โค้ดส่วนลด:</label>
+                <input type="text" id="memberCode_${m.emailId}" class="form-control" style="min-height:30px; font-size:0.78rem; text-transform:uppercase;" placeholder="เช่น PROMO10 (เว้นว่างเพื่อลบ)" value="${assignedCode}" />
                 <button type="button" class="btn-action" style="height:30px; padding:0 10px; font-size:0.72rem;" onclick="saveMemberAssignedCode('${m.emailId}')">บันทึก</button>
+                <button type="button" class="btn-action btn-danger" style="height:30px; padding:0 8px; font-size:0.7rem;" onclick="clearMemberAssignedCode('${m.emailId}')">ลบโค้ด</button>
               </div>
 
               <div style="border-top:1px dashed #cbd5e1; padding-top:6px; margin-top:2px;">
@@ -1134,9 +1135,23 @@
       db.collection("user_profiles").doc(emailId).set({
         assignedCode: codeVal
       }, { merge: true }).then(() => {
-        showToast("บันทึกโค้ดส่วนลดประจำตัวสมาชิกสำเร็จ");
+        showToast("บันทึก/อัปเดตโค้ดส่วนลดสำเร็จ");
       }).catch(err => {
         showToast("เกิดข้อผิดพลาดในการบันทึก");
+        console.error(err);
+      });
+    }
+
+    function clearMemberAssignedCode(emailId) {
+      if (!confirm("ต้องการลบโค้ดส่วนลดอัตโนมัติของสมาชิกท่านนี้หรือไม่?")) return;
+      db.collection("user_profiles").doc(emailId).set({
+        assignedCode: ""
+      }, { merge: true }).then(() => {
+        const inputEl = document.getElementById(`memberCode_${emailId}`);
+        if (inputEl) inputEl.value = "";
+        showToast("ลบโค้ดส่วนลดเรียบร้อยแล้ว");
+      }).catch(err => {
+        showToast("เกิดข้อผิดพลาดในการลบ");
         console.error(err);
       });
     }
