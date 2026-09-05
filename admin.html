@@ -217,7 +217,6 @@
         ระบบจัดการสินค้า โคลนสินค้า ตั้งค่าธีมเว็บ และบริหารจัดการสต็อกสินค้า (เปิดขายพร้อมกันทั้งพร้อมส่งและพรีออเดอร์)[cite: 2]
       </p>
 
-      <!-- จัดเรียงสลับหัวข้อใหม่ให้เหมาะสมและใช้งานง่าย -->
       <div class="admin-menu-grid">
         <div class="admin-menu-box">
           <div class="admin-menu-title">📋 หน้ารายการสินค้าทั้งหมด</div>
@@ -399,18 +398,29 @@
           <input type="text" id="pName" class="form-control" placeholder="เช่น Ducati Panigale V4 S" required />
         </div>
 
+        <!-- ตั้งค่าเปิด-ปิดสต็อกและการขายแยกอิสระทั้ง 2 ระบบ -->
         <div class="form-group" style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: var(--radius); padding: 12px;">
           <label style="font-weight: 800; color: #1e293b; margin-bottom: 8px; display: block;">⚙️ ตั้งค่าสต็อกและการขาย (พร้อมส่ง & พรีออเดอร์)</label>
           
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <!-- โหมดพร้อมส่ง -->
             <div style="background: #f0fdf4; border: 1px solid #10b981; padding: 10px; border-radius: 6px;">
-              <label style="font-size: 0.75rem; color: #065f46; font-weight: bold; display: block; margin-bottom: 4px;">📦 สต็อกพร้อมส่ง (In Stock)</label>
-              <div style="display: flex; align-items: center; gap: 6px;">
-                <input type="text" inputmode="numeric" id="pReadyStock" class="form-control" value="0" onfocus="this.select()" style="background:#fff;" />
-                <span style="font-size: 0.75rem; color: #065f46; white-space: nowrap;">ชิ้น (0=ไม่แสดง)</span>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                <label style="font-size: 0.75rem; color: #065f46; font-weight: bold;">📦 พร้อมส่ง (In Stock)</label>
+                <label style="font-size: 0.7rem; display: flex; align-items: center; gap: 3px; cursor: pointer;">
+                  <input type="checkbox" id="pReadyActive" onchange="toggleReadyInputs(this.checked)" /> เปิดขาย
+                </label>
+              </div>
+
+              <div id="readySettingsGroup" style="display: none; flex-direction: column; gap: 6px; margin-top: 4px;">
+                <div style="display: flex; align-items: center; gap: 6px;">
+                  <input type="text" inputmode="numeric" id="pReadyStock" class="form-control" value="0" onfocus="this.select()" style="background:#fff;" placeholder="จำนวนสต็อก" />
+                  <span style="font-size: 0.7rem; color: #065f46; white-space: nowrap;">ชิ้น</span>
+                </div>
               </div>
             </div>
 
+            <!-- โหมดพรีออเดอร์ -->
             <div style="background: #fff7ed; border: 1px solid #f97316; padding: 10px; border-radius: 6px;">
               <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
                 <label style="font-size: 0.75rem; color: #c2410c; font-weight: bold;">⏳ พรีออเดอร์ (Pre-order)</label>
@@ -425,7 +435,7 @@
                   <span style="font-size: 0.7rem; color: #c2410c; white-space: nowrap;">ชิ้น</span>
                 </div>
                 <label style="font-size: 0.7rem; color: #9a3412; display: flex; align-items: center; gap: 4px; cursor: pointer; margin-top: 2px;">
-                  <input type="checkbox" id="pPreorderUnlimited" onchange="toggleUnlimitedPreorder(this.checked)" /> สั่งได้ไม่จำกัดจำนวน (Unlimited)
+                  <input type="checkbox" id="pPreorderUnlimited" onchange="toggleUnlimitedPreorder(this.checked)" /> สั่งได้ไม่จำกัด (Unlimited)
                 </label>
               </div>
             </div>
@@ -675,7 +685,7 @@
     let tempProductVdo = "";
     let adminFilterBrand = "ALL";
     let adminFilterVip = "ALL";
-    let draggedImageIndex = null; // ตัวแปรสำหรับระบบลากสลับรูปภาพ
+    let draggedImageIndex = null;
 
     function sortAlphabetically(arr) {
       return arr.sort((a, b) => {
@@ -927,13 +937,15 @@
       cont.innerHTML = filtered.map(p => {
         const thumb = (p.images && p.images.length > 0) ? p.images[0] : '';
         const secretNotice = p.secretCode ? `<span style="color:var(--accent-vip); font-weight:bold;">[ปลดล็อค: ${p.secretCode}]</span> ` : '';
-        const readyStock = p.readyStock !== undefined ? p.readyStock : 0;
         
-        let preorderInfo = "ปิด";
-        if (p.preorderActive) {
-          preorderInfo = p.preorderUnlimited ? "ไม่จำกัด" : (p.preorderStock || 0);
-        }
-        const stockInfo = `<span style="color:#0284c7; font-weight:bold;">[📦 พร้อมส่ง: ${readyStock} | ⏳ พรีออเดอร์: ${preorderInfo}]</span> `;
+        const readyActive = p.readyActive || false;
+        const readyStock = p.readyStock !== undefined ? p.readyStock : 0;
+        const readyInfo = readyActive ? `📦 พร้อมส่ง: ${readyStock}` : `📦 พร้อมส่ง: ปิด`;
+
+        const preorderActive = p.preorderActive || false;
+        const preorderInfo = preorderActive ? (p.preorderUnlimited ? "⏳ พรี: ไม่จำกัด" : `⏳ พรี: ${p.preorderStock || 0}`) : `⏳ พรี: ปิด`;
+
+        const stockInfo = `<span style="color:#0284c7; font-weight:bold;">[${readyInfo} | ${preorderInfo}]</span> `;
 
         return `
           <div class="admin-prod-item">
@@ -954,6 +966,11 @@
       }).join('');
     }
 
+    function toggleReadyInputs(isActive) {
+      const group = document.getElementById("readySettingsGroup");
+      group.style.display = isActive ? "flex" : "none";
+    }
+
     function togglePreorderInputs(isActive) {
       const group = document.getElementById("preorderSettingsGroup");
       group.style.display = isActive ? "flex" : "none";
@@ -971,12 +988,16 @@
       document.getElementById("editingProductId").value = "";
       document.getElementById("addProductForm").reset();
 
+      document.getElementById("pReadyActive").checked = false;
+      document.getElementById("readySettingsGroup").style.display = "none";
       document.getElementById("pReadyStock").value = "0";
+
       document.getElementById("pPreorderActive").checked = false;
+      document.getElementById("preorderSettingsGroup").style.display = "none";
       document.getElementById("pPreorderStock").value = "0";
       document.getElementById("pPreorderStock").disabled = false;
       document.getElementById("pPreorderUnlimited").checked = false;
-      document.getElementById("preorderSettingsGroup").style.display = "none";
+      
       document.getElementById("pPrice").value = "0";
       document.getElementById("pPreorderLeadTime").value = "";
 
@@ -1005,6 +1026,9 @@
         document.getElementById("pName").value = prod.name + " (สำเนา)";
         document.getElementById("pPrice").value = prod.basePrice !== undefined ? prod.basePrice : "0";
 
+        const isReadyActive = prod.readyActive || false;
+        document.getElementById("pReadyActive").checked = isReadyActive;
+        document.getElementById("readySettingsGroup").style.display = isReadyActive ? "flex" : "none";
         document.getElementById("pReadyStock").value = prod.readyStock !== undefined ? prod.readyStock : "0";
         
         const isPreActive = prod.preorderActive || false;
@@ -1137,7 +1161,6 @@
       renderAdminImagePreview();
     }
 
-    // ฟังก์ชันสร้างตัวอย่างรูปภาพสินค้า พร้อมระบบลากสลับตำแหน่ง (Drag & Drop Reordering)
     function renderAdminImagePreview() {
       const cont = document.getElementById("adminImagesPreviewList");
       if (tempProductImages.length === 0) {
@@ -1376,7 +1399,9 @@
       const basePrice = parseFloat(document.getElementById("pPrice").value) || 0;
       const secretCode = (document.getElementById("pSecretCodeSelect").value || "").trim().toUpperCase();
 
-      const readyStock = parseInt(document.getElementById("pReadyStock").value) || 0;
+      const readyActive = document.getElementById("pReadyActive").checked;
+      const readyStock = readyActive ? (parseInt(document.getElementById("pReadyStock").value) || 0) : 0;
+      
       const preorderActive = document.getElementById("pPreorderActive").checked;
       const preorderStock = preorderActive ? (parseInt(document.getElementById("pPreorderStock").value) || 0) : 0;
       const preorderUnlimited = preorderActive && document.getElementById("pPreorderUnlimited").checked;
@@ -1394,6 +1419,7 @@
 
       const payload = {
         id, name, brand, basePrice, secretCode,
+        readyActive,
         readyStock,
         preorderActive,
         preorderStock: preorderUnlimited ? 999999 : preorderStock,
@@ -1425,6 +1451,9 @@
         document.getElementById("pName").value = prod.name;
         document.getElementById("pPrice").value = prod.basePrice !== undefined ? prod.basePrice : "0";
 
+        const isReadyActive = prod.readyActive || false;
+        document.getElementById("pReadyActive").checked = isReadyActive;
+        document.getElementById("readySettingsGroup").style.display = isReadyActive ? "flex" : "none";
         document.getElementById("pReadyStock").value = prod.readyStock !== undefined ? prod.readyStock : "0";
         
         const isPreActive = prod.preorderActive || false;
