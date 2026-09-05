@@ -162,15 +162,16 @@
       font-size: 7px; padding: 2px 4px; font-weight: 800; text-transform: uppercase; z-index: 2;
     }
 
-    .scale-price-row {
-      display: grid; grid-template-columns: 1fr 1.3fr; gap: 8px; align-items: center;
-      border: 1px solid var(--border-color); background: #fafaf8; padding: 8px 10px; border-radius: var(--radius); margin-top: 6px;
-    }
     .scale-check {
       border: 1px solid var(--border-color); padding: 8px 10px; background: #fafaf8;
       cursor: pointer; border-radius: var(--radius); font-size: 0.8rem; font-weight: 600; text-align: center; display: block;
     }
     .scale-check:has(input:checked) { border-color: #111; background: #111; color: #fff; }
+
+    .scale-setting-card {
+      background: #f8fafc; border: 1px solid #cbd5e1; border-radius: var(--radius); padding: 14px; margin-top: 10px; display: flex; flex-direction: column; gap: 10px;
+    }
+    .scale-setting-header { font-size: 0.85rem; font-weight: 800; color: #1e293b; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px; }
 
     .opt-card-row {
       background: #fafaf8; border: 1px solid var(--border-color); border-radius: var(--radius);
@@ -427,7 +428,7 @@
     </div>
   </div>
 
-  <!-- MEMBERS MODAL (จัดการสมาชิก & กำหนดโค้ดส่วนลดอัตโนมัติ) -->
+  <!-- MEMBERS MODAL -->
   <div id="membersModal" class="modal-overlay" onclick="checkOutsideModalClick(event, 'membersModal')">
     <div class="modal-box" style="max-width: 720px;">
       <div class="modal-header">
@@ -505,61 +506,9 @@
           <input type="text" id="pName" class="form-control" placeholder="เช่น Ducati Panigale V4 S" required />
         </div>
 
-        <div class="form-group" style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: var(--radius); padding: 12px;">
-          <label style="font-weight: 800; color: #1e293b; margin-bottom: 8px; display: block;">⚙️ ตั้งค่าสต็อกและการขาย (พร้อมส่ง & พรีออเดอร์)</label>
-          
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-            <div style="background: #f0fdf4; border: 1px solid #10b981; padding: 10px; border-radius: 6px;">
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                <label style="font-size: 0.75rem; color: #065f46; font-weight: bold;">📦 พร้อมส่ง (In Stock)</label>
-                <label style="font-size: 0.7rem; display: flex; align-items: center; gap: 3px; cursor: pointer;">
-                  <input type="checkbox" id="pReadyActive" onchange="toggleReadyInputs(this.checked)" /> เปิดขาย
-                </label>
-              </div>
-
-              <div id="readySettingsGroup" style="display: none; flex-direction: column; gap: 6px; margin-top: 4px;">
-                <div style="display: flex; align-items: center; gap: 6px;">
-                  <input type="text" inputmode="numeric" id="pReadyStock" class="form-control" value="0" onfocus="this.select()" style="background:#fff;" placeholder="จำนวนสต็อก" />
-                  <span style="font-size: 0.7rem; color: #065f46; white-space: nowrap;">ชิ้น</span>
-                </div>
-              </div>
-            </div>
-
-            <div style="background: #fff7ed; border: 1px solid #f97316; padding: 10px; border-radius: 6px;">
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                <label style="font-size: 0.75rem; color: #c2410c; font-weight: bold;">⏳ พรีออเดอร์ (Pre-order)</label>
-                <label style="font-size: 0.7rem; display: flex; align-items: center; gap: 3px; cursor: pointer;">
-                  <input type="checkbox" id="pPreorderActive" onchange="togglePreorderInputs(this.checked)" /> เปิดขาย
-                </label>
-              </div>
-
-              <div id="preorderSettingsGroup" style="display: none; flex-direction: column; gap: 6px; margin-top: 4px;">
-                <div style="display: flex; align-items: center; gap: 6px;">
-                  <input type="text" inputmode="numeric" id="pPreorderStock" class="form-control" value="0" onfocus="this.select()" style="background:#fff;" placeholder="จำนวนโควต้า" />
-                  <span style="font-size: 0.7rem; color: #c2410c; white-space: nowrap;">ชิ้น</span>
-                </div>
-                <label style="font-size: 0.7rem; color: #9a3412; display: flex; align-items: center; gap: 4px; cursor: pointer; margin-top: 2px;">
-                  <input type="checkbox" id="pPreorderUnlimited" onchange="toggleUnlimitedPreorder(this.checked)" /> สั่งได้ไม่จำกัด (Unlimited)
-                </label>
-              </div>
-            </div>
-          </div>
-
-          <div class="form-group" style="margin-top: 8px; margin-bottom: 0;">
-            <label style="font-size: 0.75rem; color: #0f172a;">ระยะเวลารอสินค้าพรีออเดอร์ (Lead Time)</label>
-            <input type="text" id="pPreorderLeadTime" class="form-control" placeholder="เช่น จัดส่งภายใน 15-20 วัน" />
-          </div>
-        </div>
-
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 4px;">
-          <div class="form-group">
-            <label>ราคาเริ่มต้น (ตามสเกล)</label>
-            <input type="text" inputmode="numeric" id="pPrice" class="form-control" value="0" onfocus="this.select()" required />
-          </div>
-          <div class="form-group">
-            <label style="color:var(--accent-vip);">🎟️ รหัสปลดล็อคสินค้า (ถ้ามี)</label>
-            <select id="pSecretCodeSelect" class="form-control"></select>
-          </div>
+        <div class="form-group">
+          <label style="color:var(--accent-vip);">🎟️ รหัสปลดล็อคสินค้า (ถ้ามี)</label>
+          <select id="pSecretCodeSelect" class="form-control"></select>
         </div>
 
         <div class="form-group">
@@ -603,9 +552,15 @@
           <div id="scalesContainer" style="display:flex; flex-wrap:wrap; gap:6px;"></div>
         </div>
 
-        <div class="form-group" id="scalePricesSection">
-          <label>💰 กำหนดราคาตามสเกล</label>
-          <div id="scalePricesContainer"></div>
+        <!-- กล่องตั้งค่าสต็อกและราคาแยกตามแต่ละสเกล -->
+        <div class="form-group">
+          <label style="font-weight: 800; color: #1e293b;">⚙️ ตั้งค่าสต็อก, การขาย & ราคาแยกตามสเกล</label>
+          <div id="scaleSettingsCardsContainer"></div>
+        </div>
+
+        <div class="form-group" style="margin-top: 4px;">
+          <label style="font-size: 0.8rem; color: #0f172a;">ระยะเวลารอสินค้าพรีออเดอร์ (Lead Time)</label>
+          <input type="text" id="pPreorderLeadTime" class="form-control" placeholder="เช่น จัดส่งภายใน 15-20 วัน" />
         </div>
 
         <div style="margin-top:10px;">
@@ -1128,7 +1083,6 @@
                 ${roleBadge}
               </div>
 
-              <!-- โค้ดส่วนลดอัตโนมัติหลายช่อง -->
               <div style="background:#fff; padding:10px; border:1px solid #e2e8f0; border-radius:6px; display:flex; flex-direction:column; gap:6px;">
                 <div style="display:flex; justify-content:space-between; align-items:center;">
                   <label style="font-size:0.75rem; font-weight:bold; color:var(--accent-vip);">🎟️ โค้ดส่วนลดอัตโนมัติ (ดึงจากรายการรหัส):</label>
@@ -1283,14 +1237,20 @@
         const thumb = (p.images && p.images.length > 0) ? p.images[0] : '';
         const secretNotice = p.secretCode ? `<span style="color:var(--accent-vip); font-weight:bold;">[ปลดล็อค: ${p.secretCode}]</span> ` : '';
         
-        const readyActive = p.readyActive || false;
-        const readyStock = p.readyStock !== undefined ? p.readyStock : 0;
-        const readyInfo = readyActive ? `📦 พร้อมส่ง: ${readyStock}` : `📦 พร้อมส่ง: ปิด`;
+        let activeReadyCount = 0;
+        let activePreorderCount = 0;
+        if (p.scalePrices) {
+          Object.keys(p.scalePrices).forEach(sc => {
+            const sp = p.scalePrices[sc];
+            if (sp.readyActive && (sp.readyStock || 0) > 0) activeReadyCount += (sp.readyStock || 0);
+            if (sp.preorderActive) activePreorderCount += (sp.preorderUnlimited ? 9999 : (sp.preorderStock || 0));
+          });
+        } else {
+          if (p.readyActive) activeReadyCount = p.readyStock || 0;
+          if (p.preorderActive) activePreorderCount = p.preorderUnlimited ? 9999 : (p.preorderStock || 0);
+        }
 
-        const preorderActive = p.preorderActive || false;
-        const preorderInfo = preorderActive ? (p.preorderUnlimited ? "⏳ พรี: ไม่จำกัด" : `⏳ พรี: ${p.preorderStock || 0}`) : `⏳ พรี: ปิด`;
-
-        const stockInfo = `<span style="color:#0284c7; font-weight:bold;">[${readyInfo} | ${preorderInfo}]</span> `;
+        const stockInfo = `<span style="color:#0284c7; font-weight:bold;">[พร้อมส่งรวม: ${activeReadyCount} | พรีรวม: ${activePreorderCount === 9999 ? 'ไม่จำกัด' : activePreorderCount}]</span> `;
 
         return `
           <div class="admin-prod-item">
@@ -1311,39 +1271,12 @@
       }).join('');
     }
 
-    function toggleReadyInputs(isActive) {
-      const group = document.getElementById("readySettingsGroup");
-      group.style.display = isActive ? "flex" : "none";
-    }
-
-    function togglePreorderInputs(isActive) {
-      const group = document.getElementById("preorderSettingsGroup");
-      group.style.display = isActive ? "flex" : "none";
-    }
-
-    function toggleUnlimitedPreorder(isUnlimited) {
-      const stockInput = document.getElementById("pPreorderStock");
-      stockInput.disabled = isUnlimited;
-      if (isUnlimited) stockInput.value = "999999";
-    }
-
     function openAddProductModal() {
       closeModal('manageProductsModal');
       document.getElementById("productModalTitle").innerText = "📦 เพิ่มรายการสินค้าใหม่";
       document.getElementById("editingProductId").value = "";
       document.getElementById("addProductForm").reset();
 
-      document.getElementById("pReadyActive").checked = false;
-      document.getElementById("readySettingsGroup").style.display = "none";
-      document.getElementById("pReadyStock").value = "0";
-
-      document.getElementById("pPreorderActive").checked = false;
-      document.getElementById("preorderSettingsGroup").style.display = "none";
-      document.getElementById("pPreorderStock").value = "0";
-      document.getElementById("pPreorderStock").disabled = false;
-      document.getElementById("pPreorderUnlimited").checked = false;
-      
-      document.getElementById("pPrice").value = "0";
       document.getElementById("pPreorderLeadTime").value = "";
 
       tempProductImages = [];
@@ -1372,21 +1305,6 @@
         document.getElementById("editingProductId").value = "";
         document.getElementById("pId").value = prod.id + "-COPY";
         document.getElementById("pName").value = prod.name + " (สำเนา)";
-        document.getElementById("pPrice").value = prod.basePrice !== undefined ? prod.basePrice : "0";
-
-        const isReadyActive = prod.readyActive || false;
-        document.getElementById("pReadyActive").checked = isReadyActive;
-        document.getElementById("readySettingsGroup").style.display = isReadyActive ? "flex" : "none";
-        document.getElementById("pReadyStock").value = prod.readyStock !== undefined ? prod.readyStock : "0";
-        
-        const isPreActive = prod.preorderActive || false;
-        document.getElementById("pPreorderActive").checked = isPreActive;
-        document.getElementById("preorderSettingsGroup").style.display = isPreActive ? "flex" : "none";
-        document.getElementById("pPreorderStock").value = prod.preorderStock !== undefined ? prod.preorderStock : "0";
-        
-        const isUnlimited = prod.preorderUnlimited || false;
-        document.getElementById("pPreorderUnlimited").checked = isUnlimited;
-        document.getElementById("pPreorderStock").disabled = isUnlimited;
 
         document.getElementById("pPreorderLeadTime").value = prod.preorderLeadTime || "";
 
@@ -1432,30 +1350,98 @@
       const cont = document.getElementById("scalesContainer");
       cont.innerHTML = scalesList.map(sc => `
         <label class="scale-check">
-          <input type="checkbox" name="productScale" value="${sc}" ${selectedScales.includes(sc) ? 'checked' : ''} onchange="updateScalePriceInputs()" />
+          <input type="checkbox" name="productScale" value="${sc}" ${selectedScales.includes(sc) ? 'checked' : ''} onchange="updateScaleSettingsCards()" />
           ${sc}
         </label>
       `).join('');
-      updateScalePriceInputs(scalePrices);
+      updateScaleSettingsCards(scalePrices);
     }
 
-    function updateScalePriceInputs(existingPrices = {}) {
-      const cont = document.getElementById("scalePricesContainer");
-      const defaultBase = parseFloat(document.getElementById("pPrice").value) || 0;
+    function updateScaleSettingsCards(existingPrices = {}) {
+      const container = document.getElementById("scaleSettingsCardsContainer");
       const checkedScales = Array.from(document.querySelectorAll('input[name="productScale"]:checked')).map(cb => cb.value);
 
-      cont.innerHTML = checkedScales.map(sc => {
-        const val = existingPrices[sc] !== undefined ? existingPrices[sc] : defaultBase;
+      if (checkedScales.length === 0) {
+        container.innerHTML = `<div style="font-size:0.75rem; color:#888; padding:8px;">(กรุณาเลือกสเกลที่รองรับด้านบนอย่างน้อย 1 สเกล)</div>`;
+        return;
+      }
+
+      container.innerHTML = checkedScales.map(sc => {
+        const sp = (existingPrices && existingPrices[sc]) || {
+          price: 0,
+          readyActive: false,
+          readyStock: 0,
+          preorderActive: false,
+          preorderStock: 0,
+          preorderUnlimited: false
+        };
+
+        const safeKey = sc.replace(/[^a-zA-Z0-9]/g, '_');
+
         return `
-          <div class="scale-price-row">
-            <span class="scale-price-name" style="font-size:0.78rem;">สเกล ${sc}:</span>
-            <div style="display:flex; align-items:center; gap:6px;">
-              <span>฿</span>
-              <input type="text" inputmode="numeric" class="form-control scale-price-input" data-scale="${sc}" value="${val}" onfocus="this.select()" required style="min-height:34px;" />
+          <div class="scale-setting-card" data-scale="${sc}">
+            <div class="scale-setting-header">📐 สเกล: ${sc}</div>
+            
+            <div style="display: flex; flex-direction: column; gap: 4px; margin-bottom: 4px;">
+              <label style="font-size:0.75rem; font-weight:bold; color:#333;">ราคาขายสำหรับสเกล ${sc} (บาท)</label>
+              <input type="text" inputmode="numeric" class="form-control scale-price-val-${safeKey}" value="${sp.price || 0}" onfocus="this.select()" placeholder="0" required style="background:#fff;" />
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+              <div style="background: #f0fdf4; border: 1px solid #10b981; padding: 10px; border-radius: 6px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                  <label style="font-size: 0.75rem; color: #065f46; font-weight: bold;">📦 พร้อมส่ง (In Stock)</label>
+                  <label style="font-size: 0.7rem; display: flex; align-items: center; gap: 3px; cursor: pointer;">
+                    <input type="checkbox" class="scale-ready-active-${safeKey}" ${sp.readyActive ? 'checked' : ''} onchange="toggleScaleReadyInput(this, '${safeKey}')" /> เปิดขาย
+                  </label>
+                </div>
+                <div class="scale-ready-group-${safeKey}" style="display: ${sp.readyActive ? 'flex' : 'none'}; flex-direction: column; gap: 4px; margin-top: 4px;">
+                  <div style="display: flex; align-items: center; gap: 6px;">
+                    <input type="text" inputmode="numeric" class="form-control scale-ready-stock-${safeKey}" value="${sp.readyStock || 0}" onfocus="this.select()" style="background:#fff;" placeholder="จำนวนสต็อก" />
+                    <span style="font-size: 0.7rem; color: #065f46; white-space: nowrap;">ชิ้น</span>
+                  </div>
+                </div>
+              </div>
+
+              <div style="background: #fff7ed; border: 1px solid #f97316; padding: 10px; border-radius: 6px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                  <label style="font-size: 0.75rem; color: #c2410c; font-weight: bold;">⏳ พรีออเดอร์ (Pre-order)</label>
+                  <label style="font-size: 0.7rem; display: flex; align-items: center; gap: 3px; cursor: pointer;">
+                    <input type="checkbox" class="scale-pre-active-${safeKey}" ${sp.preorderActive ? 'checked' : ''} onchange="toggleScalePreInput(this, '${safeKey}')" /> เปิดขาย
+                  </label>
+                </div>
+                <div class="scale-pre-group-${safeKey}" style="display: ${sp.preorderActive ? 'flex' : 'none'}; flex-direction: column; gap: 4px; margin-top: 4px;">
+                  <div style="display: flex; align-items: center; gap: 6px;">
+                    <input type="text" inputmode="numeric" class="form-control scale-pre-stock-${safeKey}" value="${sp.preorderUnlimited ? 999999 : (sp.preorderStock || 0)}" ${sp.preorderUnlimited ? 'disabled' : ''} onfocus="this.select()" style="background:#fff;" placeholder="จำนวนโควต้า" />
+                    <span style="font-size: 0.7rem; color: #c2410c; white-space: nowrap;">ชิ้น</span>
+                  </div>
+                  <label style="font-size: 0.68rem; color: #9a3412; display: flex; align-items: center; gap: 4px; cursor: pointer; margin-top: 2px;">
+                    <input type="checkbox" class="scale-pre-unlimited-${safeKey}" ${sp.preorderUnlimited ? 'checked' : ''} onchange="toggleScaleUnlimited(this, '${safeKey}')" /> สั่งได้ไม่จำกัด (Unlimited)
+                  </label>
+                </div>
+              </div>
             </div>
           </div>
         `;
       }).join('');
+    }
+
+    function toggleScaleReadyInput(chk, safeKey) {
+      const grp = document.querySelector(`.scale-ready-group-${safeKey}`);
+      if (grp) grp.style.display = chk.checked ? "flex" : "none";
+    }
+
+    function toggleScalePreInput(chk, safeKey) {
+      const grp = document.querySelector(`.scale-pre-group-${safeKey}`);
+      if (grp) grp.style.display = chk.checked ? "flex" : "none";
+    }
+
+    function toggleScaleUnlimited(chk, safeKey) {
+      const stockInp = document.querySelector(`.scale-pre-stock-${safeKey}`);
+      if (stockInp) {
+        stockInp.disabled = chk.checked;
+        if (chk.checked) stockInp.value = "999999";
+      }
     }
 
     function compressImageFile(file, maxWidth = 1000, quality = 0.8) {
@@ -1744,15 +1730,7 @@
       const id = document.getElementById("pId").value.trim();
       const brand = document.getElementById("pBrandSelect").value;
       const name = document.getElementById("pName").value.trim();
-      const basePrice = parseFloat(document.getElementById("pPrice").value) || 0;
       const secretCode = (document.getElementById("pSecretCodeSelect").value || "").trim().toUpperCase();
-
-      const readyActive = document.getElementById("pReadyActive").checked;
-      const readyStock = readyActive ? (parseInt(document.getElementById("pReadyStock").value) || 0) : 0;
-      
-      const preorderActive = document.getElementById("pPreorderActive").checked;
-      const preorderStock = preorderActive ? (parseInt(document.getElementById("pPreorderStock").value) || 0) : 0;
-      const preorderUnlimited = preorderActive && document.getElementById("pPreorderUnlimited").checked;
       const preorderLeadTime = document.getElementById("pPreorderLeadTime").value.trim();
 
       const checkedScales = Array.from(document.querySelectorAll('input[name="productScale"]:checked')).map(cb => cb.value);
@@ -1762,19 +1740,57 @@
       }
 
       const scalePrices = {};
-      document.querySelectorAll(".scale-price-input").forEach(inp => {
-        scalePrices[inp.getAttribute("data-scale")] = parseFloat(inp.value) || basePrice;
+      let firstPrice = 0;
+      let totalReadyActive = false;
+      let totalReadyStock = 0;
+      let totalPreorderActive = false;
+      let totalPreorderStock = 0;
+
+      checkedScales.forEach(sc => {
+        const safeKey = sc.replace(/[^a-zA-Z0-9]/g, '_');
+        const priceInp = document.querySelector(`.scale-price-val-${safeKey}`);
+        const readyChk = document.querySelector(`.scale-ready-active-${safeKey}`);
+        const readyStockInp = document.querySelector(`.scale-ready-stock-${safeKey}`);
+        const preChk = document.querySelector(`.scale-pre-active-${safeKey}`);
+        const preStockInp = document.querySelector(`.scale-pre-stock-${safeKey}`);
+        const preUnlimitedChk = document.querySelector(`.scale-pre-unlimited-${safeKey}`);
+
+        const price = parseFloat(priceInp ? priceInp.value : 0) || 0;
+        if (firstPrice === 0) firstPrice = price;
+
+        const readyActive = readyChk ? readyChk.checked : false;
+        const readyStock = parseInt(readyStockInp ? readyStockInp.value : 0) || 0;
+        const preorderActive = preChk ? preChk.checked : false;
+        const preorderUnlimited = preUnlimitedChk ? preUnlimitedChk.checked : false;
+        const preorderStock = preorderUnlimited ? 999999 : (parseInt(preStockInp ? preStockInp.value : 0) || 0);
+
+        if (readyActive) totalReadyActive = true;
+        totalReadyStock += readyStock;
+
+        if (preorderActive) totalPreorderActive = true;
+        totalPreorderStock += preorderStock;
+
+        scalePrices[sc] = {
+          price,
+          readyActive,
+          readyStock,
+          preorderActive,
+          preorderStock,
+          preorderUnlimited
+        };
       });
 
       if (!tempProductImages.length) tempProductImages.push('https://via.placeholder.com/400?text=164CRAFT');
 
       const payload = {
-        id, name, brand, basePrice, secretCode,
-        readyActive,
-        readyStock,
-        preorderActive,
-        preorderStock: preorderUnlimited ? 999999 : preorderStock,
-        preorderUnlimited,
+        id, name, brand,
+        basePrice: firstPrice,
+        secretCode,
+        readyActive: totalReadyActive,
+        readyStock: totalReadyStock,
+        preorderActive: totalPreorderActive,
+        preorderStock: totalPreorderStock,
+        preorderUnlimited: totalPreorderStock >= 999999,
         preorderLeadTime,
         images: [...tempProductImages],
         vdo: tempProductVdo || "",
@@ -1803,22 +1819,6 @@
         document.getElementById("editingProductId").value = prod.id;
         document.getElementById("pId").value = prod.id;
         document.getElementById("pName").value = prod.name;
-        document.getElementById("pPrice").value = prod.basePrice !== undefined ? prod.basePrice : "0";
-
-        const isReadyActive = prod.readyActive || false;
-        document.getElementById("pReadyActive").checked = isReadyActive;
-        document.getElementById("readySettingsGroup").style.display = isReadyActive ? "flex" : "none";
-        document.getElementById("pReadyStock").value = prod.readyStock !== undefined ? prod.readyStock : "0";
-        
-        const isPreActive = prod.preorderActive || false;
-        document.getElementById("pPreorderActive").checked = isPreActive;
-        document.getElementById("preorderSettingsGroup").style.display = isPreActive ? "flex" : "none";
-        document.getElementById("pPreorderStock").value = prod.preorderStock !== undefined ? prod.preorderStock : "0";
-        
-        const isUnlimited = prod.preorderUnlimited || false;
-        document.getElementById("pPreorderUnlimited").checked = isUnlimited;
-        document.getElementById("pPreorderStock").disabled = isUnlimited;
-
         document.getElementById("pPreorderLeadTime").value = prod.preorderLeadTime || "";
 
         document.getElementById("pBrandSelect").innerHTML = brands.map(b => `<option value="${b}" ${b === prod.brand ? 'selected' : ''}>${b}</option>`).join('');
@@ -1834,7 +1834,7 @@
           removeVdo();
         }
 
-        renderAdminScalesInputs(prod.scales, prod.scalePrices);
+        renderAdminScalesInputs(prod.scales || ["1/64"], prod.scalePrices || {});
 
         const optCont = document.getElementById("dynamicOptionsList");
         optCont.innerHTML = "";
