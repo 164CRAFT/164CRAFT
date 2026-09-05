@@ -418,7 +418,7 @@
       
       <div class="header-vip-box" id="headerVipContainer">
         <input type="password" id="headerVipInput" class="header-vip-input" placeholder="🗝️ กรอกรหัส" autocomplete="off" onkeydown="if(event.key==='Enter') applyHeaderVipCode()" />
-        <button type="button" class="btn-action" style="height:30px; padding:0 12px; font-size:0.72rem; background:#111; color:#fff; border:none; border-radius:8px;" onclick="applyHeaderVipCode()">ปลดล็อก</button>
+        <button type="button" class="btn-action" style="height:30px; padding:0 12px; font-size:0.72rem; background:#111; color:#fff; border:none; border-radius:8px;" onclick="applyHeaderVipCode()">ใช้โค้ด</button>
       </div>
 
       <div id="authContainer" style="display: flex; align-items: center; gap: 6px;">
@@ -442,7 +442,7 @@
             <div style="padding: 8px 10px; background: #fafafa; border-bottom: 1px solid var(--border-color);" id="dropdownVipWrapper">
               <div class="header-vip-box" style="display: flex; width: 100%;">
                 <input type="password" id="dropdownVipInput" class="header-vip-input" placeholder="🗝️ กรอกรหัส" style="width: 100%; height: 28px; font-size: 0.72rem;" autocomplete="off" onkeydown="if(event.key==='Enter') applyDropdownVipCode()" />
-                <button type="button" class="btn-action" style="height: 28px; padding: 0 10px; font-size: 0.7rem; background:#111; color:#fff; border:none; border-radius:6px;" onclick="applyDropdownVipCode()">ปลดล็อก</button>
+                <button type="button" class="btn-action" style="height: 28px; padding: 0 10px; font-size: 0.7rem; background:#111; color:#fff; border:none; border-radius:6px;" onclick="applyDropdownVipCode()">ใช้โค้ด</button>
               </div>
             </div>
 
@@ -786,7 +786,7 @@
               if (shipEmailInput) shipEmailInput.value = user.email || "";
               if (shipAddressInput) shipAddressInput.value = data.address || "";
 
-              // ตรวจสอบและดึงโค้ดอัตโนมัติหลายโค้ดที่ Admin กำหนดไว้มาใช้
+              // ตรวจสอบและดึงโค้ดอัตโนมัติหลายโค้ดที่ Admin กำหนดไว้มาใช้ (รองรับทั้ง assignedCodes และ assignedCode)
               let codesToApply = [];
               if (data.assignedCodes && Array.isArray(data.assignedCodes)) {
                 codesToApply = data.assignedCodes;
@@ -1361,7 +1361,7 @@
         }
       }
 
-      // ตรวจสอบและดึงโค้ดส่วนลดอัตโนมัติประจำตัวสมาชิกมาใส่ทันที
+      // ตรวจสอบและดึงข้อมูลโค้ดส่วนลดอัตโนมัติประจำตัวสมาชิกมาใส่ใน Modal ทันที
       const currentUser = auth.currentUser;
       if (currentUser && currentUser.email) {
         db.collection("user_profiles").doc(currentUser.email.toLowerCase()).get().then((doc) => {
