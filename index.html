@@ -416,9 +416,10 @@
     </div>
     <div class="header-actions" style="position: relative;">
       
-      <div class="header-vip-box">
-        <input type="password" id="headerVipInput" class="header-vip-input" placeholder="🗝️ กรอกรหัส (หลายโค้ดได้)" autocomplete="off" onkeydown="if(event.key==='Enter') applyHeaderVipCode()" />
-        <button type="button" class="btn-action" style="height:30px; padding:0 12px; font-size:0.72rem; background:#111; color:#fff; border:none; border-radius:8px;" onclick="applyHeaderVipCode()">ปลดล็อก</button>
+      <!-- ช่องกรอกโค้ดใบการ์ด (ซ่อนอัตโนมัติเมื่อใช้โค้ดส่วนลดราคาใน Modal แล้ว) -->
+      <div class="header-vip-box" id="headerVipContainer">
+        <input type="password" id="headerVipInput" class="header-vip-input" placeholder="🗝️ กรอกรหัสใบการ์ด" autocomplete="off" onkeydown="if(event.key==='Enter') applyHeaderVipCode()" />
+        <button type="button" class="btn-action" style="height:30px; padding:0 12px; font-size:0.72rem; background:#111; color:#fff; border:none; border-radius:8px;" onclick="applyHeaderVipCode()">ใช้โค้ด</button>
       </div>
 
       <div id="authContainer" style="display: flex; align-items: center; gap: 6px;">
@@ -439,10 +440,10 @@
               </div>
             </div>
 
-            <div style="padding: 8px 10px; background: #fafafa; border-bottom: 1px solid var(--border-color);">
+            <div style="padding: 8px 10px; background: #fafafa; border-bottom: 1px solid var(--border-color);" id="dropdownVipWrapper">
               <div class="header-vip-box" style="display: flex; width: 100%;">
-                <input type="password" id="dropdownVipInput" class="header-vip-input" placeholder="🗝️ กรอกรหัส (หลายโค้ดได้)" style="width: 100%; height: 28px; font-size: 0.72rem;" autocomplete="off" onkeydown="if(event.key==='Enter') applyDropdownVipCode()" />
-                <button type="button" class="btn-action" style="height: 28px; padding: 0 10px; font-size: 0.7rem; background:#111; color:#fff; border:none; border-radius:6px;" onclick="applyDropdownVipCode()">ปลดล็อก</button>
+                <input type="password" id="dropdownVipInput" class="header-vip-input" placeholder="🗝️ กรอกรหัสใบการ์ด" style="width: 100%; height: 28px; font-size: 0.72rem;" autocomplete="off" onkeydown="if(event.key==='Enter') applyDropdownVipCode()" />
+                <button type="button" class="btn-action" style="height: 28px; padding: 0 10px; font-size: 0.7rem; background:#111; color:#fff; border:none; border-radius:6px;" onclick="applyDropdownVipCode()">ใช้โค้ด</button>
               </div>
             </div>
 
@@ -535,9 +536,9 @@
           <div class="form-group"><label>ตัวเลือกตกแต่ง (Option):</label><select id="detailOptionSelect" class="form-control" onchange="calculateModalPrice()"></select></div>
 
           <div class="form-group">
-            <label>โค้ดส่วนลด (กรอกได้หลายโค้ด คั่นด้วยจุลภาค , หรือเว้นวรรค):</label>
+            <label>โค้ดส่วนลดราคา (ใส่ได้ 1 โค้ด):</label>
             <div style="display:flex; gap: 6px;">
-              <input type="text" id="promoCodeInput" class="form-control" placeholder="เช่น CODE1, CODE2" style="text-transform: uppercase;" onkeydown="if(event.key==='Enter') applyPromoCode()">
+              <input type="text" id="promoCodeInput" class="form-control" placeholder="กรอกโค้ดส่วนลด..." style="text-transform: uppercase;" onkeydown="if(event.key==='Enter') applyPromoCode()">
               <button type="button" class="btn-action btn-secondary" style="padding:4px 10px; white-space:nowrap;" onclick="applyPromoCode()">ใช้โค้ด</button>
             </div>
             <div id="promoStatusMsg" style="font-size:0.72rem; margin-top:2px; font-weight:bold;"></div>
@@ -707,10 +708,10 @@
 
     let activeCategory = "ALL";
     let activeSaleMode = "READY";
-    let activeSecretCodes = []; // รองรับหลายโค้ดพร้อมกัน
+    let activeSecretCodes = [];
     let cart = [];
     let currentSelectedProduct = null;
-    let appliedTotalDiscount = 0;
+    let appliedOptionDiscount = 0;
     let isDropdownLocked = false;
 
     let toastTimer = null;
@@ -970,11 +971,19 @@
     }
 
     function applyHeaderVipCode() {
+      if (appliedOptionDiscount > 0) {
+        showToast("ไม่สามารถใช้โค้ดใบการ์ดได้ เนื่องจากมีการใช้โค้ดส่วนลดราคาในสินค้านี้แล้ว");
+        return;
+      }
       const input = document.getElementById("headerVipInput");
       processVipCode(input.value);
     }
 
     function applyDropdownVipCode() {
+      if (appliedOptionDiscount > 0) {
+        showToast("ไม่สามารถใช้โค้ดใบการ์ดได้ เนื่องจากมีการใช้โค้ดส่วนลดราคาในสินค้านี้แล้ว");
+        return;
+      }
       const input = document.getElementById("dropdownVipInput");
       processVipCode(input.value);
       isDropdownLocked = false;
@@ -985,7 +994,6 @@
     function processVipCode(rawInput) {
       if (!rawInput) { clearHeaderVipCode(); return; }
 
-      // รองรับการกรอกหลายโค้ดพร้อมกันคั่นด้วยจุลภาคหรือเว้นวรรค
       const codes = rawInput.split(/[,,\s]+/).map(c => c.trim().toUpperCase()).filter(Boolean);
       let successList = [];
       let failList = [];
@@ -1010,7 +1018,7 @@
 
       if (activeSecretCodes.length > 0) {
         statusTag.className = "secret-status-tag active";
-        let tagHtml = `<div style="font-weight:bold; margin-bottom:2px;">สถานะปลดล็อก [ACTIVE]:</div>`;
+        let tagHtml = `<div style="font-weight:bold; margin-bottom:2px;">ปลดล็อกสำเร็จ [ACTIVE]:</div>`;
         activeSecretCodes.forEach(c => {
           const masked = c.length > 2 ? c.substring(0, 2) + "•".repeat(c.length - 2) : "••••";
           tagHtml += `<div>• ${masked}</div>`;
@@ -1247,7 +1255,7 @@
       const prod = products.find(p => p.id === productId);
       if (!prod) return;
       currentSelectedProduct = prod;
-      appliedTotalDiscount = 0;
+      appliedOptionDiscount = 0;
       
       const promoInput = document.getElementById("promoCodeInput");
       if (promoInput) promoInput.value = "";
@@ -1362,80 +1370,76 @@
       const basePrice = (currentSelectedProduct.scalePrices && currentSelectedProduct.scalePrices[scale] !== undefined) ? currentSelectedProduct.scalePrices[scale] : currentSelectedProduct.basePrice;
       const optExtra = (currentSelectedProduct.options && currentSelectedProduct.options[optIdx]) ? (currentSelectedProduct.options[optIdx].extraPrice || 0) : 0;
 
-      let total = basePrice + optExtra - appliedTotalDiscount;
-      if (total < 0) total = 0;
+      let originalTotal = basePrice + optExtra;
+      let finalTotal = originalTotal - appliedOptionDiscount;
+      if (finalTotal < 0) finalTotal = 0;
 
-      document.getElementById("modalTotalPrice").innerText = `฿${total} ${appliedTotalDiscount > 0 ? `(-฿${appliedTotalDiscount})` : ''}`;
-      return total;
+      const priceDisplay = document.getElementById("modalTotalPrice");
+      if (appliedOptionDiscount > 0) {
+        priceDisplay.innerHTML = `<span style="text-decoration: line-through; color: #888; font-size: 0.85rem; margin-right: 6px;">฿${originalTotal}</span> <span style="color: var(--accent-vip);">฿${finalTotal}</span>`;
+      } else {
+        priceDisplay.innerText = `฿${finalTotal}`;
+      }
+
+      // ซ่อนช่องกรอกโค้ดใบการ์ดที่ Header ทันทีเมื่อมีการใช้โค้ดส่วนลดราคาในสินค้านี้
+      const headerVipContainer = document.getElementById("headerVipContainer");
+      const dropdownVipWrapper = document.getElementById("dropdownVipWrapper");
+      if (appliedOptionDiscount > 0) {
+        if (headerVipContainer) headerVipContainer.style.display = "none";
+        if (dropdownVipWrapper) dropdownVipWrapper.style.display = "none";
+      } else {
+        if (headerVipContainer && window.innerWidth >= 850) headerVipContainer.style.display = "flex";
+        if (dropdownVipWrapper) dropdownVipWrapper.style.display = "block";
+      }
+
+      return finalTotal;
     }
 
     function applyPromoCode() {
       if (!currentSelectedProduct) return;
-      const rawInput = (document.getElementById("promoCodeInput").value || "").trim();
+      const code = (document.getElementById("promoCodeInput").value || "").trim().toUpperCase();
+      const optIdx = parseInt(document.getElementById("detailOptionSelect").value) || 0;
+      const selectedOpt = currentSelectedProduct.options ? currentSelectedProduct.options[optIdx] : null;
       const statusMsg = document.getElementById("promoStatusMsg");
 
-      if (!rawInput) {
-        appliedTotalDiscount = 0;
+      if (!code) {
+        appliedOptionDiscount = 0;
         statusMsg.innerText = "";
         calculateModalPrice();
         return;
       }
 
-      const enteredCodes = rawInput.split(/[,,\s]+/).map(c => c.trim().toUpperCase()).filter(Boolean);
-      const optIdx = parseInt(document.getElementById("detailOptionSelect").value) || 0;
-      const selectedOpt = currentSelectedProduct.options ? currentSelectedProduct.options[optIdx] : null;
+      let foundDiscount = 0;
+      let isValid = false;
 
-      if (!selectedOpt) {
-        appliedTotalDiscount = 0;
-        statusMsg.style.color = "var(--danger)";
-        statusMsg.innerText = "สินค้านี้ไม่มีตัวเลือกโค้ดส่วนลด";
-        calculateModalPrice();
-        return;
-      }
-
-      let cumulativeDiscount = 0;
-      let appliedList = [];
-      let invalidList = [];
-
-      enteredCodes.forEach(code => {
-        let found = false;
-        let disc = 0;
-
+      if (selectedOpt) {
         if (selectedOpt.codes && Array.isArray(selectedOpt.codes)) {
-          const match = selectedOpt.codes.find(c => (c.code || "").toUpperCase() === code);
-          if (match) {
-            found = true;
-            disc = match.discount || 0;
+          const matchCode = selectedOpt.codes.find(c => (c.code || "").toUpperCase() === code);
+          if (matchCode) {
+            isValid = true;
+            foundDiscount = matchCode.discount || 0;
           }
         }
-        if (!found && selectedOpt.vipCode && selectedOpt.vipCode.toUpperCase() === code) {
-          found = true;
-          disc = selectedOpt.vipDiscount || 0;
+        if (!isValid && selectedOpt.vipCode && selectedOpt.vipCode.toUpperCase() === code) {
+          isValid = true;
+          foundDiscount = selectedOpt.vipDiscount || 0;
         }
-
-        if (found) {
-          cumulativeDiscount += disc;
-          appliedList.push(`${code} (-฿${disc})`);
-        } else {
-          invalidList.push(code);
-        }
-      });
-
-      appliedTotalDiscount = cumulativeDiscount;
-
-      if (appliedList.length > 0) {
-        statusMsg.style.color = "var(--accent-vip)";
-        let msg = `ใช้โค้ดสำเร็จ: ${appliedList.join(', ')}`;
-        if (invalidList.length > 0) {
-          msg += ` | โค้ดที่ไม่ถูกต้อง: ${invalidList.join(', ')}`;
-        }
-        statusMsg.innerText = msg;
-      } else {
-        appliedTotalDiscount = 0;
-        statusMsg.style.color = "var(--danger)";
-        statusMsg.innerText = `โค้ดส่วนลดไม่ถูกต้อง (${invalidList.join(', ')})`;
       }
 
+      if (isValid) {
+        appliedOptionDiscount = foundDiscount;
+        statusMsg.style.color = "var(--accent-vip)";
+        statusMsg.innerText = `ใช้โค้ดสำเร็จ! ได้รับส่วนลด ฿${appliedOptionDiscount}`;
+        
+        // เคลียร์โค้ดใบการ์ดหลักออกหากเคยใส่ไว้
+        activeSecretCodes = [];
+        document.getElementById("secretStatusTag").className = "secret-status-tag";
+        document.getElementById("secretStatusTag").innerHTML = "";
+      } else {
+        appliedOptionDiscount = 0;
+        statusMsg.style.color = "var(--danger)";
+        statusMsg.innerText = "โค้ดส่วนลดไม่ถูกต้องสำหรับตัวเลือกนี้";
+      }
       calculateModalPrice();
     }
 
