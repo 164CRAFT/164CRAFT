@@ -704,7 +704,7 @@
 
     let activeCategory = "ALL";
     let activeSaleMode = "READY";
-    let activeSecretCodes = [];
+    let activeSecretCodes = JSON.parse(localStorage.getItem("activeSecretCodes") || "[]");
     let cart = [];
     let currentSelectedProduct = null;
     let appliedOptionDiscount = 0;
@@ -742,6 +742,7 @@
     }
 
     function initStoreFront() {
+      updateSecretStatusDisplay();
       initAuthListener();
       loadDataFromFirebase();
       initModalOutsideClick();
@@ -802,7 +803,11 @@
     }
 
     function logoutGoogle() {
-      auth.signOut().then(() => showToast("ออกจากระบบเรียบร้อย"));
+      auth.signOut().then(() => {
+        localStorage.removeItem("activeSecretCodes");
+        clearHeaderVipCode();
+        showToast("ออกจากระบบเรียบร้อย");
+      });
     }
 
     function handleProfileMouseEnter() {
@@ -1010,6 +1015,7 @@
       const dropdownInput = document.getElementById("dropdownVipInput");
       if (dropdownInput) dropdownInput.value = "";
 
+      localStorage.setItem("activeSecretCodes", JSON.stringify(activeSecretCodes));
       updateSecretStatusDisplay();
 
       if (failList.length > 0 && successList.length === 0) {
@@ -1039,6 +1045,7 @@
 
     function clearHeaderVipCode() {
       activeSecretCodes = [];
+      localStorage.removeItem("activeSecretCodes");
       updateSecretStatusDisplay();
       renderCategories();
       renderProducts();
@@ -1338,7 +1345,6 @@
         }
       }
 
-      // ดึงโค้ดส่วนลดอัตโนมัติประจำตัวสมาชิกมาใส่ในช่องแบบ Read-only และคำนวณส่วนลดทันที
       const currentUser = auth.currentUser;
       if (currentUser && currentUser.email) {
         db.collection("user_profiles").doc(currentUser.email.toLowerCase()).get().then((doc) => {
