@@ -1220,7 +1220,7 @@
       document.getElementById("brandDrawerDropdown").classList.remove("show");
     }
 
-    // คำนวณหาและแสดงราคาที่ต่ำที่สุดของสินค้า (รวมสเกลและส่วนลดโค้ด)
+    // คำนวณหาและแสดงราคาที่ต่ำที่สุดของสินค้า (ค้นหาทุกสเกลแล้วเลือกตัวที่ถูกที่สุด)
     function getCardLowestDiscountedPrice(p) {
       let scalesArr = (p.scales && p.scales.length > 0) ? p.scales : ['Standard'];
       let codesToCheck = [...userAssignedCodes].filter(c => vipCodesList.includes(c.toUpperCase()));
@@ -1487,10 +1487,10 @@
       if (optSelect) {
         if (prod.options && prod.options.length > 0) {
           optSelect.innerHTML = prod.options.map((opt, idx) => `
-            <option value="${idx}">${opt.name} (+฿${opt.extraPrice || 0})</option>
+            <option value="${idx}">${opt.name} (-฿${opt.extraPrice || 0})</option>
           `).join('');
         } else {
-          optSelect.innerHTML = `<option value="0">ตัวเลือกมาตรฐาน (+฿0)</option>`;
+          optSelect.innerHTML = `<option value="0">ตัวเลือกมาตรฐาน (-฿0)</option>`;
         }
       }
 
@@ -1569,7 +1569,9 @@
 
       const optExtra = (currentSelectedProduct.options && currentSelectedProduct.options[optIdx]) ? (currentSelectedProduct.options[optIdx].extraPrice || 0) : 0;
 
-      let originalTotal = basePrice + optExtra;
+      let originalTotal = basePrice - optExtra;
+      if (originalTotal < 0) originalTotal = 0;
+
       let finalTotal = originalTotal - appliedOptionDiscount;
       if (finalTotal < 0) finalTotal = 0;
 
