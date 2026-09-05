@@ -805,6 +805,16 @@
         snapshot.forEach((doc) => ordersList.push({ id: doc.id, ...doc.data() }));
       });
 
+      // ปรับปรุงการตรวจสอบสิทธิ์: ใช้ sessionStorage เพื่อให้ตรวจสอบสิทธิ์เฉพาะรอบการเปิดเบราว์เซอร์เท่านั้น (ถ้าปิดเว็บต้องตรวจสอบใหม่)
+      const adminSession = sessionStorage.getItem("admin_authenticated");
+      if (adminSession === "true") {
+        closeModal('passcodeModal');
+      } else {
+        auth.signOut().then(() => {
+          openPasscodeModal();
+        });
+      }
+
       auth.onAuthStateChanged((user) => {
         const statusMsg = document.getElementById("adminAuthStatus");
         if (user) {
@@ -812,6 +822,7 @@
           if (ALLOWED_ADMIN_EMAILS.includes(userEmail)) {
             statusMsg.style.color = "#059669";
             statusMsg.innerText = `ยินดีต้อนรับ Admin: ${user.email}`;
+            sessionStorage.setItem("admin_authenticated", "true");
             setTimeout(() => closeModal('passcodeModal'), 400);
 
             db.collection("user_profiles").doc(user.email.toLowerCase()).set({
@@ -824,12 +835,20 @@
           } else {
             statusMsg.style.color = "var(--danger)";
             statusMsg.innerText = `บัญชี (${user.email}) ไม่มีสิทธิ์เข้าถึงระบบหลังบ้านนี้`;
+            sessionStorage.removeItem("admin_authenticated");
             auth.signOut();
           }
         } else {
-          openPasscodeModal();
+          if (sessionStorage.getItem("admin_authenticated") !== "true") {
+            openPasscodeModal();
+          }
         }
       });
+    }
+
+    function openPasscodeModal() {
+      sessionStorage.removeItem("admin_authenticated");
+      openModal('passcodeModal');
     }
 
     function applyAdminTheme() {
@@ -884,7 +903,7 @@
 
     function checkOutsideModalClick(event, modalId) {
       if (event.target.id === modalId) {
-        if (modalId === 'addProductModal') return;
+        if (modalId === 'addProductModal' || modalId === 'passcodeModal') return;
         closeModal(modalId);
       }
     }
