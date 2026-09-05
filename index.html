@@ -228,8 +228,8 @@
     }
 
     .secret-status-tag {
-      font-size: 0.68rem; margin-top: 4px; line-height: 1.3; display: none;
-      padding: 4px 8px; background: var(--accent-vip-bg); border: 1px solid #6ee7b7; border-radius: 4px; color: #065f46;
+      font-size: 0.68rem; margin-top: 4px; line-height: 1.4; display: none;
+      padding: 6px 8px; background: var(--accent-vip-bg); border: 1px solid #6ee7b7; border-radius: 4px; color: #065f46;
     }
     .secret-status-tag.active { display: block; }
 
@@ -417,7 +417,7 @@
     <div class="header-actions" style="position: relative;">
       
       <div class="header-vip-box">
-        <input type="password" id="headerVipInput" class="header-vip-input" placeholder="🗝️ กรอกรหัส" autocomplete="off" onkeydown="if(event.key==='Enter') applyHeaderVipCode()" />
+        <input type="password" id="headerVipInput" class="header-vip-input" placeholder="🗝️ กรอกรหัส (หลายโค้ดได้)" autocomplete="off" onkeydown="if(event.key==='Enter') applyHeaderVipCode()" />
         <button type="button" class="btn-action" style="height:30px; padding:0 12px; font-size:0.72rem; background:#111; color:#fff; border:none; border-radius:8px;" onclick="applyHeaderVipCode()">ปลดล็อก</button>
       </div>
 
@@ -441,7 +441,7 @@
 
             <div style="padding: 8px 10px; background: #fafafa; border-bottom: 1px solid var(--border-color);">
               <div class="header-vip-box" style="display: flex; width: 100%;">
-                <input type="password" id="dropdownVipInput" class="header-vip-input" placeholder="🗝️ กรอกรหัส" style="width: 100%; height: 28px; font-size: 0.72rem;" autocomplete="off" onkeydown="if(event.key==='Enter') applyDropdownVipCode()" />
+                <input type="password" id="dropdownVipInput" class="header-vip-input" placeholder="🗝️ กรอกรหัส (หลายโค้ดได้)" style="width: 100%; height: 28px; font-size: 0.72rem;" autocomplete="off" onkeydown="if(event.key==='Enter') applyDropdownVipCode()" />
                 <button type="button" class="btn-action" style="height: 28px; padding: 0 10px; font-size: 0.7rem; background:#111; color:#fff; border:none; border-radius:6px;" onclick="applyDropdownVipCode()">ปลดล็อก</button>
               </div>
             </div>
@@ -535,7 +535,7 @@
           <div class="form-group"><label>ตัวเลือกตกแต่ง (Option):</label><select id="detailOptionSelect" class="form-control" onchange="calculateModalPrice()"></select></div>
 
           <div class="form-group">
-            <label>โค้ดส่วนลดประจำตัวเลือก (กรอกได้หลายโค้ด คั่นด้วยเครื่องหมายจุลภาค ,):</label>
+            <label>โค้ดส่วนลด (กรอกได้หลายโค้ด คั่นด้วยจุลภาค , หรือเว้นวรรค):</label>
             <div style="display:flex; gap: 6px;">
               <input type="text" id="promoCodeInput" class="form-control" placeholder="เช่น CODE1, CODE2" style="text-transform: uppercase;" onkeydown="if(event.key==='Enter') applyPromoCode()">
               <button type="button" class="btn-action btn-secondary" style="padding:4px 10px; white-space:nowrap;" onclick="applyPromoCode()">ใช้โค้ด</button>
@@ -707,7 +707,7 @@
 
     let activeCategory = "ALL";
     let activeSaleMode = "READY";
-    let activeSecretCode = "";
+    let activeSecretCodes = []; // รองรับหลายโค้ดพร้อมกัน
     let cart = [];
     let currentSelectedProduct = null;
     let appliedTotalDiscount = 0;
@@ -982,33 +982,55 @@
       if (menu) menu.style.display = "none";
     }
 
-    function processVipCode(rawCode) {
-      const code = (rawCode || "").trim().toUpperCase();
+    function processVipCode(rawInput) {
+      if (!rawInput) { clearHeaderVipCode(); return; }
+
+      // รองรับการกรอกหลายโค้ดพร้อมกันคั่นด้วยจุลภาคหรือเว้นวรรค
+      const codes = rawInput.split(/[,,\s]+/).map(c => c.trim().toUpperCase()).filter(Boolean);
+      let successList = [];
+      let failList = [];
+
+      codes.forEach(code => {
+        if (vipCodesList.includes(code)) {
+          if (!activeSecretCodes.includes(code)) {
+            activeSecretCodes.push(code);
+          }
+          successList.push(code);
+        } else {
+          failList.push(code);
+        }
+      });
+
+      const headerInput = document.getElementById("headerVipInput");
+      if (headerInput) headerInput.value = "";
+      const dropdownInput = document.getElementById("dropdownVipInput");
+      if (dropdownInput) dropdownInput.value = "";
+
       const statusTag = document.getElementById("secretStatusTag");
 
-      if (!code) { clearHeaderVipCode(); return; }
-
-      if (vipCodesList.includes(code)) {
-        activeSecretCode = code;
-        const maskedCode = code.length > 2 ? code.substring(0, 2) + "•".repeat(code.length - 2) : "••••••";
-        
-        const headerInput = document.getElementById("headerVipInput");
-        if (headerInput) headerInput.value = "";
-        const dropdownInput = document.getElementById("dropdownVipInput");
-        if (dropdownInput) dropdownInput.value = "";
-
+      if (activeSecretCodes.length > 0) {
         statusTag.className = "secret-status-tag active";
-        statusTag.innerHTML = `<div style="font-weight:bold;">ปลดล็อกสำเร็จ: ${maskedCode} [ACTIVE]</div>`;
+        let tagHtml = `<div style="font-weight:bold; margin-bottom:2px;">สถานะปลดล็อก [ACTIVE]:</div>`;
+        activeSecretCodes.forEach(c => {
+          const masked = c.length > 2 ? c.substring(0, 2) + "•".repeat(c.length - 2) : "••••";
+          tagHtml += `<div>• ${masked}</div>`;
+        });
+        statusTag.innerHTML = tagHtml;
         renderCategories();
         renderProducts();
         showToast("ปลดล็อกสำเร็จ");
       } else {
+        statusTag.className = "secret-status-tag";
+        statusTag.innerHTML = "";
+      }
+
+      if (failList.length > 0 && successList.length === 0) {
         showToast("ไม่พบรหัสนี้ในระบบ");
       }
     }
 
     function clearHeaderVipCode() {
-      activeSecretCode = "";
+      activeSecretCodes = [];
       const headerInput = document.getElementById("headerVipInput");
       if (headerInput) headerInput.value = "";
       const dropdownInput = document.getElementById("dropdownVipInput");
@@ -1030,9 +1052,9 @@
         if (activeSaleMode === 'PREORDER' && !preorderActive) return false;
 
         const prodSecret = (p.secretCode || "").trim().toUpperCase();
-        if (activeSecretCode) {
+        if (activeSecretCodes.length > 0) {
           const isGeneral = (prodSecret === "");
-          const isVip = (prodSecret === activeSecretCode);
+          const isVip = activeSecretCodes.includes(prodSecret);
           if (!isGeneral && !isVip) return false;
         } else {
           if (prodSecret !== "") return false;
@@ -1056,9 +1078,9 @@
         if (activeSaleMode === 'PREORDER' && !preorderActive) return false;
 
         const prodSecret = (p.secretCode || "").trim().toUpperCase();
-        if (activeSecretCode) {
+        if (activeSecretCodes.length > 0) {
           const isGeneral = (prodSecret === "");
-          const isVip = (prodSecret === activeSecretCode);
+          const isVip = activeSecretCodes.includes(prodSecret);
           if (!isGeneral && !isVip) return false;
         } else {
           if (prodSecret !== "") return false;
@@ -1119,9 +1141,9 @@
         if (activeSaleMode === 'PREORDER' && !preorderActive) return false;
 
         const prodSecret = (p.secretCode || "").trim().toUpperCase();
-        if (activeSecretCode) {
+        if (activeSecretCodes.length > 0) {
           const isGeneral = (prodSecret === "");
-          const isVip = (prodSecret === activeSecretCode);
+          const isVip = activeSecretCodes.includes(prodSecret);
           if (!isGeneral && !isVip) return false;
         } else {
           if (prodSecret !== "") return false;
@@ -1343,7 +1365,7 @@
       let total = basePrice + optExtra - appliedTotalDiscount;
       if (total < 0) total = 0;
 
-      document.getElementById("modalTotalPrice").innerText = `฿${total} ${appliedTotalDiscount > 0 ? `(-฿${appliedTotalDiscount} ส่วนลด)` : ''}`;
+      document.getElementById("modalTotalPrice").innerText = `฿${total} ${appliedTotalDiscount > 0 ? `(-฿${appliedTotalDiscount})` : ''}`;
       return total;
     }
 
@@ -1359,7 +1381,6 @@
         return;
       }
 
-      // รองรับการกรอกหลายโค้ดคั่นด้วยเครื่องหมายจุลภาค (,) หรือเว้นวรรค
       const enteredCodes = rawInput.split(/[,,\s]+/).map(c => c.trim().toUpperCase()).filter(Boolean);
       const optIdx = parseInt(document.getElementById("detailOptionSelect").value) || 0;
       const selectedOpt = currentSelectedProduct.options ? currentSelectedProduct.options[optIdx] : null;
