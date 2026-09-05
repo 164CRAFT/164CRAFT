@@ -918,6 +918,7 @@
       }, (err) => console.log("Error loading products:", err));
     }
 
+    // ฟังก์ชันเปิด Modal พร้อมผลัก History State เพื่อรองรับปุ่มย้อนกลับบนมือถือ
     function openModal(id) { 
       const modal = document.getElementById(id);
       if (modal) {
@@ -935,6 +936,7 @@
       }
     }
 
+    // ดักจับการกดปุ่มย้อนกลับ (Back Button) เพื่อปิด Modal ที่เปิดอยู่ทั้งหมดทันที
     window.addEventListener('popstate', (event) => {
       const modals = ['detailModal', 'cartModal', 'shippingModal', 'accountModal', 'orderSummaryModal'];
       modals.forEach(id => {
