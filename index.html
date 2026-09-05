@@ -994,9 +994,10 @@
     }
 
     function processVipCode(rawInput) {
-      if (!rawInput) { clearHeaderVipCode(); return; }
+      const cleanInput = (rawInput || "").trim();
+      if (!cleanInput) return; // ถ้าเว้นว่างไว้ จะไม่ทำลายหรือลบโค้ดเดิมที่ใช้งานอยู่
 
-      const codes = rawInput.split(/[,,\s]+/).map(c => c.trim().toUpperCase()).filter(Boolean);
+      const codes = cleanInput.split(/[,,\s]+/).map(c => c.trim().toUpperCase()).filter(Boolean);
       let successList = [];
       let failList = [];
 
