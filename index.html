@@ -1254,6 +1254,7 @@
         if (finalP < 0) finalP = 0;
 
         if (maxDisc > 0) {
+          // ปรับตำแหน่งตามภาพที่ 2: ราคาเต็มขีดทับไว้ข้างหน้า ตามด้วยราคาลดสีแดง
           return `<span style="text-decoration: line-through; color: #888; font-size: 0.85rem; margin-right: 4px;">฿${totalBase}</span> <span style="color: var(--danger);">฿${finalP}</span>`;
         }
       }
@@ -1452,7 +1453,7 @@
       const scaleSelect = document.getElementById("detailScaleSelect");
       if (scaleSelect) {
         scaleSelect.innerHTML = (prod.scales || []).map(sc => {
-          const scPrice = (prod.scalePrices && prod.scalePrices[sc] !== undefined) ? prod.scalePrices[sc] : prod.basePrice;
+          const scPrice = (prod.scalePrices && prod.scalePrices[sc] !== undefined) ? prod.scalePrices[sc].price : prod.basePrice;
           return `<option value="${sc}">${sc} (฿${scPrice})</option>`;
         }).join('');
       }
@@ -1509,7 +1510,15 @@
       val += delta;
 
       if (currentSelectedProduct) {
-        const maxLimit = activeSaleMode === 'READY' ? (currentSelectedProduct.readyStock || 0) : (currentSelectedProduct.preorderUnlimited ? 999999 : (currentSelectedProduct.preorderStock || 0));
+        const scale = document.getElementById("detailScaleSelect").value;
+        let maxLimit = 999999;
+        if (currentSelectedProduct.scalePrices && currentSelectedProduct.scalePrices[scale]) {
+          const sp = currentSelectedProduct.scalePrices[scale];
+          maxLimit = activeSaleMode === 'READY' ? (sp.readyStock || 0) : (sp.preorderUnlimited ? 999999 : (sp.preorderStock || 0));
+        } else {
+          maxLimit = activeSaleMode === 'READY' ? (currentSelectedProduct.readyStock || 0) : (currentSelectedProduct.preorderUnlimited ? 999999 : (currentSelectedProduct.preorderStock || 0));
+        }
+
         if (val > maxLimit) {
           val = maxLimit;
           showToast(`จำกัดจำนวนสูงสุดไม่เกินสต็อก (${maxLimit} ชิ้น)`);
@@ -1524,7 +1533,13 @@
       if (!currentSelectedProduct) return 0;
       const scale = document.getElementById("detailScaleSelect").value;
       const optIdx = parseInt(document.getElementById("detailOptionSelect").value) || 0;
-      const basePrice = (currentSelectedProduct.scalePrices && currentSelectedProduct.scalePrices[scale] !== undefined) ? currentSelectedProduct.scalePrices[scale] : currentSelectedProduct.basePrice;
+      
+      let basePrice = currentSelectedProduct.basePrice || 0;
+      if (currentSelectedProduct.scalePrices && currentSelectedProduct.scalePrices[scale] !== undefined) {
+        const sp = currentSelectedProduct.scalePrices[scale];
+        basePrice = (typeof sp === 'object' && sp.price !== undefined) ? sp.price : sp;
+      }
+
       const optExtra = (currentSelectedProduct.options && currentSelectedProduct.options[optIdx]) ? (currentSelectedProduct.options[optIdx].extraPrice || 0) : 0;
 
       let originalTotal = basePrice + optExtra;
@@ -1608,13 +1623,30 @@
       if (!currentSelectedProduct) return;
 
       const incomingSaleMode = activeSaleMode;
-      if (incomingSaleMode === 'READY') {
-        const isReadyActive = currentSelectedProduct.readyActive || false;
-        const readyStock = currentSelectedProduct.readyStock || 0;
-        if (!isReadyActive || readyStock <= 0) {
-          showToast("สินค้านี้หมดชั่วคราว ไม่สามารถสั่งซื้อได้");
-          return;
+      const scale = document.getElementById("detailScaleSelect").value;
+      
+      let maxLimit = 999999;
+      let isReadyAct = currentSelectedProduct.readyActive || false;
+      let isPreAct = currentSelectedProduct.preorderActive || false;
+
+      if (currentSelectedProduct.scalePrices && currentSelectedProduct.scalePrices[scale]) {
+        const sp = currentSelectedProduct.scalePrices[scale];
+        if (typeof sp === 'object') {
+          isReadyAct = sp.readyActive;
+          isPreAct = sp.preorderActive;
+          maxLimit = incomingSaleMode === 'READY' ? (sp.readyStock || 0) : (sp.preorderUnlimited ? 999999 : (sp.preorderStock || 0));
         }
+      } else {
+        maxLimit = incomingSaleMode === 'READY' ? (currentSelectedProduct.readyStock || 0) : (currentSelectedProduct.preorderUnlimited ? 999999 : (currentSelectedProduct.preorderStock || 0));
+      }
+
+      if (incomingSaleMode === 'READY' && (!isReadyAct || maxLimit <= 0)) {
+        showToast("สินค้านี้หมดชั่วคราว หรือปิดการขายพร้อมส่ง");
+        return;
+      }
+      if (incomingSaleMode === 'PREORDER' && !isPreAct) {
+        showToast("สินค้านี้ปิดการขายพรีออเดอร์");
+        return;
       }
 
       if (cart.length > 0) {
@@ -1628,7 +1660,6 @@
       const qtyInput = document.getElementById("modalQtyInput");
       const addQty = parseInt(qtyInput ? qtyInput.value : 1) || 1;
 
-      const scale = document.getElementById("detailScaleSelect").value;
       const optIdx = parseInt(document.getElementById("detailOptionSelect").value) || 0;
       const selectedOpt = (currentSelectedProduct.options && currentSelectedProduct.options[optIdx]) ? currentSelectedProduct.options[optIdx] : { name: 'Standard', extraPrice: 0 };
       const finalPrice = calculateModalPrice();
@@ -1640,7 +1671,6 @@
         item.saleMode === incomingSaleMode
       );
 
-      const maxLimit = incomingSaleMode === 'READY' ? (currentSelectedProduct.readyStock || 0) : (currentSelectedProduct.preorderUnlimited ? 999999 : (currentSelectedProduct.preorderStock || 0));
       const currentInCart = existingIndex > -1 ? cart[existingIndex].qty : 0;
 
       if (currentInCart + addQty > maxLimit) {
@@ -1722,7 +1752,13 @@
     function changeCartQty(idx, delta) {
       const item = cart[idx];
       const prod = item.product;
-      const maxLimit = item.saleMode === 'READY' ? (prod.readyStock || 0) : (prod.preorderUnlimited ? 999999 : (prod.preorderStock || 0));
+      let maxLimit = 999999;
+      if (prod.scalePrices && prod.scalePrices[item.scale]) {
+        const sp = prod.scalePrices[item.scale];
+        maxLimit = item.saleMode === 'READY' ? (sp.readyStock || 0) : (sp.preorderUnlimited ? 999999 : (sp.preorderStock || 0));
+      } else {
+        maxLimit = item.saleMode === 'READY' ? (prod.readyStock || 0) : (prod.preorderUnlimited ? 999999 : (prod.preorderStock || 0));
+      }
 
       const newQty = item.qty + delta;
       if (newQty > maxLimit) {
@@ -1758,7 +1794,6 @@
       updateCartBadge();
       renderCart();
       
-      // ปิดหน้าต่าง Popup ยืนยัน และปิดหน้าต่างตะกร้าสินค้าทั้งหมดทันทีตามเงื่อนไข
       closeModal('clearCartConfirmModal');
       closeModal('cartModal');
       showToast("ล้างตะกร้าสินค้าเรียบร้อยแล้ว");
@@ -1840,7 +1875,7 @@
                 </div>
               </div>
               <div style="text-align:right; flex-shrink:0; font-size:0.78rem;">
-                <div>${it.qty} سين x ฿${it.price}</div>
+                <div>${it.qty} ชิ้น x ฿${it.price}</div>
                 <strong style="color:var(--danger);">฿${lineTotal}</strong>
               </div>
             </div>
