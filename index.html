@@ -385,7 +385,6 @@
     .form-control:focus { background: #fff; border-color: var(--border-dark); box-shadow: 0 0 0 3px rgba(0,0,0,0.04); }
     textarea.form-control { min-height: 70px; }
 
-    /* Quantity Box for Detail Modal */
     .modal-qty-container { display: flex; align-items: center; gap: 10px; margin-top: 2px; }
     .modal-qty-box {
       display: flex; align-items: center; border: 1px solid var(--border-color); border-radius: var(--radius);
@@ -553,7 +552,7 @@
           </div>
 
           <div class="compact-price-bar">
-            <span class="compact-price-label">ราคาสุทธิ</span>
+            <span class="compact-price-label">ราคารวมสุทธิ</span>
             <span class="compact-price-val" id="modalTotalPrice">฿0</span>
           </div>
 
@@ -704,7 +703,9 @@
 
     let brands = ["Ducati", "Honda", "Isuzu", "Kawasaki", "Toyota", "Yamaha"];
     let scalesList = ["1/12", "1/32", "1/43", "1/64"];
-    let vipCodesList = ["MEMBER99", "SECRET88", "VIP164"];
+    let vipCodesList = [];
+    let vipCodesMap = {};
+
     let systemSettings = {
       storeName: "164CRAFT",
       adminEmail: "admin@164craft.com",
@@ -765,10 +766,8 @@
       document.getElementById("modeReadyBtn").className = `sale-mode-btn ${activeSaleMode === 'READY' ? 'active' : ''}`;
       document.getElementById("modePreorderBtn").className = `sale-mode-btn ${activeSaleMode === 'PREORDER' ? 'active' : ''}`;
 
-      updateSecretStatusDisplay();
-      updateCartBadge();
-      initAuthListener();
       loadDataFromFirebase();
+      initAuthListener();
       initModalOutsideClick();
       initBrandDrawerOutsideClick();
     }
@@ -913,11 +912,25 @@
           if (data.brands) brands = sortAlphabetically(data.brands);
           if (data.scales) scalesList = sortAlphabetically(data.scales);
           if (data.vipCodes) {
-            vipCodesList = data.vipCodes.map(item => typeof item === 'object' ? item.code : item);
+            vipCodesList = [];
+            vipCodesMap = {};
+            data.vipCodes.forEach(item => {
+              const c = typeof item === 'object' ? (item.code || "").toUpperCase() : (item || "").toUpperCase();
+              const n = typeof item === 'object' ? (item.note || "") : "";
+              if (c) {
+                vipCodesList.push(c);
+                vipCodesMap[c] = n;
+              }
+            });
           }
           if (data.settings) systemSettings = data.settings;
         }
+
+        activeSecretCodes = activeSecretCodes.filter(c => vipCodesList.includes(c.toUpperCase()));
+        localStorage.setItem("activeSecretCodes", JSON.stringify(activeSecretCodes));
+
         applyShopSettings();
+        updateSecretStatusDisplay();
         renderCategories();
       }, (err) => console.log("Error loading settings:", err));
 
@@ -1075,7 +1088,7 @@
       updateSecretStatusDisplay();
 
       if (failList.length > 0 && successList.length === 0) {
-        showToast("ไม่พบรหัสนี้ในระบบ");
+        showToast("ไม่พบรหัสนี้ในระบบจัดการรหัส");
       } else if (successList.length > 0) {
         renderCategories();
         renderProducts();
@@ -1085,12 +1098,15 @@
 
     function updateSecretStatusDisplay() {
       const statusTag = document.getElementById("secretStatusTag");
-      if (activeSecretCodes.length > 0) {
+      const validActiveCodes = activeSecretCodes.filter(c => vipCodesList.includes(c.toUpperCase()));
+
+      if (validActiveCodes.length > 0) {
         statusTag.className = "secret-status-tag active";
         let tagHtml = `<div style="font-weight:bold; margin-bottom:2px;">ปลดล็อกสำเร็จ [ACTIVE]:</div>`;
-        activeSecretCodes.forEach(c => {
+        validActiveCodes.forEach(c => {
           const masked = c.length > 2 ? c.substring(0, 2) + "•".repeat(c.length - 2) : "••••";
-          tagHtml += `<div>• ${masked} (${c})</div>`;
+          const noteText = vipCodesMap[c] ? ` (${vipCodesMap[c]})` : ` (${c})`;
+          tagHtml += `<div>• ${masked}${noteText}</div>`;
         });
         statusTag.innerHTML = tagHtml;
       } else {
@@ -1108,6 +1124,7 @@
     }
 
     function getProductCountByBrand(brand = "ALL") {
+      const validActiveCodes = activeSecretCodes.filter(c => vipCodesList.includes(c.toUpperCase()));
       return products.filter(p => {
         const readyActive = p.readyActive || false;
         const readyStock = p.readyStock !== undefined ? p.readyStock : 0;
@@ -1117,9 +1134,9 @@
         if (activeSaleMode === 'PREORDER' && !preorderActive) return false;
 
         const prodSecret = (p.secretCode || "").trim().toUpperCase();
-        if (activeSecretCodes.length > 0) {
+        if (validActiveCodes.length > 0) {
           const isGeneral = (prodSecret === "");
-          const isVip = activeSecretCodes.includes(prodSecret);
+          const isVip = validActiveCodes.includes(prodSecret);
           if (!isGeneral && !isVip) return false;
         } else {
           if (prodSecret !== "") return false;
@@ -1133,6 +1150,7 @@
       const cont = document.getElementById("brandDrawerDropdown");
       const labelName = document.getElementById("currentBrandName");
       const labelCount = document.getElementById("currentBrandCount");
+      const validActiveCodes = activeSecretCodes.filter(c => vipCodesList.includes(c.toUpperCase()));
 
       const currentFilteredCount = products.filter(p => {
         const readyActive = p.readyActive || false;
@@ -1143,9 +1161,9 @@
         if (activeSaleMode === 'PREORDER' && !preorderActive) return false;
 
         const prodSecret = (p.secretCode || "").trim().toUpperCase();
-        if (activeSecretCodes.length > 0) {
+        if (validActiveCodes.length > 0) {
           const isGeneral = (prodSecret === "");
-          const isVip = activeSecretCodes.includes(prodSecret);
+          const isVip = validActiveCodes.includes(prodSecret);
           if (!isGeneral && !isVip) return false;
         } else {
           if (prodSecret !== "") return false;
@@ -1197,8 +1215,11 @@
       }
       
       let maxDisc = 0;
-      let codesToCheck = [...userAssignedCodes];
-      activeSecretCodes.forEach(c => { if (!codesToCheck.includes(c)) codesToCheck.push(c); });
+      let codesToCheck = [...userAssignedCodes].filter(c => vipCodesList.includes(c.toUpperCase()));
+      activeSecretCodes.forEach(c => {
+        const uc = c.toUpperCase();
+        if (vipCodesList.includes(uc) && !codesToCheck.includes(uc)) codesToCheck.push(uc);
+      });
 
       if (p.options && p.options.length > 0) {
         const opt = p.options[0];
@@ -1224,7 +1245,7 @@
           return `<span style="text-decoration: line-through; color: #888; font-size: 0.85rem; margin-right: 4px;">฿${totalBase}</span> <span style="color: var(--danger);">฿${finalP}</span>`;
         }
       }
-      return `<span>฿${base}</span>`;
+      return `<span style="color: var(--danger);">฿${base}</span>`;
     }
 
     function renderProducts() {
@@ -1233,6 +1254,7 @@
       const sidebarSearch = (document.getElementById("sidebarSearchInput")?.value || "").trim().toLowerCase();
       const search = mobileSearch || sidebarSearch;
       const overviewCounter = document.getElementById("filterOverviewCount");
+      const validActiveCodes = activeSecretCodes.filter(c => vipCodesList.includes(c.toUpperCase()));
 
       const filtered = products.filter(p => {
         const readyActive = p.readyActive || false;
@@ -1243,9 +1265,9 @@
         if (activeSaleMode === 'PREORDER' && !preorderActive) return false;
 
         const prodSecret = (p.secretCode || "").trim().toUpperCase();
-        if (activeSecretCodes.length > 0) {
+        if (validActiveCodes.length > 0) {
           const isGeneral = (prodSecret === "");
-          const isVip = activeSecretCodes.includes(prodSecret);
+          const isVip = validActiveCodes.includes(prodSecret);
           if (!isGeneral && !isVip) return false;
         } else {
           if (prodSecret !== "") return false;
@@ -1434,8 +1456,11 @@
         }
       }
 
-      let codesToCheck = [...userAssignedCodes];
-      activeSecretCodes.forEach(c => { if (!codesToCheck.includes(c)) codesToCheck.push(c); });
+      let codesToCheck = [...userAssignedCodes].filter(c => vipCodesList.includes(c.toUpperCase()));
+      activeSecretCodes.forEach(c => {
+        const uc = c.toUpperCase();
+        if (vipCodesList.includes(uc) && !codesToCheck.includes(uc)) codesToCheck.push(uc);
+      });
 
       if (codesToCheck.length > 0) {
         const maskedCodesStr = codesToCheck.map(c => {
