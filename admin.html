@@ -113,7 +113,8 @@
       background: rgba(0, 0, 0, 0.65); backdrop-filter: blur(4px);
       display: none; align-items: flex-end; justify-content: center; z-index: 1000; padding: 0;
     }
-    #addProductModal { z-index: 1100; }
+    #manageProductsModal { z-index: 1050; }
+    #addProductModal { z-index: 1150; }
 
     @media(min-width: 640px) { .modal-overlay { align-items: center; justify-content: center; padding: 20px; } }
     .modal-box {
@@ -314,7 +315,7 @@
 
   <!-- MANAGE PRODUCTS MODAL -->
   <div id="manageProductsModal" class="modal-overlay" onclick="checkOutsideModalClick(event, 'manageProductsModal')">
-    <div class="modal-box">
+    <div class="modal-box" onclick="event.stopPropagation()">
       <div class="modal-header">
         <span>📋 รายการสินค้าทั้งหมดในระบบ</span>
         <button class="modal-close" onclick="closeModal('manageProductsModal')">✕</button>
@@ -355,7 +356,7 @@
 
   <!-- ORDERS MODAL -->
   <div id="ordersModal" class="modal-overlay" onclick="checkOutsideModalClick(event, 'ordersModal')">
-    <div class="modal-box" style="max-width: 750px;">
+    <div class="modal-box">
       <div class="modal-header">
         <span>📦 คำสั่งซื้อสินค้าทั้งหมดในระบบ</span>
         <button class="modal-close" onclick="closeModal('ordersModal')">✕</button>
