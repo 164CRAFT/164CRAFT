@@ -117,6 +117,7 @@
     
     #orderDetailModal { z-index: 2000 !important; }
     #memberDetailModal { z-index: 1500 !important; }
+    #customConfirmModal { z-index: 3000 !important; }
 
     .modal-box {
       width: 100%; max-height: 92vh; background: var(--bg-card); border: 1px solid var(--border-color);
@@ -247,7 +248,7 @@
         <span style="font-size: 0.72rem; color: var(--accent-vip); background: var(--accent-vip-bg); padding: 3px 8px; border-radius: 12px; border: 1px solid #a7f3d0; width: fit-content;">● Google Admin Authenticated</span>
       </div>
       <p class="admin-desc">
-        ระบบจัดการสินค้า โคลนสินค้า ตั้งค่าธีมเว็บ และบริหารจัดการสต็อกสินค้า (เปิดขายพร้อมกันทั้งพร้อมส่งและพรีออเดอร์)[cite: 2]
+        ระบบจัดการสินค้า โคลนสินค้า ตั้งค่าธีมเว็บ และบริหารจัดการสต็อกสินค้า (เปิดขายพร้อมกันทั้งพร้อมส่งและพรีออเดอร์)
       </p>
 
       <div class="admin-menu-grid">
@@ -599,6 +600,18 @@
     </div>
   </div>
 
+  <!-- CUSTOM CONFIRM MODAL (แทนที่ alert/confirm แบบเบราว์เซอร์ เพื่อซ่อนชื่อโดเมน) -->
+  <div id="customConfirmModal" class="modal-overlay" style="z-index: 3000;">
+    <div class="modal-box" style="max-width: 380px; text-align: center;">
+      <div class="modal-header" style="justify-content: center; border-bottom: none; padding-bottom: 0;">⚠️ ยืนยันการทำรายการ</div>
+      <p id="customConfirmText" style="font-size: 0.88rem; color: var(--text-main); margin: 16px 0; font-weight: 600;"></p>
+      <div style="display: flex; gap: 8px;">
+        <button type="button" class="btn-action btn-secondary" style="flex: 1; height: 38px;" onclick="closeCustomConfirm(false)">ยกเลิก</button>
+        <button type="button" id="customConfirmOkBtn" class="btn-action btn-danger" style="flex: 1; height: 38px;">ยืนยันลบ</button>
+      </div>
+    </div>
+  </div>
+
   <!-- ADD / EDIT / CLONE PRODUCT MODAL -->
   <div id="addProductModal" class="modal-overlay" onclick="checkOutsideModalClick(event, 'addProductModal')">
     <div class="modal-box">
@@ -835,6 +848,7 @@
     let adminFilterBrand = "ALL";
     let adminFilterVip = "ALL";
     let draggedImageIndex = null;
+    let customConfirmCallback = null;
 
     let toastTimer = null;
     function showToast(message) {
@@ -846,6 +860,23 @@
       toastTimer = setTimeout(() => {
         toast.classList.remove("show");
       }, 2200);
+    }
+
+    function showCustomConfirm(message, onConfirm) {
+      document.getElementById("customConfirmText").innerText = message;
+      customConfirmCallback = onConfirm;
+      openModal("customConfirmModal");
+      document.getElementById("customConfirmOkBtn").onclick = function() {
+        closeModal("customConfirmModal");
+        if (customConfirmCallback) customConfirmCallback(true);
+      };
+    }
+
+    function closeCustomConfirm(result) {
+      closeModal("customConfirmModal");
+      if (!result && customConfirmCallback) {
+        customConfirmCallback(false);
+      }
     }
 
     function sortAlphabetically(arr) {
@@ -974,7 +1005,7 @@
     }
 
     window.addEventListener('popstate', (event) => {
-      const modals = ['manageProductsModal', 'ordersModal', 'shippingLabelModal', 'orderDetailModal', 'membersModal', 'memberDetailModal', 'webThemeConfigModal', 'addProductModal', 'vipCodesModal', 'configModal', 'bankConfigModal', 'shippingConfigModal', 'editCodeModal', 'passcodeModal'];
+      const modals = ['manageProductsModal', 'ordersModal', 'shippingLabelModal', 'orderDetailModal', 'membersModal', 'memberDetailModal', 'webThemeConfigModal', 'addProductModal', 'vipCodesModal', 'configModal', 'bankConfigModal', 'shippingConfigModal', 'editCodeModal', 'customConfirmModal', 'passcodeModal'];
       modals.forEach(id => {
         const m = document.getElementById(id);
         if (m && m.style.display === 'flex') {
@@ -1125,11 +1156,26 @@
     }
 
     function deleteOrder(orderId) {
-      if (!confirm("ต้องการลบคำสั่งซื้อนี้ออกจากระบบหรือไม่?")) return;
-      db.collection("orders").doc(orderId).delete().then(() => {
-        showToast("ลบคำสั่งซื้อสำเร็จ");
-      }).catch(err => {
-        showToast("เกิดข้อผิดพลาดในการลบออเดอร์");
+      showCustomConfirm("ต้องการลบคำสั่งซื้อนี้ออกจากระบบหรือไม่?", (confirmed) => {
+        if (confirmed) {
+          db.collection("orders").doc(orderId).delete().then(() => {
+            showToast("ลบคำสั่งซื้อสำเร็จ");
+          }).catch(err => {
+            showToast("เกิดข้อผิดพลาดในการลบออเดอร์");
+          });
+        }
+      });
+    }
+
+    function deleteProduct(productId) {
+      showCustomConfirm(`ต้องการลบ SKU: ${productId} หรือไม่?`, (confirmed) => {
+        if (confirmed) {
+          db.collection("products").doc(productId).delete().then(() => {
+            showToast("ลบสำเร็จ");
+          }).catch(err => {
+            showToast("เกิดข้อผิดพลาดในการลบสินค้า");
+          });
+        }
       });
     }
 
@@ -1950,11 +1996,6 @@
 
         openModal('addProductModal');
       });
-    }
-
-    function deleteProduct(productId) {
-      if (!confirm(`ต้องการลบ SKU: ${productId} หรือไม่?`)) return;
-      db.collection("products").doc(productId).delete().then(() => showToast("ลบสำเร็จ"));
     }
 
     function openVipCodesModal() { renderVipCodesList(); openModal('vipCodesModal'); }
