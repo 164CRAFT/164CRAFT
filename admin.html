@@ -115,7 +115,6 @@
     }
     @media(min-width: 640px) { .modal-overlay { align-items: center; justify-content: center; padding: 20px; } }
     
-    /* ตั้งค่า Z-Index พิเศษสำหรับ Modal ใบสั่งซื้อและรายละเอียดสมาชิกให้อยู่บนสุดเสมอ */
     #orderDetailModal { z-index: 2000 !important; }
     #memberDetailModal { z-index: 1500 !important; }
 
@@ -188,22 +187,27 @@
     }
     .opt-code-single-row { display: grid; grid-template-columns: 2fr auto; gap: 8px; align-items: center; }
 
+    /* ปรับปรุง UI แผงกรองสินค้าและแจ้งเตือนสถานะให้สะอาดตาและพรีเมียมยิ่งขึ้น */
     .admin-filter-bar {
-      display: flex; flex-direction: column; gap: 8px; background: #fafaf8;
-      border: 1px solid var(--border-color); border-radius: var(--radius); padding: 10px 12px; margin-bottom: 10px;
+      display: flex; flex-direction: column; gap: 10px; background: #ffffff;
+      border: 1px solid var(--border-color); border-radius: var(--radius); padding: 14px; margin-bottom: 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.02);
     }
     .admin-filter-chips { display: flex; flex-wrap: wrap; gap: 6px; }
     .admin-filter-btn {
-      background: #fff; border: 1px solid var(--border-color); border-radius: var(--radius);
-      padding: 4px 10px; font-size: 0.75rem; font-weight: 600; cursor: pointer; transition: all 0.15s;
+      background: #f8f8f6; border: 1px solid var(--border-color); border-radius: 6px;
+      padding: 6px 12px; font-size: 0.75rem; font-weight: 700; cursor: pointer; transition: all 0.2s; color: #444;
     }
-    .admin-filter-btn:hover { border-color: var(--accent); }
+    .admin-filter-btn:hover { border-color: var(--accent); color: #111; background: #f0f0ed; }
     .admin-filter-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
 
     .admin-prod-item {
       display: flex; justify-content: space-between; align-items: center;
-      border: 1px solid var(--border-color); background: #fafaf8; padding: 10px 12px; border-radius: var(--radius); margin-bottom: 8px; gap: 10px;
+      border: 1px solid var(--border-color); background: #ffffff; padding: 12px 14px; border-radius: var(--radius); margin-bottom: 8px; gap: 10px;
+      transition: all 0.2s ease; box-shadow: 0 2px 5px rgba(0,0,0,0.01);
     }
+    .admin-prod-item:hover { border-color: var(--accent); box-shadow: 0 4px 12px rgba(0,0,0,0.04); }
+
     .tags-container { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 0.5rem; }
     .tag-chip {
       background: #f0f0ec; border: 1px solid var(--border-color); padding: 8px 12px;
@@ -315,9 +319,9 @@
     </div>
   </div>
 
-  <!-- MANAGE PRODUCTS MODAL -->
+  <!-- MANAGE PRODUCTS MODAL (ปรับแต่ง UI แจ้งเตือนและตัวกรองให้พรีเมียมขึ้น) -->
   <div id="manageProductsModal" class="modal-overlay" onclick="checkOutsideModalClick(event, 'manageProductsModal')">
-    <div class="modal-box">
+    <div class="modal-box" style="max-width: 820px;">
       <div class="modal-header">
         <span>📋 รายการสินค้าทั้งหมดในระบบ</span>
         <button class="modal-close" onclick="closeModal('manageProductsModal')">✕</button>
@@ -330,17 +334,19 @@
       </div>
 
       <div class="admin-filter-bar">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-          <span style="font-size:0.75rem; font-weight:800; color:#333;">🏷️ ตัวกรองแบรนด์:</span>
-          <span id="adminFilteredCount" style="font-size:0.72rem; color:var(--text-muted);"></span>
+        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom: 1px solid #eee; padding-bottom: 6px;">
+          <span style="font-size:0.78rem; font-weight:800; color:#111;">🏷️ ตัวกรองแบรนด์สินค้า:</span>
+          <span id="adminFilteredCount" style="font-size:0.75rem; color:var(--accent-vip); font-weight:700; background:var(--accent-vip-bg); padding:2px 8px; border-radius:10px;"></span>
         </div>
         <div class="admin-filter-chips" id="adminBrandFilterChips"></div>
 
-        <div style="display:flex; gap:6px; margin-top:2px;">
-          <span style="font-size:0.75rem; font-weight:800; color:#333; line-height:26px;">สถานะ VIP:</span>
-          <button type="button" class="admin-filter-btn active" id="filterVipAllBtn" onclick="setAdminVipFilter('ALL')">ทั้งหมด</button>
-          <button type="button" class="admin-filter-btn" id="filterVipNormalBtn" onclick="setAdminVipFilter('NORMAL')">ทั่วไป</button>
-          <button type="button" class="admin-filter-btn" id="filterVipOnlyBtn" onclick="setAdminVipFilter('VIP')">เฉพาะ VIP 🔒</button>
+        <div style="display:flex; align-items:center; gap:8px; margin-top:4px; padding-top:6px; border-top:1px dashed #e2e8f0;">
+          <span style="font-size:0.78rem; font-weight:800; color:#111;">🔒 สถานะการมองเห็น:</span>
+          <div style="display:flex; gap:6px;">
+            <button type="button" class="admin-filter-btn active" id="filterVipAllBtn" onclick="setAdminVipFilter('ALL')">ทั้งหมด</button>
+            <button type="button" class="admin-filter-btn" id="filterVipNormalBtn" onclick="setAdminVipFilter('NORMAL')">ทั่วไป</button>
+            <button type="button" class="admin-filter-btn" id="filterVipOnlyBtn" onclick="setAdminVipFilter('VIP')">เฉพาะ VIP 🔒</button>
+          </div>
         </div>
       </div>
 
@@ -415,7 +421,7 @@
     </div>
   </div>
 
-  <!-- ORDER DETAIL MODAL (Z-Index สูงสุดเพื่อให้อยู่บนสุดเสมอ) -->
+  <!-- ORDER DETAIL MODAL -->
   <div id="orderDetailModal" class="modal-overlay" onclick="checkOutsideModalClick(event, 'orderDetailModal')">
     <div class="modal-box" style="max-width: 600px;">
       <div class="modal-header" style="color: #111;">
@@ -433,7 +439,7 @@
     </div>
   </div>
 
-  <!-- MEMBERS MODAL (หน้าหลัก แสดงเฉพาะ ชื่อ และ Email พร้อมปุ่มข้อมูล) -->
+  <!-- MEMBERS MODAL -->
   <div id="membersModal" class="modal-overlay" onclick="checkOutsideModalClick(event, 'membersModal')">
     <div class="modal-box" style="max-width: 600px;">
       <div class="modal-header">
@@ -450,7 +456,7 @@
     </div>
   </div>
 
-  <!-- MEMBER DETAIL POPUP MODAL (Popup ข้อมูลสมาชิก, จัดการโค้ด และประวัติใบสั่งซื้อย้อนหลังพร้อมวันเวลา) -->
+  <!-- MEMBER DETAIL POPUP MODAL -->
   <div id="memberDetailModal" class="modal-overlay" onclick="if(event.target===this) closeModal('memberDetailModal')">
     <div class="modal-box" style="max-width: 600px;">
       <div class="modal-header">
