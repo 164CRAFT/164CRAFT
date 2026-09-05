@@ -595,6 +595,15 @@
       </div>
       <div id="cartItemList" style="max-height: 45vh; overflow-y: auto; padding-right: 2px;">- ไม่มีรายการสินค้า -</div>
       
+      <!-- เพิ่มส่วนแสดงผล ข้อมูลการจัดส่ง & ชำระเงิน ในตะกร้า -->
+      <div class="bank-payment-box" style="margin-top: 6px; text-align: left;">
+        <div style="font-weight: bold; font-size: 0.78rem; margin-bottom: 3px; border-bottom: 1px solid #ddd; padding-bottom: 2px;">💳 ช่องทางชำระเงิน & โอนเงิน:</div>
+        <div style="font-size: 0.75rem;"><strong>ธนาคาร:</strong> <span id="cartPayBankName">-</span></div>
+        <div style="font-size: 0.75rem;"><strong>เลขที่บัญชี:</strong> <span id="cartPayAccountNo" style="font-weight: bold; color: #000;">-</span></div>
+        <div style="font-size: 0.75rem;"><strong>ชื่อบัญชี:</strong> <span id="cartPayAccountName">-</span></div>
+        <div id="cartPayQrDisplay" style="text-align: center; margin-top: 4px;"></div>
+      </div>
+
       <div style="background: #fafafa; border: 1px solid var(--border-color); padding: 10px; border-radius: var(--radius); margin-top: 4px;">
         <div style="font-size: 0.78rem; color: var(--text-muted);" id="cartShippingDisplay">การจัดส่ง: EMS (฿50)</div>
         <div style="font-weight: 850; color: #000; font-size: 1.05rem; margin-top: 2px;" id="netTotalDisplay">ราคารวมทั้งสิ้น: ฿0</div>
@@ -908,6 +917,10 @@
         }
         applyShopSettings();
         renderCategories();
+        // อัปเดตข้อมูลในตะกร้าหากมีการเปิดอยู่
+        if (document.getElementById('cartModal').style.display === 'flex') {
+          renderCart();
+        }
       }, (err) => console.log("Error loading settings:", err));
 
       db.collection("products").onSnapshot((snapshot) => {
@@ -975,19 +988,29 @@
       }
 
       document.getElementById("cartShippingDisplay").innerText = `การจัดส่ง: ${systemSettings.shippingName} (฿${systemSettings.shippingFee})`;
+      
+      // อัปเดตข้อมูลธนาคาร & QR Code ในหน้าตะกร้า (Cart Modal)
+      document.getElementById("cartPayBankName").innerText = systemSettings.bankName;
+      document.getElementById("cartPayAccountNo").innerText = systemSettings.accountNo;
+      document.getElementById("cartPayAccountName").innerText = systemSettings.accountName;
+
+      // อัปเดตข้อมูลธนาคาร & QR Code ในหน้าชำระเงิน (Shipping Modal)
       document.getElementById("payBankName").innerText = systemSettings.bankName;
       document.getElementById("payAccountNo").innerText = systemSettings.accountNo;
       document.getElementById("payAccountName").innerText = systemSettings.accountName;
       
+      const cartQrBox = document.getElementById("cartPayQrDisplay");
       const qrBox = document.getElementById("payQrDisplay");
       const summaryQrBox = document.getElementById("summaryQrDisplay");
 
       if (systemSettings.qrCodeUrl) {
         const qrHtml = `<img src="${systemSettings.qrCodeUrl}" class="qr-preview-img" />`;
+        if (cartQrBox) cartQrBox.innerHTML = qrHtml;
         if (qrBox) qrBox.innerHTML = qrHtml;
         if (summaryQrBox) summaryQrBox.innerHTML = qrHtml;
       } else {
         const noQrHtml = `<p style="font-size:0.7rem; color:#666;">(ไม่ได้อัปโหลด QR Code)</p>`;
+        if (cartQrBox) cartQrBox.innerHTML = noQrHtml;
         if (qrBox) qrBox.innerHTML = noQrHtml;
         if (summaryQrBox) summaryQrBox.innerHTML = noQrHtml;
       }
