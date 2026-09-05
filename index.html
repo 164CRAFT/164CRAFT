@@ -425,7 +425,8 @@
         <button id="loginBtn" class="btn-action btn-secondary" onclick="loginWithGoogle()">
           🔑 เข้าสู่ระบบ
         </button>
-        <div id="userProfile" style="display: none; position: relative;">
+        <!-- เปลี่ยนมาใช้ Wrapper ห่อหุ้มปุ่มและเมนู เพื่อให้ตรวจจับการเอาเมาส์เข้า/ออกได้อย่างสมบูรณ์ -->
+        <div id="userProfile" style="display: none; position: relative;" onmouseenter="handleProfileMouseEnter()" onmouseleave="handleProfileMouseLeave()">
           <div class="profile-icon-btn" onclick="toggleAccountDropdown(event)" title="เมนูบัญชี">
             <img id="userAvatar" src="" alt="User" />
           </div>
@@ -742,6 +743,7 @@
     let cart = [];
     let currentSelectedProduct = null;
     let appliedOptionDiscount = 0;
+    let isDropdownLocked = false; // ตัวแปรเช็คสถานะการคลิกเปิดค้างไว้
 
     let toastTimer = null;
     function showToast(message) {
@@ -831,13 +833,37 @@
       auth.signOut().then(() => showToast("ออกจากระบบเรียบร้อย"));
     }
 
+    // ฟังก์ชันจัดการ Hover ชี้เปิด / ออกปิด
+    function handleProfileMouseEnter() {
+      const menu = document.getElementById("accountDropdownMenu");
+      if (menu) menu.style.display = "flex";
+    }
+
+    function handleProfileMouseLeave() {
+      if (!isDropdownLocked) {
+        const menu = document.getElementById("accountDropdownMenu");
+        if (menu) menu.style.display = "none";
+      }
+    }
+
+    // ฟังก์ชันจัดการคลิกเปิดค้าง / ปิด
     function toggleAccountDropdown(event) {
       event.stopPropagation();
       const menu = document.getElementById("accountDropdownMenu");
-      menu.style.display = (menu.style.display === "flex") ? "none" : "flex";
+      if (!menu) return;
+
+      if (isDropdownLocked) {
+        isDropdownLocked = false;
+        menu.style.display = "none";
+      } else {
+        isDropdownLocked = true;
+        menu.style.display = "flex";
+      }
     }
 
+    // คลิกช่องว่างด้านนอกเพื่อปิดเมนูที่เปิดค้างไว้
     function closeAccountDropdownOutside(event) {
+      isDropdownLocked = false;
       const menu = document.getElementById("accountDropdownMenu");
       if (menu && menu.style.display === "flex") menu.style.display = "none";
     }
@@ -1000,6 +1026,7 @@
     function applyDropdownVipCode() {
       const input = document.getElementById("dropdownVipInput");
       processVipCode(input.value);
+      isDropdownLocked = false;
       const menu = document.getElementById("accountDropdownMenu");
       if (menu) menu.style.display = "none";
     }
