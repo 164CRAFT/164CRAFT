@@ -454,7 +454,7 @@
             </div>
 
             <a href="profile.html" class="dropdown-menu-item" onclick="toggleAccountDropdown(event)">
-              📍 จัดการข้อมูล & ประวัติการสั่งซื้อ
+              📍 จัดการข้อมูล & ประวัติการสั่งซื้อ[cite: 3]
             </a>
             <div class="dropdown-menu-item danger" onclick="logoutGoogle(); toggleAccountDropdown(event);">
               🚪 ออกจากระบบ
@@ -537,7 +537,7 @@
           </div>
 
           <div class="form-group" style="margin-top:2px;"><label>สเกล (Scale):</label><select id="detailScaleSelect" class="form-control" onchange="calculateModalPrice()"></select></div>
-          <div class="form-group"><label>ตัวเลือกตกแต่ง (Option):</label><select id="detailOptionSelect" class="form-control" onchange="calculateModalPrice()"></select></div>
+          <div class="form-group"><label>ตัวเลือกตกแต่ง (Option):</label><select id="detailOptionSelect" class="form-control" onchange="applyAllCumulativePromoCodes()"></select></div>
 
           <div class="form-group">
             <label>โค้ดส่วนลดราคา:</label>
@@ -576,7 +576,7 @@
       <div id="cartItemList" style="max-height: 45vh; overflow-y: auto; padding-right: 2px;">- ไม่มีรายการสินค้า -</div>
       
       <div style="background: #fafafa; border: 1px solid var(--border-color); padding: 10px; border-radius: var(--radius); margin-top: 4px;">
-        <div style="font-size: 0.78rem; color: var(--text-muted);" id="cartShippingDisplay">การจัดส่ง: EMS (฿50)</div>
+        <div style="font-size: 0.78rem; color: var(--text-muted);" id="cartShippingDisplay">การจัดส่ง: EMS (฿50)[cite: 3]</div>
         <div style="font-weight: 850; color: #000; font-size: 1.05rem; margin-top: 2px;" id="netTotalDisplay">ราคารวมทั้งสิ้น: ฿0</div>
       </div>
 
@@ -609,9 +609,9 @@
       
       <div class="bank-payment-box">
         <div style="font-weight:bold; font-size:0.82rem;">📲 โอนเงินชำระค่าสินค้าผ่านบัญชี</div>
-        <div><strong>ธนาคาร:</strong> <span id="payBankName">กสิกรไทย (KBANK)</span></div>
-        <div><strong>เลขที่บัญชี:</strong> <span id="payAccountNo" style="font-weight:bold; color:#000;">123-4-56789-0</span></div>
-        <div><strong>ชื่อบัญชี:</strong> <span id="payAccountName">164CRAFT</span></div>
+        <div><strong>ธนาคาร:</strong> <span id="payBankName">กสิกรไทย (KBANK)</span>[cite: 3]</div>
+        <div><strong>เลขที่บัญชี:</strong> <span id="payAccountNo" style="font-weight:bold; color:#000;">123-4-56789-0</span>[cite: 3]</div>
+        <div><strong>ชื่อบัญชี:</strong> <span id="payAccountName">164CRAFT</span>[cite: 3]</div>
       </div>
 
       <form id="shippingForm" onsubmit="confirmOrder(event)" style="margin-top: 4px;">
@@ -633,24 +633,24 @@
   <div id="orderSummaryModal" class="modal-overlay">
     <div class="modal-box" style="max-width: 600px;">
       <div class="modal-header" style="color: #111;">
-        <span>🎉 สรุปรายการสั่งซื้อสำเร็จ!</span>
+        <span>🎉 สรุปรายการสั่งซื้อสำเร็จ![cite: 3]</span>
         <button class="modal-close" onclick="closeModal('orderSummaryModal')">✕</button>
       </div>
       <p style="font-size: 0.8rem; color: var(--text-muted);">ระบบบันทึกรายการคำสั่งซื้อเรียบร้อยแล้ว</p>
 
       <div id="printableOrderArea">
         <div class="shipping-info-box" style="margin-top:0; background: #fff;">
-          <div style="font-weight: bold; margin-bottom: 4px; border-bottom: 1px solid #ddd; padding-bottom: 4px;">🏬 ข้อมูลผู้จัดส่ง (Sender):</div>
+          <div style="font-weight: bold; margin-bottom: 4px; border-bottom: 1px solid #ddd; padding-bottom: 4px;">🏬 ข้อมูลผู้จัดส่ง (Sender):[cite: 3]</div>
           <div><strong>ผู้ส่ง:</strong> <span id="summarySenderName">-</span></div>
           <div><strong>เบอร์โทร:</strong> <span id="summarySenderPhone">-</span></div>
           <div><strong>ที่อยู่:</strong> <span id="summarySenderAddress">-</span></div>
         </div>
 
-        <div style="font-weight: bold; font-size: 0.88rem; margin-top: 8px;">📦 รายการสินค้าที่สั่งซื้อ:</div>
+        <div style="font-weight: bold; font-size: 0.88rem; margin-top: 8px;">📦 รายการสินค้าที่สั่งซื้อ:[cite: 3]</div>
         <div id="summaryItemsList" style="max-height: 200px; overflow-y: auto; border: 1px solid var(--border-color); border-radius: var(--radius); padding: 6px; background: #fff; margin-top: 4px;"></div>
 
         <div class="shipping-info-box" style="margin-top: 8px;">
-          <div style="font-weight: bold; margin-bottom: 4px; border-bottom: 1px solid #ddd; padding-bottom: 4px;">🚚 ข้อมูลผู้รับ (Receiver):</div>
+          <div style="font-weight: bold; margin-bottom: 4px; border-bottom: 1px solid #ddd; padding-bottom: 4px;">🚚 ข้อมูลผู้รับ (Receiver):[cite: 3]</div>
           <div><strong>ชื่อผู้รับ:</strong> <span id="summaryCustomerName">-</span></div>
           <div><strong>เบอร์โทร:</strong> <span id="summaryCustomerPhone">-</span></div>
           <div><strong>อีเมล:</strong> <span id="summaryCustomerEmail">-</span></div>
@@ -659,7 +659,7 @@
         </div>
 
         <div class="bank-payment-box" style="margin-top: 8px; text-align: left;">
-          <div style="font-weight: bold; font-size: 0.82rem; margin-bottom: 4px; border-bottom: 1px solid #ddd; padding-bottom: 4px;">💳 ข้อมูลการชำระเงิน:</div>
+          <div style="font-weight: bold; font-size: 0.82rem; margin-bottom: 4px; border-bottom: 1px solid #ddd; padding-bottom: 4px;">💳 ข้อมูลการชำระเงิน:[cite: 3]</div>
           <div><strong>ธนาคาร:</strong> <span id="summaryBankName">-</span></div>
           <div><strong>เลขที่บัญชี:</strong> <span id="summaryAccountNo" style="font-weight: bold; color: #000;">-</span></div>
           <div><strong>ชื่อบัญชี:</strong> <span id="summaryAccountName">-</span></div>
@@ -667,7 +667,7 @@
 
         <div style="border-top: 2px solid var(--border-dark); padding-top: 8px; margin-top: 8px;">
           <div style="display: flex; justify-content: space-between; font-size: 0.82rem; color: var(--text-muted);"><span>ค่าสินค้า:</span><span id="summarySubtotal">฿0</span></div>
-          <div style="display: flex; justify-content: space-between; font-size: 0.82rem; color: var(--text-muted);"><span>ค่าจัดส่ง (<span id="summaryShippingName">EMS</span>):</span><span id="summaryShippingFee">฿50</span></div>
+          <div style="display: flex; justify-content: space-between; font-size: 0.82rem; color: var(--text-muted);"><span>ค่าจัดส่ง (<span id="summaryShippingName">EMS</span>):[cite: 3]</span><span id="summaryShippingFee">฿50</span></div>
           <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 1.1rem; color: #000; margin-top: 4px;"><span>ยอดรวมสุทธิ:</span><span id="summaryGrandTotal">฿0</span></div>
         </div>
       </div>
@@ -795,7 +795,7 @@
 
           const userEmail = (user.email || "").toLowerCase();
           if (ALLOWED_ADMIN_EMAILS.includes(userEmail)) {
-            roleStatusContainer.innerHTML = `<a href="admin.html" class="admin-badge-icon" title="คลิกเพื่อเข้าสู่ระบบหลังบ้าน">🛠️ ADMIN</a>`;
+            roleStatusContainer.innerHTML = `<a href="admin.html" class="admin-badge-icon" title="คลิกเพื่อเข้าสู่ระบบหลังบ้าน">[cite: 2]🛠️ ADMIN</a>`;
           } else {
             roleStatusContainer.innerHTML = `<span class="user-badge-status">USER</span>`;
           }
@@ -1010,7 +1010,7 @@
         document.documentElement.style.setProperty('--accent', systemSettings.themeColor);
       }
 
-      document.getElementById("cartShippingDisplay").innerText = `การจัดส่ง: ${systemSettings.shippingName} (฿${systemSettings.shippingFee})`;
+      document.getElementById("cartShippingDisplay").innerText = `การจัดส่ง: ${systemSettings.shippingName} (฿${systemSettings.shippingFee})[cite: 3]`;
       document.getElementById("payBankName").innerText = systemSettings.bankName;
       document.getElementById("payAccountNo").innerText = systemSettings.accountNo;
       document.getElementById("payAccountName").innerText = systemSettings.accountName;
@@ -1664,10 +1664,16 @@
       const optIdx = parseInt(document.getElementById("detailOptionSelect").value) || 0;
       const selectedOpt = currentSelectedProduct.options ? currentSelectedProduct.options[optIdx] : null;
 
-      let codesToCheck = [...userAssignedCodes].filter(c => vipCodesList.includes(c.toUpperCase()));
-      activeSecretCodes.forEach(c => {
-        const uc = c.toUpperCase();
-        if (vipCodesList.includes(uc) && !codesToCheck.includes(uc)) codesToCheck.push(uc);
+      // ตรวจสอบกับรายการทั้งหมดในระบบ (vipCodesList) และสิทธิ์ผู้ใช้
+      let availableCodes = vipCodesList.map(item => typeof item === 'object' ? item.code : item);
+      let codesToCheck = [];
+
+      let userCodes = [...userAssignedCodes, ...activeSecretCodes];
+      userCodes.forEach(code => {
+        const uc = code.toUpperCase();
+        if (availableCodes.includes(uc) && !codesToCheck.includes(uc)) {
+          codesToCheck.push(uc);
+        }
       });
 
       if (!selectedOpt || codesToCheck.length === 0) {
@@ -1712,12 +1718,12 @@
 
       if (appliedList.length > 0) {
         statusMsg.style.color = "var(--accent-vip)";
-        statusMsg.innerText = `ใช้โค้ดส่วนลดสะสมทั้งหมด: ${appliedList.join(', ')} (ลดรวม -฿${cumulativeDiscount})`;
+        statusMsg.innerText = `ตรวจสอบกับระบบแล้ว ใช้โค้ดส่วนลดสะสม: ${appliedList.join(', ')} (ลดรวม -฿${cumulativeDiscount})[cite: 1, 2, 3]`;
         updateSecretStatusDisplay();
       } else {
         appliedOptionDiscount = 0;
         statusMsg.style.color = "#777";
-        statusMsg.innerText = "โค้ดส่วนลดที่มีสิทธิ์ไม่ตรงกับเงื่อนไขของตัวเลือกนี้";
+        statusMsg.innerText = "โค้ดส่วนลดในระบบไม่ตรงกับเงื่อนไขส่วนลดของตัวเลือกนี้";
       }
       calculateModalPrice();
     }
