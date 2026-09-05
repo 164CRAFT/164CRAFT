@@ -387,7 +387,6 @@
 
     .shipping-info-box { background: #fafaf8; border: 1px dashed #888; border-radius: var(--radius); padding: 10px; font-size: .82rem; line-height: 1.4; margin-top: 8px; }
     .bank-payment-box { background: #f4f4f1; border: 1px solid var(--border-color); border-radius: var(--radius); padding: 10px; font-size: 0.82rem; margin-top: 8px; text-align: center; }
-    .qr-preview-img { max-width: 130px; max-height: 130px; object-fit: contain; margin: 6px auto; display: block; border-radius: 6px; border: 1px solid #ccc; }
 
     /* Custom Toast Notification Styles */
     #toastNotification {
@@ -620,7 +619,6 @@
         <div><strong>ธนาคาร:</strong> <span id="payBankName">กสิกรไทย (KBANK)</span></div>
         <div><strong>เลขที่บัญชี:</strong> <span id="payAccountNo" style="font-weight:bold; color:#000;">123-4-56789-0</span></div>
         <div><strong>ชื่อบัญชี:</strong> <span id="payAccountName">164CRAFT</span></div>
-        <div id="payQrDisplay"></div>
       </div>
 
       <form id="shippingForm" onsubmit="confirmOrder(event)" style="margin-top: 4px;">
@@ -672,7 +670,6 @@
           <div><strong>ธนาคาร:</strong> <span id="summaryBankName">-</span></div>
           <div><strong>เลขที่บัญชี:</strong> <span id="summaryAccountNo" style="font-weight: bold; color: #000;">-</span></div>
           <div><strong>ชื่อบัญชี:</strong> <span id="summaryAccountName">-</span></div>
-          <div id="summaryQrDisplay" style="text-align: center;"></div>
         </div>
 
         <div style="border-top: 2px solid var(--border-dark); padding-top: 8px; margin-top: 8px;">
@@ -728,7 +725,6 @@
       bankName: "กสิกรไทย (KBANK)",
       accountNo: "123-4-56789-0",
       accountName: "164CRAFT CO., LTD.",
-      qrCodeUrl: "",
       senderName: "164CRAFT คลังกระจายสินค้า",
       senderPhone: "0812345678",
       senderAddress: "99/1 ถ.พหลโยธิน แขวงลาดยาว เขตจตุจักร กรุงเทพฯ 10900",
@@ -978,19 +974,6 @@
       document.getElementById("payBankName").innerText = systemSettings.bankName;
       document.getElementById("payAccountNo").innerText = systemSettings.accountNo;
       document.getElementById("payAccountName").innerText = systemSettings.accountName;
-      
-      const qrBox = document.getElementById("payQrDisplay");
-      const summaryQrBox = document.getElementById("summaryQrDisplay");
-
-      if (systemSettings.qrCodeUrl) {
-        const qrHtml = `<img src="${systemSettings.qrCodeUrl}" class="qr-preview-img" />`;
-        if (qrBox) qrBox.innerHTML = qrHtml;
-        if (summaryQrBox) summaryQrBox.innerHTML = qrHtml;
-      } else {
-        const noQrHtml = `<p style="font-size:0.7rem; color:#666;">(ไม่ได้อัปโหลด QR Code)</p>`;
-        if (qrBox) qrBox.innerHTML = noQrHtml;
-        if (summaryQrBox) summaryQrBox.innerHTML = noQrHtml;
-      }
     }
 
     function switchSaleMode(mode) {
@@ -1629,7 +1612,6 @@
       document.getElementById("summaryBankName").innerText = systemSettings.bankName;
       document.getElementById("summaryAccountNo").innerText = systemSettings.accountNo;
       document.getElementById("summaryAccountName").innerText = systemSettings.accountName;
-      document.getElementById("summaryQrDisplay").innerHTML = systemSettings.qrCodeUrl ? `<img src="${systemSettings.qrCodeUrl}" class="qr-preview-img" />` : '';
 
       document.getElementById("summarySubtotal").innerText = "฿" + subtotal;
       document.getElementById("summaryShippingFee").innerText = "฿" + systemSettings.shippingFee;
