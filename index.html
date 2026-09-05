@@ -688,7 +688,7 @@
 
   <!-- TOAST NOTIFICATION -->
   <div id="toastNotification">
-    <span>✓</span> <span id="toastText">แจ้งเตือน</span>
+    <span id="toastText">แจ้งเตือน</span>
   </div>
 
   <!-- Firebase App SDK, Firestore & Auth -->
@@ -805,13 +805,34 @@
             roleStatusContainer.innerHTML = `<span class="user-badge-status">USER</span>`;
           }
 
-          const shipNameInput = document.getElementById("shipName");
-          const shipEmailInput = document.getElementById("shipEmail");
-          const profileName = document.getElementById("profileName");
-          
-          if (shipNameInput && !shipNameInput.value) shipNameInput.value = user.displayName || "";
-          if (shipEmailInput && !shipEmailInput.value) shipEmailInput.value = user.email || "";
-          if (profileName && !profileName.value) profileName.value = user.displayName || "";
+          // โหลดข้อมูลที่อยู่จัดส่งที่บันทึกไว้ใน Firestore ตาม Email ของผู้ใช้
+          db.collection("user_profiles").doc(userEmail).get().then((doc) => {
+            const shipNameInput = document.getElementById("shipName");
+            const shipPhoneInput = document.getElementById("shipPhone");
+            const shipEmailInput = document.getElementById("shipEmail");
+            const shipAddressInput = document.getElementById("shipAddress");
+            
+            const profileName = document.getElementById("profileName");
+            const profilePhone = document.getElementById("profilePhone");
+            const profileAddress = document.getElementById("profileAddress");
+
+            if (doc.exists) {
+              const data = doc.data();
+              if (shipNameInput) shipNameInput.value = data.name || user.displayName || "";
+              if (shipPhoneInput) shipPhoneInput.value = data.phone || "";
+              if (shipEmailInput) shipEmailInput.value = user.email || "";
+              if (shipAddressInput) shipAddressInput.value = data.address || "";
+
+              if (profileName) profileName.value = data.name || user.displayName || "";
+              if (profilePhone) profilePhone.value = data.phone || "";
+              if (profileAddress) profileAddress.value = data.address || "";
+            } else {
+              if (shipNameInput && !shipNameInput.value) shipNameInput.value = user.displayName || "";
+              if (shipEmailInput && !shipEmailInput.value) shipEmailInput.value = user.email || "";
+              if (profileName && !profileName.value) profileName.value = user.displayName || "";
+            }
+          });
+
         } else {
           loginBtn.style.display = "inline-flex";
           userProfile.style.display = "none";
@@ -821,7 +842,7 @@
 
     function loginWithGoogle() {
       auth.signInWithPopup(googleProvider).then((result) => {
-        showToast("✓ เข้าสู่ระบบสำเร็จ");
+        showToast("เข้าสู่ระบบสำเร็จ");
       }).catch((error) => showToast("เข้าสู่ระบบไม่สำเร็จ: " + error.message));
     }
 
@@ -879,16 +900,39 @@
 
     function saveUserProfileModal(e) {
       e.preventDefault();
-      const name = document.getElementById("profileName").value;
-      const phone = document.getElementById("profilePhone").value;
-      const address = document.getElementById("profileAddress").value;
+      const user = auth.currentUser;
+      if (!user) {
+        showToast("กรุณาเข้าสู่ระบบก่อนบันทึกข้อมูล");
+        return;
+      }
 
-      document.getElementById("shipName").value = name;
-      document.getElementById("shipPhone").value = phone;
-      document.getElementById("shipAddress").value = address;
+      const name = document.getElementById("profileName").value.trim();
+      const phone = document.getElementById("profilePhone").value.trim();
+      const address = document.getElementById("profileAddress").value.trim();
 
-      showToast("✓ บันทึกที่อยู่จัดส่งเรียบร้อยแล้ว!");
-      closeModal('accountModal');
+      const userProfileData = {
+        uid: user.uid,
+        email: user.email.toLowerCase(),
+        name: name,
+        phone: phone,
+        address: address,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      };
+
+      // บันทึกที่อยู่จัดส่งลง Firestore โดยใช้ Email เป็น Document ID
+      db.collection("user_profiles").doc(user.email.toLowerCase()).set(userProfileData, { merge: true })
+        .then(() => {
+          document.getElementById("shipName").value = name;
+          document.getElementById("shipPhone").value = phone;
+          document.getElementById("shipAddress").value = address;
+
+          showToast("บันทึกที่อยู่จัดส่งสำเร็จ");
+          closeModal('accountModal');
+        })
+        .catch((error) => {
+          showToast("เกิดข้อผิดพลาดในการบันทึก");
+          console.error(error);
+        });
     }
 
     function loadDataFromFirebase() {
@@ -979,7 +1023,7 @@
     function switchSaleMode(mode) {
       if (cart.length > 0) {
         const activeType = cart[0].saleMode === 'READY' ? 'สินค้าพร้อมส่ง' : 'สินค้าพรีออเดอร์';
-        showToast(`⚠️ มี "${activeType}" ค้างอยู่ในตะกร้า`);
+        showToast(`มี "${activeType}" ค้างอยู่ในตะกร้า`);
         return;
       }
 
@@ -1033,12 +1077,12 @@
         if (dropdownInput) dropdownInput.value = "";
 
         statusTag.className = "secret-status-tag active";
-        statusTag.innerHTML = `<div style="font-weight:bold;">✓ ปลดล็อกสำเร็จ: ${maskedCode} [ACTIVE]</div>`;
+        statusTag.innerHTML = `<div style="font-weight:bold;">ปลดล็อกสำเร็จ: ${maskedCode} [ACTIVE]</div>`;
         renderCategories();
         renderProducts();
-        showToast("✓ ปลดล็อกสำเร็จ!");
+        showToast("ปลดล็อกสำเร็จ");
       } else {
-        showToast("✕ ไม่พบรหัสนี้ในระบบ");
+        showToast("ไม่พบรหัสนี้ในระบบ");
       }
     }
 
@@ -1416,11 +1460,11 @@
       if (isValid) {
         appliedOptionDiscount = foundDiscount;
         statusMsg.style.color = "var(--accent-vip)";
-        statusMsg.innerText = `✓ ใช้โค้ดสำเร็จ! ได้รับส่วนลด ฿${appliedOptionDiscount}`;
+        statusMsg.innerText = `ใช้โค้ดสำเร็จ! ได้รับส่วนลด ฿${appliedOptionDiscount}`;
       } else {
         appliedOptionDiscount = 0;
         statusMsg.style.color = "var(--danger)";
-        statusMsg.innerText = "✕ โค้ดส่วนลดไม่ถูกต้องสำหรับตัวเลือกนี้";
+        statusMsg.innerText = "โค้ดส่วนลดไม่ถูกต้องสำหรับตัวเลือกนี้";
       }
       calculateModalPrice();
     }
@@ -1433,7 +1477,7 @@
         const isReadyActive = currentSelectedProduct.readyActive || false;
         const readyStock = currentSelectedProduct.readyStock || 0;
         if (!isReadyActive || readyStock <= 0) {
-          showToast("⚠️ สินค้านี้หมดชั่วคราว ไม่สามารถสั่งซื้อได้");
+          showToast("สินค้านี้หมดชั่วคราว ไม่สามารถสั่งซื้อได้");
           return;
         }
       }
@@ -1441,7 +1485,7 @@
       if (cart.length > 0) {
         const firstItemSaleMode = cart[0].saleMode;
         if (firstItemSaleMode !== incomingSaleMode) {
-          showToast(`⚠️ ไม่สามารถสั่งซื้อทั้ง 2 ระบบพร้อมกันได้`);
+          showToast("ไม่สามารถสั่งซื้อทั้ง 2 ระบบพร้อมกันได้");
           return;
         }
       }
@@ -1462,7 +1506,7 @@
       const currentInCart = existingIndex > -1 ? cart[existingIndex].qty : 0;
 
       if (currentInCart + 1 > maxLimit) {
-        showToast(`⚠️ สินค้าเกินจำนวนสต็อกที่มี (${maxLimit} ชิ้น)`);
+        showToast(`สินค้าเกินจำนวนสต็อกที่มี (${maxLimit} ชิ้น)`);
         return;
       }
 
@@ -1481,7 +1525,7 @@
 
       updateCartBadge();
       closeModal("detailModal");
-      showToast("✓ เพิ่มลงตะกร้าเรียบร้อย");
+      showToast("เพิ่มลงตะกร้าเรียบร้อย");
     }
 
     function updateCartBadge() {
@@ -1543,7 +1587,7 @@
 
       const newQty = item.qty + delta;
       if (newQty > maxLimit) {
-        showToast(`⚠️ สินค้าเกินสต็อกที่มี (${maxLimit} ชิ้น)`);
+        showToast(`สินค้าเกินสต็อกที่มี (${maxLimit} ชิ้น)`);
         return;
       }
 
