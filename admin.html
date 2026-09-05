@@ -117,7 +117,6 @@
     
     #orderDetailModal { z-index: 2000 !important; }
     #memberDetailModal { z-index: 1500 !important; }
-    #customConfirmModal { z-index: 3000 !important; }
 
     .modal-box {
       width: 100%; max-height: 92vh; background: var(--bg-card); border: 1px solid var(--border-color);
@@ -272,7 +271,7 @@
 
         <div class="admin-menu-box">
           <div class="admin-menu-title">🎨 ตั้งค่าเว็บ, โลโก้ & สีธีม</div>
-          <div class="admin-menu-desc">แก้ไขชื่อเว็บ อัปโหลดโลโก้ และกำหนดสีธีม (มีผลทั้งหน้าแรกและหลังบ้าน)</div>
+          <div class="admin-menu-desc">แก้ไขชื่อเว็บ อัปโหลดโลโก้ และกำหนดสีธีม (รวมถึงสวิตซ์เปิด-ปิดช่องกรอกโค้ด)</div>
           <button class="btn-action btn-secondary" style="margin-top: auto;" onclick="openWebThemeConfigModal()">ตั้งค่าเว็บไซต์</button>
         </div>
 
@@ -494,7 +493,7 @@
     </div>
   </div>
 
-  <!-- WEB THEME CONFIG MODAL -->
+  <!-- WEB THEME CONFIG MODAL (เพิ่มสวิตซ์เปิด-ปิดช่องใส่โค้ด) -->
   <div id="webThemeConfigModal" class="modal-overlay" onclick="checkOutsideModalClick(event, 'webThemeConfigModal')">
     <div class="modal-box" style="max-width: 480px;">
       <div class="modal-header">
@@ -513,6 +512,13 @@
             <input type="color" id="cfgThemeColor" style="width: 50px; height: 38px; border: 1px solid var(--border-color); border-radius: var(--radius); cursor: pointer; background: transparent;" value="#111111" />
             <input type="text" id="cfgThemeColorText" class="form-control" value="#111111" readonly />
           </div>
+        </div>
+        <div class="form-group" style="background:#fafafa; border:1px solid var(--border-color); padding:12px; border-radius:var(--radius);">
+          <label style="display: flex; align-items: center; justify-content: space-between; cursor: pointer;">
+            <span style="font-size: 0.85rem; font-weight: 800; color: #111;">🗝️ แสดงช่องใส่รหัสโค้ดที่ Header หน้าเว็บ</span>
+            <input type="checkbox" id="cfgShowHeaderVip" style="width: 18px; height: 18px; accent-color: var(--accent); cursor: pointer;" />
+          </label>
+          <span style="font-size: 0.7rem; color: #666; margin-top: 4px; display: block;">(ปิดสวิตซ์หากต้องการซ่อนกล่องกรอกรหัสโค้ดไม่ให้ลูกค้ามองเห็น)</span>
         </div>
         <div class="form-group">
           <label>อัปโหลดรูปโลโก้เว็บไซต์ (มีผลทั้งหน้าแรกและหลังบ้าน)</label>
@@ -600,7 +606,7 @@
     </div>
   </div>
 
-  <!-- CUSTOM CONFIRM MODAL (แทนที่ alert/confirm แบบเบราว์เซอร์ เพื่อซ่อนชื่อโดเมน) -->
+  <!-- CUSTOM CONFIRM MODAL -->
   <div id="customConfirmModal" class="modal-overlay" style="z-index: 3000;">
     <div class="modal-box" style="max-width: 380px; text-align: center;">
       <div class="modal-header" style="justify-content: center; border-bottom: none; padding-bottom: 0;">⚠️ ยืนยันการทำรายการ</div>
@@ -837,7 +843,8 @@
       senderPhone: "0812345678",
       senderAddress: "99/1 ถ.พหลโยธิน แขวงลาดยาว เขตจตุจักร กรุงเทพฯ 10900",
       logoUrl: "",
-      themeColor: "#111111"
+      themeColor: "#111111",
+      showHeaderVip: true // เพิ่มค่าเริ่มต้นให้แสดงช่องใส่โค้ดที่ Header หน้าเว็บ
     };
 
     let products = [];
@@ -915,7 +922,10 @@
               };
             });
           }
-          if (data.settings) systemSettings = data.settings;
+          if (data.settings) {
+            systemSettings = data.settings;
+            if (systemSettings.showHeaderVip === undefined) systemSettings.showHeaderVip = true;
+          }
         }
         applyAdminTheme();
       }).catch(err => console.log("Error loading settings:", err));
@@ -1301,6 +1311,7 @@
       document.getElementById("cfgStoreName").value = systemSettings.storeName || "164CRAFT";
       document.getElementById("cfgThemeColor").value = systemSettings.themeColor || "#111111";
       document.getElementById("cfgThemeColorText").value = systemSettings.themeColor || "#111111";
+      document.getElementById("cfgShowHeaderVip").checked = systemSettings.showHeaderVip !== false;
       
       const logoArea = document.getElementById("logoPreviewArea");
       logoArea.innerHTML = systemSettings.logoUrl ? `<img src="${systemSettings.logoUrl}" style="max-height:50px; border-radius:4px; border:1px solid #ccc;" />` : '<span style="font-size:0.72rem; color:#666;">(ยังไม่ได้อัปโหลดโลโก้)</span>';
@@ -1327,6 +1338,7 @@
       e.preventDefault();
       systemSettings.storeName = document.getElementById("cfgStoreName").value.trim();
       systemSettings.themeColor = document.getElementById("cfgThemeColor").value;
+      systemSettings.showHeaderVip = document.getElementById("cfgShowHeaderVip").checked;
       saveDataToFirestore();
       applyAdminTheme();
       showToast("บันทึกการตั้งค่าเว็บสำเร็จ");
