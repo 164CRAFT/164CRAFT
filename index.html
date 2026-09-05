@@ -446,12 +446,9 @@
               </div>
             </div>
 
-            <div class="dropdown-menu-item" onclick="openModal('accountModal'); toggleAccountDropdown(event);">
-              📍 ตั้งค่าที่อยู่จัดส่ง
-            </div>
-            <div class="dropdown-menu-item" onclick="showToast('ฟีเจอร์ประวัติการสั่งซื้อ จะแสดงรายการสั่งซื้อของคุณที่นี่เร็วๆ นี้'); toggleAccountDropdown(event);">
-              📦 ประวัติการสั่งซื้อ
-            </div>
+            <a href="profile.html" class="dropdown-menu-item" onclick="toggleAccountDropdown(event)">
+              📍 จัดการข้อมูล & ประวัติการสั่งซื้อ
+            </a>
             <div class="dropdown-menu-item danger" onclick="logoutGoogle(); toggleAccountDropdown(event);">
               🚪 ออกจากระบบ
             </div>
@@ -508,31 +505,6 @@
         <section class="product-grid" id="productGridContainer"></section>
       </div>
     </main>
-  </div>
-
-  <!-- ACCOUNT MODAL -->
-  <div id="accountModal" class="modal-overlay">
-    <div class="modal-box" style="max-width: 480px;">
-      <div class="modal-header">
-        <span>📍 ตั้งค่าข้อมูลที่อยู่จัดส่ง</span>
-        <button class="modal-close" onclick="closeModal('accountModal')">✕</button>
-      </div>
-
-      <div style="display: flex; align-items: center; gap: 10px; background: #fafafa; padding: 10px; border-radius: var(--radius); border: 1px solid var(--border-color);">
-        <img id="modalUserAvatar" src="" style="width: 45px; height: 45px; border-radius: 50%; border: 2px solid #111;" alt="Avatar" />
-        <div style="overflow: hidden;">
-          <div id="modalUserName" style="font-weight: 850; font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">-</div>
-          <div id="modalUserEmail" style="font-size: 0.72rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">-</div>
-        </div>
-      </div>
-
-      <form onsubmit="saveUserProfileModal(event)">
-        <div class="form-group"><label>ชื่อ-นามสกุล ผู้รับหลัก</label><input type="text" id="profileName" class="form-control" required /></div>
-        <div class="form-group"><label>เบอร์โทรศัพท์ติดต่อ</label><input type="tel" id="profilePhone" class="form-control" placeholder="0812345678" maxlength="10" required /></div>
-        <div class="form-group"><label>ที่อยู่จัดส่งเริ่มต้น</label><textarea id="profileAddress" class="form-control" rows="3" placeholder="บ้านเลขที่, ถนน, ตำบล, อำเภอ, จังหวัด, รหัสไปรษณีย์" required></textarea></div>
-        <button type="submit" class="btn-action" style="width: 100%; margin-top: 4px; height: 40px;">💾 บันทึกที่อยู่จัดส่ง</button>
-      </form>
-    </div>
   </div>
 
   <!-- DETAIL MODAL -->
@@ -794,10 +766,6 @@
           document.getElementById("dropdownUserName").innerText = user.displayName || "สมาชิก 164CRAFT";
           document.getElementById("dropdownUserEmail").innerText = user.email;
 
-          document.getElementById("modalUserAvatar").src = user.photoURL || "https://via.placeholder.com/45";
-          document.getElementById("modalUserName").innerText = user.displayName || "สมาชิก 164CRAFT";
-          document.getElementById("modalUserEmail").innerText = user.email;
-
           const userEmail = (user.email || "").toLowerCase();
           if (ALLOWED_ADMIN_EMAILS.includes(userEmail)) {
             roleStatusContainer.innerHTML = `<a href="admin.html" class="admin-badge-icon" title="คลิกเพื่อเข้าสู่ระบบหลังบ้าน">🛠️ ADMIN</a>`;
@@ -805,16 +773,12 @@
             roleStatusContainer.innerHTML = `<span class="user-badge-status">USER</span>`;
           }
 
-          // โหลดข้อมูลที่อยู่จัดส่งที่บันทึกไว้ใน Firestore ตาม Email ของผู้ใช้
+          // โหลดข้อมูลที่อยู่จัดส่งอัตโนมัติมาใส่ฟอร์มชำระเงินตาม Email ของผู้ใช้
           db.collection("user_profiles").doc(userEmail).get().then((doc) => {
             const shipNameInput = document.getElementById("shipName");
             const shipPhoneInput = document.getElementById("shipPhone");
             const shipEmailInput = document.getElementById("shipEmail");
             const shipAddressInput = document.getElementById("shipAddress");
-            
-            const profileName = document.getElementById("profileName");
-            const profilePhone = document.getElementById("profilePhone");
-            const profileAddress = document.getElementById("profileAddress");
 
             if (doc.exists) {
               const data = doc.data();
@@ -822,14 +786,9 @@
               if (shipPhoneInput) shipPhoneInput.value = data.phone || "";
               if (shipEmailInput) shipEmailInput.value = user.email || "";
               if (shipAddressInput) shipAddressInput.value = data.address || "";
-
-              if (profileName) profileName.value = data.name || user.displayName || "";
-              if (profilePhone) profilePhone.value = data.phone || "";
-              if (profileAddress) profileAddress.value = data.address || "";
             } else {
               if (shipNameInput && !shipNameInput.value) shipNameInput.value = user.displayName || "";
               if (shipEmailInput && !shipEmailInput.value) shipEmailInput.value = user.email || "";
-              if (profileName && !profileName.value) profileName.value = user.displayName || "";
             }
           });
 
@@ -898,43 +857,6 @@
       });
     }
 
-    function saveUserProfileModal(e) {
-      e.preventDefault();
-      const user = auth.currentUser;
-      if (!user) {
-        showToast("กรุณาเข้าสู่ระบบก่อนบันทึกข้อมูล");
-        return;
-      }
-
-      const name = document.getElementById("profileName").value.trim();
-      const phone = document.getElementById("profilePhone").value.trim();
-      const address = document.getElementById("profileAddress").value.trim();
-
-      const userProfileData = {
-        uid: user.uid,
-        email: user.email.toLowerCase(),
-        name: name,
-        phone: phone,
-        address: address,
-        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-      };
-
-      // บันทึกที่อยู่จัดส่งลง Firestore โดยใช้ Email เป็น Document ID
-      db.collection("user_profiles").doc(user.email.toLowerCase()).set(userProfileData, { merge: true })
-        .then(() => {
-          document.getElementById("shipName").value = name;
-          document.getElementById("shipPhone").value = phone;
-          document.getElementById("shipAddress").value = address;
-
-          showToast("บันทึกที่อยู่จัดส่งสำเร็จ");
-          closeModal('accountModal');
-        })
-        .catch((error) => {
-          showToast("เกิดข้อผิดพลาดในการบันทึก");
-          console.error(error);
-        });
-    }
-
     function loadDataFromFirebase() {
       db.collection("store_data").doc("settings").onSnapshot((doc) => {
         if (doc.exists) {
@@ -976,7 +898,7 @@
     }
 
     window.addEventListener('popstate', (event) => {
-      const modals = ['detailModal', 'cartModal', 'shippingModal', 'accountModal', 'orderSummaryModal'];
+      const modals = ['detailModal', 'cartModal', 'shippingModal', 'orderSummaryModal'];
       modals.forEach(id => {
         const m = document.getElementById(id);
         if (m && m.style.display === 'flex') {
@@ -1636,54 +1558,72 @@
       cart.filter(Boolean).forEach(it => subtotal += (it.price * it.qty));
       const grandTotal = subtotal + systemSettings.shippingFee;
 
-      document.getElementById("summarySenderName").innerText = systemSettings.senderName;
-      document.getElementById("summarySenderPhone").innerText = systemSettings.senderPhone;
-      document.getElementById("summarySenderAddress").innerText = systemSettings.senderAddress;
+      // บันทึกคำสั่งซื้อลงใน Firestore Collection "orders" เพื่อให้หน้า profile.html และ admin.html ดึงไปแสดงผล
+      const orderData = {
+        customer: customer,
+        items: cart,
+        subtotal: subtotal,
+        shippingFee: systemSettings.shippingFee,
+        shippingName: systemSettings.shippingName,
+        grandTotal: grandTotal,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      };
 
-      document.getElementById("summaryCustomerName").innerText = customer.name;
-      document.getElementById("summaryCustomerPhone").innerText = customer.phone;
-      document.getElementById("summaryCustomerEmail").innerText = customer.email;
-      document.getElementById("summaryCustomerAddress").innerText = customer.address;
+      db.collection("orders").add(orderData).then(() => {
+        document.getElementById("summarySenderName").innerText = systemSettings.senderName;
+        document.getElementById("summarySenderPhone").innerText = systemSettings.senderPhone;
+        document.getElementById("summarySenderAddress").innerText = systemSettings.senderAddress;
 
-      const noteContainer = document.getElementById("summaryNoteContainer");
-      if (customer.note) {
-        document.getElementById("summaryCustomerNote").innerText = customer.note;
-        noteContainer.style.display = "block";
-      } else {
-        noteContainer.style.display = "none";
-      }
+        document.getElementById("summaryCustomerName").innerText = customer.name;
+        document.getElementById("summaryCustomerPhone").innerText = customer.phone;
+        document.getElementById("summaryCustomerEmail").innerText = customer.email;
+        document.getElementById("summaryCustomerAddress").innerText = customer.address;
 
-      document.getElementById("summaryBankName").innerText = systemSettings.bankName;
-      document.getElementById("summaryAccountNo").innerText = systemSettings.accountNo;
-      document.getElementById("summaryAccountName").innerText = systemSettings.accountName;
+        const noteContainer = document.getElementById("summaryNoteContainer");
+        if (customer.note) {
+          document.getElementById("summaryCustomerNote").innerText = customer.note;
+          noteContainer.style.display = "block";
+        } else {
+          noteContainer.style.display = "none";
+        }
 
-      document.getElementById("summarySubtotal").innerText = "฿" + subtotal;
-      document.getElementById("summaryShippingFee").innerText = "฿" + systemSettings.shippingFee;
-      document.getElementById("summaryGrandTotal").innerText = "฿" + grandTotal;
+        document.getElementById("summaryBankName").innerText = systemSettings.bankName;
+        document.getElementById("summaryAccountNo").innerText = systemSettings.accountNo;
+        document.getElementById("summaryAccountName").innerText = systemSettings.accountName;
 
-      document.getElementById("summaryItemsList").innerHTML = cart.map(it => {
-        const thumb = (it.product.images && it.product.images.length > 0) ? it.product.images[0] : '';
-        const lineTotal = it.price * it.qty;
-        const modeLabel = it.saleMode === 'READY' ? '[พร้อมส่ง]' : '[พรีออเดอร์]';
-        return `
-          <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid #eee; padding:6px 0; gap:8px;">
-            <div style="display:flex; gap:8px; align-items:center; overflow:hidden;">
-              <img src="${thumb}" style="width:36px; height:36px; object-fit:cover; border-radius:6px; border:1px solid #111; flex-shrink:0;" />
-              <div style="overflow:hidden;">
-                <div style="font-weight:bold; font-size:0.78rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${it.product.name} ${modeLabel}</div>
-                <div style="font-size:0.65rem; color:#666;">SKU: ${it.product.id} | สเกล: ${it.scale} | ${it.optionName}</div>
+        document.getElementById("summarySubtotal").innerText = "฿" + subtotal;
+        document.getElementById("summaryShippingFee").innerText = "฿" + systemSettings.shippingFee;
+        document.getElementById("summaryGrandTotal").innerText = "฿" + grandTotal;
+
+        document.getElementById("summaryItemsList").innerHTML = cart.map(it => {
+          const thumb = (it.product.images && it.product.images.length > 0) ? it.product.images[0] : '';
+          const lineTotal = it.price * it.qty;
+          const modeLabel = it.saleMode === 'READY' ? '[พร้อมส่ง]' : '[พรีออเดอร์]';
+          return `
+            <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid #eee; padding:6px 0; gap:8px;">
+              <div style="display:flex; gap:8px; align-items:center; overflow:hidden;">
+                <img src="${thumb}" style="width:36px; height:36px; object-fit:cover; border-radius:6px; border:1px solid #111; flex-shrink:0;" />
+                <div style="overflow:hidden;">
+                  <div style="font-weight:bold; font-size:0.78rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${it.product.name} ${modeLabel}</div>
+                  <div style="font-size:0.65rem; color:#666;">SKU: ${it.product.id} | สเกล: ${it.scale} | ${it.optionName}</div>
+                </div>
+              </div>
+              <div style="text-align:right; flex-shrink:0; font-size:0.78rem;">
+                <div>${it.qty} ชิ้น x ฿${it.price}</div>
+                <strong style="color:#111;">฿${lineTotal}</strong>
               </div>
             </div>
-            <div style="text-align:right; flex-shrink:0; font-size:0.78rem;">
-              <div>${it.qty} ชิ้น x ฿${it.price}</div>
-              <strong style="color:#111;">฿${lineTotal}</strong>
-            </div>
-          </div>
-        `;
-      }).join('');
+          `;
+        }).join('');
 
-      closeModal('shippingModal');
-      openModal('orderSummaryModal');
+        cart = [];
+        updateCartBadge();
+        closeModal('shippingModal');
+        openModal('orderSummaryModal');
+      }).catch(err => {
+        showToast("เกิดข้อผิดพลาดในการบันทึกคำสั่งซื้อ");
+        console.error(err);
+      });
     }
   </script>
 </body>
