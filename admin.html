@@ -114,6 +114,11 @@
       display: none; align-items: flex-end; justify-content: center; z-index: 1000; padding: 0; cursor: pointer;
     }
     @media(min-width: 640px) { .modal-overlay { align-items: center; justify-content: center; padding: 20px; } }
+    
+    /* ตั้งค่า Z-Index พิเศษสำหรับ Modal ใบสั่งซื้อและรายละเอียดสมาชิกให้อยู่บนสุดเสมอ */
+    #orderDetailModal { z-index: 2000 !important; }
+    #memberDetailModal { z-index: 1500 !important; }
+
     .modal-box {
       width: 100%; max-height: 92vh; background: var(--bg-card); border: 1px solid var(--border-color);
       border-radius: 16px 16px 0 0; padding: 20px 18px; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
@@ -410,11 +415,11 @@
     </div>
   </div>
 
-  <!-- ORDER DETAIL MODAL -->
+  <!-- ORDER DETAIL MODAL (Z-Index สูงสุดเพื่อให้อยู่บนสุดเสมอ) -->
   <div id="orderDetailModal" class="modal-overlay" onclick="checkOutsideModalClick(event, 'orderDetailModal')">
     <div class="modal-box" style="max-width: 600px;">
       <div class="modal-header" style="color: #111;">
-        <span>🎉 สรุปรายการสั่งซื้อสำเร็จ!</span>
+        <span>🎉 รายละเอียดใบสั่งซื้อสินค้า</span>
         <button class="modal-close" onclick="closeModal('orderDetailModal')">✕</button>
       </div>
       <p style="font-size: 0.8rem; color: var(--text-muted);">รายละเอียดคำสั่งซื้อเพิ่มเติมในระบบ</p>
@@ -445,8 +450,8 @@
     </div>
   </div>
 
-  <!-- MEMBER DETAIL POPUP MODAL (Popup ข้อมูลสมาชิก, จัดการโค้ด และประวัติใบสั่งซื้อย้อนหลัง) -->
-  <div id="memberDetailModal" class="modal-overlay" style="z-index: 1100;" onclick="if(event.target===this) closeModal('memberDetailModal')">
+  <!-- MEMBER DETAIL POPUP MODAL (Popup ข้อมูลสมาชิก, จัดการโค้ด และประวัติใบสั่งซื้อย้อนหลังพร้อมวันเวลา) -->
+  <div id="memberDetailModal" class="modal-overlay" onclick="if(event.target===this) closeModal('memberDetailModal')">
     <div class="modal-box" style="max-width: 600px;">
       <div class="modal-header">
         <span id="popupMemberTitle">👤 ข้อมูลสมาชิก & ประวัติการสั่งซื้อ</span>
@@ -517,7 +522,7 @@
     </div>
   </div>
 
-  <!-- VIP CODES MODAL (จัดการรหัส & โน้ตข้อความ - แยกประเภทชัดเจน) -->
+  <!-- VIP CODES MODAL -->
   <div id="vipCodesModal" class="modal-overlay" onclick="checkOutsideModalClick(event, 'vipCodesModal')">
     <div class="modal-box" style="max-width: 680px;">
       <div class="modal-header">
@@ -1070,7 +1075,13 @@
         `;
       }).join('');
 
+      let dateStr = "-";
+      if (ord.createdAt && ord.createdAt.toDate) {
+        dateStr = ord.createdAt.toDate().toLocaleString('th-TH', { dateStyle: 'medium', timeStyle: 'short' });
+      }
+
       content.innerHTML = `
+        <div style="font-size:0.78rem; color:var(--text-muted); margin-bottom:4px;"><strong>วันที่สั่งซื้อ:</strong> ${dateStr}</div>
         <div class="shipping-info-box" style="margin-top:0; background: #fff;">
           <div style="font-weight: bold; margin-bottom: 4px; border-bottom: 1px solid #ddd; padding-bottom: 4px;">🏬 ข้อมูลผู้จัดส่ง (Sender):</div>
           <div><strong>ผู้ส่ง:</strong> ${systemSettings.senderName}</div>
@@ -1117,7 +1128,6 @@
       });
     }
 
-    // หน้าหลักสมาชิก แสดงเฉพาะ ชื่อ และ Email พร้อมปุ่มข้อมูล
     function openMembersModal() {
       const cont = document.getElementById("membersListContainer");
       if (members.length === 0) {
@@ -1141,7 +1151,6 @@
       openModal('membersModal');
     }
 
-    // เปิด Popup ข้อมูลสมาชิก, จัดการโค้ด และดูประวัติใบสั่งซื้อย้อนหลัง
     function openMemberDetailPopup(emailStr) {
       const member = members.find(m => (m.email || m.emailId || "").toLowerCase() === emailStr.toLowerCase());
       if (!member) return;
@@ -1166,7 +1175,6 @@
         appendPopupMemberCodeRow("");
       }
 
-      // โหลดประวัติใบสั่งซื้อย้อนหลังของสมาชิกคนนี้
       const ordersCont = document.getElementById("popupMemberOrdersContainer");
       const userOrders = ordersList.filter(o => o.customer && o.customer.email && o.customer.email.toLowerCase() === emailStr.toLowerCase());
 
@@ -1174,11 +1182,15 @@
         ordersCont.innerHTML = `<div style="font-size:0.75rem; color:#777; padding:10px; text-align:center;">ยังไม่มีประวัติคำสั่งซื้อสินค้าในระบบ</div>`;
       } else {
         ordersCont.innerHTML = userOrders.map(ord => {
+          let dateStr = "-";
+          if (ord.createdAt && ord.createdAt.toDate) {
+            dateStr = ord.createdAt.toDate().toLocaleString('th-TH', { dateStyle: 'medium', timeStyle: 'short' });
+          }
           return `
             <div style="background:#fff; border:1px solid #e2e8f0; border-radius:6px; padding:10px; display:flex; justify-content:space-between; align-items:center; gap:8px;">
               <div>
                 <div style="font-weight:bold; font-size:0.8rem; color:#111;">ยอดชำระ: ฿${ord.grandTotal || 0}</div>
-                <div style="font-size:0.7rem; color:var(--text-muted);">จัดส่งผ่าน: ${ord.shippingName || 'EMS'}</div>
+                <div style="font-size:0.7rem; color:var(--text-muted);">วันที่สั่งซื้อ: ${dateStr}</div>
               </div>
               <button class="btn-action" style="height:30px; padding:0 8px; font-size:0.7rem; background:#059669; border-color:#059669;" onclick="viewOrderDetail('${ord.id}')">📄 ดูใบสั่งซื้อ</button>
             </div>
