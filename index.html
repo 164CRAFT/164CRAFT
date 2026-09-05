@@ -446,6 +446,7 @@
               </div>
             </div>
 
+            <!-- ช่องกรอกรหัสในเมนูย่อยบัญชี (ควบคุมการแสดงผลด้วยสวิตซ์จากหลังบ้าน) -->
             <div style="padding: 8px 10px; background: #fafafa; border-bottom: 1px solid var(--border-color);" id="dropdownVipWrapper">
               <div class="header-vip-box" style="display: flex; width: 100%;">
                 <input type="password" id="dropdownVipInput" class="header-vip-input" placeholder="🗝️ กรอกรหัส" style="width: 100%; height: 28px; font-size: 0.72rem;" autocomplete="off" onkeydown="if(event.key==='Enter') applyDropdownVipCode()" />
@@ -974,7 +975,7 @@
         const headerVipContainer = document.getElementById("headerVipContainer");
         const dropdownVipWrapper = document.getElementById("dropdownVipWrapper");
         if (headerVipContainer && window.innerWidth >= 850 && systemSettings.showHeaderVip !== false) headerVipContainer.style.display = "flex";
-        if (dropdownVipWrapper) dropdownVipWrapper.style.display = "block";
+        if (dropdownVipWrapper) dropdownVipWrapper.style.display = (systemSettings.showHeaderVip !== false) ? "block" : "none";
       }
     }
 
@@ -1020,6 +1021,11 @@
       const headerVipBox = document.getElementById("headerVipContainer");
       if (headerVipBox) {
         headerVipBox.style.display = (systemSettings.showHeaderVip !== false) ? "flex" : "none";
+      }
+
+      const dropdownVipWrapper = document.getElementById("dropdownVipWrapper");
+      if (dropdownVipWrapper) {
+        dropdownVipWrapper.style.display = (systemSettings.showHeaderVip !== false) ? "block" : "none";
       }
 
       document.getElementById("cartShippingDisplay").innerText = `การจัดส่ง: ${systemSettings.shippingName} (฿${systemSettings.shippingFee})`;
@@ -1161,7 +1167,6 @@
         if (prodSecret !== "") {
           if (!validActiveCodes.includes(prodSecret)) return false;
         }
-
         if (brand === "ALL") return true;
         return p.brand && p.brand.toUpperCase() === brand.toUpperCase();
       }).length;
