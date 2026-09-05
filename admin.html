@@ -131,6 +131,9 @@
     }
     .modal-close:hover { background: #111; color: #fff; border-color: #111; }
 
+    .shipping-info-box { background: #fafaf8; border: 1px dashed #888; border-radius: var(--radius); padding: 10px; font-size: .82rem; line-height: 1.4; margin-top: 8px; }
+    .bank-payment-box { background: #f4f4f1; border: 1px solid var(--border-color); border-radius: var(--radius); padding: 10px; font-size: 0.82rem; margin-top: 8px; text-align: left; }
+
     .image-preview-grid {
       display: grid; grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); gap: 8px;
       margin-top: 6px; max-height: 160px; overflow-y: auto; border: 1px dashed var(--border-color);
@@ -339,14 +342,14 @@
     </div>
   </div>
 
-  <!-- ORDERS MODAL (คำสั่งซื้อสินค้าทั้งหมด พร้อมปุ่มดูข้อมูลเพิ่มเติมและลบออเดอร์) -->
+  <!-- ORDERS MODAL (คำสั่งซื้อสินค้าทั้งหมด) -->
   <div id="ordersModal" class="modal-overlay" onclick="checkOutsideModalClick(event, 'ordersModal')">
     <div class="modal-box" style="max-width: 750px;">
       <div class="modal-header">
         <span>📦 คำสั่งซื้อสินค้าทั้งหมดในระบบ</span>
         <button class="modal-close" onclick="closeModal('ordersModal')">✕</button>
       </div>
-      <p style="font-size: 0.8rem; color: var(--text-muted);">รายการออเดอร์ทั้งหมดจากลูกค้า สามารถกดดูข้อมูลเพิ่มเติมหรือลบออเดอร์ได้</p>
+      <p style="font-size: 0.8rem; color: var(--text-muted);">รายการออเดอร์ทั้งหมดจากลูกค้า สามารถกดดูรายละเอียดหรือลบออเดอร์ได้</p>
       
       <div id="adminOrdersListContainer" style="max-height: 55vh; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; margin-top: 6px; padding-right: 4px;"></div>
 
@@ -356,21 +359,25 @@
     </div>
   </div>
 
-  <!-- ORDER DETAIL MODAL (รายละเอียดออเดอร์แบบเต็ม) -->
+  <!-- ORDER DETAIL MODAL (ใบสรุปรายการสั่งซื้อสำเร็จ - ดีไซน์ตรงกันกับหน้าร้าน) -->
   <div id="orderDetailModal" class="modal-overlay" onclick="checkOutsideModalClick(event, 'orderDetailModal')">
     <div class="modal-box" style="max-width: 600px;">
-      <div class="modal-header">
-        <span>📄 รายละเอียดคำสั่งซื้อเพิ่มเติม</span>
+      <div class="modal-header" style="color: #111;">
+        <span>🎉 สรุปรายการสั่งซื้อสำเร็จ!</span>
         <button class="modal-close" onclick="closeModal('orderDetailModal')">✕</button>
       </div>
-      <div id="orderDetailContent" style="display: flex; flex-direction: column; gap: 10px; font-size: 0.85rem; max-height: 60vh; overflow-y: auto;"></div>
-      <div style="margin-top: 10px;">
-        <button type="button" class="btn-action btn-secondary" style="width: 100%;" onclick="closeModal('orderDetailModal')">ปิดหน้าต่าง</button>
+      <p style="font-size: 0.8rem; color: var(--text-muted);">รายละเอียดคำสั่งซื้อเพิ่มเติมในระบบ</p>
+
+      <div id="orderDetailContent" style="display: flex; flex-direction: column; gap: 10px; font-size: 0.85rem; max-height: 60vh; overflow-y: auto; padding-right: 2px;"></div>
+
+      <div style="display: flex; gap: 8px; margin-top: 10px;">
+        <button class="btn-action btn-secondary" style="flex: 1; height: 40px;" onclick="window.print()">🖨️ พิมพ์เอกสาร</button>
+        <button class="btn-action" style="flex: 1; height: 40px;" onclick="closeModal('orderDetailModal')">ปิดหน้าต่าง</button>
       </div>
     </div>
   </div>
 
-  <!-- MEMBERS MODAL (จัดการสมาชิก พร้อมอัปเดตสิทธิ์ Admin สำหรับ craft.studio164@gmail.com) -->
+  <!-- MEMBERS MODAL (จัดการสมาชิก) -->
   <div id="membersModal" class="modal-overlay" onclick="checkOutsideModalClick(event, 'membersModal')">
     <div class="modal-box" style="max-width: 700px;">
       <div class="modal-header">
@@ -884,7 +891,6 @@
       openModal('manageProductsModal');
     }
 
-    // ฟังก์ชันจัดการแสดงออเดอร์ พร้อมปุ่มดูข้อมูลเพิ่มเติมและลบออเดอร์
     function openOrdersModal() {
       const cont = document.getElementById("adminOrdersListContainer");
       if (ordersList.length === 0) {
@@ -913,29 +919,60 @@
       if (!ord) return;
 
       const content = document.getElementById("orderDetailContent");
-      const itemsHtml = (ord.items || []).map(it => `
-        <div style="font-size:0.78rem; color:#333; border-bottom:1px dashed #eee; padding:6px 0; display:flex; justify-content:space-between;">
-          <span>• ${it.product.name} [${it.saleMode === 'READY' ? 'พร้อมส่ง' : 'พรีออเดอร์'}] (${it.scale} / ${it.optionName}) x ${it.qty}</span>
-          <strong style="white-space:nowrap;">฿${it.price * it.qty}</strong>
-        </div>
-      `).join('');
+      const itemsHtml = (ord.items || []).map(it => {
+        const thumb = (it.product.images && it.product.images.length > 0) ? it.product.images[0] : '';
+        const lineTotal = it.price * it.qty;
+        const modeLabel = it.saleMode === 'READY' ? '[พร้อมส่ง]' : '[พรีออเดอร์]';
+        return `
+          <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid #eee; padding:6px 0; gap:8px;">
+            <div style="display:flex; gap:8px; align-items:center; overflow:hidden;">
+              <img src="${thumb}" style="width:36px; height:36px; object-fit:cover; border-radius:6px; border:1px solid #111; flex-shrink:0;" />
+              <div style="overflow:hidden;">
+                <div style="font-weight:bold; font-size:0.78rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${it.product.name} ${modeLabel}</div>
+                <div style="font-size:0.65rem; color:#666;">SKU: ${it.product.id} | สเกล: ${it.scale} | ${it.optionName}</div>
+              </div>
+            </div>
+            <div style="text-align:right; flex-shrink:0; font-size:0.78rem;">
+              <div>${it.qty} ชิ้น x ฿${it.price}</div>
+              <strong style="color:#111;">฿${lineTotal}</strong>
+            </div>
+          </div>
+        `;
+      }).join('');
 
       content.innerHTML = `
-        <div style="background:#f8fafc; padding:10px; border-radius:6px; border:1px solid #cbd5e1;">
-          <strong>ข้อมูลผู้รับ (Receiver):</strong><br>
-          ชื่อ: ${ord.customer.name}<br>
-          เบอร์โทร: ${ord.customer.phone}<br>
-          อีเมล: ${ord.customer.email}<br>
-          ที่อยู่: ${ord.customer.address}<br>
-          ${ord.customer.note ? `หมายเหตุ: <span style="color:#b45309;">${ord.customer.note}</span>` : ''}
+        <div class="shipping-info-box" style="margin-top:0; background: #fff;">
+          <div style="font-weight: bold; margin-bottom: 4px; border-bottom: 1px solid #ddd; padding-bottom: 4px;">🏬 ข้อมูลผู้จัดส่ง (Sender):</div>
+          <div><strong>ผู้ส่ง:</strong> ${systemSettings.senderName}</div>
+          <div><strong>เบอร์โทร:</strong> ${systemSettings.senderPhone}</div>
+          <div><strong>ที่อยู่:</strong> ${systemSettings.senderAddress}</div>
         </div>
-        <div style="background:#fff; padding:10px; border-radius:6px; border:1px solid #cbd5e1; margin-top:4px;">
-          <strong>รายการสินค้า:</strong>
+
+        <div style="font-weight: bold; font-size: 0.88rem; margin-top: 4px;">📦 รายการสินค้าที่สั่งซื้อ:</div>
+        <div style="max-height: 180px; overflow-y: auto; border: 1px solid var(--border-color); border-radius: var(--radius); padding: 6px; background: #fff; margin-top: 2px;">
           ${itemsHtml}
-          <div style="margin-top:8px; text-align:right; font-size:0.85rem;">
-            ค่าสินค้า: ฿${ord.subtotal || 0} | ค่าส่ง (${ord.shippingName || 'EMS'}): ฿${ord.shippingFee || 0}<br>
-            <strong style="font-size:1rem; color:#059669;">ยอดรวมสุทธิ: ฿${ord.grandTotal || 0}</strong>
-          </div>
+        </div>
+
+        <div class="shipping-info-box" style="margin-top: 4px;">
+          <div style="font-weight: bold; margin-bottom: 4px; border-bottom: 1px solid #ddd; padding-bottom: 4px;">🚚 ข้อมูลผู้รับ (Receiver):</div>
+          <div><strong>ชื่อผู้รับ:</strong> ${ord.customer.name}</div>
+          <div><strong>เบอร์โทร:</strong> ${ord.customer.phone}</div>
+          <div><strong>อีเมล:</strong> ${ord.customer.email}</div>
+          <div><strong>ที่อยู่:</strong> ${ord.customer.address}</div>
+          ${ord.customer.note ? `<div style="margin-top: 4px; color: #b45309;"><strong>Note:</strong> ${ord.customer.note}</div>` : ''}
+        </div>
+
+        <div class="bank-payment-box" style="margin-top: 4px;">
+          <div style="font-weight: bold; font-size: 0.82rem; margin-bottom: 4px; border-bottom: 1px solid #ddd; padding-bottom: 4px;">💳 ข้อมูลการชำระเงิน:</div>
+          <div><strong>ธนาคาร:</strong> ${systemSettings.bankName}</div>
+          <div><strong>เลขที่บัญชี:</strong> <span style="font-weight: bold; color: #000;">${systemSettings.accountNo}</span></div>
+          <div><strong>ชื่อบัญชี:</strong> ${systemSettings.accountName}</div>
+        </div>
+
+        <div style="border-top: 2px solid var(--border-dark); padding-top: 6px; margin-top: 4px;">
+          <div style="display: flex; justify-content: space-between; font-size: 0.82rem; color: var(--text-muted);"><span>ค่าสินค้า:</span><span>฿${ord.subtotal || 0}</span></div>
+          <div style="display: flex; justify-content: space-between; font-size: 0.82rem; color: var(--text-muted);"><span>ค่าจัดส่ง (${ord.shippingName || systemSettings.shippingName}):</span><span>฿${ord.shippingFee || systemSettings.shippingFee}</span></div>
+          <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 1.1rem; color: #000; margin-top: 2px;"><span>ยอดรวมสุทธิ:</span><span>฿${ord.grandTotal || 0}</span></div>
         </div>
       `;
       openModal('orderDetailModal');
@@ -950,7 +987,6 @@
       });
     }
 
-    // ฟังก์ชันจัดการสมาชิก ปรับสถานะ craft.studio164@gmail.com ให้แสดงเป็น Admin
     function openMembersModal() {
       const cont = document.getElementById("membersListContainer");
       if (members.length === 0) {
