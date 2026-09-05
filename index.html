@@ -1220,45 +1220,66 @@
       document.getElementById("brandDrawerDropdown").classList.remove("show");
     }
 
-    function getCardDiscountedPrice(p) {
-      let base = p.basePrice || 0;
-      if (p.scalePrices && p.scales && p.scales.length > 0) {
-        base = p.scalePrices[p.scales[0]] !== undefined ? p.scalePrices[p.scales[0]] : base;
-      }
-      
-      let maxDisc = 0;
+    // คำนวณหาและแสดงราคาที่ต่ำที่สุดของสินค้า (รวมสเกลและส่วนลดโค้ด)
+    function getCardLowestDiscountedPrice(p) {
+      let scalesArr = (p.scales && p.scales.length > 0) ? p.scales : ['Standard'];
       let codesToCheck = [...userAssignedCodes].filter(c => vipCodesList.includes(c.toUpperCase()));
       activeSecretCodes.forEach(c => {
         const uc = c.toUpperCase();
         if (vipCodesList.includes(uc) && !codesToCheck.includes(uc)) codesToCheck.push(uc);
       });
 
-      if (p.options && p.options.length > 0) {
-        const opt = p.options[0];
-        let optExtra = opt.extraPrice || 0;
-        let totalBase = base + optExtra;
+      let minOriginal = Infinity;
+      let minFinal = Infinity;
+      let hasDiscount = false;
 
-        codesToCheck.forEach(code => {
-          let foundDisc = 0;
-          if (opt.codes && Array.isArray(opt.codes)) {
-            const m = opt.codes.find(c => (c.code || "").toUpperCase() === code.toUpperCase());
-            if (m) foundDisc = m.discount || 0;
-          }
-          if (!foundDisc && opt.vipCode && opt.vipCode.toUpperCase() === code.toUpperCase()) {
-            foundDisc = opt.vipDiscount || 0;
-          }
-          if (foundDisc > maxDisc) maxDisc = foundDisc;
-        });
-
-        let finalP = totalBase - maxDisc;
-        if (finalP < 0) finalP = 0;
-
-        if (maxDisc > 0) {
-          // ปรับตำแหน่งตามภาพที่ 2: ราคาเต็มขีดทับไว้ข้างหน้า ตามด้วยราคาลดสีแดง
-          return `<span style="text-decoration: line-through; color: #888; font-size: 0.85rem; margin-right: 4px;">฿${totalBase}</span> <span style="color: var(--danger);">฿${finalP}</span>`;
+      scalesArr.forEach(sc => {
+        let base = p.basePrice || 0;
+        if (p.scalePrices && p.scalePrices[sc] !== undefined) {
+          const sp = p.scalePrices[sc];
+          base = (typeof sp === 'object' && sp.price !== undefined) ? sp.price : sp;
         }
+
+        let optionsArr = (p.options && p.options.length > 0) ? p.options : [{ name: 'Standard', extraPrice: 0, codes: [] }];
+
+        optionsArr.forEach(opt => {
+          let optExtra = opt.extraPrice || 0;
+          let totalBase = base + optExtra;
+
+          let maxDisc = 0;
+          codesToCheck.forEach(code => {
+            let foundDisc = 0;
+            if (opt.codes && Array.isArray(opt.codes)) {
+              const m = opt.codes.find(c => (c.code || "").toUpperCase() === code.toUpperCase());
+              if (m) foundDisc = m.discount || 0;
+            }
+            if (!foundDisc && opt.vipCode && opt.vipCode.toUpperCase() === code.toUpperCase()) {
+              foundDisc = opt.vipDiscount || 0;
+            }
+            if (foundDisc > maxDisc) maxDisc = foundDisc;
+          });
+
+          let finalP = totalBase - maxDisc;
+          if (finalP < 0) finalP = 0;
+
+          if (finalP < minFinal) {
+            minFinal = finalP;
+            minOriginal = totalBase;
+            hasDiscount = (maxDisc > 0);
+          }
+        });
+      });
+
+      if (minFinal === Infinity) {
+        minFinal = p.basePrice || 0;
+        minOriginal = minFinal;
+        hasDiscount = false;
       }
-      return `<span style="color: var(--danger);">฿${base}</span>`;
+
+      if (hasDiscount && minOriginal > minFinal) {
+        return `<span style="text-decoration: line-through; color: #888; font-size: 0.85rem; margin-right: 4px;">฿${minOriginal}</span> <span style="color: var(--danger);">฿${minFinal}</span>`;
+      }
+      return `<span style="color: var(--danger);">฿${minFinal}</span>`;
     }
 
     function renderProducts() {
@@ -1341,7 +1362,7 @@
           mediaHtml = `<img src="${mainImage}" alt="${p.name}" />`;
         }
 
-        const priceHtml = getCardDiscountedPrice(p);
+        const priceHtml = getCardLowestDiscountedPrice(p);
 
         return `
           <div class="product-card" ${p.vdo ? `onmouseenter="playCardVdo(this)" onmouseleave="stopCardVdo(this)"` : ''}>
@@ -1453,7 +1474,11 @@
       const scaleSelect = document.getElementById("detailScaleSelect");
       if (scaleSelect) {
         scaleSelect.innerHTML = (prod.scales || []).map(sc => {
-          const scPrice = (prod.scalePrices && prod.scalePrices[sc] !== undefined) ? prod.scalePrices[sc].price : prod.basePrice;
+          let scPrice = prod.basePrice;
+          if (prod.scalePrices && prod.scalePrices[sc] !== undefined) {
+            const sp = prod.scalePrices[sc];
+            scPrice = (typeof sp === 'object' && sp.price !== undefined) ? sp.price : sp;
+          }
           return `<option value="${sc}">${sc} (฿${scPrice})</option>`;
         }).join('');
       }
@@ -1514,7 +1539,9 @@
         let maxLimit = 999999;
         if (currentSelectedProduct.scalePrices && currentSelectedProduct.scalePrices[scale]) {
           const sp = currentSelectedProduct.scalePrices[scale];
-          maxLimit = activeSaleMode === 'READY' ? (sp.readyStock || 0) : (sp.preorderUnlimited ? 999999 : (sp.preorderStock || 0));
+          if (typeof sp === 'object') {
+            maxLimit = activeSaleMode === 'READY' ? (sp.readyStock || 0) : (sp.preorderUnlimited ? 999999 : (sp.preorderStock || 0));
+          }
         } else {
           maxLimit = activeSaleMode === 'READY' ? (currentSelectedProduct.readyStock || 0) : (currentSelectedProduct.preorderUnlimited ? 999999 : (currentSelectedProduct.preorderStock || 0));
         }
