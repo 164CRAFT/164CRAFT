@@ -595,7 +595,7 @@
       </div>
       <div id="cartItemList" style="max-height: 45vh; overflow-y: auto; padding-right: 2px;">- ไม่มีรายการสินค้า -</div>
       
-      <!-- เพิ่มส่วนแสดงผล ข้อมูลการจัดส่ง & ชำระเงิน ในตะกร้า -->
+      <!-- ข้อมูลการจัดส่ง & ชำระเงิน ในตะกร้า -->
       <div class="bank-payment-box" style="margin-top: 6px; text-align: left;">
         <div style="font-weight: bold; font-size: 0.78rem; margin-bottom: 3px; border-bottom: 1px solid #ddd; padding-bottom: 2px;">💳 ช่องทางชำระเงิน & โอนเงิน:</div>
         <div style="font-size: 0.75rem;"><strong>ธนาคาร:</strong> <span id="cartPayBankName">-</span></div>
@@ -917,7 +917,6 @@
         }
         applyShopSettings();
         renderCategories();
-        // อัปเดตข้อมูลในตะกร้าหากมีการเปิดอยู่
         if (document.getElementById('cartModal').style.display === 'flex') {
           renderCart();
         }
@@ -989,12 +988,10 @@
 
       document.getElementById("cartShippingDisplay").innerText = `การจัดส่ง: ${systemSettings.shippingName} (฿${systemSettings.shippingFee})`;
       
-      // อัปเดตข้อมูลธนาคาร & QR Code ในหน้าตะกร้า (Cart Modal)
       document.getElementById("cartPayBankName").innerText = systemSettings.bankName;
       document.getElementById("cartPayAccountNo").innerText = systemSettings.accountNo;
       document.getElementById("cartPayAccountName").innerText = systemSettings.accountName;
 
-      // อัปเดตข้อมูลธนาคาร & QR Code ในหน้าชำระเงิน (Shipping Modal)
       document.getElementById("payBankName").innerText = systemSettings.bankName;
       document.getElementById("payAccountNo").innerText = systemSettings.accountNo;
       document.getElementById("payAccountName").innerText = systemSettings.accountName;
