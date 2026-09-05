@@ -256,7 +256,7 @@
 
         <div class="admin-menu-box">
           <div class="admin-menu-title">👥 จัดการสมาชิกในระบบ</div>
-          <div class="admin-menu-desc">เพิ่ม, แก้ไข หรือลบโค้ดส่วนลดอัตโนมัติให้สมาชิกแต่ละคน</div>
+          <div class="admin-menu-desc">เพิ่ม, แก้ไข หรือลบโค้ดส่วนลดอัตโนมัติให้สมาชิกแต่ละคน (รองรับหลายโค้ด)</div>
           <button class="btn-action btn-secondary" style="margin-top: auto;" onclick="openMembersModal()">จัดการสมาชิก</button>
         </div>
 
@@ -427,14 +427,14 @@
     </div>
   </div>
 
-  <!-- MEMBERS MODAL (เพิ่ม, แก้ไข, ลบ โค้ดส่วนลดอัตโนมัติสำหรับสมาชิก) -->
+  <!-- MEMBERS MODAL (ระบบจัดการโค้ดส่วนลดอัตโนมัติ: เพิ่ม, แก้ไข, ลบ) -->
   <div id="membersModal" class="modal-overlay" onclick="checkOutsideModalClick(event, 'membersModal')">
     <div class="modal-box" style="max-width: 700px;">
       <div class="modal-header">
         <span>👥 จัดการสมาชิก & กำหนดโค้ดส่วนลดอัตโนมัติ</span>
         <button class="modal-close" onclick="closeModal('membersModal')">✕</button>
       </div>
-      <p style="font-size: 0.8rem; color: var(--text-muted);">รายชื่อสมาชิก คุณสามารถเพิ่ม แก้ไข หรือลบโค้ดส่วนลดอัตโนมัติของสมาชิกแต่ละคนได้ที่นี่</p>
+      <p style="font-size: 0.8rem; color: var(--text-muted);">รายชื่อสมาชิก คุณสามารถเพิ่ม, แก้ไข หรือลบโค้ดส่วนลดอัตโนมัติของสมาชิกแต่ละคนได้ที่นี่ (รองรับหลายโค้ด)</p>
       
       <div id="membersListContainer" style="max-height: 55vh; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; margin-top: 6px; padding-right: 4px;"></div>
 
@@ -1071,7 +1071,7 @@
       });
     }
 
-    // ฟังก์ชันจัดการสมาชิก เพิ่ม, แก้ไข, ลบ โค้ดส่วนลดอัตโนมัติ
+    // ฟังก์ชันจัดการสมาชิก รองรับระบบเพิ่ม โค้ดส่วนลดอัตโนมัติหลายโค้ด (+ เพิ่ม)
     function openMembersModal() {
       const cont = document.getElementById("membersListContainer");
       if (members.length === 0) {
@@ -1084,7 +1084,16 @@
             `<div style="font-size:0.7rem; color:#fff; font-weight:bold; background:#111; padding:3px 8px; border-radius:4px; height:fit-content;">Admin</div>` : 
             `<div style="font-size:0.7rem; color:#059669; font-weight:bold; background:var(--accent-vip-bg); padding:3px 8px; border-radius:4px; height:fit-content;">สมาชิก Active</div>`;
 
-          const assignedCode = m.assignedCode || "";
+          let assignedCodes = m.assignedCodes || [];
+          if (!assignedCodes.length && m.assignedCode) assignedCodes = [m.assignedCode];
+
+          let codesHtml = assignedCodes.map((codeVal, cIdx) => `
+            <div style="display:flex; gap:6px; align-items:center;" id="codeRow_${m.emailId}_${cIdx}">
+              <input type="text" class="form-control member-code-input-${m.emailId}" style="min-height:30px; font-size:0.78rem; text-transform:uppercase;" placeholder="เช่น PROMO10" value="${codeVal}" />
+              <button type="button" class="btn-action btn-danger" style="height:30px; padding:0 8px; font-size:0.7rem;" onclick="this.closest('[id^=codeRow_]').remove()">✕ ลบ</button>
+            </div>
+          `).join('');
+
           const userOrders = ordersList.filter(o => o.customer && o.customer.email && o.customer.email.toLowerCase() === userEmail);
           
           let ordersHtml = '';
@@ -1108,12 +1117,16 @@
                 ${roleBadge}
               </div>
 
-              <!-- ช่องจัดการโค้ดส่วนลดอัตโนมัติ (เพิ่ม/แก้ไข/ลบ) -->
-              <div style="display:flex; gap:6px; align-items:center; background:#fff; padding:8px; border:1px solid #e2e8f0; border-radius:6px;">
-                <label style="font-size:0.72rem; font-weight:bold; white-space:nowrap;">🎟️ โค้ดส่วนลด:</label>
-                <input type="text" id="memberCode_${m.emailId}" class="form-control" style="min-height:30px; font-size:0.78rem; text-transform:uppercase;" placeholder="เช่น PROMO10 (เว้นว่างเพื่อลบ)" value="${assignedCode}" />
-                <button type="button" class="btn-action" style="height:30px; padding:0 10px; font-size:0.72rem;" onclick="saveMemberAssignedCode('${m.emailId}')">บันทึก</button>
-                <button type="button" class="btn-action btn-danger" style="height:30px; padding:0 8px; font-size:0.7rem;" onclick="clearMemberAssignedCode('${m.emailId}')">ลบโค้ด</button>
+              <!-- โค้ดส่วนลดอัตโนมัติหลายช่อง -->
+              <div style="background:#fff; padding:10px; border:1px solid #e2e8f0; border-radius:6px; display:flex; flex-direction:column; gap:6px;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <label style="font-size:0.75rem; font-weight:bold; color:var(--accent-vip);">🎟️ โค้ดส่วนลดอัตโนมัติ (ใส่ได้หลายโค้ด):</label>
+                  <button type="button" class="btn-action btn-secondary" style="height:26px; padding:0 8px; font-size:0.68rem;" onclick="addMemberCodeRow('${m.emailId}')">+ เพิ่มโค้ด</button>
+                </div>
+                <div id="memberCodesContainer_${m.emailId}" style="display:flex; flex-direction:column; gap:6px;">
+                  ${codesHtml}
+                </div>
+                <button type="button" class="btn-action" style="height:32px; font-size:0.75rem; margin-top:4px;" onclick="saveMemberAssignedCodes('${m.emailId}')">💾 บันทึกโค้ดทั้งหมด</button>
               </div>
 
               <div style="border-top:1px dashed #cbd5e1; padding-top:6px; margin-top:2px;">
@@ -1127,31 +1140,35 @@
       openModal('membersModal');
     }
 
-    function saveMemberAssignedCode(emailId) {
-      const inputEl = document.getElementById(`memberCode_${emailId}`);
-      if (!inputEl) return;
-      const codeVal = inputEl.value.trim().toUpperCase();
-
-      db.collection("user_profiles").doc(emailId).set({
-        assignedCode: codeVal
-      }, { merge: true }).then(() => {
-        showToast("บันทึก/อัปเดตโค้ดส่วนลดสำเร็จ");
-      }).catch(err => {
-        showToast("เกิดข้อผิดพลาดในการบันทึก");
-        console.error(err);
-      });
+    function addMemberCodeRow(emailId) {
+      const container = document.getElementById(`memberCodesContainer_${emailId}`);
+      if (!container) return;
+      const rowId = 'codeRow_' + Date.now();
+      const div = document.createElement('div');
+      div.id = rowId;
+      div.style.cssText = "display:flex; gap:6px; align-items:center;";
+      div.innerHTML = `
+        <input type="text" class="form-control member-code-input-${emailId}" style="min-height:30px; font-size:0.78rem; text-transform:uppercase;" placeholder="เช่น PROMO10" value="" />
+        <button type="button" class="btn-action btn-danger" style="height:30px; padding:0 8px; font-size:0.7rem;" onclick="document.getElementById('${rowId}').remove()">✕ ลบ</button>
+      `;
+      container.appendChild(div);
     }
 
-    function clearMemberAssignedCode(emailId) {
-      if (!confirm("ต้องการลบโค้ดส่วนลดอัตโนมัติของสมาชิกท่านนี้หรือไม่?")) return;
+    function saveMemberAssignedCodes(emailId) {
+      const inputs = document.querySelectorAll(`.member-code-input-${emailId}`);
+      const codes = [];
+      inputs.forEach(inp => {
+        const val = inp.value.trim().toUpperCase();
+        if (val && !codes.includes(val)) codes.push(val);
+      });
+
       db.collection("user_profiles").doc(emailId).set({
-        assignedCode: ""
+        assignedCodes: codes,
+        assignedCode: codes.length > 0 ? codes[0] : "" // สำหรับรองรับระบบเก่าร่วมด้วย
       }, { merge: true }).then(() => {
-        const inputEl = document.getElementById(`memberCode_${emailId}`);
-        if (inputEl) inputEl.value = "";
-        showToast("ลบโค้ดส่วนลดเรียบร้อยแล้ว");
+        showToast("บันทึกโค้ดส่วนลดอัตโนมัติสำเร็จ");
       }).catch(err => {
-        showToast("เกิดข้อผิดพลาดในการลบ");
+        showToast("เกิดข้อผิดพลาดในการบันทึก");
         console.error(err);
       });
     }
