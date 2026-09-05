@@ -784,6 +784,27 @@
               if (shipPhoneInput) shipPhoneInput.value = data.phone || "";
               if (shipEmailInput) shipEmailInput.value = user.email || "";
               if (shipAddressInput) shipAddressInput.value = data.address || "";
+
+              // ดึงรหัสปลดล็อกสินค้า / โค้ดส่วนลดที่ผู้ดูแลระบบกำหนดไว้ให้สมาชิกคนนี้มาเปิดใช้งานอัตโนมัติ
+              let autoCodes = [];
+              if (data.assignedCodes && Array.isArray(data.assignedCodes)) {
+                autoCodes = data.assignedCodes;
+              } else if (data.assignedCode) {
+                autoCodes = [data.assignedCode];
+              }
+
+              if (autoCodes.length > 0) {
+                autoCodes.forEach(code => {
+                  const upperCode = code.toUpperCase();
+                  if (vipCodesList.includes(upperCode) && !activeSecretCodes.includes(upperCode)) {
+                    activeSecretCodes.push(upperCode);
+                  }
+                });
+                localStorage.setItem("activeSecretCodes", JSON.stringify(activeSecretCodes));
+                updateSecretStatusDisplay();
+                renderCategories();
+                renderProducts();
+              }
             } else {
               if (shipNameInput && !shipNameInput.value) shipNameInput.value = user.displayName || "";
               if (shipEmailInput && !shipEmailInput.value) shipEmailInput.value = user.email || "";
@@ -995,7 +1016,7 @@
 
     function processVipCode(rawInput) {
       const cleanInput = (rawInput || "").trim();
-      if (!cleanInput) return; // ถ้าเว้นว่างไว้ จะไม่ทำลายหรือลบโค้ดเดิมที่ใช้งานอยู่
+      if (!cleanInput) return; // หากเว้นว่างไว้ จะไม่ทำลายหรือลบโค้ดเดิมที่ใช้งานอยู่
 
       const codes = cleanInput.split(/[,,\s]+/).map(c => c.trim().toUpperCase()).filter(Boolean);
       let successList = [];
