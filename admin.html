@@ -181,7 +181,7 @@
     .opt-codes-section {
       background: #ffffff; border: 1px dashed #cbd5e1; border-radius: 6px; padding: 10px 12px; display: flex; flex-direction: column; gap: 8px;
     }
-    .opt-code-single-row { display: grid; grid-template-columns: 1.5fr 1fr auto; gap: 8px; align-items: center; }
+    .opt-code-single-row { display: grid; grid-template-columns: 2fr auto; gap: 8px; align-items: center; }
 
     .admin-filter-bar {
       display: flex; flex-direction: column; gap: 8px; background: #fafaf8;
@@ -269,7 +269,7 @@
 
         <div class="admin-menu-box">
           <div class="admin-menu-title">🎟️ จัดการรหัส & โน้ตข้อความ</div>
-          <div class="admin-menu-desc">แยกจัดการ "โค้ดเปิดสินค้า" และ "โค้ดเงินสด/ส่วนลด" พร้อมแก้ไขโน้ต</div>
+          <div class="admin-menu-desc">แยกจัดการ "โค้ดเปิดสินค้า" และ "โค้ดเงินสดส่วนลด" พร้อมแก้ไขโน้ต</div>
           <button class="btn-action btn-secondary" style="margin-top: auto;" onclick="openVipCodesModal()">จัดการรหัส & โน้ต</button>
         </div>
 
@@ -1677,20 +1677,17 @@
       document.getElementById("adminVdoContainer").style.display = "none";
     }
 
-    function createCodeRowHtml(code = '', discount = 0) {
-      const allCreatedCodes = vipCodesList.map(item => item.code);
-      const optionsHtml = allCreatedCodes.map(c => `<option value="${c}" ${c === code ? 'selected' : ''}>${c}</option>`).join('');
+    function createCodeRowHtml(code = '') {
+      // กรองเฉพาะโค้ดประเภทส่วนลด (DISCOUNT) มาให้เลือกในตัวเลือกสินค้า
+      const discountCodes = vipCodesList.filter(item => item.type === 'DISCOUNT').map(item => item.code);
+      const optionsHtml = discountCodes.map(c => `<option value="${c}" ${c === code ? 'selected' : ''}>${c}</option>`).join('');
 
       return `
         <div class="opt-code-single-row">
           <select class="form-control opt-single-code" style="min-height:34px; font-size:0.8rem; text-transform:uppercase;">
-            <option value="">-- เลือกโค้ดในระบบ --</option>
+            <option value="">-- เลือกโค้ดส่วนลดในระบบ --</option>
             ${optionsHtml}
           </select>
-          <div style="display:flex; align-items:center; gap:4px;">
-            <span style="font-size:0.75rem; color:var(--danger); font-weight:bold;">-฿</span>
-            <input type="text" inputmode="numeric" class="form-control opt-single-discount" placeholder="0" value="${discount}" onfocus="this.select()" style="min-height:34px; font-size:0.8rem;" />
-          </div>
           <button type="button" class="btn-action btn-danger" style="height:34px; padding:0 8px; font-size:0.7rem;" onclick="this.closest('.opt-code-single-row').remove()">✕</button>
         </div>
       `;
@@ -1704,7 +1701,7 @@
       let codesList = opt.codes || [];
       if (!codesList.length && opt.vipCode) codesList.push({ code: opt.vipCode, discount: opt.vipDiscount || 0 });
 
-      let codesHtml = codesList.map(c => createCodeRowHtml(c.code, c.discount)).join('');
+      let codesHtml = codesList.map(c => createCodeRowHtml(c.code)).join('');
 
       row.innerHTML = `
         <div class="opt-main-inputs">
@@ -1720,7 +1717,7 @@
         </div>
         <div class="opt-codes-section">
           <div style="display:flex; justify-content:space-between; align-items:center;">
-            <span style="font-size:0.72rem; font-weight:bold; color:var(--accent-vip);">🎟️ โค้ดส่วนลด (เลือกจากรหัสที่สร้างไว้)</span>
+            <span style="font-size:0.72rem; font-weight:bold; color:var(--accent-vip);">🎟️ โค้ดส่วนลด (ดึงมูลค่าจากระบบอัตโนมัติ)</span>
             <button type="button" class="btn-action btn-secondary" style="height:26px; padding:0 8px; font-size:0.68rem;" onclick="addCodeToOption(this)">+ เพิ่มโค้ด</button>
           </div>
           <div class="opt-codes-container">${codesHtml}</div>
@@ -1732,7 +1729,7 @@
     function addCodeToOption(btn) {
       const container = btn.closest('.opt-codes-section').querySelector('.opt-codes-container');
       const temp = document.createElement('div');
-      temp.innerHTML = createCodeRowHtml('', 0);
+      temp.innerHTML = createCodeRowHtml('');
       container.appendChild(temp.firstElementChild);
     }
 
@@ -1745,9 +1742,13 @@
           const codes = [];
           card.querySelectorAll(".opt-code-single-row").forEach(codeRow => {
             const cSelect = codeRow.querySelector(".opt-single-code");
-            const dInput = codeRow.querySelector(".opt-single-discount");
             const codeVal = (cSelect.value || "").trim().toUpperCase();
-            if (codeVal) codes.push({ code: codeVal, discount: parseFloat(dInput.value) || 0 });
+            if (codeVal) {
+              // ค้นหามูลค่าส่วนลดจาก vipCodesList อัตโนมัติ ไม่ต้องกรอกค่าเงินเอง
+              const foundMaster = vipCodesList.find(item => item.code === codeVal);
+              const autoDisc = foundMaster ? foundMaster.discount : 0;
+              codes.push({ code: codeVal, discount: autoDisc });
+            }
           });
           options.push({
             name: nameInput.value.trim(),
@@ -1914,7 +1915,7 @@
             <div class="tag-chip">
               <div>
                 <strong style="color:var(--accent-vip);">${code}</strong> 
-                <span style="font-size:0.75rem; color:#065f46;">(ลด ฿${disc})</span>
+                <span style="font-size:0.75rem; color:#065f46;">(มูลค่าส่วนลด ฿${disc})</span>
                 <div style="font-size:0.7rem; color:#555; font-weight:normal;">${note || 'ไม่มีโน้ต'}</div>
               </div>
               <div style="display:flex; gap:4px;">
