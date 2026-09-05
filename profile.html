@@ -79,8 +79,32 @@
 
     .order-item-card {
       background: #fafafa; border: 1px solid var(--border-color); border-radius: var(--radius);
-      padding: 14px; margin-bottom: 10px; display: flex; flex-direction: column; gap: 8px;
+      padding: 14px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; gap: 10px;
     }
+
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(10, 10, 10, 0.75); backdrop-filter: blur(6px);
+      display: none; align-items: center; justify-content: center; z-index: 1000; padding: 20px; cursor: pointer;
+    }
+    .modal-box {
+      width: 100%; max-width: 600px; max-height: 90vh; background: #fff; border: 1px solid var(--border-color);
+      border-radius: calc(var(--radius) * 1.8); padding: 28px; box-shadow: 0 30px 60px rgba(0,0,0,0.3);
+      display: flex; flex-direction: column; gap: 12px; position: relative; overflow-y: auto; cursor: default;
+    }
+    .modal-header {
+      font-size: 1rem; font-weight: 850; padding-bottom: 8px; border-bottom: 1px solid var(--border-color);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .modal-close {
+      width: 32px; height: 32px; border: 1px solid var(--border-color); background: #fff;
+      border-radius: var(--radius); font-size: 0.9rem; cursor: pointer; font-weight: bold;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .modal-close:hover { background: #111; color: #fff; border-color: #111; }
+
+    .shipping-info-box { background: #fafaf8; border: 1px dashed #888; border-radius: var(--radius); padding: 10px; font-size: .82rem; line-height: 1.4; margin-top: 8px; }
+    .bank-payment-box { background: #f4f4f1; border: 1px solid var(--border-color); border-radius: var(--radius); padding: 10px; font-size: 0.82rem; margin-top: 8px; text-align: left; }
 
     #toastNotification {
       position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(20px);
@@ -137,6 +161,56 @@
 
   </div>
 
+  <!-- ORDER SUMMARY MODAL (ใบสรุปรายการสั่งซื้อสำเร็จ) -->
+  <div id="orderSummaryModal" class="modal-overlay" onclick="if(event.target===this) closeModal('orderSummaryModal')">
+    <div class="modal-box">
+      <div class="modal-header" style="color: #111;">
+        <span>🎉 สรุปรายการสั่งซื้อสำเร็จ!</span>
+        <button class="modal-close" onclick="closeModal('orderSummaryModal')">✕</button>
+      </div>
+      <p style="font-size: 0.8rem; color: var(--text-muted);">รายละเอียดคำสั่งซื้อสินค้าของคุณ</p>
+
+      <div id="printableOrderArea">
+        <div class="shipping-info-box" style="margin-top:0; background: #fff;">
+          <div style="font-weight: bold; margin-bottom: 4px; border-bottom: 1px solid #ddd; padding-bottom: 4px;">🏬 ข้อมูลผู้จัดส่ง (Sender):</div>
+          <div><strong>ผู้ส่ง:</strong> <span id="summarySenderName">164CRAFT คลังกระจายสินค้า</span></div>
+          <div><strong>เบอร์โทร:</strong> <span id="summarySenderPhone">0812345678</span></div>
+          <div><strong>ที่อยู่:</strong> <span id="summarySenderAddress">99/1 ถ.พหลโยธิน แขวงลาดยาว เขตจตุจักร กรุงเทพฯ 10900</span></div>
+        </div>
+
+        <div style="font-weight: bold; font-size: 0.88rem; margin-top: 8px;">📦 รายการสินค้าที่สั่งซื้อ:</div>
+        <div id="summaryItemsList" style="max-height: 200px; overflow-y: auto; border: 1px solid var(--border-color); border-radius: var(--radius); padding: 6px; background: #fff; margin-top: 4px;"></div>
+
+        <div class="shipping-info-box" style="margin-top: 8px;">
+          <div style="font-weight: bold; margin-bottom: 4px; border-bottom: 1px solid #ddd; padding-bottom: 4px;">🚚 ข้อมูลผู้รับ (Receiver):</div>
+          <div><strong>ชื่อผู้รับ:</strong> <span id="summaryCustomerName">-</span></div>
+          <div><strong>เบอร์โทร:</strong> <span id="summaryCustomerPhone">-</span></div>
+          <div><strong>อีเมล:</strong> <span id="summaryCustomerEmail">-</span></div>
+          <div><strong>ที่อยู่:</strong> <span id="summaryCustomerAddress">-</span></div>
+          <div id="summaryNoteContainer" style="margin-top: 4px; color: #b45309; display:none;"><strong>Note:</strong> <span id="summaryCustomerNote">-</span></div>
+        </div>
+
+        <div class="bank-payment-box" style="margin-top: 8px;">
+          <div style="font-weight: bold; font-size: 0.82rem; margin-bottom: 4px; border-bottom: 1px solid #ddd; padding-bottom: 4px;">💳 ข้อมูลการชำระเงิน:</div>
+          <div><strong>ธนาคาร:</strong> <span id="summaryBankName">กสิกรไทย (KBANK)</span></div>
+          <div><strong>เลขที่บัญชี:</strong> <span id="summaryAccountNo" style="font-weight: bold; color: #000;">123-4-56789-0</span></div>
+          <div><strong>ชื่อบัญชี:</strong> <span id="summaryAccountName">164CRAFT CO., LTD.</span></div>
+        </div>
+
+        <div style="border-top: 2px solid var(--border-dark); padding-top: 8px; margin-top: 8px;">
+          <div style="display: flex; justify-content: space-between; font-size: 0.82rem; color: var(--text-muted);"><span>ค่าสินค้า:</span><span id="summarySubtotal">฿0</span></div>
+          <div style="display: flex; justify-content: space-between; font-size: 0.82rem; color: var(--text-muted);"><span>ค่าจัดส่ง (<span id="summaryShippingName">EMS</span>):</span><span id="summaryShippingFee">฿50</span></div>
+          <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 1.1rem; color: #000; margin-top: 4px;"><span>ยอดรวมสุทธิ:</span><span id="summaryGrandTotal">฿0</span></div>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 8px; margin-top: 10px;">
+        <button class="btn-action btn-secondary" style="flex: 1; height: 40px;" onclick="window.print()">🖨️ พิมพ์เอกสาร</button>
+        <button class="btn-action" style="flex: 1; height: 40px;" onclick="closeModal('orderSummaryModal')">ปิดหน้าต่าง</button>
+      </div>
+    </div>
+  </div>
+
   <div id="toastNotification"><span id="toastText">แจ้งเตือน</span></div>
 
   <!-- Firebase App SDK, Firestore & Auth -->
@@ -159,6 +233,8 @@
     const db = firebase.firestore();
     const auth = firebase.auth();
 
+    let userOrdersData = [];
+
     let toastTimer = null;
     function showToast(message) {
       const toast = document.getElementById("toastNotification");
@@ -168,6 +244,9 @@
       toastTimer = setTimeout(() => { toast.classList.remove("show"); }, 2000);
     }
 
+    function openModal(id) { document.getElementById(id).style.display = "flex"; }
+    function closeModal(id) { document.getElementById(id).style.display = "none"; }
+
     function initProfilePage() {
       auth.onAuthStateChanged((user) => {
         if (user) {
@@ -175,7 +254,14 @@
           document.getElementById("userName").innerText = user.displayName || "สมาชิก 164CRAFT";
           document.getElementById("userEmail").innerText = user.email;
 
-          // โหลดข้อมูลที่อยู่จัดส่งของ User
+          db.collection("user_profiles").doc(user.email.toLowerCase()).set({
+            uid: user.uid,
+            name: user.displayName || "สมาชิก",
+            email: user.email.toLowerCase(),
+            photoURL: user.photoURL || "",
+            lastLogin: firebase.firestore.FieldValue.serverTimestamp()
+          }, { merge: true });
+
           db.collection("user_profiles").doc(user.email.toLowerCase()).get().then((doc) => {
             if (doc.exists) {
               const data = doc.data();
@@ -187,7 +273,6 @@
             }
           });
 
-          // โหลดประวัติคำสั่งซื้อของ User คนนี้
           loadUserOrders(user.email);
 
         } else {
@@ -228,27 +313,70 @@
     function loadUserOrders(email) {
       db.collection("orders").where("customer.email", "==", email.toLowerCase()).onSnapshot((snapshot) => {
         const cont = document.getElementById("userOrdersList");
-        const orders = [];
-        snapshot.forEach(doc => orders.push(doc.data()));
+        userOrdersData = [];
+        snapshot.forEach(doc => userOrdersData.push({ id: doc.id, ...doc.data() }));
 
-        if (orders.length === 0) {
+        if (userOrdersData.length === 0) {
           cont.innerHTML = `<div style="text-align:center; color:#777; padding:20px;">ยังไม่มีประวัติคำสั่งซื้อสินค้า</div>`;
           return;
         }
 
-        cont.innerHTML = orders.map(ord => `
+        cont.innerHTML = userOrdersData.map(ord => `
           <div class="order-item-card">
-            <div style="display:flex; justify-content:space-between; font-weight:bold; font-size:0.85rem;">
-              <span>ยอดชำระ: ฿${ord.grandTotal || 0}</span>
-              <span style="color:var(--accent-vip);">จัดส่งผ่าน ${ord.shippingName || 'EMS'}</span>
+            <div>
+              <div style="font-weight:bold; font-size:0.85rem;">ยอดชำระ: ฿${ord.grandTotal || 0}</div>
+              <div style="font-size:0.72rem; color:var(--text-muted);">จัดส่งผ่าน ${ord.shippingName || 'EMS'}</div>
             </div>
-            <div style="font-size:0.75rem; color:var(--text-muted);">
-              ผู้รับ: ${ord.customer.name} (${ord.customer.phone}) <br>
-              ที่อยู่: ${ord.customer.address}
-            </div>
+            <button class="btn-action btn-secondary" style="height:34px; font-size:0.75rem; padding:0 10px;" onclick="viewOrderSummary('${ord.id}')">🔍 รายละเอียดเพิ่มเติม</button>
           </div>
         `).join('');
       });
+    }
+
+    function viewOrderSummary(orderId) {
+      const ord = userOrdersData.find(o => o.id === orderId);
+      if (!ord) return;
+
+      document.getElementById("summaryCustomerName").innerText = ord.customer.name;
+      document.getElementById("summaryCustomerPhone").innerText = ord.customer.phone;
+      document.getElementById("summaryCustomerEmail").innerText = ord.customer.email;
+      document.getElementById("summaryCustomerAddress").innerText = ord.customer.address;
+
+      const noteContainer = document.getElementById("summaryNoteContainer");
+      if (ord.customer.note) {
+        document.getElementById("summaryCustomerNote").innerText = ord.customer.note;
+        noteContainer.style.display = "block";
+      } else {
+        noteContainer.style.display = "none";
+      }
+
+      document.getElementById("summarySubtotal").innerText = "฿" + (ord.subtotal || 0);
+      document.getElementById("summaryShippingName").innerText = ord.shippingName || "EMS";
+      document.getElementById("summaryShippingFee").innerText = "฿" + (ord.shippingFee || 50);
+      document.getElementById("summaryGrandTotal").innerText = "฿" + (ord.grandTotal || 0);
+
+      document.getElementById("summaryItemsList").innerHTML = (ord.items || []).map(it => {
+        const thumb = (it.product.images && it.product.images.length > 0) ? it.product.images[0] : '';
+        const lineTotal = it.price * it.qty;
+        const modeLabel = it.saleMode === 'READY' ? '[พร้อมส่ง]' : '[พรีออเดอร์]';
+        return `
+          <div style="display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid #eee; padding:6px 0; gap:8px;">
+            <div style="display:flex; gap:8px; align-items:center; overflow:hidden;">
+              <img src="${thumb}" style="width:36px; height:36px; object-fit:cover; border-radius:6px; border:1px solid #111; flex-shrink:0;" />
+              <div style="overflow:hidden;">
+                <div style="font-weight:bold; font-size:0.78rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${it.product.name} ${modeLabel}</div>
+                <div style="font-size:0.65rem; color:#666;">SKU: ${it.product.id} | สเกล: ${it.scale} | ${it.optionName}</div>
+              </div>
+            </div>
+            <div style="text-align:right; flex-shrink:0; font-size:0.78rem;">
+              <div>${it.qty} ชิ้น x ฿${it.price}</div>
+              <strong style="color:#111;">฿${lineTotal}</strong>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      openModal('orderSummaryModal');
     }
   </script>
 </body>
