@@ -1220,7 +1220,6 @@
       document.getElementById("brandDrawerDropdown").classList.remove("show");
     }
 
-    // คำนวณหาและแสดงราคาที่ต่ำที่สุดของสินค้า (ค้นหาทุกสเกลแล้วเลือกตัวที่ถูกที่สุด)
     function getCardLowestDiscountedPrice(p) {
       let scalesArr = (p.scales && p.scales.length > 0) ? p.scales : ['Standard'];
       let codesToCheck = [...userAssignedCodes].filter(c => vipCodesList.includes(c.toUpperCase()));
@@ -1244,7 +1243,8 @@
 
         optionsArr.forEach(opt => {
           let optExtra = opt.extraPrice || 0;
-          let totalBase = base + optExtra;
+          let totalBase = base - optExtra;
+          if (totalBase < 0) totalBase = 0;
 
           let maxDisc = 0;
           codesToCheck.forEach(code => {
@@ -1265,7 +1265,7 @@
           if (finalP < minFinal) {
             minFinal = finalP;
             minOriginal = totalBase;
-            hasDiscount = (maxDisc > 0);
+            hasDiscount = (maxDisc > 0 || optExtra > 0);
           }
         });
       });
