@@ -454,7 +454,7 @@
             </div>
 
             <a href="profile.html" class="dropdown-menu-item" onclick="toggleAccountDropdown(event)">
-              📍 จัดการข้อมูล & ประวัติการสั่งซื้อ[cite: 3]
+              📍 จัดการข้อมูล & ประวัติการสั่งซื้อ
             </a>
             <div class="dropdown-menu-item danger" onclick="logoutGoogle(); toggleAccountDropdown(event);">
               🚪 ออกจากระบบ
@@ -576,7 +576,7 @@
       <div id="cartItemList" style="max-height: 45vh; overflow-y: auto; padding-right: 2px;">- ไม่มีรายการสินค้า -</div>
       
       <div style="background: #fafafa; border: 1px solid var(--border-color); padding: 10px; border-radius: var(--radius); margin-top: 4px;">
-        <div style="font-size: 0.78rem; color: var(--text-muted);" id="cartShippingDisplay">การจัดส่ง: EMS (฿50)[cite: 3]</div>
+        <div style="font-size: 0.78rem; color: var(--text-muted);" id="cartShippingDisplay">การจัดส่ง: EMS (฿50)</div>
         <div style="font-weight: 850; color: #000; font-size: 1.05rem; margin-top: 2px;" id="netTotalDisplay">ราคารวมทั้งสิ้น: ฿0</div>
       </div>
 
@@ -609,9 +609,9 @@
       
       <div class="bank-payment-box">
         <div style="font-weight:bold; font-size:0.82rem;">📲 โอนเงินชำระค่าสินค้าผ่านบัญชี</div>
-        <div><strong>ธนาคาร:</strong> <span id="payBankName">กสิกรไทย (KBANK)</span>[cite: 3]</div>
-        <div><strong>เลขที่บัญชี:</strong> <span id="payAccountNo" style="font-weight:bold; color:#000;">123-4-56789-0</span>[cite: 3]</div>
-        <div><strong>ชื่อบัญชี:</strong> <span id="payAccountName">164CRAFT</span>[cite: 3]</div>
+        <div><strong>ธนาคาร:</strong> <span id="payBankName">กสิกรไทย (KBANK)</span></div>
+        <div><strong>เลขที่บัญชี:</strong> <span id="payAccountNo" style="font-weight:bold; color:#000;">123-4-56789-0</span></div>
+        <div><strong>ชื่อบัญชี:</strong> <span id="payAccountName">164CRAFT</span></div>
       </div>
 
       <form id="shippingForm" onsubmit="confirmOrder(event)" style="margin-top: 4px;">
@@ -633,24 +633,24 @@
   <div id="orderSummaryModal" class="modal-overlay">
     <div class="modal-box" style="max-width: 600px;">
       <div class="modal-header" style="color: #111;">
-        <span>🎉 สรุปรายการสั่งซื้อสำเร็จ![cite: 3]</span>
+        <span>🎉 สรุปรายการสั่งซื้อสำเร็จ!</span>
         <button class="modal-close" onclick="closeModal('orderSummaryModal')">✕</button>
       </div>
       <p style="font-size: 0.8rem; color: var(--text-muted);">ระบบบันทึกรายการคำสั่งซื้อเรียบร้อยแล้ว</p>
 
       <div id="printableOrderArea">
         <div class="shipping-info-box" style="margin-top:0; background: #fff;">
-          <div style="font-weight: bold; margin-bottom: 4px; border-bottom: 1px solid #ddd; padding-bottom: 4px;">🏬 ข้อมูลผู้จัดส่ง (Sender):[cite: 3]</div>
+          <div style="font-weight: bold; margin-bottom: 4px; border-bottom: 1px solid #ddd; padding-bottom: 4px;">🏬 ข้อมูลผู้จัดส่ง (Sender):</div>
           <div><strong>ผู้ส่ง:</strong> <span id="summarySenderName">-</span></div>
           <div><strong>เบอร์โทร:</strong> <span id="summarySenderPhone">-</span></div>
           <div><strong>ที่อยู่:</strong> <span id="summarySenderAddress">-</span></div>
         </div>
 
-        <div style="font-weight: bold; font-size: 0.88rem; margin-top: 8px;">📦 รายการสินค้าที่สั่งซื้อ:[cite: 3]</div>
+        <div style="font-weight: bold; font-size: 0.88rem; margin-top: 8px;">📦 รายการสินค้าที่สั่งซื้อ:</div>
         <div id="summaryItemsList" style="max-height: 200px; overflow-y: auto; border: 1px solid var(--border-color); border-radius: var(--radius); padding: 6px; background: #fff; margin-top: 4px;"></div>
 
         <div class="shipping-info-box" style="margin-top: 8px;">
-          <div style="font-weight: bold; margin-bottom: 4px; border-bottom: 1px solid #ddd; padding-bottom: 4px;">🚚 ข้อมูลผู้รับ (Receiver):[cite: 3]</div>
+          <div style="font-weight: bold; margin-bottom: 4px; border-bottom: 1px solid #ddd; padding-bottom: 4px;">🚚 ข้อมูลผู้รับ (Receiver):</div>
           <div><strong>ชื่อผู้รับ:</strong> <span id="summaryCustomerName">-</span></div>
           <div><strong>เบอร์โทร:</strong> <span id="summaryCustomerPhone">-</span></div>
           <div><strong>อีเมล:</strong> <span id="summaryCustomerEmail">-</span></div>
@@ -659,7 +659,7 @@
         </div>
 
         <div class="bank-payment-box" style="margin-top: 8px; text-align: left;">
-          <div style="font-weight: bold; font-size: 0.82rem; margin-bottom: 4px; border-bottom: 1px solid #ddd; padding-bottom: 4px;">💳 ข้อมูลการชำระเงิน:[cite: 3]</div>
+          <div style="font-weight: bold; font-size: 0.82rem; margin-bottom: 4px; border-bottom: 1px solid #ddd; padding-bottom: 4px;">💳 ข้อมูลการชำระเงิน:</div>
           <div><strong>ธนาคาร:</strong> <span id="summaryBankName">-</span></div>
           <div><strong>เลขที่บัญชี:</strong> <span id="summaryAccountNo" style="font-weight: bold; color: #000;">-</span></div>
           <div><strong>ชื่อบัญชี:</strong> <span id="summaryAccountName">-</span></div>
@@ -667,7 +667,7 @@
 
         <div style="border-top: 2px solid var(--border-dark); padding-top: 8px; margin-top: 8px;">
           <div style="display: flex; justify-content: space-between; font-size: 0.82rem; color: var(--text-muted);"><span>ค่าสินค้า:</span><span id="summarySubtotal">฿0</span></div>
-          <div style="display: flex; justify-content: space-between; font-size: 0.82rem; color: var(--text-muted);"><span>ค่าจัดส่ง (<span id="summaryShippingName">EMS</span>):[cite: 3]</span><span id="summaryShippingFee">฿50</span></div>
+          <div style="display: flex; justify-content: space-between; font-size: 0.82rem; color: var(--text-muted);"><span>ค่าจัดส่ง (<span id="summaryShippingName">EMS</span>):</span><span id="summaryShippingFee">฿50</span></div>
           <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 1.1rem; color: #000; margin-top: 4px;"><span>ยอดรวมสุทธิ:</span><span id="summaryGrandTotal">฿0</span></div>
         </div>
       </div>
@@ -795,7 +795,7 @@
 
           const userEmail = (user.email || "").toLowerCase();
           if (ALLOWED_ADMIN_EMAILS.includes(userEmail)) {
-            roleStatusContainer.innerHTML = `<a href="admin.html" class="admin-badge-icon" title="คลิกเพื่อเข้าสู่ระบบหลังบ้าน">[cite: 2]🛠️ ADMIN</a>`;
+            roleStatusContainer.innerHTML = `<a href="admin.html" class="admin-badge-icon" title="คลิกเพื่อเข้าสู่ระบบหลังบ้าน">🛠️ ADMIN</a>`;
           } else {
             roleStatusContainer.innerHTML = `<span class="user-badge-status">USER</span>`;
           }
@@ -923,9 +923,12 @@
             data.vipCodes.forEach(item => {
               const c = typeof item === 'object' ? (item.code || "").toUpperCase() : (item || "").toUpperCase();
               const n = typeof item === 'object' ? (item.note || "") : "";
+              const t = typeof item === 'object' ? (item.type || "ACCESS") : "ACCESS";
+              const d = typeof item === 'object' ? (parseFloat(item.discount) || 0) : 0;
+
               if (c) {
                 vipCodesList.push(c);
-                vipCodesMap[c] = n;
+                vipCodesMap[c] = { note: n, type: t, discount: d };
               }
             });
           }
@@ -1010,7 +1013,7 @@
         document.documentElement.style.setProperty('--accent', systemSettings.themeColor);
       }
 
-      document.getElementById("cartShippingDisplay").innerText = `การจัดส่ง: ${systemSettings.shippingName} (฿${systemSettings.shippingFee})[cite: 3]`;
+      document.getElementById("cartShippingDisplay").innerText = `การจัดส่ง: ${systemSettings.shippingName} (฿${systemSettings.shippingFee})`;
       document.getElementById("payBankName").innerText = systemSettings.bankName;
       document.getElementById("payAccountNo").innerText = systemSettings.accountNo;
       document.getElementById("payAccountName").innerText = systemSettings.accountName;
@@ -1106,7 +1109,8 @@
         let tagHtml = `<div style="font-weight:bold; margin-bottom:2px;">ปลดล็อกสำเร็จ [ACTIVE]:</div>`;
         validActiveCodes.forEach(c => {
           const masked = c.length > 2 ? c.substring(0, 2) + "•".repeat(c.length - 2) : "••••";
-          const noteText = vipCodesMap[c] ? ` (${vipCodesMap[c]})` : ` (${c})`;
+          const info = vipCodesMap[c] || {};
+          const noteText = info.note ? ` (${info.note})` : ` (${c})`;
           tagHtml += `<div>• ${masked}${noteText}</div>`;
         });
         statusTag.innerHTML = tagHtml;
@@ -1145,13 +1149,10 @@
         if (!isModeValid) return false;
 
         const prodSecret = (p.secretCode || "").trim().toUpperCase();
-        if (validActiveCodes.length > 0) {
-          const isGeneral = (prodSecret === "");
-          const isVip = validActiveCodes.includes(prodSecret);
-          if (!isGeneral && !isVip) return false;
-        } else {
-          if (prodSecret !== "") return false;
+        if (prodSecret !== "") {
+          if (!validActiveCodes.includes(prodSecret)) return false;
         }
+
         if (brand === "ALL") return true;
         return p.brand && p.brand.toUpperCase() === brand.toUpperCase();
       }).length;
@@ -1182,12 +1183,8 @@
         if (!isModeValid) return false;
 
         const prodSecret = (p.secretCode || "").trim().toUpperCase();
-        if (validActiveCodes.length > 0) {
-          const isGeneral = (prodSecret === "");
-          const isVip = validActiveCodes.includes(prodSecret);
-          if (!isGeneral && !isVip) return false;
-        } else {
-          if (prodSecret !== "") return false;
+        if (prodSecret !== "") {
+          if (!validActiveCodes.includes(prodSecret)) return false;
         }
 
         const matchesCat = (activeCategory === "ALL" || (p.brand && p.brand.toUpperCase() === activeCategory.toUpperCase()));
@@ -1257,6 +1254,11 @@
 
           let totalDisc = 0;
           codesToCheck.forEach(code => {
+            const info = vipCodesMap[code];
+            if (info && info.type === 'DISCOUNT') {
+              totalDisc += info.discount;
+            }
+
             let foundDisc = 0;
             if (opt.codes && Array.isArray(opt.codes)) {
               const m = opt.codes.find(c => (c.code || "").toUpperCase() === code.toUpperCase());
@@ -1333,12 +1335,8 @@
         if (!isModeValid) return false;
 
         const prodSecret = (p.secretCode || "").trim().toUpperCase();
-        if (validActiveCodes.length > 0) {
-          const isGeneral = (prodSecret === "");
-          const isVip = validActiveCodes.includes(prodSecret);
-          if (!isGeneral && !isVip) return false;
-        } else {
-          if (prodSecret !== "") return false;
+        if (prodSecret !== "") {
+          if (!validActiveCodes.includes(prodSecret)) return false;
         }
 
         const matchesCat = (activeCategory === "ALL" || (p.brand && p.brand.toUpperCase() === activeCategory.toUpperCase()));
@@ -1642,7 +1640,6 @@
 
       const optExtra = (currentSelectedProduct.options && currentSelectedProduct.options[optIdx]) ? (currentSelectedProduct.options[optIdx].extraPrice || 0) : 0;
 
-      // สูตรคำนวณ: ราคาสินค้าตั้งต้น - (ตัวเลือก) - (โค้ดที่มีทั้งหมดสะสม)
       let originalTotal = basePrice;
       let finalTotal = originalTotal - optExtra - appliedOptionDiscount;
       if (finalTotal < 0) finalTotal = 0;
@@ -1664,8 +1661,7 @@
       const optIdx = parseInt(document.getElementById("detailOptionSelect").value) || 0;
       const selectedOpt = currentSelectedProduct.options ? currentSelectedProduct.options[optIdx] : null;
 
-      // ตรวจสอบกับรายการทั้งหมดในระบบ (vipCodesList) และสิทธิ์ผู้ใช้
-      let availableCodes = vipCodesList.map(item => typeof item === 'object' ? item.code : item);
+      let availableCodes = vipCodesList;
       let codesToCheck = [];
 
       let userCodes = [...userAssignedCodes, ...activeSecretCodes];
@@ -1688,25 +1684,26 @@
       let appliedList = [];
 
       codesToCheck.forEach(code => {
-        let found = false;
-        let disc = 0;
+        const info = vipCodesMap[code];
+        if (info && info.type === 'DISCOUNT') {
+          cumulativeDiscount += info.discount;
+          const masked = code.length > 2 ? code.substring(0, 2) + "•".repeat(code.length - 2) : "••••";
+          appliedList.push(`${masked} (-฿${info.discount})`);
+        }
 
+        let foundOptDisc = 0;
         if (selectedOpt.codes && Array.isArray(selectedOpt.codes)) {
           const matchCode = selectedOpt.codes.find(c => (c.code || "").toUpperCase() === code.toUpperCase());
-          if (matchCode) {
-            found = true;
-            disc = matchCode.discount || 0;
-          }
+          if (matchCode) foundOptDisc = matchCode.discount || 0;
         }
-        if (!found && selectedOpt.vipCode && selectedOpt.vipCode.toUpperCase() === code.toUpperCase()) {
-          found = true;
-          disc = selectedOpt.vipDiscount || 0;
+        if (!foundOptDisc && selectedOpt.vipCode && selectedOpt.vipCode.toUpperCase() === code.toUpperCase()) {
+          foundOptDisc = selectedOpt.vipDiscount || 0;
         }
 
-        if (found && disc > 0) {
-          cumulativeDiscount += disc;
+        if (foundOptDisc > 0 && (!info || info.type !== 'DISCOUNT')) {
+          cumulativeDiscount += foundOptDisc;
           const masked = code.length > 2 ? code.substring(0, 2) + "•".repeat(code.length - 2) : "••••";
-          appliedList.push(`${masked} (-฿${disc})`);
+          appliedList.push(`${masked} (ตัวเลือก -฿${foundOptDisc})`);
         }
       });
 
@@ -1718,7 +1715,7 @@
 
       if (appliedList.length > 0) {
         statusMsg.style.color = "var(--accent-vip)";
-        statusMsg.innerText = `ตรวจสอบกับระบบแล้ว ใช้โค้ดส่วนลดสะสม: ${appliedList.join(', ')} (ลดรวม -฿${cumulativeDiscount})[cite: 1, 2, 3]`;
+        statusMsg.innerText = `ใช้โค้ดส่วนลดสะสมทั้งหมด: ${appliedList.join(', ')} (ลดรวม -฿${cumulativeDiscount})`;
         updateSecretStatusDisplay();
       } else {
         appliedOptionDiscount = 0;
