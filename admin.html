@@ -111,7 +111,7 @@
     .modal-overlay {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       background: rgba(0, 0, 0, 0.65); backdrop-filter: blur(4px);
-      display: none; align-items: flex-end; justify-content: center; z-index: 1000; padding: 0; cursor: pointer;
+      display: none; align-items: flex-end; justify-content: center; z-index: 1000; padding: 0;
     }
     @media(min-width: 640px) { .modal-overlay { align-items: center; justify-content: center; padding: 20px; } }
     .modal-box {
@@ -479,12 +479,12 @@
     </div>
   </div>
 
-  <!-- ADD / EDIT / CLONE PRODUCT MODAL -->
-  <div id="addProductModal" class="modal-overlay" onclick="checkOutsideModalClick(event, 'addProductModal')">
+  <!-- ADD / EDIT / CLONE PRODUCT MODAL (คลิกพื้นที่ว่างจะไม่ปิด) -->
+  <div id="addProductModal" class="modal-overlay">
     <div class="modal-box">
       <div class="modal-header">
         <span id="productModalTitle">📦 เพิ่มรายการสินค้าใหม่</span>
-        <button class="modal-close" onclick="closeModal('addProductModal')">✕</button>
+        <button class="modal-close" onclick="closeModal('addProductModal'); openManageProductsModal();">✕</button>
       </div>
       
       <form id="addProductForm" onsubmit="handleProductSubmit(event)">
@@ -884,6 +884,8 @@
 
     function checkOutsideModalClick(event, modalId) {
       if (event.target.id === modalId) {
+        // ปิดการคลิกพื้นที่ว่างเฉพาะหน้าเพิ่ม/แก้ไขสินค้า เพื่อป้องกันข้อมูลหาย
+        if (modalId === 'addProductModal') return;
         closeModal(modalId);
       }
     }
@@ -1323,7 +1325,7 @@
           removeVdo();
         }
 
-        renderAdminScalesInputs(prod.scales, prod.scalePrices);
+        renderAdminScalesInputs(prod.scales || ["1/64"], prod.scalePrices || {});
 
         const optCont = document.getElementById("dynamicOptionsList");
         optCont.innerHTML = "";
@@ -1626,7 +1628,7 @@
       const trimmed = (url || "").trim();
       if (!trimmed) { if (!document.getElementById("pVdoInput").files.length) removeVdo(); return; }
       tempProductVdo = trimmed;
-      document.getElementById("pVdoInput").value = '';
+      document.getElementById("pVdoInput").value = "";
       document.getElementById("vdoCompressStatus").innerText = "";
       displayVdoPreview(tempProductVdo, trimmed);
     }
@@ -1801,193 +1803,10 @@
 
       db.collection("products").doc(id).set(payload).then(() => {
         showToast("บันทึกสินค้าสำเร็จ");
-        document.getElementById("editingProductId").value = id;
-        document.getElementById("productModalTitle").innerText = "✏️ แก้ไขสินค้า: " + id;
+        // ปิดหน้าฟอร์มสินค้าและกลับไปยังหน้ารายการสินค้าทั้งหมด
+        closeModal('addProductModal');
+        openManageProductsModal();
       }).catch(err => showToast("เกิดข้อผิดพลาด: " + err.message));
-    }
-
-    function editProduct(productId) {
-      db.collection("products").doc(productId).get().then((doc) => {
-        if (!doc.exists) {
-          showToast("ไม่พบสินค้า");
-          return;
-        }
-        const prod = doc.data();
-
-        closeModal('manageProductsModal');
-        document.getElementById("productModalTitle").innerText = "✏️ แก้ไขสินค้า: " + prod.id;
-        document.getElementById("editingProductId").value = prod.id;
-        document.getElementById("pId").value = prod.id;
-        document.getElementById("pName").value = prod.name;
-        document.getElementById("pPreorderLeadTime").value = prod.preorderLeadTime || "";
-
-        document.getElementById("pBrandSelect").innerHTML = brands.map(b => `<option value="${b}" ${b === prod.brand ? 'selected' : ''}>${b}</option>`).join('');
-        renderVipSelectOptions(prod.secretCode || "");
-
-        tempProductImages = prod.images ? [...prod.images] : [];
-        renderAdminImagePreview();
-
-        if (prod.vdo) {
-          tempProductVdo = prod.vdo;
-          displayVdoPreview(prod.vdo, prod.vdo);
-        } else {
-          removeVdo();
-        }
-
-        renderAdminScalesInputs(prod.scales || ["1/64"], prod.scalePrices || {});
-
-        const optCont = document.getElementById("dynamicOptionsList");
-        optCont.innerHTML = "";
-        if (prod.options && prod.options.length) {
-          prod.options.forEach(o => addDynamicOptionRow(o));
-        }
-
-        openModal('addProductModal');
-      });
-    }
-
-    function deleteProduct(productId) {
-      if (!confirm(`ต้องการลบ SKU: ${productId} หรือไม่?`)) return;
-      db.collection("products").doc(productId).delete().then(() => showToast("ลบสำเร็จ"));
-    }
-
-    function openVipCodesModal() { renderVipCodesList(); openModal('vipCodesModal'); }
-    function renderVipCodesList() {
-      document.getElementById("vipCodeChipsList").innerHTML = vipCodesList.map((item, idx) => {
-        const code = typeof item === 'object' ? item.code : item;
-        const note = typeof item === 'object' && item.note ? item.note : '';
-        return `
-          <div class="tag-chip" style="width: 100%;">
-            <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
-              <div>
-                <span style="font-weight:bold; color:var(--accent-vip); font-size:0.85rem;">${code}</span>
-                <span style="font-size:0.75rem; color:#666; margin-left:8px;">${note ? 'โน้ต: ' + note : '(ไม่มีโน้ต)'}</span>
-              </div>
-              <span class="del-btn" onclick="deleteVipCode(${idx})">✕ ลบ</span>
-            </div>
-          </div>
-        `;
-      }).join('');
-    }
-
-    function handleAddVipCode(e) {
-      e.preventDefault();
-      const codeVal = document.getElementById("newVipCodeInput").value.trim().toUpperCase();
-      const noteVal = document.getElementById("newVipNoteInput").value.trim();
-
-      if (codeVal) {
-        const exists = vipCodesList.some(item => (typeof item === 'object' ? item.code : item) === codeVal);
-        if (!exists) {
-          vipCodesList.push({ code: codeVal, note: noteVal });
-          vipCodesList = sortAlphabetically(vipCodesList);
-          saveDataToFirestore();
-          document.getElementById("newVipCodeInput").value = "";
-          document.getElementById("newVipNoteInput").value = "";
-          renderVipCodesList();
-          showToast("เพิ่มรหัสสำเร็จ");
-        } else {
-          showToast("รหัสนี้มีอยู่ในระบบแล้ว");
-        }
-      }
-    }
-
-    function deleteVipCode(idx) { 
-      vipCodesList.splice(idx, 1); 
-      saveDataToFirestore(); 
-      renderVipCodesList(); 
-      showToast("ลบสำเร็จ");
-    }
-
-    function openConfigModal() { renderConfigChips(); openModal('configModal'); }
-    function renderConfigChips() {
-      brands = sortAlphabetically(brands);
-      scalesList = sortAlphabetically(scalesList);
-      document.getElementById("brandChipsList").innerHTML = brands.map(b => `
-        <div class="tag-chip"><span>${b}</span><span class="del-btn" onclick="deleteBrand('${b}')">✕</span></div>
-      `).join('');
-      document.getElementById("scaleChipsList").innerHTML = scalesList.map(s => `
-        <div class="tag-chip"><span>${s}</span><span class="del-btn" onclick="deleteScale('${s}')">✕</span></div>
-      `).join('');
-    }
-    function handleAddBrand(e) {
-      e.preventDefault();
-      const val = document.getElementById("newBrandName").value.trim();
-      if (val && !brands.includes(val)) { 
-        brands.push(val); 
-        brands = sortAlphabetically(brands); 
-        saveDataToFirestore(); 
-        document.getElementById("newBrandName").value = ""; 
-        renderConfigChips(); 
-        showToast("เพิ่มแบรนด์สำเร็จ");
-      }
-    }
-    function deleteBrand(b) {
-      if (brands.length <= 1) {
-        showToast("ต้องมีอย่างน้อย 1 แบรนด์");
-        return;
-      }
-      brands = brands.filter(x => x !== b); 
-      saveDataToFirestore(); 
-      renderConfigChips();
-      showToast("ลบสำเร็จ");
-    }
-    function handleAddScale(e) {
-      e.preventDefault();
-      const val = document.getElementById("newScaleName").value.trim();
-      if (val && !scalesList.includes(val)) { 
-        scalesList.push(val); 
-        scalesList = sortAlphabetically(scalesList); 
-        saveDataToFirestore(); 
-        document.getElementById("newScaleName").value = ""; 
-        renderConfigChips(); 
-        showToast("เพิ่มสเกลสำเร็จ");
-      }
-    }
-    function deleteScale(s) {
-      if (scalesList.length <= 1) {
-        showToast("ต้องมีอย่างน้อย 1 สเกล");
-        return;
-      }
-      scalesList = scalesList.filter(x => x !== s); 
-      saveDataToFirestore(); 
-      renderConfigChips();
-      showToast("ลบสำเร็จ");
-    }
-
-    function openBankConfigModal() {
-      document.getElementById("cfgBankName").value = systemSettings.bankName;
-      document.getElementById("cfgAccountNo").value = systemSettings.accountNo;
-      document.getElementById("cfgAccountName").value = systemSettings.accountName;
-      openModal('bankConfigModal');
-    }
-
-    function saveBankConfig(e) {
-      e.preventDefault();
-      systemSettings.bankName = document.getElementById("cfgBankName").value.trim();
-      systemSettings.accountNo = document.getElementById("cfgAccountNo").value.trim();
-      systemSettings.accountName = document.getElementById("cfgAccountName").value.trim();
-      saveDataToFirestore();
-      showToast("บันทึกการตั้งค่าธนาคารสำเร็จ");
-    }
-
-    function openShippingConfigModal() {
-      document.getElementById("cfgSenderName").value = systemSettings.senderName;
-      document.getElementById("cfgSenderPhone").value = systemSettings.senderPhone;
-      document.getElementById("cfgSenderAddress").value = systemSettings.senderAddress;
-      document.getElementById("cfgShippingName").value = systemSettings.shippingName;
-      document.getElementById("cfgShippingFee").value = systemSettings.shippingFee;
-      openModal('shippingConfigModal');
-    }
-
-    function saveShippingConfig(e) {
-      e.preventDefault();
-      systemSettings.senderName = document.getElementById("cfgSenderName").value.trim();
-      systemSettings.senderPhone = document.getElementById("cfgSenderPhone").value.trim();
-      systemSettings.senderAddress = document.getElementById("cfgSenderAddress").value.trim();
-      systemSettings.shippingName = document.getElementById("cfgShippingName").value.trim();
-      systemSettings.shippingFee = parseFloat(document.getElementById("cfgShippingFee").value) || 0;
-      saveDataToFirestore();
-      showToast("บันทึกข้อมูลการจัดส่งสำเร็จ");
     }
   </script>
 </body>
